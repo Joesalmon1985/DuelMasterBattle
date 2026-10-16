@@ -39,7 +39,7 @@ GODOT_BIN="$(resolve_godot)"
 export GODOT="$GODOT_BIN"
 echo "Using Godot: $GODOT_BIN"
 
-SCENE="res://client/scenes/main_menu.tscn"
+SCENE="res://client/scenes/dev_menu.tscn"
 RESOLUTION="450x800"
 ARGS=()
 while [[ $# -gt 0 ]]; do

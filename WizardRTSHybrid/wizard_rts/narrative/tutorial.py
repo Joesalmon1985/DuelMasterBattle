@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts import settlements
-from wizard_rts.narrative import campaign, config, conversation, duel_lease, events, graph, personas, quests, residents, wizard
+from wizard_rts.narrative import campaign, config, conversation, duel_lease, events, graph, party, personas, quests, residents, wizard
 
 TEACHER = "tutorial"
 LESSON_TITLES = {"meet": "Speak with your mentor", "colours": "Learn the three colours", "told_ward": "Break a Ward you were told",
@@ -54,7 +54,8 @@ def refresh(world: Any) -> None:
 
 def tick(world: Any) -> None:
     residents.quantum(world)
-    conversation.tick(world)
+    for _seat in party.players(world):  # each wizard's own conversations: ended when they walk away or leave them idle
+        conversation.tick(world)
     campaign.tick(world)
     quests.tick(world, state(world)["settlement"])
 

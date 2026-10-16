@@ -26,6 +26,7 @@ var _player_attack: Array = []
 var _ward_locked := false
 var _events: Array = []
 var _paused := false
+# There are no rounds: "pending" only means "has casts left", so neither side ever waits for the other (see wizard_rts/net/pvp.py).
 var _rival_cast_pending := true
 var _your_cast_pending := true
 var _cast_deadline_s: float = -1.0
@@ -302,7 +303,7 @@ func player_cast_block_reason() -> String:
 	if player_history.size() >= player.max_casts:
 		return "No casts left"
 	if not _your_cast_pending:
-		return "Waiting for the rival's cast…"
+		return "No casts left"
 	if not is_player_attack_complete():
 		return "Fill all %d spells" % player.weave_size
 	return ""
@@ -316,8 +317,10 @@ func submit_player_attack() -> bool:
 	var reply: Dictionary = _sim.op({"op": "pvp_cast", "attack": _player_attack.duplicate(), "cast_seq": cast_seq})
 	if str(reply.get("status", "")) != "ok":
 		_last_error = str(reply.get("reason", "rejected"))
-		if _last_error == "already_cast_this_round":
-			_your_cast_pending = false
+		if _last_error in ["finished", "no_casts_left", "not_active", "bad_cast_seq"]:
+			# the rival broke the Ward first, or our count was behind: take the host's word for the duel as it now stands
+			var fresh: Dictionary = _sim.op({"op": "pvp_view"})
+			apply_view(fresh.get("duel", {}))
 		return false
 	_player_attack = _empty(player.weave_size)
 	apply_view(reply.get("duel", {}))
@@ -366,7 +369,8 @@ func advance_time(delta: float, paused: bool = false) -> void:
 func enemy_cast_progress() -> float:
 	if phase != Phase.DUELING:
 		return 0.0
-	return 0.0 if _rival_cast_pending else 1.0
+	var cap := float(enemy.max_casts) if enemy != null else 1.0
+	return clampf(float(enemy_history.size()) / maxf(cap, 1.0), 0.0, 1.0)  # how much of its allowance the rival has used
 
 
 # --- read model ----------------------------------------------------------------------------

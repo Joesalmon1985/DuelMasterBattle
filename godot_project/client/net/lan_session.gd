@@ -7,8 +7,8 @@ extends Node
 
 const SimClient = preload("res://client/hybrid/sim_client.gd")
 
-const PROTOCOL_VERSION := 1
-const GAME_VERSION := "0.1.0"  # must match WizardRTSHybrid/wizard_rts/net/protocol.py
+const PROTOCOL_VERSION := 2  # 2: real-time PvP casts, the narrative ops, single-player save/continue
+const GAME_VERSION := "0.2.0"  # must match WizardRTSHybrid/wizard_rts/net/protocol.py
 const DEFAULT_PORT := 8765
 const DISCOVERY_PORT := 8767
 
@@ -26,7 +26,8 @@ var seed := 507
 var map_size := "small"
 var last_error := ""
 var sim = null  # the live HybridSimClient handed from the lobby to the world
-var private_session := false  # single player on a phone: hosted on 127.0.0.1, no discovery
+var private_session := false  # single player: the world is hosted on 127.0.0.1 by this device, one human seat plus the AI companion, no discovery
+var continue_game := false  # host the newest saved Wizard World instead of a new one (private sessions)
 
 var _host_pid := -1
 var _ready_file := ""
@@ -49,9 +50,37 @@ func reset() -> void:
 	session_name = ""
 	last_error = ""
 	private_session = false
+	continue_game = false
 	if sim != null:
 		sim.disconnect_from_host()
 	sim = null
+
+
+## Where this device keeps Wizard World saves: the app's own storage, the same folder the Python host is told to use.
+func runs_dir() -> String:
+	var override := OS.get_environment("DMB_RUNS_DIR")  # tests keep their saves away from a real campaign
+	return override if override != "" else OS.get_user_data_dir().path_join("dmb_runs")
+
+
+## Is there a saved Wizard World campaign on this device to continue? (Only these: the old adventure's save is a different file and is never looked at.)
+func has_wizard_save() -> bool:
+	for slot in ["quit", "auto", "manual"]:
+		if FileAccess.file_exists(runs_dir().path_join("saves/campaign/%s.pkl" % slot)):
+			return true
+	return false
+
+
+## The Python 3 that runs the world on a PC: DMB_PYTHON, the repo's .dmb_windows_local.json, then `python` (Windows) or `python3`.
+func python_exe() -> String:
+	var env := OS.get_environment("DMB_PYTHON")
+	if env != "":
+		return env
+	var local := ProjectSettings.globalize_path("res://").path_join("../.dmb_windows_local.json")
+	if FileAccess.file_exists(local):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(local))
+		if typeof(parsed) == TYPE_DICTIONARY and str(parsed.get("python", "")) != "" and FileAccess.file_exists(str(parsed["python"])):
+			return str(parsed["python"])
+	return "python" if OS.has_feature("windows") else "python3"
 
 
 func default_player_name() -> String:
@@ -102,7 +131,8 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	_host_status = {"state": "starting"}
 	var bind := "127.0.0.1" if private else "0.0.0.0"
 	var args := {"port": DEFAULT_PORT, "bind": bind, "name": name, "code": code, "secret": host_secret, "seed": seed_, "map": map_,
-		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT}
+		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
+		"continue": continue_game and private, "runs_dir": runs_dir()}
 	if Engine.has_singleton("DmbPySim"):
 		var plugin = Engine.get_singleton("DmbPySim")
 		var raw: String = str(plugin.start(JSON.stringify(args)))
@@ -110,18 +140,19 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 		if typeof(r) != TYPE_DICTIONARY or str(r.get("status", "")) != "ok":
 			_host_status = {"state": "failed", "error": raw}
 		return _host_status
-	var py := OS.get_environment("DMB_PYTHON")
-	if py == "":
-		py = "python3"
+	var py := python_exe()
 	var hyb := _hybrid_dir()
 	if hyb == "":
 		_host_status = {"state": "failed", "error": "WizardRTSHybrid directory not found next to the project (desktop hosting needs the repository layout)"}
 		return _host_status
 	_ready_file = OS.get_user_data_dir().path_join("lan_host_ready_%d.json" % (Time.get_ticks_msec() % 100000))
 	var argv: PackedStringArray = ["-u", hyb.path_join("wizard_rts/net/host.py"), "--bind", bind, "--port", str(DEFAULT_PORT), "--name", name, "--code", code,
-		"--secret", host_secret, "--seed", str(seed_), "--map", map_, "--max-players", "1" if private else "2", "--ready-file", _ready_file]
+		"--secret", host_secret, "--seed", str(seed_), "--map", map_, "--max-players", "1" if private else "2", "--ready-file", _ready_file,
+		"--runs-dir", runs_dir()]
 	if private:
 		argv.append("--no-discovery")
+		if continue_game:
+			argv.append("--continue")
 	_host_pid = OS.create_process(py, argv, false)
 	if _host_pid <= 0:
 		_host_status = {"state": "failed", "error": "could not start %s (set DMB_PYTHON to your Python 3 executable)" % py}

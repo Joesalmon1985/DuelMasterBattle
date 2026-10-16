@@ -180,7 +180,7 @@ func _end_scene() -> void:
 	world.paused = false
 	world._input_locked = false
 	world._hud_area_lbl.text = "Wizard RTS"
-	world._apply_snapshot(world._sim.op({"op": "snapshot"}).get("snapshot", {}))  # the paused world sent none: bring the picture up to date
+	world.refresh_snapshot()  # the paused world sent none: bring the picture up to date
 
 
 # ---------------------------------------------------------------- Game Over
@@ -198,13 +198,20 @@ func _show_game_over(go: Dictionary) -> void:
 	world.camera_focus = Vector2.INF
 	world.paused = true
 	world._input_locked = true
-	over_card.show_card("Game over", str(go.get("text", "The apprentice was defeated.")), "The stranger's magic was stronger than yours. Your journey ends here.", [], [
-		{"id": "new", "text": "New game", "kind": "primary"}, {"id": "quit", "text": "Quit"}])
+	var buttons: Array = [{"id": "new", "text": "New game", "kind": "primary"}, {"id": "quit", "text": "Quit"}]
+	var body := "The stranger's magic was stronger than yours. Your journey ends here."
+	if not world.is_solo_session():  # a shared world goes on without you: there is no restarting it for somebody else
+		buttons = [{"id": "quit", "text": "Leave game", "kind": "primary"}]
+		body = "The stranger's magic was stronger than yours. Your journey ends here, but the world, and your friend, go on."
+	over_card.show_card("Game over", str(go.get("text", "The apprentice was defeated.")), body, [], buttons)
 
 
 func _on_over(id: String) -> void:
 	if id == "quit":
-		world.get_tree().quit()
+		if world.mp:
+			world.mp_leave()
+		else:
+			world.get_tree().quit()
 	else:
 		new_game()
 

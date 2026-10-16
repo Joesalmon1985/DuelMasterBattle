@@ -1,6 +1,6 @@
 @echo off
 rem DuelMasterBattle: run the world on this PC for two phones on the same Wi-Fi (the fallback when the phones cannot host).
-rem Both phones: JOIN LOCAL GAME, type the join code, tap the game in the list (or type this PC's Wi-Fi address below).
+rem Both phones: Join Multiplayer, type the join code, tap the game in the list (or type this PC's Wi-Fi address below).
 rem The first phone to join gets the START THE WORLD button. Close this window to end the game.
 rem If Windows asks "Allow Python to communicate on these networks", allow it on private networks (TCP 8765, UDP 8767).
 setlocal

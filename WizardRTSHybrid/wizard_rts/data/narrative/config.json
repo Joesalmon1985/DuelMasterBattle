@@ -43,5 +43,9 @@
     },
     "mentor_relationship": 40,
     "dead_after_defeat": "The apprentice was defeated."
+  },
+  "party": {
+    "training_grace_ms": 120000,
+    "scene_grace_ms": 90000
   }
 }

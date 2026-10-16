@@ -67,6 +67,11 @@ func _run() -> void:
 		await process_frame
 	if not clear:
 		return _die("LAN status label overlaps the HUD")
+	# the Wizard World opens with the apprentice's arrival text: a player reads or skips it before walking about
+	if world.story_ui != null and world.story_ui.opening_card.visible:
+		world.story_ui.finish_opening()
+		for _f in 6:
+			await process_frame
 	# 2. this client moves; the host accepts the steps (the pose in the next state poll matches)
 	var start: Vector2i = world._john_pos
 	var moved := false

@@ -30,13 +30,17 @@ def _run(args: dict[str, Any]) -> None:
     global _host
     try:
         from wizard_rts.net import protocol
-        from wizard_rts.net.host import HostServer, lan_addresses, new_world
+        from wizard_rts.net.host import HostServer, lan_addresses, load_saved_world, new_world
         from wizard_rts.net.session import MultiplayerSession
 
         _status.update(state="building_world")
-        world = new_world(int(args.get("seed", 507)), str(args.get("map", "small")), str(args.get("profile", "campaign")))
+        if args.get("runs_dir"):
+            os.environ["DMB_RUNS"] = str(args["runs_dir"])  # where Wizard World saves live: the app's own storage, which the menu can also look at
+        seed, map_size, profile = int(args.get("seed", 507)), str(args.get("map", "small")), str(args.get("profile", "campaign"))
+        world = (load_saved_world(profile) if args.get("continue") else None) or new_world(seed, map_size, profile)
         session = MultiplayerSession(world, name=str(args.get("name", "Phone")), join_code=args.get("code"), host_secret=args.get("secret"),
-                                     max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)))
+                                     max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)),
+                                     world_factory=lambda: new_world(seed, map_size, profile), ai_companions=1 if int(args.get("max_players", 2)) == 1 else 0)
         host = HostServer(world, session, bind=str(args.get("bind", "0.0.0.0")), port=int(args.get("port", protocol.DEFAULT_PORT)),
                           discovery_port=(int(args["discovery_port"]) if args.get("discovery_port") else None))
         host.start()
@@ -61,7 +65,8 @@ def _run(args: dict[str, Any]) -> None:
 
 
 def start(args_json: str) -> str:
-    """Start hosting; `args_json` keys: port, bind, name, code, secret, seed, map, profile, max_players, discovery_port, view_radius."""
+    """Start hosting; `args_json` keys: port, bind, name, code, secret, seed, map, profile, max_players, discovery_port, view_radius,
+    continue (host the newest Wizard World save), runs_dir (where saves live)."""
     global _thread
     with _lock:
         if _thread is not None and _thread.is_alive():
@@ -107,5 +112,36 @@ def self_test() -> str:
         seq += 1
         w.advance(100, seq, snapshot=False)
     stepped = time.time() - t
+    # the Wizard World layer and the AI companion must import and run from the staged tree too (no numpy, no compiler, no repository)
+    from wizard_rts.narrative import tutorial
+    from wizard_rts.net import ai_wizard, protocol
+    from wizard_rts.net.session import MultiplayerSession
+
+    session = MultiplayerSession(w, name="selftest", join_code="0000", host_secret="s", max_players=1, ai_companions=1)
+    conn = object()
+    session.handle(conn, {"op": "hello", "protocol": protocol.PROTOCOL_VERSION, "game": protocol.GAME_VERSION, "secret": "s", "name": "Self"}, 0.0)
+    session.handle(conn, {"op": "start"}, 0.0)
+    companion = sorted(l.name for l in session.links.values() if l.ai)
+    # single-player save and continue work in this process too (a pickle of the narrative world, in a scratch folder)
+    import shutil
+    import tempfile
+
+    from wizard_rts.net.host import load_saved_world
+
+    scratch = tempfile.mkdtemp(prefix="dmb_selftest_")
+    previous = os.environ.get("DMB_RUNS")
+    os.environ["DMB_RUNS"] = scratch
+    try:
+        saved = session.handle(conn, {"op": "save", "slot": "manual"}, 0.0)
+        reloaded = load_saved_world("campaign") if saved.get("status") == "ok" else None
+        save_ok = bool(reloaded is not None and "narrative" in reloaded.__dict__ and tutorial.state(reloaded)["teacher"])
+    finally:
+        if previous is None:
+            os.environ.pop("DMB_RUNS", None)
+        else:
+            os.environ["DMB_RUNS"] = previous
+        shutil.rmtree(scratch, ignore_errors=True)
     return json.dumps({"status": "ok", "python": sys.version.split()[0], "platform": sys.platform, "build_s": round(built, 2), "advance_5s_game_s": round(stepped, 2),
-                       "game_ms": int(w.dmb.clock.get("game_ms", 0)), "buildings": len(w.buildings), "units": len(w.units), "hash": w.state_hash()[:12]})
+                       "game_ms": int(w.dmb.clock.get("game_ms", 0)), "buildings": len(w.buildings), "units": len(w.units), "hash": w.state_hash()[:12],
+                       "narrative": "narrative" in w.__dict__, "mentor": bool(tutorial.state(w)["teacher"]), "companion": companion, "save_continue": save_ok, "protocol": protocol.PROTOCOL_VERSION,
+                       "game": protocol.GAME_VERSION, "ai_characters": sorted(ai_wizard.characters()["wizards"])})

@@ -14,7 +14,7 @@ from typing import Any
 
 from sim.dmb.people.registry import PeopleService
 
-from wizard_rts.narrative import characters, events
+from wizard_rts.narrative import characters, events, party
 
 BEAT_MS = 20_000
 ROUTINE_RADIUS = 2
@@ -39,6 +39,8 @@ def _occupied(world: Any) -> set[tuple[int, int]]:
     out = {(u["tx"], u["ty"]) for u in world.units.values() if u.get("alive", True)}
     out |= {tuple(r["tile"]) for r in table(world).values() if r["status"] in ("present", "dead")}  # a body still lies where it fell
     out.add((int(world.player["tx"]), int(world.player["ty"])))
+    for p in (getattr(world, "players", None) or {}).values():  # every wizard in the world takes up a tile, not only the one acting
+        out.add((int(p["tx"]), int(p["ty"])))
     return out
 
 
@@ -86,7 +88,7 @@ def figure(rec: dict[str, Any]) -> str:
 def quantum(world: Any) -> None:
     """Once a game second: let each resident whose beat is due step to another tile near its post (unless someone is talking to it)."""
     now = int(world.dmb.clock.get("game_ms", 0))
-    conv = world.narrative["conversations"]  # a resident being talked to stands still (conversation.py ends abandoned conversations)
+    conv = party.talking_keys(world)  # a resident being talked to (by anyone) stands still (conversation.py ends abandoned conversations)
     for pid, r in sorted(table(world).items()):
         if r["status"] != "present":
             continue

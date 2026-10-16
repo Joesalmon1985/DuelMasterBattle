@@ -11,7 +11,7 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from wizard_rts.narrative import config, perf
+from wizard_rts.narrative import config, party, perf
 
 
 def _wizard_default() -> dict[str, Any]:
@@ -45,6 +45,12 @@ def carry_over(old: Any, new: Any) -> dict[str, Any]:
     n = enable(new)
     if enabled(old):
         n["wizard"] = copy.deepcopy(old.narrative["wizard"])
+        for seat, g in old.narrative.get("guests", {}).items():  # every other wizard crosses over with theirs (scene, talks and flags start afresh)
+            fresh = party._fresh_private(g.get("name", ""))
+            fresh["wizard"] = copy.deepcopy(g["wizard"])
+            n.setdefault("guests", {})[seat] = fresh
+        if "party" in old.narrative:
+            n["party"] = copy.deepcopy(old.narrative["party"])
     return n
 
 
@@ -55,5 +61,6 @@ def tick(world: Any) -> None:
 
     with perf.timed("tick"):
         characters.watch(world)
-        characters.link_nearby(world)
+        for _seat in party.players(world):  # a character for the people each wizard walks up to
+            characters.link_nearby(world)
         tutorial.tick(world)

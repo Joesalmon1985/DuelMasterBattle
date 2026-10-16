@@ -1,5 +1,11 @@
 # Duel Master Battle on two Android phones
 
+There is one game, **Wizard World**: a living civilisation with a wizard's apprenticeship inside it. The main menu has four entries,
+**Play Single Player**, **Host Multiplayer**, **Join Multiplayer** and **Settings**. Alone you play the same world with a fellow
+apprentice, Mira, for company (an AI wizard who walks with you and will duel you for practice); with a friend you share it.
+The notes below are about the two-phone game. (Version 0.2.0 replaces 0.1.0: install it on **both** phones, a 0.1.0 phone
+cannot join a 0.2.0 host.)
+
 Two people, two phones, one Wi-Fi, one living world. One phone runs the world and plays in it; the other joins. Nothing
 needs the internet once the app is installed. Whether the game turns cooperative or competitive is up to the two of you:
 wander the settlements together, talk to people, take on quests and outbreaks and watch the civilisation grow, or seek each
@@ -55,14 +61,14 @@ Both phones on the same Wi-Fi (or one phone's hotspot, with the other phone conn
 
 **Phone A (the host)**
 
-1. Open Duel Master Battle > **HOST LOCAL GAME**.
+1. Open Duel Master Battle > **Host Multiplayer**.
 2. Type your name, keep or change the game name and the four-digit join code, choose the map (`small` is right for a
    first game), then **START HOSTING**. The world is built on the phone: 10 to 30 seconds.
 3. The lobby shows your Wi-Fi address and the join code. Tell them to the other player.
 
 **Phone B (the guest)**
 
-4. Open Duel Master Battle > **JOIN LOCAL GAME**. Type your name and the join code.
+4. Open Duel Master Battle > **Join Multiplayer**. Type your name and the join code.
 5. Tap the game under *Games on this Wi-Fi*. If the list stays empty, type Phone A's Wi-Fi address and tap **JOIN**.
 6. Both lobbies now show both names.
 
@@ -77,10 +83,17 @@ caravans and the factions' wars are the same on both phones because one simulati
 
 **Competitive play.** Walk up to the other wizard. When you are within two tiles, a **⚔ Duel** button appears above ✦.
 Tap it; the other phone shows the challenge with **Accept** / **Decline**. On Accept both boards open: each of you sets a
-Ward of three spells and taps **Lock**, then you cast in turns. The rival's Ward stays hidden (`?`) until the end; the host
-scores every cast, so neither phone can cheat. The result screen names the winner and shows both Wards; **Continue** on both
+Ward of three spells and taps **Lock**, then you both guess **at the same time**: there are no turns, so whoever thinks faster
+makes more guesses while the other is still deciding, and the first guess that breaks the other's Ward wins at once. Each of you
+has ten casts. The rival's Ward stays hidden (`?`) until the end; the host scores every cast, so neither phone can cheat. The result screen names the winner and shows both Wards; **Continue** on both
 returns you to the world where you left it. The world is paused during a duel and resumes afterwards. The fire-magic
 cooldown is per player.
+
+**Single player.** **Play Single Player** builds a private Wizard World on the phone and opens it with the apprentice's
+arrival. Mira keeps near you; walk up to her and tap **⚔ Duel Mira** for a practice Ward duel (she thinks for 5 to 11 seconds
+between casts, so a quick player makes several guesses to her one). The pause menu has **Save game** and **Save and leave**; the
+game also saves itself every five minutes and when the app goes to the background, and **Play Single Player** then offers
+**Continue campaign**. The old Ashwell adventure is no longer part of the game.
 
 **Leaving.** The pause menu (menu button, top left) has **Leave**. If the host leaves or the host phone sleeps for long,
 the game ends for both: keep the host phone awake and in the app. A guest who loses Wi-Fi for a moment sees
@@ -93,7 +106,7 @@ If the phone-hosted build gives trouble (section 7 says what is unverified), the
 1. Double-click **`Host LAN Game.bat`**, type a join code (Enter keeps `1234`). If Windows asks whether Python may
    communicate on networks, allow it on private networks (the game uses TCP 8765 and UDP 8767). The window prints a
    `HYBRID_HOST_READY` line whose `lan` list is this PC's Wi-Fi address.
-2. Both phones: **JOIN LOCAL GAME**, the code, tap the game in the list (or type the PC's address). The first phone to join
+2. Both phones: **Join Multiplayer**, the code, tap the game in the list (or type the PC's address). The first phone to join
    gets the **START THE WORLD** button. Play is identical from there.
 3. Closing the window ends the game.
 
@@ -123,7 +136,7 @@ Python host with a scripted second human (headed acceptance with screenshots), t
 self-tested in isolation, the gradle template overlay, and **the APK itself**: `Setup Android Build Tools.bat` and
 `Build Android APK.bat` were run on this PC on 15 October 2026 and produced `build\android\DuelMasterBattle-debug.apk`
 (152 MB; arm64 only; signed with the debug key, APK signature scheme v2; CPython 3.14 and the packed game sources inside;
-package `com.duelmasterbattle.game` 0.1.0, min SDK 24, target SDK 35). Not yet verified anywhere: the game on physical
+package `com.duelmasterbattle.game` 0.1.0 (the first build; the corrected build is 0.2.0, version code 2, see `docs/ANDROID_PLAYTEST_CORRECTIONS.md`), min SDK 24, target SDK 35). Not yet verified anywhere: the game on physical
 phones (none was attached to this PC), so whether the packed Python starts on a real phone is the first thing the two-phone
 session will tell. The apprentice campaign (lessons, the stranger) has been played single-player; two players inside it
 over the LAN is untested, so expect the story beats to follow the host's wizard. Treat the first two-phone session as the

@@ -221,8 +221,8 @@ func _build_host() -> void:
 
 
 func _build_private() -> void:
-	_title("Preparing your world")
-	_text("The world is being built on this phone…")
+	_title("Loading your campaign" if LanSession.continue_game else "Preparing your world")
+	_text("Your saved campaign is being restored on this device…" if LanSession.continue_game else "The world is being built on this device…")
 	_hosting_started = false
 	call_deferred("_start_private")
 

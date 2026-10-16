@@ -27,15 +27,16 @@ from __future__ import annotations
 import secrets
 import time
 from collections import deque
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from typing import Any, Callable, Iterator
 
 from sim.dmb.time.clock import ClockService
 
 from wizard_rts import story
 from wizard_rts.coords import tile_to_hex
-from wizard_rts.net import protocol, pvp
-from wizard_rts.net.protocol import HOST_ONLY_OPS, PASSTHROUGH_OPS, PLAYER_OPS
+from wizard_rts.narrative import campaign, duel_lease, party
+from wizard_rts.net import ai_wizard, protocol, pvp
+from wizard_rts.net.protocol import HOST_ONLY_OPS, PASSTHROUGH_OPS, PLAYER_OPS, SOLO_OPS
 
 PLAYER_COLOURS = ["#f2c14e", "#4ec9f2", "#9ef24e", "#f24e9e"]
 MAX_PLAYERS = 4
@@ -70,6 +71,7 @@ class Link:
         self.outgoing: str = ""  # the duel id of the challenge I sent and that is still open
         self.spawned = False
         self.joined_at = 0.0
+        self.ai = False  # driven by net/ai_wizard.py through the same dispatch a connection uses
 
     def notice(self, kind: str, **data: Any) -> None:
         self.notices.append({"kind": kind, **data})
@@ -80,8 +82,13 @@ class MultiplayerSession:
     def __init__(self, world: Any, name: str = "DuelMasterBattle", join_code: str | None = None, host_secret: str | None = None,
                  max_players: int = 2, clock: Callable[[], float] = time.monotonic, view_radius: int = protocol.DEFAULT_VIEW_RADIUS,
                  cast_timeout_s: float = pvp.CAST_TIMEOUT_S, invite_timeout_s: float = pvp.INVITE_TIMEOUT_S,
-                 disconnect_grace_s: float = DISCONNECT_GRACE_S, remove_after_s: float = REMOVE_AFTER_S, first_joiner_hosts: bool = False) -> None:
+                 disconnect_grace_s: float = DISCONNECT_GRACE_S, remove_after_s: float = REMOVE_AFTER_S, first_joiner_hosts: bool = False,
+                 world_factory: Callable[[], Any] | None = None, ai_companions: int = 0) -> None:
         self.world = world
+        self.world_factory = world_factory  # builds a fresh world for a single-player "New game"
+        self.on_world_swap: Callable[[Any], None] | None = None  # the host loop adopts the world a New game created
+        self.ai_companions = max(0, min(1, int(ai_companions)))  # AI wizards that fill a seat the session has no human for (a single-player game: one)
+        self.ais: dict[str, ai_wizard.AiWizard] = {}
         # a host without a player of its own (a PC hosting for two phones): the first wizard to join with the code becomes the host player
         self.first_joiner_hosts = bool(first_joiner_hosts)
         self.name = str(name)[:40] or "DuelMasterBattle"
@@ -113,35 +120,53 @@ class MultiplayerSession:
     def info(self) -> dict[str, Any]:
         """What an unauthenticated probe (discovery, the join screen) may learn."""
         return {"status": "ok", "dmb": 1, "name": self.name, "protocol": protocol.PROTOCOL_VERSION, "game": protocol.GAME_VERSION,
-                "state": self.state, "players": sum(1 for l in self.links.values() if l.connected), "max_players": self.max_players,
+                "state": self.state, "players": sum(1 for l in self.links.values() if l.connected and not l.ai), "max_players": self.max_players,
                 "needs_code": True, "seed": int(self.world.seed), "map": str(self.world.map_size)}
 
     def lobby_view(self) -> dict[str, Any]:
         return {"name": self.name, "state": self.state, "max_players": self.max_players, "seed": int(self.world.seed), "map": str(self.world.map_size),
                 "profile": str(self.world.profile), "game_ms": self.game_ms(),
                 "players": [{"id": l.id, "name": l.name, "host": l.host, "connected": l.connected, "colour": self.world.players[l.id].get("colour", ""),
-                             "spawned": l.spawned} for l in self._links_in_order()]}
+                             "spawned": l.spawned, "ai": l.ai} for l in self._links_in_order()]}
 
     def _links_in_order(self) -> list[Link]:
         return [self.links[k] for k in sorted(self.links, key=lambda k: int(k[1:]))]
 
     # ------------------------------------------------------------------ players
-    def _new_link(self, name: str, host: bool, now: float) -> Link:
-        self._player_counter += 1
-        pid = f"p{self._player_counter}"
+    def _new_link(self, name: str, host: bool, now: float, ai: bool = False) -> Link:
+        if ai:
+            pid = f"{ai_wizard.AI_PREFIX}{len(self.ais) + 1}"
+            colour = "#c58cff"
+        else:
+            self._player_counter += 1
+            pid = f"p{self._player_counter}"
+            colour = PLAYER_COLOURS[(self._player_counter - 1) % len(PLAYER_COLOURS)]
         link = Link(pid, name, secrets.token_hex(12), host)
+        link.ai = ai
         link.joined_at = now
-        colour = PLAYER_COLOURS[(self._player_counter - 1) % len(PLAYER_COLOURS)]
         if host and self.world.players.get(pid) is None and not any(l.host for l in self.links.values()):
             rec = self.world.player  # the host's wizard is the single-player record itself
         else:
             rec = {"tx": int(self.world.player["tx"]), "ty": int(self.world.player["ty"]), "facing": "down"}
         rec.update(id=pid, name=name, colour=colour)
+        if ai:
+            rec["ai"] = True
         self.world.players[pid] = rec
         self.links[pid] = link
         if host:
             link.spawned = True
+        self._seat(link)
         return link
+
+    def _seat(self, link: Link) -> None:
+        """Give this wizard its place in the story: a seat in the party with a private wizard record (the host's is the world's own)."""
+        w = self.world
+        if "narrative" not in w.__dict__:
+            return
+        party.enroll(w, link.id, link.name, host=link.host, human=not link.ai)
+        party.set_present(w, link.id, link.connected or link.ai)
+        with party.as_player(w, link.id):
+            campaign.on_join(w)
 
     def _bind(self, link: Link, conn: Any, now: float) -> None:
         if link.conn is not None and link.conn is not conn:
@@ -156,6 +181,10 @@ class MultiplayerSession:
         link.disconnected_at = None
         link.tree_sent.clear()  # a fresh connection gets the forest again
         self.by_conn[conn] = link
+        if "narrative" in self.world.__dict__ and link.id in party.seats(self.world):
+            party.set_present(self.world, link.id, True)
+            with party.as_player(self.world, link.id):
+                campaign.welcome_back(self.world)  # whatever happened while they were away is in their journal
 
     def disconnect(self, conn: Any, now: float | None = None) -> None:
         now = self.clock() if now is None else now
@@ -166,6 +195,8 @@ class MultiplayerSession:
             link.conn = None
             link.connected = False
             link.disconnected_at = now
+            if "narrative" in self.world.__dict__:
+                party.set_present(self.world, link.id, False)  # nothing in the story waits for a wizard who is not here
             self._notify_others(link, "player_left", player=link.id, name=link.name)
 
     def _notify_others(self, link: Link | None, kind: str, **data: Any) -> None:
@@ -189,8 +220,10 @@ class MultiplayerSession:
         prev_player, prev_story = w.player, w.__dict__.get("story")
         w.player = w.players[link.id]
         w.story = self._story_for(link)
+        seat = party.as_player(w, link.id) if "narrative" in w.__dict__ else nullcontext()
         try:
-            yield
+            with seat:  # the wizard's own spells, lessons, conversations, dialogue flags and Aspect scores
+                yield
         finally:
             w.player = prev_player
             w.story = prev_story if prev_story is not None else self.base_story
@@ -252,6 +285,12 @@ class MultiplayerSession:
         for link in self.links.values():
             if self.state == "playing" and not link.spawned:
                 self._spawn(link)
+        if "narrative" in world.__dict__:
+            for link in self.links.values():
+                party.enroll(world, link.id, link.name, host=link.host, human=not link.ai)
+                party.set_present(world, link.id, link.connected or link.ai)
+                with party.as_player(world, link.id):
+                    campaign.on_join(world)
         for duel in list(self.duels.values()):
             duel.token = ""  # the old world's pause token died with it
         self.duels.clear()
@@ -279,6 +318,14 @@ class MultiplayerSession:
         link.last_seen = now
         if op == "hello":
             return self._hello(conn, message, now)
+        if op == "leave":
+            self.disconnect(conn, now)
+            return {"status": "ok", "left": link.id}
+        return self.dispatch(link, message, now)
+
+    def dispatch(self, link: Link, message: dict[str, Any], now: float) -> dict[str, Any]:
+        """One command from an authenticated wizard, human or AI: the same checks and handlers for both."""
+        op = str(message.get("op", ""))
         if op not in PLAYER_OPS:
             return {"status": "rejected", "reason": "not_allowed_in_multiplayer", "op": op}
         if op in HOST_ONLY_OPS and not link.host:
@@ -289,9 +336,8 @@ class MultiplayerSession:
             return {"status": "ok", "session": self.lobby_view(), "you": link.id}
         if op == "start":
             return self.start(link)
-        if op == "leave":
-            self.disconnect(conn, now)
-            return {"status": "ok", "left": link.id}
+        if op in SOLO_OPS:
+            return self._solo_op(link, op, message, now)
         if op == "state":
             return self.state_view(link, message, now)
         if op == "move":
@@ -301,6 +347,31 @@ class MultiplayerSession:
         if op in PASSTHROUGH_OPS:
             return self._passthrough(link, op, message)
         return {"status": "rejected", "reason": "unknown_op", "op": op}
+
+    # ------------------------------------------------------------------ single-player save and New game
+    def _solo_op(self, link: Link, op: str, message: dict[str, Any], now: float) -> dict[str, Any]:
+        """Save and New game exist only in a one-human private session: the world is that player's own, so a save slot is theirs. A shared
+        world (two or more seats) has no slot of its own; its host leaves it by leaving."""
+        if self.max_players != 1:
+            return {"status": "rejected", "reason": "not_allowed_in_multiplayer", "op": op}
+        from wizard_rts import server  # the same save / new_game handling as the classic single-player server
+
+        if op == "save":
+            reply = server._handle(self.world, {"op": "save", "slot": str(message.get("slot", "manual"))})
+            return reply if isinstance(reply, dict) else {"status": "rejected", "reason": "bad_reply"}
+        if self.world_factory is None:
+            return {"status": "rejected", "reason": "no_world_factory"}
+        fresh = self.world_factory()
+        self._swap_world(fresh)
+        view = self.state_view(link, {"full": True}, now)
+        return {"status": "ok", "new_game": True, "terrain": fresh.terrain.wire() if fresh.terrain is not None else None, "snapshot": view["snapshot"]}
+
+    def _swap_world(self, world: Any) -> None:
+        """Replace the world object (New game): every seat keeps its place, its duels and invites end, the host loop adopts the new object."""
+        world.players = {}
+        self.rebind(world)
+        if self.on_world_swap is not None:
+            self.on_world_swap(world)
 
     # ------------------------------------------------------------------ hello
     def _hello(self, conn: Any, message: dict[str, Any], now: float) -> dict[str, Any]:
@@ -320,7 +391,7 @@ class MultiplayerSession:
             link = next((l for l in self.links.values() if l.host), None)
         reconnect = link is not None
         if link is None:
-            if len(self.links) >= self.max_players:
+            if sum(1 for l in self.links.values() if not l.ai) >= self.max_players:
                 return {"status": "rejected", "reason": "full", "max_players": self.max_players}
             link = self._new_link(name, is_host, now)
             if self.state == "playing" and not self._spawn(link):
@@ -341,12 +412,27 @@ class MultiplayerSession:
         if self.state == "playing":
             return {"status": "ok", "idempotent": True, "state": self.state}
         self.state = "playing"
+        self._ensure_companions()
         for other in self._links_in_order():
             if not other.spawned:
                 self._spawn(other)
         self.events.append({"kind": "start", "game_ms": self.game_ms()})
         self._notify_others(None, "started")
         return {"status": "ok", "state": self.state, "session": self.lobby_view()}
+
+    def _ensure_companions(self) -> None:
+        """A single-player game has a second wizard in it: the fellow apprentice. A shared game (two humans) has none, and the AI never takes a
+        human's seat: the seat count above is humans only."""
+        if self.ai_companions <= len(self.ais) or any(not l.host for l in self.links.values() if not l.ai):
+            return
+        key = ai_wizard.companion_id()
+        spec = ai_wizard.characters()["wizards"][key]
+        link = self._new_link(spec["name"], False, self.clock(), ai=True)
+        link.connected = True
+        link.spawned = False
+        party.set_present(self.world, link.id, True)
+        seed = int(self.world.seed) * 31 + len(self.ais) + 1
+        self.ais[link.id] = ai_wizard.AiWizard(self, link, key, seed)
 
     # ------------------------------------------------------------------ movement
     def _pose(self, link: Link) -> dict[str, Any]:
@@ -409,9 +495,10 @@ class MultiplayerSession:
             p["connected"] = bool(other and other.connected)
             p["in_duel"] = bool(other and other.duel_id and self.duels.get(other.duel_id) and self.duels[other.duel_id].state != "finished")
             p["you"] = str(p["id"]) == link.id
+            p["ai"] = bool(other and other.ai)
         out = {"status": "ok", "seq": message.get("seq"), "you": link.id, "session_state": self.state, "snapshot": snap, "view_radius": radius,
                "duel": self._duel_view(link, now), "invite": self._invite_view(link, now), "outgoing": link.outgoing,
-               "players_online": sum(1 for l in self.links.values() if l.connected), "notices": list(link.notices), "pose": self._pose(link)}
+               "players_online": sum(1 for l in self.links.values() if l.connected and not l.ai), "notices": list(link.notices), "pose": self._pose(link)}
         link.notices.clear()
         return out
 
@@ -472,7 +559,7 @@ class MultiplayerSession:
         if duel is None:
             return {"status": "rejected", "reason": "no_duel"}
         if op == "pvp_ward":
-            r = duel.submit_ward(link.id, list(message.get("ward", [])))
+            r = duel.submit_ward(link.id, list(message.get("ward", [])), now)
             if r.get("status") == "ok" and not r.get("idempotent"):
                 self.command_log.append({"op": op, "player": link.id, "duel": duel.id, "game_ms": self.game_ms()})
                 if duel.state == "active":
@@ -524,6 +611,8 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "too_far", "range": pvp.CHALLENGE_RANGE, "distance": self._distance(link, target)}
         if target.invite and target.invite["expires_at"] > now:
             return {"status": "rejected", "reason": "target_busy"}
+        if self._story_busy(link) or self._story_busy(target):
+            return {"status": "rejected", "reason": "busy_in_story"}
         self._duel_counter += 1
         duel_id = f"pvp{self._duel_counter}"
         fmt = pvp.make_format(message.get("format"))
@@ -532,6 +621,14 @@ class MultiplayerSession:
         target.notice("challenged", duel_id=duel_id, by=link.id, by_name=link.name)
         self.events.append({"kind": "pvp_challenge", "duel": duel_id, "from": link.id, "to": target.id, "game_ms": self.game_ms()})
         return {"status": "ok", "duel_id": duel_id, "target": target.id, "expires_in_s": self.invite_timeout_s, "format": {k: fmt[k] for k in ("slots", "colours", "max_casts", "allow_repeats")}}
+
+    def _story_busy(self, link: Link) -> bool:
+        """In the middle of the story's own duel or scene: not a moment to be challenged or to challenge."""
+        w = self.world
+        if "narrative" not in w.__dict__ or link.ai or link.id not in party.seats(w):
+            return False
+        with party.as_player(w, link.id):
+            return duel_lease.active(w) is not None or campaign.active_scene(w) is not None
 
     def _respond(self, link: Link, message: dict[str, Any], now: float) -> dict[str, Any]:
         inv = link.invite
@@ -583,6 +680,16 @@ class MultiplayerSession:
     def tick(self, now: float | None = None) -> None:
         """Wall-clock admission rules: invite expiry, cast timeouts, disconnect forfeits, ghost removal. Called by the host loop."""
         now = self.clock() if now is None else now
+        for ai in list(self.ais.values()):
+            if ai.disabled:
+                continue
+            try:
+                ai.tick(now)
+            except Exception:  # noqa: BLE001 - a bug in a companion must never stop the world for the people playing in it
+                import traceback
+
+                traceback.print_exc()
+                ai.disabled = True  # it stands where it is; the world, the clock and the humans carry on
         for link in list(self.links.values()):
             if link.invite and link.invite["expires_at"] <= now:
                 challenger = self.links.get(link.invite["from"])
@@ -614,6 +721,8 @@ class MultiplayerSession:
             if not link.host and not link.connected and link.disconnected_at is not None and now - link.disconnected_at >= self.remove_after_s:
                 self.world.players.pop(link.id, None)
                 self.links.pop(link.id, None)
+                if "narrative" in self.world.__dict__:
+                    party.leave(self.world, link.id)
                 self._notify_others(link, "player_removed", player=link.id)
 
     def stats(self) -> dict[str, Any]:

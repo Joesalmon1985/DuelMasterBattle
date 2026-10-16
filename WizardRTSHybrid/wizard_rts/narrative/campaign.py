@@ -36,7 +36,7 @@ from sim.dmb.people.registry import PeopleService
 from sim.dmb.time.clock import ClockService
 
 from wizard_rts import settlements
-from wizard_rts.narrative import characters, checks, config, conversation, duel_lease, events, graph, personas, residents, wizard
+from wizard_rts.narrative import characters, checks, config, conversation, duel_lease, events, graph, party, personas, residents, wizard
 
 SCENES = Path(__file__).resolve().parents[1] / "data" / "narrative" / "dialogue" / "campaign_scenes.json"
 STAGES = ("training", "explore", "arrival", "confrontation", "duel", "victory", "aftermath", "complete", "game_over")
@@ -88,7 +88,44 @@ def stage(world: Any) -> str:
 
 
 def over(world: Any) -> bool:
+    """The campaign is over for the wizard acting now: the stage is `game_over` (nobody is left), or this wizard has died (in company the others go on)."""
+    if "narrative" not in world.__dict__:
+        return False
+    if world.narrative.get("campaign", {}).get("stage") == "game_over":
+        return True
+    fate = world.narrative["wizard"].get("fate")
+    return bool(fate) and not fate.get("alive", True)
+
+
+def over_for_all(world: Any) -> bool:
     return "narrative" in world.__dict__ and world.narrative.get("campaign", {}).get("stage") == "game_over"
+
+
+def _guest_seat(world: Any) -> str:
+    """The seat whose scene cursor is acting, or "" for the host / a world without company (whose cursor is `state["scene"]`, as ever)."""
+    seat = party.current(world)
+    return seat if seat and not party.is_host_seat(world, seat) and seat in party.guests(world) else ""
+
+
+def _scene(world: Any) -> dict[str, Any] | None:
+    g = _guest_seat(world)
+    return party.guests(world)[g].get("scene") if g else state(world)["scene"]
+
+
+def _set_scene(world: Any, value: dict[str, Any] | None) -> None:
+    g = _guest_seat(world)
+    if g:
+        party.guests(world)[g]["scene"] = value
+    else:
+        state(world)["scene"] = value
+
+
+def any_scene_open(world: Any) -> bool:
+    """Is a present human still reading a scene? (Nothing else about the stranger advances over somebody's head, but nobody waits for ever.)"""
+    for _seat in party.players(world, humans_only=True, present_only=True):
+        if _scene(world) is not None:
+            return True
+    return False
 
 
 def _set_stage(world: Any, name: str) -> None:
@@ -194,6 +231,11 @@ def explore_due(world: Any) -> dict[str, Any]:
 
 def _quiet(world: Any) -> bool:
     """Nothing else owns the player: no conversation, no duel, no dungeon, and no open story duel."""
+    if party.multi(world):  # in company it is enough that one present wizard is free: nobody can hold the story back by standing in a dungeon
+        for _seat in party.players(world, humans_only=True, present_only=True):
+            if not conversation.table(world) and duel_lease.active(world) is None and not over(world):
+                return True
+        return not party.present_humans(world)
     story = world.__dict__.get("story") or {}
     return (not conversation.table(world) and duel_lease.active(world) is None and not story.get("in_dungeon") and not story.get("duel"))
 
@@ -210,23 +252,61 @@ def tick(world: Any) -> None:
         return
     _watch_fire(world, st)
     s = st["stage"]
-    if s == "training" and all(wizard.lesson_done(world, l) for l in config.get("tutorial", "essential", [])):
-        if not all(wizard.knows(world, sp) for sp in wizard.palette()) or int(wizard.wiz(world)["weave_size"]) < 3:
-            wizard.learn(world, wizard.palette(), 3)  # the lessons are recorded but the magic is not (an inconsistent save): the progression is applied, never just the flag
-            events.log(world, "spells_repaired", spells=wizard.spells(world))
+    if s == "training" and _training_done(world, st):
+        for _seat in party.players(world):  # every wizard has the magic when the lessons are over: the progression is applied, never just the flag
+            if party.multi(world) and not all(wizard.lesson_done(world, l) for l in config.get("tutorial", "essential", [])):
+                catch_up(world)  # a wizard who has not finished the lessons by now is caught up (they stay free to ask the mentor again)
+            elif not all(wizard.knows(world, sp) for sp in wizard.palette()) or int(wizard.wiz(world)["weave_size"]) < 3:
+                wizard.learn(world, wizard.palette(), 3)  # (a wizard who has not finished the lessons is caught up; so is an inconsistent save)
+                events.log(world, "spells_repaired", spells=wizard.spells(world))
         st["explore_start_ms"] = now(world)
         _set_stage(world, "explore")
     elif s == "explore":
-        if explore_due(world)["due"] and _quiet(world) and not st["scene"]:
+        if explore_due(world)["due"] and _quiet(world) and not any_scene_open(world):
             start_arrival(world)
-    elif s == "arrival" and not st["scene"]:
+    elif s == "arrival" and _arrival_ready(world, st):
         _arrival_step(world, st)
-    elif s == "duel" and duel_lease.active(world) is None and not st["scene"]:
-        _lost_duel(world, "no_duel")  # the stage says a duel is under way but there is none: a lethal duel is never skipped
+    elif s == "duel":
+        _duel_watch(world, st)
     elif s == "aftermath":
         _aftermath_step(world, st)
     if s in ("victory", "aftermath", "complete"):
         _stranger_leaves(world, st)
+
+
+def _training_done(world: Any, st: dict[str, Any]) -> bool:
+    """One wizard: the essential lessons are done. Company: every present human has finished them, or the first to finish has waited
+    `party.training_grace_ms` for the others (nobody is held back by a friend who is elsewhere, asleep or slow)."""
+    essential = config.get("tutorial", "essential", [])
+    if not party.multi(world):
+        return all(wizard.lesson_done(world, l) for l in essential)
+    done = {seat: all(wizard.lesson_done(world, l) for l in essential) for seat in party.players(world, humans_only=True)}
+    present = party.present_humans(world)
+    waiting = [s for s in (present or list(done)) if not done.get(s, False)]
+    if not waiting:
+        return any(done.values()) or not done
+    if any(done.values()):
+        first = st.setdefault("first_done_ms", now(world))
+        return now(world) - int(first) >= party.training_grace_ms()
+    return False
+
+
+def _arrival_ready(world: Any, st: dict[str, Any]) -> bool:
+    """The walk-in waits for the notice to be read, but not for ever."""
+    if not party.multi(world):
+        return not st["scene"]
+    return not any_scene_open(world) or now(world) - int(st.get("arrival_ms") or 0) > int(config.get("campaign", "arrival_walk_cap_ms", 60000)) + int(config.get("party", "scene_grace_ms", 90000))
+
+
+def _duel_watch(world: Any, st: dict[str, Any]) -> None:
+    if not party.multi(world):
+        if duel_lease.active(world) is None and not st["scene"]:
+            _lost_duel(world, "no_duel")  # the stage says a duel is under way but there is none: a lethal duel is never skipped
+        return
+    for _seat in party.players(world, humans_only=True):
+        w = wizard.wiz(world)
+        if w.get("lethal") == "active" and duel_lease.active(world) is None and _scene(world) is None and not over(world):
+            _lost_duel(world, "no_duel")
 
 
 def _watch_fire(world: Any, st: dict[str, Any]) -> None:
@@ -289,7 +369,7 @@ def start_arrival(world: Any) -> bool:
     _set_stage(world, "arrival")
     st["arrival_ms"] = now(world)
     events.log(world, "stranger_arrived", person=pid, spawn=list(spawn))
-    start_scene(world, "notice")
+    start_scene_for_all(world, "notice")
     return True
 
 
@@ -316,7 +396,7 @@ def start_confrontation(world: Any) -> None:
                              if max(abs(int(row["tx"]) - centre[0]), abs(int(row["ty"]) - centre[1])) <= r)
     residents.table(world)[st["attacker"]]["walk"] = []
     _set_stage(world, "confrontation")
-    start_scene(world, "confrontation" if present else "confrontation_alone")
+    start_scene_for_all(world, "confrontation" if present else "confrontation_alone")
 
 
 # ------------------------------------------------------------------ scenes: pages the player acknowledges
@@ -327,14 +407,24 @@ def scene_ctx(world: Any) -> dict[str, Any]:
 
 
 def active_scene(world: Any) -> dict[str, Any] | None:
-    return state(world).get("scene")
+    return _scene(world)
 
 
 def start_scene(world: Any, scene_id: str) -> None:
-    st = state(world)
     conversation.end(world, None, "scene")
-    st["scene"] = {"id": scene_id, "i": 0, "applied": -1, "answered": {}}
+    _set_scene(world, {"id": scene_id, "i": 0, "applied": -1, "answered": {}})
     _enter_page(world, 0)
+
+
+def start_scene_for_all(world: Any, scene_id: str) -> None:
+    """The story's big moments are lived by every wizard in the world, each at their own pace, each with their own answers. A wizard who is
+    away is not waited for; `welcome_back` brings them up to date when they return."""
+    if not party.multi(world):
+        start_scene(world, scene_id)
+        return
+    for _seat in party.players(world, humans_only=True, present_only=True):
+        if not over(world):
+            start_scene(world, scene_id)
 
 
 def _page(world: Any, sc: dict[str, Any]) -> dict[str, Any]:
@@ -343,7 +433,7 @@ def _page(world: Any, sc: dict[str, Any]) -> dict[str, Any]:
 
 def _enter_page(world: Any, i: int) -> None:
     """Apply a page's effects, once, when it is first shown (a reload or a repeated request never applies them again)."""
-    sc = state(world)["scene"]
+    sc = _scene(world)
     sc["i"] = i
     if i <= sc["applied"]:
         return
@@ -404,7 +494,7 @@ def scene_choose(world: Any, choice_id: str) -> dict[str, Any]:
 def scene_next(world: Any) -> dict[str, Any]:
     """The player acknowledges the page: the next page (its effects apply now), or, after the last, the scene's ending action."""
     st = state(world)
-    sc = st["scene"]
+    sc = _scene(world)
     if sc is None:
         return {"status": "rejected", "reason": "no_scene"}
     view = scene_view(world)
@@ -414,21 +504,29 @@ def scene_next(world: Any) -> dict[str, Any]:
         _enter_page(world, sc["i"] + 1)
         return {"status": "ok", "scene": scene_view(world)}
     final = scenes()[sc["id"]].get("final", "")
-    st["scene"] = None
+    _set_scene(world, None)
     out: dict[str, Any] = {"status": "ok", "scene": None, "ended": sc["id"]}
     if final == "duel":
+        if st["stage"] in ("victory", "aftermath", "complete"):
+            # somebody else has already driven the stranger off while this wizard was reading: nothing is left to fight, and nothing is lost
+            wizard.wiz(world)["lethal"] = "spared"
+            wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "The stranger withdrew from the village before it came to a duel with me.", "source": NOTE_SOURCE})
+            return out
         lease = duel_lease.begin(world, OPPONENT, purpose=DUEL_PURPOSE, display_name=names(world)["attacker"])
         if lease["status"] != "started":
             _lost_duel(world, "no_lease:" + str(lease.get("reason", "")))
         else:
             lease["payload"]["duel"]["speaker"] = ""
             out["duel_lease"] = lease
-            _set_stage(world, "duel")
+            wizard.wiz(world)["lethal"] = "active"
+            if st["stage"] != "duel":
+                _set_stage(world, "duel")
     elif final == "arrival":
         pass  # the stranger is already walking; control returns to the player
     elif final == "aftermath":
-        st["aftermath_start_ms"] = now(world)
-        _set_stage(world, "aftermath")
+        if st["stage"] == "victory" or not party.multi(world):
+            st["aftermath_start_ms"] = now(world)
+            _set_stage(world, "aftermath")
     return out
 
 
@@ -459,8 +557,8 @@ def _retreat(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
     st = state(world)
     pid = st["attacker"]
     r = residents.table(world).get(pid)
-    if r is None or r["status"] != "present":
-        return
+    if r is None or r["status"] != "present" or r.get("leaving"):
+        return  # he withdraws once, whoever's scene shows it first
     px, py = int(world.player["tx"]), int(world.player["ty"])
     best = None
     for dist in (18, 14, 10, 6):
@@ -497,13 +595,37 @@ def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> 
     """The stranger's duel finished and the report verified. A victory is the only way on; everything else ends the game."""
     st = state(world)
     if out["outcome"] != "won":
+        wizard.wiz(world)["lethal"] = "lost"
         return game_over(world, "duel_" + str(out["outcome"]))
-    st["outcome"] = "victory"
+    wizard.wiz(world)["lethal"] = "won"
     checks.change_once(world, "resolve", 1, "campaign/duel_victory")
     wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "I defeated the stranger with the magic my teacher taught me. He withdrew from the village, alive.", "source": NOTE_SOURCE})
-    _set_stage(world, "victory")
+    if st["stage"] == "duel" or not party.multi(world):
+        st["outcome"] = "victory"
+        _set_stage(world, "victory")
+        _spare_others(world, party.current(world))
     start_scene(world, "victory")
     return {"status": "ok", "stage": "victory"}
+
+
+def _spare_others(world: Any, winner: str) -> None:
+    """Somebody broke the stranger's Ward: he withdraws from the whole settlement. The other wizards' duels with him end here, unpenalised, and
+    every one of them is shown the retreat; a wizard who is away is told in the journal and shown it on return (`welcome_back`)."""
+    if not party.multi(world):
+        return
+    for seat in party.players(world, humans_only=True):
+        if seat == winner or (not winner and party.is_host_seat(world, seat)):
+            continue
+        w = wizard.wiz(world)
+        if w.get("fate") is not None:
+            continue
+        if w.get("lethal") == "active":
+            duel_lease.release_spared(world, party.current(world), "stranger_withdrew")
+        if w.get("lethal") != "won":
+            w["lethal"] = "spared"
+        w["journal_notes"].append({"game_ms": now(world), "text": "A fellow apprentice broke the stranger's Ward, and he withdrew from the village, alive.", "source": NOTE_SOURCE})
+        if party.seats(world).get(seat, {}).get("present"):
+            start_scene(world, "victory")
 
 
 def on_duel_void(world: Any, lease: dict[str, Any], why: str) -> dict[str, Any]:
@@ -516,20 +638,35 @@ def _lost_duel(world: Any, why: str) -> dict[str, Any]:
 
 
 def game_over(world: Any, cause: str) -> dict[str, Any]:
-    """The apprentice dies. Terminal: recorded once, the clock is held, every op but a new game is refused (`server.py`), saves are refused."""
+    """The apprentice dies. Alone, this is terminal: recorded once, the clock is held, every op but a new game is refused (`server.py`), saves are
+    refused. In company death is personal: this wizard's fate is recorded and they are out of the story, the world and the others go on, and the
+    campaign is over for everybody only when no human wizard is left alive."""
     st = state(world)
     if st["stage"] == "game_over":
         return {"status": "ok", "stage": "game_over", "already": True}
+    if party.multi(world) and over(world):
+        return {"status": "ok", "stage": st["stage"], "already": True}
     conversation.close_all(world, "game_over")
     duel_lease.abandon(world, "game_over")
-    st["scene"] = None
-    st["outcome"] = "defeat"
+    _set_scene(world, None)
     wizard.wiz(world)["fate"] = {"alive": False, "cause": cause, "game_ms": now(world), "text": config.get("campaign", "dead_after_defeat", "The apprentice was defeated.")}
-    world.dmb.tombstones["player"] = {"kind": "wizard", "display_name": "the apprentice", "cause_id": cause, "profile_refs": {}}
-    events.log(world, "player_died", cause=cause)
+    me = checks.actor(world)
+    world.dmb.tombstones[me] = {"kind": "wizard", "display_name": "the apprentice", "cause_id": cause, "profile_refs": {}}
+    events.log(world, "player_died", cause=cause, seat=party.current(world))
+    if party.multi(world) and _someone_alive(world):
+        return {"status": "ok", "stage": st["stage"], "personal": True}
+    st["outcome"] = "defeat"
     _set_stage(world, "game_over")
     ClockService(world.dmb.clock).acquire_pause("game_over", "player")
     return {"status": "ok", "stage": "game_over"}
+
+
+def _someone_alive(world: Any) -> bool:
+    for _seat in party.players(world, humans_only=True):
+        fate = wizard.wiz(world).get("fate")
+        if not fate or fate.get("alive", True):
+            return True
+    return False
 
 
 # ------------------------------------------------------------------ the aftermath and the one objective
@@ -537,7 +674,7 @@ def game_over(world: Any, cause: str) -> dict[str, Any]:
 def _aftermath_step(world: Any, st: dict[str, Any]) -> None:
     talks = len(st["aftermath_talks"])
     elapsed = now(world) - int(st["aftermath_start_ms"] or now(world))
-    if (talks >= int(config.get("campaign", "aftermath_min_talks", 2)) or elapsed >= int(config.get("campaign", "aftermath_fallback_ms", 150000))) and not conversation.table(world):
+    if (talks >= int(config.get("campaign", "aftermath_min_talks", 2)) or elapsed >= int(config.get("campaign", "aftermath_fallback_ms", 150000))) and not party.anyone_busy(world):
         complete(world)
 
 
@@ -554,9 +691,12 @@ def complete(world: Any) -> None:
     if st["stage"] == "complete":
         return
     _set_stage(world, "complete")
-    wizard.wiz(world)["campaign_finished"] = True
-    wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "Objective: seek greater magical power. What I know is not enough; the people here believe there are teachers and traditions beyond this valley.",
-                                               "source": NOTE_SOURCE})
+    for _seat in party.players(world):  # every wizard of the party has the objective in their journal
+        if wizard.wiz(world).get("fate"):
+            continue
+        wizard.wiz(world)["campaign_finished"] = True
+        wizard.wiz(world)["journal_notes"].append({"game_ms": now(world), "text": "Objective: seek greater magical power. What I know is not enough; the people here believe there are teachers and traditions beyond this valley.",
+                                                   "source": NOTE_SOURCE})
 
 
 # ------------------------------------------------------------------ what the client and the HUD read
@@ -575,3 +715,63 @@ def snapshot(world: Any) -> dict[str, Any]:
             "explore": explore_due(world) if st["stage"] == "explore" else {}, "aspects": checks.scores(world), "worldview": wizard.worldview_scores(world),
             "worldview_primary": wizard.worldview_primary(world), "mentor": mentor(world),
             "mentor_dead": st["mentor_fate"] in ("killed_by_stranger", "died_earlier"), "stranger": st["attacker"]}
+
+
+# ------------------------------------------------------------------ a wizard joins, or comes back (company)
+
+STAGE_ORDER = {name: i for i, name in enumerate(STAGES)}
+
+
+def catch_up(world: Any) -> bool:
+    """The wizard acting now has the colours and the weave, whatever they missed: the lessons are over for the world, nobody is left unable to fight
+    (the stranger's duel and the Wards of the settlement need the magic). True when anything was granted."""
+    changed = False
+    w = wizard.wiz(world)
+    if not all(wizard.knows(world, sp) for sp in wizard.palette()) or int(w["weave_size"]) < 3:
+        wizard.learn(world, wizard.palette(), 3)
+        changed = True
+    for lesson in config.get("tutorial", "essential", []):
+        if wizard.complete_lesson(world, lesson):
+            changed = True
+    if changed:
+        w["caught_up"] = True
+        events.log(world, "caught_up", seat=party.current(world), spells=wizard.spells(world))
+    return changed
+
+
+def on_join(world: Any) -> None:
+    """A new wizard has a seat (call it as that wizard): the mentor knows them as well as he knows the first apprentice, and whatever the world has
+    already been through is theirs to have lived (they are caught up, and the journal says what happened before they came)."""
+    st = state(world)
+    teacher = world.narrative.get("tutorial", {}).get("teacher", "")
+    if teacher and teacher in world.dmb.people and not wizard.wiz(world).get("fate"):
+        PeopleService(world.dmb).set_relationship(teacher, checks.actor(world), int(config.get("campaign", "mentor_relationship", 40)))
+    if st["stage"] != "training":
+        catch_up(world)
+    welcome_back(world)
+
+
+def welcome_back(world: Any) -> None:
+    """A wizard who was away (or has just arrived) is brought up to date with the story, once per stage: what happened is in their journal, a
+    stranger who is still at the settlement is faced in a scene of their own, and a duel that has already been won for everybody is not theirs to lose."""
+    w = wizard.wiz(world)
+    if w.get("fate"):
+        return
+    st = state(world)
+    seen = int(STAGE_ORDER.get(str(w.get("seen_stage", "")), -1))
+    stage = st["stage"]
+    now_i = STAGE_ORDER.get(stage, 0)
+    w["seen_stage"] = stage
+    if seen >= now_i or stage in ("training", "explore", "game_over"):
+        return
+    n = names(world)
+    notes = w["journal_notes"]
+    if seen < STAGE_ORDER["confrontation"] and st["mentor_fate"] in ("killed_by_stranger", "died_earlier"):
+        notes.append({"game_ms": now(world), "text": f"I came to {n['settlement']} too late: {n['mentor']}, the teacher here, had already been killed by a wizard who called himself {n['attacker']}.",
+                      "source": NOTE_SOURCE})
+    if stage in ("victory", "aftermath", "complete"):
+        if w.get("lethal") not in ("won", "lost"):
+            w["lethal"] = "spared"
+        notes.append({"game_ms": now(world), "text": "The stranger has been driven out of the village. I did not have to face him.", "source": NOTE_SOURCE})
+    elif stage in ("confrontation", "duel") and _scene(world) is None and w.get("lethal") in (None, "") and st["attacker"]:
+        start_scene(world, "confrontation_alone")  # the stranger is here now: this wizard meets him with the rest

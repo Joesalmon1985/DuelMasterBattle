@@ -1,10 +1,12 @@
 # Build the Android APK on Windows with a headless Godot export, then optionally install it on every phone plugged in.
-#   scripts\android\build_apk.ps1 [-Kind debug|release] [-ClientOnly] [-Install]
+#   scripts\android\build_apk.ps1 [-Kind debug|release] [-ClientOnly] [-Install] [-SkipArtProbe]
+# After the export it inspects the package (runtimes, packed Python, every catalogue image and data file the game reads, the version) and then proves, in an
+# exported pack, that catalogue art loads at run time (verify_art_export.py, a few minutes; -SkipArtProbe leaves that out).
 # Output: build\android\DuelMasterBattle-<kind>.apk (host-capable: Godot client + the CPython world via Chaquopy) or
 #         build\android\DuelMasterBattle-client.apk  (-ClientOnly: plain Godot export, can only join a game hosted elsewhere)
 # Needs the toolchain from setup_android_toolchain.ps1 ('Setup Android Build Tools.bat'); the first gradle run downloads
 # Gradle, the Android Gradle plugin, Chaquopy and the Android CPython runtime (internet, ~10 minutes, ~1 GB).
-param([ValidateSet("debug", "release")][string]$Kind = "debug", [switch]$ClientOnly, [switch]$Install)
+param([ValidateSet("debug", "release")][string]$Kind = "debug", [switch]$ClientOnly, [switch]$Install, [switch]$SkipArtProbe)
 $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\android_env.ps1"
 
@@ -55,12 +57,19 @@ if (-not (Test-Path $out)) {
 $size = [math]::Round((Get-Item $out).Length / 1MB, 1)
 Write-Host "APK: $out ($size MB)"
 $inspectArgs = @((Join-Path $hyb "scripts/android/inspect_apk.py"), $out)
+$gameVersion = ([regex]::Match((Get-Content (Join-Path $hyb "wizard_rts/net/protocol.py") -Raw), 'GAME_VERSION = "([^"]+)"')).Groups[1].Value
+if ($gameVersion) { $inspectArgs += @("--expect-version", $gameVersion) }
 if ($ClientOnly) { $inspectArgs += "--client-only" }
 & $python @inspectArgs
 if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the APK does not contain what a phone needs (see above)" -ForegroundColor Red; exit 1 }
 $apksigner = Join-Path $script:SdkRoot "build-tools/35.0.0/apksigner.bat"
 & $apksigner verify --print-certs $out 2>&1 | Select-String -Pattern "Verifies|DOES NOT VERIFY|certificate DN|ERROR" | ForEach-Object { "signature: " + $_.Line }
 if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the APK is not signed (check the debug keystore in the editor settings)" -ForegroundColor Red; exit 1 }
+if (-not $SkipArtProbe) {
+    Write-Host "proving that catalogue art loads from an exported pack (a few minutes)"
+    & $python (Join-Path $hyb "scripts/android/verify_art_export.py") --godot $godot
+    if ($LASTEXITCODE -ne 0) { Write-Host "ANDROID_APK_FAILED: the exported game could not load the imported art" -ForegroundColor Red; exit 1 }
+}
 Write-Host "ANDROID_APK_OK $out" -ForegroundColor Green
 if ($Install) {
     & "$PSScriptRoot\install_apk.ps1" -Apk $out

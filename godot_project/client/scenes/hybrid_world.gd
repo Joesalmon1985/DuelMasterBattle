@@ -104,6 +104,7 @@ func _ready() -> void:
 	_font = ThemeDB.fallback_font
 	var adv := _adv()
 	if not adv.is_active():
+		adv.test_mode = true  # the old adventure's autoload is only a dependency here (spells, items): Wizard World must never write over or depend on its save file
 		adv.new_game()
 	area_id = "hybrid"
 	area = {"id": "hybrid", "name": "Wizard RTS", "rows": ["."]}
@@ -537,12 +538,28 @@ func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
 	})
 
 
+## Bring the picture of the world up to date after the client stood still for a moment (a scene, a duel board): the classic server answers `snapshot`,
+## a hosted world answers the same `state` poll it always does.
+func refresh_snapshot() -> void:
+	if mp:
+		var full: Dictionary = _sim.op({"op": "state", "seq": _mp_seq}, 20000)
+		if str(full.get("status", "")) == "ok":
+			_apply_snapshot(full.get("snapshot", {}))
+			_mp_apply(full)
+		return
+	_apply_snapshot(_sim.op({"op": "snapshot"}).get("snapshot", {}))
+
+
+## Is there a game of one's own to save, load and restart? A private (single-player) session has; a shared world belongs to both players.
+func is_solo_session() -> bool:
+	return not mp or LanSession.private_session
+
+
 func _on_duel_finished(outcome: String, _payload: Dictionary) -> void:
 	_duel_open = false
 	_input_locked = false
 	_duel_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var reply := _sim.op({"op": "snapshot"})
-	_apply_snapshot(reply.get("snapshot", {}))
+	refresh_snapshot()
 	_hud_area_lbl.text = "Duel %s" % outcome
 	if story_ui != null and _story_follow_up != null:
 		story_ui.show_follow_up(_story_follow_up)  # the teacher answers
@@ -735,7 +752,7 @@ func autosave_wait_reason() -> String:
 
 
 func _autosave_tick(delta: float) -> void:
-	if _snapshot.is_empty() or mp:
+	if _snapshot.is_empty() or not is_solo_session():
 		return
 	_autosave_acc += delta
 	if _autosave_acc < autosave_seconds or autosave_wait_reason() != "":
@@ -747,8 +764,8 @@ func _autosave_tick(delta: float) -> void:
 
 ## Escape and the menu button: Continue, Save game, Load game, Save and quit (a card of the same style as every other narrative panel).
 func _on_menu() -> void:
-	if mp:
-		_mp_on_menu()  # the host owns the world: Continue or Leave, nothing to save here
+	if mp and not LanSession.private_session:
+		_mp_on_menu()  # a shared world: the host owns it. Continue or Leave, nothing to save here
 		return
 	if _input_locked or _duel_open or _snapshot.is_empty() or _menu_open or (campaign_ui != null and campaign_ui.covering()):
 		return
@@ -759,9 +776,13 @@ func _on_menu() -> void:
 
 
 func _show_menu_root(note: String) -> void:
-	menu_card.show_card("Paused", "", note, [
-		{"id": "continue", "text": "Continue", "kind": "primary"}, {"id": "save", "text": "Save game"},
-		{"id": "load", "text": "Load game"}, {"id": "quit", "text": "Save and quit"}], [])
+	var items: Array = [{"id": "continue", "text": "Continue", "kind": "primary"}, {"id": "save", "text": "Save game"}]
+	if not mp:
+		items.append({"id": "load", "text": "Load game"})  # loading swaps the world: only the classic server does that (a hosted game continues from the main menu)
+		items.append({"id": "quit", "text": "Save and quit"})
+	else:
+		items.append({"id": "quit", "text": "Save and leave"})
+	menu_card.show_card("Paused", "", note, items, [])
 
 
 func _close_menu() -> void:
@@ -788,7 +809,10 @@ func _on_menu_choice(id: String) -> void:
 			_show_menu_root("")
 		"quit":
 			save_slot("quit")
-			get_tree().quit()
+			if mp:
+				mp_leave()  # back to the main menu: the campaign is saved and "Continue" is waiting there
+			else:
+				get_tree().quit()
 		_:
 			if id.begins_with("slot:"):
 				var r := load_slot(id.trim_prefix("slot:"))
@@ -846,8 +870,10 @@ func _update_hud(snap: Dictionary) -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty() and not mp:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and not _snapshot.is_empty() and is_solo_session():
 		save_slot("quit")  # closing the window saves first
+	elif what == NOTIFICATION_APPLICATION_PAUSED and not _snapshot.is_empty() and mp and LanSession.private_session and autosave_wait_reason() == "":
+		save_slot("quit")  # a phone can be closed by the system once the app is in the background: the campaign is already safe
 
 # ---------------------------------------------------------------------------
 # LAN multiplayer
@@ -884,12 +910,13 @@ func _mp_build_ui() -> void:
 	_mp_toast = Label.new()
 	_mp_toast.name = "LanToast"
 	_mp_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_mp_toast.offset_left = -360
-	_mp_toast.offset_right = 360
-	_mp_toast.offset_top = 150
-	_mp_toast.offset_bottom = 200
 	_mp_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_mp_toast.add_theme_font_size_override("font_size", 26)
+	_mp_toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART  # an AI wizard's line is a sentence, not a word
+	_mp_toast.offset_left = -330
+	_mp_toast.offset_right = 330
+	_mp_toast.offset_top = 250  # below the objective card, clear of the top bar
+	_mp_toast.offset_bottom = 350
+	_mp_toast.add_theme_font_size_override("font_size", 24)
 	_mp_toast.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
 	_mp_toast.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	_mp_toast.add_theme_constant_override("outline_size", 6)
@@ -1211,14 +1238,16 @@ func _mp_notice(n: Dictionary) -> void:
 			_mp_toast_show("No answer to your challenge")
 		"cycle_reset":
 			_mp_toast_show("A new cycle begins")
+		"ai_says":
+			_mp_toast_show("%s: %s" % [who, str(n.get("text", ""))], 6.0)  # an AI wizard speaking in its own voice
 
 
-func _mp_toast_show(text: String) -> void:
+func _mp_toast_show(text: String, seconds: float = 3.0) -> void:
 	if _mp_toast == null:
 		return
 	_mp_toast.text = text
 	_mp_toast.visible = true
-	_mp_toast_t = 3.0
+	_mp_toast_t = seconds
 
 
 func _mp_status_text(reply: Dictionary) -> String:

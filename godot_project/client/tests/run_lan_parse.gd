@@ -13,7 +13,7 @@ func _run() -> void:
 	var failed := false
 	for path in ["res://client/hybrid/sim_client.gd", "res://client/net/lan_session.gd", "res://client/net/lan_discovery.gd",
 			"res://client/duel/net_duel_sim.gd", "res://client/scenes/lan_menu.gd", "res://client/scripts/game_board.gd",
-			"res://client/scenes/hybrid_world.gd", "res://client/scripts/main_menu.gd"]:
+			"res://client/scenes/hybrid_world.gd", "res://client/scripts/main_menu.gd", "res://client/scripts/dev_menu.gd", "res://client/scripts/dev_mode.gd", "res://client/scripts/asset_loader.gd"]:
 		var s = load(path)
 		if s == null or not (s is GDScript) or not s.can_instantiate():
 			print("HYBRID_LAN_PARSE_FAIL %s" % path)
@@ -49,6 +49,16 @@ func _run() -> void:
 		print("HYBRID_LAN_PARSE_FAIL net sim view mirror phase=%s hist=%d ev=%d" % [sim.phase, sim.enemy_history.size(), ev.size()])
 		quit(1)
 		return
+	# no rounds: having cast, and the rival not having cast, never produces a "waiting" message and never blocks the next cast
+	view["rival_history"] = []
+	view["rival_cast_pending"] = true
+	sim.apply_view(view)
+	var block: String = sim.player_cast_block_reason()
+	if block.to_lower().find("waiting") >= 0 or not sim.is_player_window_open():
+		print("HYBRID_LAN_PARSE_FAIL net sim blocks a free cast: '%s'" % block)
+		quit(1)
+		return
+	view["rival_history"] = [{"n": 1, "attack": [1, 1, 1], "fracture": 1, "echo": 0, "fade": 2, "broken": false, "auto": false}]
 	view["state"] = "finished"
 	view["result"] = {"outcome": "victory", "reason": "solved", "your_casts": 2, "rival_casts": 2, "rival_ward": [1, 1, 3]}
 	view["rival_ward"] = [1, 1, 3]

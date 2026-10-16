@@ -298,21 +298,23 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert (r["fracture"], r["echo"], r["fade"], r["broken"]) == (2, 0, 1, False)
     dup = a.cast([3, 0, 0], cast_seq=1)
     assert dup["idempotent"] is True and dup["fracture"] == 2
-    assert a.cast([1, 1, 1])["reason"] == "already_cast_this_round"
+    # no rounds: A casts again at once, B has not cast at all, and A is never told to wait
+    r = a.cast([1, 1, 1])
+    assert r["status"] == "ok" and r["done"] is False
     va = a.duel()["duel"]
-    assert va["your_cast_pending"] is False and va["rival_cast_pending"] is True and "rival_ward" not in va
+    assert va["your_cast_pending"] is True and va["rival_cast_pending"] is True and "rival_ward" not in va
+    assert (va["your_casts"], va["rival_casts"]) == (2, 0) and len(va["your_history"]) == 2 and va["rival_history"] == []
     r = b.cast([0, 1, 1])
     assert (r["fracture"], r["echo"], r["broken"]) == (2, 0, False)
-    assert a.duel()["duel"]["round"] == 2 and b.duel()["duel"]["round"] == 2
     r = b.cast([0, 1, 3])
-    assert r["broken"] is True and r["done"] is False  # the round closes when both have cast
-    r = a.cast([3, 3, 1])
-    assert r["done"] is True
+    assert r["broken"] is True and r["done"] is True  # the first breaking cast ends the duel at once
+    assert a.cast([3, 3, 1], cast_seq=3)["reason"] == "finished"  # A's late guess is refused
     va, vb = a.duel()["duel"], b.duel()["duel"]
     assert va["result"]["outcome"] == "defeat" and vb["result"]["outcome"] == "victory"
     assert va["result"]["reason"] == "solved"
     assert va["rival_ward"] == [3, 3, 0] and vb["rival_ward"] == [0, 1, 3]  # disclosed only now
-    assert va["rival_history"][-1]["attack"] == [0, 1, 3] and vb["rival_history"][-1]["attack"] == [3, 3, 1]
+    assert va["rival_history"][-1]["attack"] == [0, 1, 3] and vb["rival_history"][-1]["attack"] == [1, 1, 1]
+    assert (va["result"]["your_casts"], va["result"]["rival_casts"]) == (2, 2)
     assert not rig.world.dmb.clock.get("pause_tokens"), "the world resumes when the duel ends"
     assert rig.world.dmb.clock["game_ms"] == frozen
     assert any(e["kind"] == "pvp_duel_ended" for e in rig.world.events)
@@ -327,6 +329,48 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert rig.world.dmb.clock["game_ms"] > frozen
 
 
+def test_pvp_casts_are_independent_and_a_simultaneous_win_has_one_winner(rig: Rig) -> None:
+    import threading
+
+    a, b = rig.make_clients()
+    _walk_adjacent(a, b)
+    d = a.challenge(b.player_id)["duel_id"]
+    b.respond(d, True)
+    a.ward([0, 1, 3])
+    b.ward([3, 3, 0])
+    # A races ahead: three guesses over the wire, B none; every reply carries both histories' counts
+    for attack in ([0, 0, 0], [1, 1, 1], [3, 0, 0]):
+        r = a.cast(attack)
+        assert r["status"] == "ok" and r["done"] is False
+    assert (r["duel"]["your_casts"], r["duel"]["rival_casts"]) == (3, 0)
+    vb = b.duel()["duel"]
+    assert (vb["your_casts"], vb["rival_casts"]) == (0, 3) and vb["your_cast_pending"] is True
+    # both now send a winning cast at the same moment from two threads: the host serialises them, exactly one wins
+    replies: dict[str, dict] = {}
+    gate = threading.Barrier(2)
+
+    def go(name: str, client: NetClient, attack: list[int]) -> None:
+        gate.wait()
+        replies[name] = client.cast(attack)
+
+    ts = [threading.Thread(target=go, args=("a", a, [3, 3, 0])), threading.Thread(target=go, args=("b", b, [0, 1, 3]))]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+    winners = [n for n, r in replies.items() if r.get("status") == "ok" and r.get("broken")]
+    losers = [n for n, r in replies.items() if r.get("reason") == "finished"]
+    assert len(winners) == 1 and len(losers) == 1, replies
+    va, vb = a.duel()["duel"], b.duel()["duel"]
+    assert va["state"] == "finished" == vb["state"]
+    assert {va["result"]["outcome"], vb["result"]["outcome"]} == {"victory", "defeat"}
+    assert va["result"]["winner"] == vb["result"]["winner"] != ""
+    assert not rig.world.dmb.clock.get("pause_tokens")
+    # the world carries on after the duel
+    assert a.op({"op": "pvp_leave"})["status"] == "ok" and b.op({"op": "pvp_leave"})["status"] == "ok"
+    assert any(a.step(dx, dy)["status"] == "ok" for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)))
+
+
 def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
     a, b = rig.make_clients()
     _walk_adjacent(a, b)
@@ -335,11 +379,15 @@ def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
     assert b.respond(d, False)["accepted"] is False
     assert any(n["kind"] == "declined" for n in a.state()["notices"])
     assert not rig.world.dmb.clock.get("pause_tokens")
-    # clash: both break in the same round -> compute_result draw with both solved
+    # both could solve with their first cast: the cast that reaches the host first wins and the other is refused (no clash)
     d = a.challenge(b.player_id)["duel_id"]
     b.respond(d, True)
-    va, vb = _play_duel(a, b, [0, 0, 0], [1, 1, 1], [([1, 1, 1], [0, 0, 0])])
-    assert va["result"]["outcome"] == "clash" == vb["result"]["outcome"]
+    a.ward([0, 0, 0])
+    b.ward([1, 1, 1])
+    assert a.cast([1, 1, 1])["done"] is True
+    assert b.cast([0, 0, 0])["reason"] == "finished"
+    va, vb = a.duel()["duel"], b.duel()["duel"]
+    assert va["result"]["outcome"] == "victory" and vb["result"]["outcome"] == "defeat" and vb["your_casts"] == 0
     a.op({"op": "pvp_leave"})
     b.op({"op": "pvp_leave"})
     # stalemate at exhaustion with equal progress
@@ -382,9 +430,9 @@ def test_pvp_timeouts_auto_cast_and_invite_expiry() -> None:
         a.ward([0, 0, 0])
         b.ward([1, 1, 1])
         a.cast([3, 3, 3])
-        time.sleep(0.9)  # B never casts: the host casts a legal weave for him and the round closes
+        time.sleep(0.9)  # B never casts: after the per-player timeout the host casts a legal weave for him
         vb = b.duel()["duel"]
-        assert vb["round"] == 2 and vb["your_history"][0]["auto"] is True and len(vb["your_history"][0]["attack"]) == 3
+        assert vb["your_history"][0]["auto"] is True and len(vb["your_history"][0]["attack"]) == 3
     finally:
         rig.close()
 
