@@ -9,6 +9,7 @@ const TerrainView = preload("res://client/hybrid/terrain_view.gd")
 const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
 const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
+const TrialMode = preload("res://client/hybrid/trial_mode.gd")
 const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
@@ -48,6 +49,7 @@ var hud: Control  # the campaign HUD: era and cycle, the current objective, a jo
 var menu_card: Control  # the pause menu (a DmbNarrativeCard)
 var campaign_ui: Node  # the opening campaign's scenes and the Game Over screen (campaign_ui.gd)
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
+var trial_mode: Node  # the Trial of Champions: zone mode (trial_mode.gd); `trial_mode.active` is "inside"
 var terrain = null  # TerrainView once the sim has sent its terrain
 ## Camera zoom is stored as PHYSICAL pixels per map tile (so "how close" means the same on a phone and a monitor) and converted with the stretch scale.
 const ZOOM_DEFAULT_PX := 52.0
@@ -94,6 +96,17 @@ var _pvp_sim = null
 var _pvp_duel_id := ""
 var _pvp_last_outcome := ""
 const MP_SPRITES := ["red_mage", "hedge_mage", "blue_mage", "assassin"]
+# ---- mortal apprentices (plan M1): the dead spectate, bodies lie in the world, resurrection is a channel beside the body, the game ends only when no human is left
+var _dead_mode := false  # this wizard is dead: the avatar is hidden, the controls are off, the banner is up
+var _dead_banner: Label
+var _dead_info: Dictionary = {}  # the host's `you_dead`
+var _watch_btn: Button  # a dead wizard may follow the survivor with the camera
+var _watching := ""  # the player id the camera follows while dead ("" = stay at the body)
+var _res_fx: Dictionary = {}  # the resurrection channel in progress near us: {tile, left_ms, total_ms, name}
+var _res_label: Label
+var _ending: Dictionary = {}  # the session has ended for the humans (every one of them dead)
+var _ending_shown := false
+var _pest_fx: Dictionary = {}  # a rat breaking apart beside the wizard: {tile, t}
 
 
 func _ready() -> void:
@@ -164,6 +177,10 @@ func _ready() -> void:
 	story_ui.name = "StoryUi"
 	add_child(story_ui)
 	story_ui.setup(self)
+	trial_mode = TrialMode.new()
+	trial_mode.name = "TrialMode"
+	add_child(trial_mode)
+	trial_mode.setup(self)
 	campaign_ui = CampaignUi.new()  # after the story panels: it sees the keyboard first while a scene or the Game Over screen is up
 	campaign_ui.name = "CampaignUi"
 	add_child(campaign_ui)
@@ -176,6 +193,8 @@ func _ready() -> void:
 	hud_layer.add_child(hud)
 	hud.setup(self)
 	hud.journal_requested.connect(func() -> void: story_ui.set_journal_visible(not story_ui.journal.visible))
+	if mp:
+		hud.journal_button.visible = false  # no journal in Wizard World: if you forget what somebody asked, ask them again
 	era_hud = hud.stats_label
 	var menu_layer := CanvasLayer.new()
 	menu_layer.name = "MenuLayer"
@@ -192,6 +211,8 @@ func _ready() -> void:
 		_mp_bytes_at_start = _sim.bytes_in
 	if mp or OS.has_feature("mobile"):
 		_touch.set_action_visible(true)  # phones: the interact button is always on
+	if mp:
+		_mp_build_mortality_ui()
 
 
 func _era_text(snap: Dictionary) -> String:
@@ -213,7 +234,7 @@ func _era_text(snap: Dictionary) -> String:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if hud != null and story_ui != null:
-		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active))
+		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
@@ -359,6 +380,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	# Wizard Mode: a left click on anything opens its inspect card. The press only remembers what is under the pointer; the click happens on release,
 	# and not at all if a pinch or a drag happened in between.
+	if trial_mode != null and trial_mode.active and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not _duel_open:
+		if trial_mode.tap(event.position):
+			get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not _duel_open and story_ui != null and not story_ui.covering():
 		if event.pressed:
 			_pinch_seen = false
@@ -389,6 +414,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _arrived() -> void:
 	if _sim._peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+		return
+	if trial_mode != null and trial_mode.active:
+		trial_mode.arrived()
+		_update_prompt()
 		return
 	if mp:
 		# one validated step per tile; the host answers with the authoritative pose (a refusal snaps the avatar back)
@@ -430,12 +459,16 @@ func tile_ground(x: int, y: int) -> bool:
 
 
 func _tile_char(_x: int, _y: int) -> String:
+	if trial_mode != null and trial_mode.active:
+		return super._tile_char(_x, _y)  # a zone: the legacy area's rows (cave walls, floor, water)
 	if not tile_ground(_x, _y):
 		return " "
 	return "."
 
 
 func is_walkable(p: Vector2i) -> bool:
+	if trial_mode != null and trial_mode.active:  # a zone: the legacy rule (cave walls, things standing on tiles) plus the other wizard
+		return super.is_walkable(p) and not trial_mode.blocked(p)
 	if not tile_ground(p.x, p.y):
 		return false
 	return not _blocked.has(p) and not _solid.has(p)
@@ -466,6 +499,14 @@ func _unnote_solid(id: String) -> void:
 func _on_action() -> void:
 	if _duel_open or _snapshot.is_empty():
 		return
+	if trial_mode != null and trial_mode.active:
+		trial_mode.interact()
+		return
+	if mp and story_ui != null:  # Wizard World's action button: the nearest person or landmark (the gate), as E does
+		var near: Dictionary = story_ui.nearest_interactive()
+		if not near.is_empty():
+			story_ui.use_entity(near)
+			return
 	var reply := _sim.op({"op": "interact"})
 	if str(reply.get("status", "")) != "started":
 		_hud_area_lbl.text = "Walk up to the hazard"
@@ -526,6 +567,20 @@ func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
 			var reply: Dictionary = _sim.op(_story_duel_report(payload))
 			_story_follow_up = reply.get("follow_up", null)
 			_story_duel_id = ""
+			var trial = reply.get("trial", null)
+			if typeof(trial) == TYPE_DICTIONARY and trial_mode != null:
+				trial_mode.after_duel(trial)
+			var pest = reply.get("pest", null)
+			if typeof(pest) == TYPE_DICTIONARY and not (pest as Dictionary).is_empty():
+				if bool(pest.get("killed", false)):
+					_pest_fx = {"tile": _john_pos, "t": 0.9}
+					_sfx().fracture(3)
+					if mp:
+						_mp_toast_show("The rat breaks apart. %d left." % int(pest.get("left", 0)) if int(pest.get("left", 0)) > 0 else "The rat breaks apart. The warehouse is quiet.", 4.0)
+				else:
+					_sfx().denied()
+					if mp:
+						_mp_toast_show("It got away under the floor. You are hurt: one cast fewer next time.", 4.0)
 			return reply
 		return {}
 	if kind != "ResolveHazardDuel":
@@ -616,6 +671,8 @@ func _place_john_from_snapshot() -> void:
 
 
 func _draw() -> void:
+	if trial_mode != null and trial_mode.active:
+		return  # a zone is tile sprites and actors (the Overworld's builders); the hex world is not drawn behind it
 	var cam_tile := Vector2i(int(_camera.position.x / TPX), int(_camera.position.y / TPX))
 	if terrain != null:
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -663,6 +720,8 @@ func _draw() -> void:
 	for entity in rows:
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
+	_draw_resurrection()
+	_draw_pest_fx()
 	if god != null:
 		god.draw_overlay(self)
 
@@ -794,6 +853,9 @@ func _close_menu() -> void:
 
 func _on_menu_choice(id: String) -> void:
 	match id:
+		"ending_leave":
+			mp_leave()
+			return
 		"continue":
 			_close_menu()
 		"save":
@@ -827,6 +889,8 @@ var _progress := {}  # what the journal showed last time: lessons done, quest st
 
 
 func _notice_progress() -> void:
+	if mp:
+		return  # Wizard World: no "new in your journal" flashes
 	var j: Dictionary = story_ui.journal_data() if story_ui != null else {}
 	if j.is_empty():
 		return
@@ -866,7 +930,7 @@ func _update_hud(snap: Dictionary) -> void:
 	var title := "%s - Cycle %d" % [str(era.get("era", "")).capitalize(), int(hist.get("cycle", 0))] if not era.is_empty() else "Wizard RTS"
 	if bool(hist.get("cycle_pending", false)):
 		title += " - the cycle ends"
-	hud.set_state(title, _era_text(snap), story_ui.objective_text() if story_ui != null else "")
+	hud.set_state(title, _era_text(snap), story_ui.objective_text() if (story_ui != null and not mp) else "")  # no objective line in Wizard World (plan amendment 11): people say what matters
 
 
 func _notification(what: int) -> void:
@@ -1047,10 +1111,15 @@ func _on_state_reply(reply: Dictionary) -> void:
 
 
 func _mp_apply(reply: Dictionary) -> void:
-	_mp_apply_players(reply.get("snapshot", {}).get("players", []))
+	if trial_mode != null:
+		var tv = reply.get("trial", {})
+		trial_mode.apply(tv if typeof(tv) == TYPE_DICTIONARY else {})
+	if trial_mode == null or not trial_mode.active:
+		_mp_apply_players(reply.get("snapshot", {}).get("players", []))
 	for n in reply.get("notices", []):
 		if typeof(n) == TYPE_DICTIONARY:
 			_mp_notice(n)
+	_mp_apply_mortality(reply)
 	var inv: Dictionary = reply.get("invite", {}) if typeof(reply.get("invite", {})) == TYPE_DICTIONARY else {}
 	if inv.is_empty() != _mp_invite.is_empty() or str(inv.get("duel_id", "")) != str(_mp_invite.get("duel_id", "")):
 		_mp_invite = inv
@@ -1070,6 +1139,12 @@ func _mp_apply_players(rows: Array) -> void:
 			continue
 		var pid := str(row.get("id", ""))
 		if pid == "" or bool(row.get("you", false)):
+			continue
+		if bool(row.get("dead", false)):  # a dead wizard is a body on the ground (an npc row the art layer draws), not a standing avatar
+			_mp_players[pid] = row
+			seen[pid] = true
+			if actor("lan:" + pid) != null:
+				remove_actor("lan:" + pid)
 			continue
 		seen[pid] = true
 		var tile := Vector2i(int(row.get("tx", 0)), int(row.get("ty", 0)))
@@ -1240,6 +1315,27 @@ func _mp_notice(n: Dictionary) -> void:
 			_mp_toast_show("A new cycle begins")
 		"ai_says":
 			_mp_toast_show("%s: %s" % [who, str(n.get("text", ""))], 6.0)  # an AI wizard speaking in its own voice
+		"wizard_died":
+			if str(n.get("seat", "")) != LanSession.player_id:
+				_mp_toast_show("%s has fallen." % who, 5.0)
+		"resurrection_started":
+			if str(n.get("by", "")) != LanSession.player_id:
+				_mp_toast_show("%s is trying to bring %s back…" % [str(n.get("by_name", "Someone")), who], 5.0)
+			_sfx().ready_chime()
+		"wizard_resurrected":
+			_mp_toast_show("%s lives again." % who, 5.0)
+			if campaign_ui != null:
+				campaign_ui.flash.color = Color(0.85, 0.95, 1.0, 0.8)
+			_sfx().victory()
+		"resurrection_abandoned":
+			if str(n.get("by", "")) == LanSession.player_id:
+				_mp_toast_show("The weave slipped: stay beside the body.", 4.0)
+		"conversation":
+			# somebody walked up and started talking to us (the mother, usually): the same card as any conversation we open ourselves
+			if story_ui != null and typeof(n.get("reply")) == TYPE_DICTIONARY and not _duel_open:
+				story_ui.show_follow_up(n["reply"])
+				if wizard_labels != null:
+					wizard_labels.close()
 
 
 func _mp_toast_show(text: String, seconds: float = 3.0) -> void:
@@ -1286,8 +1382,10 @@ func _on_move_reply(reply: Dictionary) -> void:
 	_mp_seq = maxi(_mp_seq, int(reply.get("seq", _mp_seq)))
 	if reason == "occupied":
 		_mp_toast_show("Someone is standing there")
-	elif reason == "in_duel":
+	elif reason == "in_duel" or reason == "dead":
 		pass
+	elif reason == "grounded":  # the mother's words are the reason: shown as her speech, never as a system message
+		_mp_toast_show("%s: %s" % [str(reply.get("name", "Your mother")), str(reply.get("line", "Not one step further."))], 6.0)
 	else:
 		_mp_toast_show("You cannot walk there")
 
@@ -1336,3 +1434,238 @@ func mp_leave() -> void:
 	LanSession.stop_local_host()
 	LanSession.reset()
 	get_tree().change_scene_to_file("res://client/scenes/main_menu.tscn")
+
+
+# ---------------------------------------------------------------------------
+# Mortal apprentices (plan M1): dead mode, the resurrection channel, the ending
+# ---------------------------------------------------------------------------
+
+func _mp_build_mortality_ui() -> void:
+	var layer: CanvasLayer = get_node_or_null("LanLayer")
+	if layer == null:
+		return
+	_dead_banner = Label.new()
+	_dead_banner.name = "DeadBanner"
+	_dead_banner.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_dead_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_dead_banner.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_dead_banner.offset_left = -340
+	_dead_banner.offset_right = 340
+	_dead_banner.offset_top = 120
+	_dead_banner.offset_bottom = 200
+	_dead_banner.add_theme_font_size_override("font_size", 28)
+	_dead_banner.add_theme_color_override("font_color", Color(0.92, 0.9, 1.0))
+	_dead_banner.add_theme_color_override("font_outline_color", Color(0.05, 0.0, 0.1, 0.95))
+	_dead_banner.add_theme_constant_override("outline_size", 7)
+	_dead_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_dead_banner.visible = false
+	layer.add_child(_dead_banner)
+	_watch_btn = Button.new()
+	_watch_btn.name = "WatchButton"
+	_watch_btn.text = "Watch"
+	_watch_btn.focus_mode = Control.FOCUS_NONE
+	_watch_btn.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_watch_btn.offset_left = -120
+	_watch_btn.offset_right = 120
+	_watch_btn.offset_top = 206
+	_watch_btn.offset_bottom = 266
+	_watch_btn.add_theme_font_size_override("font_size", 22)
+	_watch_btn.add_theme_stylebox_override("normal", _VT.gem_button_style())
+	_watch_btn.add_theme_stylebox_override("hover", _VT.gem_button_style())
+	_watch_btn.add_theme_stylebox_override("pressed", _VT.gem_button_style(true))
+	_watch_btn.add_theme_color_override("font_color", _VT.COLOR_ACCENT_GOLD)
+	_watch_btn.pressed.connect(_toggle_watch)
+	_watch_btn.visible = false
+	layer.add_child(_watch_btn)
+	_res_label = Label.new()
+	_res_label.name = "ResurrectionLabel"
+	_res_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_res_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_res_label.offset_left = -300
+	_res_label.offset_right = 300
+	_res_label.offset_top = -330
+	_res_label.offset_bottom = -280
+	_res_label.add_theme_font_size_override("font_size", 24)
+	_res_label.add_theme_color_override("font_color", Color(0.8, 0.95, 1.0))
+	_res_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_res_label.add_theme_constant_override("outline_size", 6)
+	_res_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_res_label.visible = false
+	layer.add_child(_res_label)
+
+
+func _mp_apply_mortality(reply: Dictionary) -> void:
+	var dead = reply.get("you_dead", {})
+	var is_dead := typeof(dead) == TYPE_DICTIONARY and not (dead as Dictionary).is_empty()
+	if is_dead and not _dead_mode:
+		_enter_dead_mode(dead)
+	elif not is_dead and _dead_mode:
+		_leave_dead_mode()
+	if _dead_mode:
+		_dead_info = dead
+		_dead_banner.text = _dead_text()
+		_watch_btn.visible = _survivor_id() != ""
+		_watch_btn.text = ("Stay with your body" if _watching != "" else "Watch %s" % _survivor_name())
+		if _watching != "" and _mp_players.has(_watching):
+			var row: Dictionary = _mp_players[_watching]
+			camera_focus = Vector2((float(row.get("tx", 0)) + 0.5) * float(TPX), (float(row.get("ty", 0)) + 0.5) * float(TPX))
+		elif _watching != "":
+			_watching = ""
+			camera_focus = Vector2.INF
+	var res = reply.get("resurrection", {})
+	_res_fx = res if typeof(res) == TYPE_DICTIONARY else {}
+	if _res_label != null:
+		_res_label.visible = not _res_fx.is_empty()
+		if _res_label.visible:
+			_res_label.text = "Bringing %s back… %d" % [str(_res_fx.get("name", "")), int(ceil(float(_res_fx.get("left_ms", 0)) / 1000.0))]
+	var ending = reply.get("ending", {})
+	if typeof(ending) == TYPE_DICTIONARY and not (ending as Dictionary).is_empty():
+		_ending = ending
+		_show_ending()
+
+
+func _dead_text() -> String:
+	var by := str(_dead_info.get("by", ""))
+	var killer := ""
+	if by != "" and _mp_players.has(by):
+		killer = str(_mp_players[by].get("name", ""))
+	var who := _survivor_name()
+	var line := "You are dead."
+	if killer != "":
+		line = "%s killed you." % killer
+	if who != "":
+		line += "\n%s can bring you back." % who
+	else:
+		line += "\nNobody is left to bring you back."
+	return line
+
+
+func _survivor_id() -> String:
+	for pid in _mp_players:
+		var row: Dictionary = _mp_players[pid]
+		if not bool(row.get("dead", false)) and bool(row.get("connected", true)):
+			return pid
+	return ""
+
+
+func _survivor_name() -> String:
+	var pid := _survivor_id()
+	return str(_mp_players[pid].get("name", pid)) if pid != "" else ""
+
+
+func _enter_dead_mode(dead: Dictionary) -> void:
+	_dead_mode = true
+	_dead_info = dead
+	_john.visible = false  # the body on the ground is drawn by the art layer (an npc row); the standing avatar goes
+	_held_dir = Vector2i.ZERO
+	_input_locked = true
+	_touch.set_enabled(false)
+	if story_ui != null:
+		story_ui.close_dialog()
+	if wizard_labels != null:
+		wizard_labels.close()
+	_dead_banner.visible = true
+	_sfx().defeat()
+	_hud_area_lbl.text = "Dead"
+
+
+func _leave_dead_mode() -> void:
+	_dead_mode = false
+	_dead_info = {}
+	_watching = ""
+	camera_focus = Vector2.INF
+	_john.visible = true
+	_dead_banner.visible = false
+	_watch_btn.visible = false
+	if _ending.is_empty():
+		_input_locked = false
+		_touch.set_enabled(true)
+	if trial_mode != null and trial_mode.active:
+		trial_mode.apply(trial_mode.view)  # stood up beside the body, inside the zone
+	else:
+		_place_john_from_snapshot()  # the host stood us up where the body lay
+	_hud_area_lbl.text = "Alive again"
+
+
+func _toggle_watch() -> void:
+	_watching = "" if _watching != "" else _survivor_id()
+
+
+func _draw_resurrection() -> void:
+	if _res_fx.is_empty() or not _res_fx.has("tile"):
+		return
+	var t: Array = _res_fx["tile"]
+	var c := Vector2((float(t[0]) + 0.5) * float(TPX), (float(t[1]) + 0.5) * float(TPX))
+	var total := maxf(1.0, float(_res_fx.get("total_ms", 6000)))
+	var done := clampf(1.0 - float(_res_fx.get("left_ms", 0)) / total, 0.0, 1.0)
+	var time_s := Time.get_ticks_msec() / 1000.0
+	draw_arc(c, 40.0, 0.0, TAU, 40, Color(0.5, 0.8, 1.0, 0.35), 3.0)
+	draw_arc(c, 40.0, -PI * 0.5, -PI * 0.5 + TAU * done, 40, Color(0.75, 0.95, 1.0, 0.95), 5.0)
+	for k in 3:  # the three colours orbit the body and close in as the weave takes
+		var a := time_s * 2.4 + float(k) * TAU / 3.0
+		var r := 34.0 - 18.0 * done
+		var col: Color = [Color(1.0, 0.45, 0.2), Color(0.4, 0.75, 1.0), Color(0.45, 0.9, 0.4)][k]
+		draw_circle(c + Vector2(cos(a), sin(a)) * r, 7.0 + 3.0 * done, col)
+	draw_circle(c, 6.0 + 10.0 * done, Color(1.0, 1.0, 1.0, 0.25 + 0.5 * done))
+
+
+func _show_ending() -> void:
+	if _ending_shown:
+		return
+	_ending_shown = true
+	_input_locked = true
+	_menu_open = true
+	_touch.set_enabled(false)
+	if story_ui != null:
+		story_ui.close_dialog()
+	if wizard_labels != null:
+		wizard_labels.close()
+	var kind := str(_ending.get("kind", ""))
+	var title := "You died."
+	var body := "Your story ends here. The world goes on without you: the village, its people and everything that happened are kept, and a new apprentice can enter it from the menu."
+	if kind == "all_dead":
+		title = "Both of you died."
+		body = "Nobody is left to bring the other back. The world goes on without you both; it is saved as it is, and new apprentices can enter it from the menu."
+	menu_card.show_card(title, "", body, [{"id": "ending_leave", "text": "Leave", "kind": "primary"}], [])
+
+
+## Test and inspection API (mortality).
+func ui_dead() -> bool:
+	return _dead_mode
+
+
+func ui_dead_info() -> Dictionary:
+	return _dead_info.duplicate(true)
+
+
+func ui_resurrection() -> Dictionary:
+	return _res_fx.duplicate(true)
+
+
+func ui_ending() -> Dictionary:
+	return _ending.duplicate(true)
+
+
+func ui_resurrect(target: String) -> Dictionary:
+	return _sim.op({"op": "resurrect", "target": target})
+
+
+func _draw_pest_fx() -> void:
+	if _pest_fx.is_empty():
+		return
+	var t: float = float(_pest_fx.get("t", 0.0)) - get_process_delta_time()
+	if t <= 0.0:
+		_pest_fx = {}
+		return
+	_pest_fx["t"] = t
+	var tile: Vector2i = _pest_fx["tile"]
+	var c := Vector2((float(tile.x) + 0.5) * float(TPX), (float(tile.y) + 0.5) * float(TPX))
+	var k := 1.0 - t / 0.9
+	for i in 8:  # bits of shell flying off
+		var a := float(i) * TAU / 8.0 + 0.4
+		canvas_item_draw_bit(c + Vector2(cos(a), sin(a)) * (10.0 + 50.0 * k), 5.0 * (1.0 - k), Color(0.35, 0.33, 0.3, 1.0 - k))
+	draw_circle(c, 6.0 + 30.0 * k, Color(1.0, 0.6, 0.2, 0.6 * (1.0 - k)))
+
+
+func canvas_item_draw_bit(at: Vector2, r: float, col: Color) -> void:
+	draw_rect(Rect2(at - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), col, true)

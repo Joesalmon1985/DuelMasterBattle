@@ -6,7 +6,8 @@ from typing import Any
 
 from wizard_rts.narrative import campaign, conversation, duel_lease, tutorial, wizard
 
-OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose")
+OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect", "pest_fight",
+       "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view")
 FOUGHT = ("victory", "defeat", "clash", "stalemate")
 
 
@@ -38,6 +39,29 @@ def handle(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         return {"status": "ok"}
     if op == "journal":
         return {"status": "ok", "journal": tutorial.snapshot(world)}
+    if op == "resurrect":
+        from wizard_rts.narrative import mortality
+
+        return mortality.resurrect_begin(world, mortality.me(world), str(message.get("target", "")))
+    if op == "pest_fight":
+        from wizard_rts.narrative import pests
+
+        return pests.fight(world, str(message.get("target", "")))
+    if op.startswith("trial_"):
+        from wizard_rts.trial import run as trial
+
+        if op == "trial_enter":
+            return trial.enter(world)
+        if op == "trial_move":
+            return trial.move(world, int(message.get("dx", 0)), int(message.get("dy", 0)), message.get("facing"))
+        if op == "trial_interact":
+            return trial.interact(world, str(message.get("entity", "")))
+        if op == "trial_choose":
+            return trial.choose(world, str(message.get("entity", "")), str(message.get("choice", "")))
+        if op == "trial_leave":
+            return trial.leave(world)
+        if op == "trial_view":
+            return {"status": "ok", "view": trial.view(world)}
     return {"status": "rejected", "reason": "unknown_op"}
 
 
@@ -58,6 +82,14 @@ def resolve(world: Any, message: dict[str, Any]) -> dict[str, Any]:
     if out["status"] == "resolved":
         if rec["purpose"] == duel_lease.LETHAL:
             out["campaign"] = campaign.on_duel_resolved(world, rec, out)  # a victory goes on; anything else ends the game (decided in campaign.py)
+        elif str(rec["purpose"]).startswith("pest:"):
+            from wizard_rts.narrative import pests
+
+            out["pest"] = pests.on_duel_resolved(world, rec, out)
+        elif str(rec["purpose"]).startswith("trial:"):
+            from wizard_rts.trial import run as trial
+
+            out["trial"] = trial.on_duel_resolved(world, rec, out)
         else:
             out["follow_up"] = tutorial.on_duel_resolved(world, rec, out)
     return out

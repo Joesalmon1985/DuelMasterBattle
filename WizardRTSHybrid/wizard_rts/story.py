@@ -769,10 +769,12 @@ def entity_rows(world: Any) -> list[dict[str, Any]]:
     """NPCs and dungeon entrances as ordinary snapshot entities (what Godot draws and labels)."""
     s = world.__dict__.get("story")
     rows = []
-    if "narrative" in world.__dict__:  # residents: the teacher and the villagers of the narrative layer
+    if "narrative" in world.__dict__:  # residents: the teacher and the villagers of the narrative layer; the Trial's gate
         from wizard_rts.narrative import residents, tutorial
+        from wizard_rts.trial import run as trial
 
         rows.extend(residents.entity_rows(world, tutorial.row_info(world)))
+        rows.extend(trial.entity_rows(world))
     if not s:
         return rows
     for pid, n in sorted(s["npcs"].items()):
@@ -819,7 +821,8 @@ def _story_snapshot(world: Any) -> dict[str, Any]:
 # ------------------------------------------------------------------ the wizard's command surface
 
 WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
-              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose")
+              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose",
+              "resurrect", "pest_fight", "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -845,12 +848,13 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
-    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose"):
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect", "pest_fight") or op.startswith("trial_"):
         from wizard_rts.narrative import ops
 
         out = ops.handle(world, message)
     else:
         out = {"status": "ok"}
-    out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}
+    if not op.startswith("trial_"):  # the Trial's ops carry their own `view` (the zone)
+        out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}
     out["duel"] = duel_view(world)
     return out

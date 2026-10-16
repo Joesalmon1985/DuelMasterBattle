@@ -167,6 +167,17 @@ func activate_choice_index(i: int) -> bool:
 	return true
 
 
+## Press the choice with this id as a finger would (tests): false when the card is hidden, the choice absent or disabled.
+func activate_choice_id(id: String) -> bool:
+	if not visible:
+		return false
+	var b: Button = choice_button(id)
+	if b == null or b.disabled:
+		return false
+	b.pressed.emit()
+	return true
+
+
 func choice_button(id: String) -> Button:
 	for b in choices_box.get_children():
 		if str(b.get_meta("choice_id", "")) == id:

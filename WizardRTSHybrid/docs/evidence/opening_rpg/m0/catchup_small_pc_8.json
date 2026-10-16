@@ -1,0 +1,69 @@
+{
+ "map": "small",
+ "seed": 507,
+ "build_s": 0.78,
+ "minutes": 8,
+ "wall_s_total": 3.29,
+ "wall_s_per_sim_minute": 0.41,
+ "x_realtime": 145.9,
+ "python": "3.14.0",
+ "platform": "win32",
+ "rows": [
+  {
+   "minute": 1,
+   "wall_s": 0.69,
+   "buildings": 54,
+   "workers": 30,
+   "units": 6
+  },
+  {
+   "minute": 2,
+   "wall_s": 0.3,
+   "buildings": 60,
+   "workers": 36,
+   "units": 6
+  },
+  {
+   "minute": 3,
+   "wall_s": 0.32,
+   "buildings": 66,
+   "workers": 42,
+   "units": 6
+  },
+  {
+   "minute": 4,
+   "wall_s": 0.31,
+   "buildings": 72,
+   "workers": 48,
+   "units": 6
+  },
+  {
+   "minute": 5,
+   "wall_s": 0.3,
+   "buildings": 76,
+   "workers": 51,
+   "units": 6
+  },
+  {
+   "minute": 6,
+   "wall_s": 0.38,
+   "buildings": 78,
+   "workers": 53,
+   "units": 8
+  },
+  {
+   "minute": 7,
+   "wall_s": 0.4,
+   "buildings": 81,
+   "workers": 56,
+   "units": 11
+  },
+  {
+   "minute": 8,
+   "wall_s": 0.59,
+   "buildings": 91,
+   "workers": 60,
+   "units": 8
+  }
+ ]
+}

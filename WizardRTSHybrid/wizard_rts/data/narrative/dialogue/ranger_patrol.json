@@ -1,0 +1,272 @@
+{
+ "id": "ranger_patrol",
+ "title": "The Patrol",
+ "note": "Placeholder authored text (owner review pending). A forester prepares a patrol of the valley's edge and would like company, or at least advice. This is where the Trial of Champions is first spoken of: a road east, a gate, a yearly madness. Narrative-only; relationships and a fact.",
+ "active_flags": [
+  "heard_ranger"
+ ],
+ "cast": {
+  "ranger": {
+   "pick": [
+    {
+     "kind": "worker",
+     "roles": [
+      "ranger"
+     ]
+    },
+    {
+     "kind": "worker",
+     "roles": [
+      "hunter",
+      "lumberjack"
+     ]
+    }
+   ],
+   "label": "patroller"
+  },
+  "guard": {
+   "pick": [
+    {
+     "kind": "unit",
+     "unit_kinds": [
+      "soldier"
+     ]
+    },
+    {
+     "kind": "worker",
+     "roles": [
+      "hunter",
+      "lumberjack"
+     ]
+    }
+   ],
+   "label": "guard",
+   "optional": true
+  }
+ },
+ "speakers": {
+  "ranger": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "r_done",
+       "when": {
+        "requires": [
+         "patrol_set"
+        ],
+        "forbids": [
+         "closed_ranger"
+        ]
+       },
+       "sets": [
+        "closed_ranger"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 4
+        },
+        {
+         "kind": "journal_note",
+         "text": "The Patrol: {ranger} walks the valley's edge with a clearer head for my advice."
+        }
+       ],
+       "lines": [
+        "I have the route in my head now. Thank you for thinking it through with me; most people just tell me to be careful."
+       ]
+      },
+      {
+       "id": "r_after",
+       "when": {
+        "requires": [
+         "closed_ranger"
+        ]
+       },
+       "lines": [
+        "Back from the edge. Nothing out there but trees and the road, which is how I like it."
+       ]
+      },
+      {
+       "id": "r_open",
+       "lines": [
+        "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "ask_patrol",
+       "text": "Which way are you thinking?",
+       "when": {
+        "forbids": [
+         "heard_ranger"
+        ]
+       },
+       "sets": [
+        "heard_ranger"
+       ],
+       "lines": [
+        "North along the fences, where the deer get in. Or east along the road, past where the old fortress stands. Nobody goes east if they can help it, this time of year."
+       ]
+      },
+      {
+       "id": "why_east",
+       "text": "Why does nobody go east?",
+       "when": {
+        "requires": [
+         "heard_ranger"
+        ],
+        "forbids": [
+         "heard_trial"
+        ]
+       },
+       "sets": [
+        "heard_trial"
+       ],
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "trial_rumour"
+        }
+       ],
+       "lines": [
+        "The Trial. The fortress in the hills has a gate, and once a year the gate opens and people walk in to win a fortune, and the road east is full of the ones who have not thought it through.",
+        "You can see the gate from the road; it is not far. People walk down there every year and most of them do not walk back. I would not go. I would not stop you either; you are a wizard."
+       ]
+      },
+      {
+       "id": "advise_north",
+       "text": "Go north. The fences matter more than the road.",
+       "when": {
+        "requires": [
+         "heard_ranger"
+        ],
+        "forbids": [
+         "patrol_set"
+        ]
+       },
+       "sets": [
+        "patrol_set",
+        "patrol_north"
+       ],
+       "lines": [
+        "North it is. The deer will be disappointed."
+       ],
+       "ends": true
+      },
+      {
+       "id": "advise_east",
+       "text": "Go east, and look at the road. Tell me what you see at the gate.",
+       "when": {
+        "requires": [
+         "heard_ranger"
+        ],
+        "forbids": [
+         "patrol_set"
+        ]
+       },
+       "check": {
+        "aspect": "curiosity",
+        "threshold": "easy"
+       },
+       "lines": [
+        "{name} looks at you for a moment."
+       ],
+       "pass": {
+        "sets": [
+         "patrol_set",
+         "patrol_east"
+        ],
+        "effects": [
+         {
+          "kind": "fact",
+          "id": "trial_rumour"
+         },
+         {
+          "kind": "aspect",
+          "aspect": "curiosity",
+          "delta": 1
+         }
+        ],
+        "lines": [
+         "All right. East. If there are contestants on the road I will count them for you. Do not get any ideas from the count."
+        ],
+        "ends": true
+       },
+       "fail": {
+        "lines": [
+         "East is the road and the road is the Trial and I would rather not. North, I think."
+        ]
+       }
+      },
+      {
+       "id": "leave",
+       "text": "I will let you get ready.",
+       "lines": [
+        "Dusk, then."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "guard": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "g_east",
+       "when": {
+        "requires": [
+         "patrol_east"
+        ]
+       },
+       "lines": [
+        "{ranger} is off east tonight on your say-so. If they come back talking about gates and gold, that is on you, wizard."
+       ]
+      },
+      {
+       "id": "g_open",
+       "lines": [
+        "If {ranger} asks which way to walk, say north. Nothing good comes up that east road. Last week a man in a black cloak came up it asking after the wizard by name, and he did not look like a pupil."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "cloak",
+       "text": "A man in a black cloak? Asking after whom?",
+       "when": {
+        "forbids": [
+         "heard_cloak"
+        ]
+       },
+       "sets": [
+        "heard_cloak"
+       ],
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "stranger_rumour"
+        }
+       ],
+       "lines": [
+        "After {mentor}. By name, and an old name at that. He thanked me, which I did not like, and went back the way he came. I expect we have not seen the last of him."
+       ]
+      },
+      {
+       "id": "leave",
+       "text": "Keep your eyes open.",
+       "lines": [
+        "Always do."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

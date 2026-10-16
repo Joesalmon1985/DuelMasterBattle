@@ -1,0 +1,427 @@
+{
+ "id": "warehouse",
+ "note": "Placeholder authored text (owner review pending). The warehouse keeper of the home settlement. Facts from narrative/pests.py: pests_left, pests_total, killed_total, my_killed, others_killed, cooperated, eaten_total, complained, duels_since_complaint, burned, wave, cleared, minutes_since_complaint, escapes; the ledger's counts; the apprentice's facts (mentor_wants_log, log_for_mentor).",
+ "speakers": {
+  "keeper": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "burned",
+       "when": {
+        "facts": [
+         {
+          "name": "burned",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_burned"
+        ]
+       },
+       "sets": [
+        "said_burned"
+       ],
+       "lines": [
+        "You set fire to my warehouse. With the rats still in it. I want you to think about the order of those two things.",
+        "Everything in that store belongs to everybody in this village. The rats were eating it. You were burning it. I do not see the improvement."
+       ]
+      },
+      {
+       "id": "duelling_instead",
+       "when": {
+        "facts": [
+         {
+          "name": "complained",
+          "gte": 1
+         },
+         {
+          "name": "pests_left",
+          "gte": 1
+         },
+         {
+          "name": "duels_since_complaint",
+          "gte": 2
+         }
+        ],
+        "forbids": [
+         "said_duelling"
+        ]
+       },
+       "sets": [
+        "said_duelling"
+       ],
+       "lines": [
+        "I have been standing here listening to the pair of you throw Wards at each other in the road for {minutes_since_complaint} minutes while {pests_left} rats eat the winter.",
+        "If you want something to fight, it has six legs and it is in my grain. I am not asking twice."
+       ]
+      },
+      {
+       "id": "cleared_together",
+       "when": {
+        "facts": [
+         {
+          "name": "cleared",
+          "gte": 1
+         },
+         {
+          "name": "cooperated",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_cleared"
+        ]
+       },
+       "sets": [
+        "said_cleared"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 6
+        },
+        {
+         "kind": "ledger",
+         "key": "keeper_thanked"
+        }
+       ],
+       "lines": [
+        "Both of you, then. One on each side of the store, like you had planned it. I did not expect that, and I say so to your faces.",
+        "The warehouse is open. Tell your mothers I said you did a day's work."
+       ]
+      },
+      {
+       "id": "cleared_alone",
+       "when": {
+        "facts": [
+         {
+          "name": "cleared",
+          "gte": 1
+         },
+         {
+          "name": "my_killed",
+          "gte": 1
+         },
+         {
+          "name": "others_killed",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_cleared"
+        ]
+       },
+       "sets": [
+        "said_cleared"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 5
+        },
+        {
+         "kind": "ledger",
+         "key": "keeper_thanked"
+        }
+       ],
+       "lines": [
+        "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think.",
+        "The store is yours to walk through whenever you like. Mind the loose boards."
+       ]
+      },
+      {
+       "id": "cleared_by_others",
+       "when": {
+        "facts": [
+         {
+          "name": "cleared",
+          "gte": 1
+         },
+         {
+          "name": "my_killed",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_cleared"
+        ]
+       },
+       "sets": [
+        "said_cleared"
+       ],
+       "lines": [
+        "Rats are gone. Not by your hand, from what I saw, but gone. I thank whoever did it; I expect you know who."
+       ]
+      },
+      {
+       "id": "cleared_any",
+       "when": {
+        "facts": [
+         {
+          "name": "cleared",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_cleared"
+        ]
+       },
+       "sets": [
+        "said_cleared"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 3
+        }
+       ],
+       "lines": [
+        "That is the last of them. Good riddance. The store is open."
+       ]
+      },
+      {
+       "id": "returned",
+       "when": {
+        "facts": [
+         {
+          "name": "wave",
+          "gte": 2
+         },
+         {
+          "name": "pests_left",
+          "gte": 1
+         },
+         {
+          "name": "complained",
+          "lte": 0
+         }
+        ]
+       },
+       "lines": [
+        "They are back. Fewer this time, and bolder. I told the elders we needed a cat; they said we needed a wizard. Well. Here you are."
+       ],
+       "lines_alt": [
+        [
+         "They are back. They are always back. Rats are a kind of weather."
+        ]
+       ]
+      },
+      {
+       "id": "progress",
+       "when": {
+        "facts": [
+         {
+          "name": "complained",
+          "gte": 1
+         },
+         {
+          "name": "pests_left",
+          "gte": 1
+         },
+         {
+          "name": "killed_total",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        {
+         "text": "{killed_total} down, {pests_left} to go. They eat faster than you fight; {eaten_total} loads gone since I first counted.",
+         "when": {
+          "facts": [
+           {
+            "name": "eaten_total",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "{killed_total} down, {pests_left} to go. Keep at it.",
+         "when": {
+          "facts": [
+           {
+            "name": "eaten_total",
+            "lte": 0
+           }
+          ]
+         }
+        },
+        {
+         "text": "And one of them got away from you. They do that. Come at it again before it tells the others.",
+         "when": {
+          "facts": [
+           {
+            "name": "escapes",
+            "gte": 1
+           }
+          ]
+         }
+        }
+       ]
+      },
+      {
+       "id": "complaint",
+       "when": {
+        "facts": [
+         {
+          "name": "pests_left",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "Rats. In the Central Warehouse. {pests_total} of them at the last count, in and out of the grain like they pay rent.",
+        "Big ones. One of them is the size of a dog and clicks when it walks. Rats, I tell you. Nobody listens."
+       ]
+      },
+      {
+       "id": "quiet",
+       "lines": [
+        "Store is quiet. Which is how I like it. Ask the carriers if you want news; I only count things."
+       ],
+       "lines_alt": [
+        [
+         "Quiet. I do not trust it, but I will take it."
+        ],
+        [
+         "Nothing to report. Say that back to me slowly; I never hear it."
+        ]
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "what_matter",
+       "text": "What's the matter with the warehouse?",
+       "when": {
+        "facts": [
+         {
+          "name": "pests_left",
+          "gte": 1
+         }
+        ]
+       },
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "keeper_complained_to"
+        },
+        {
+         "kind": "pests_complained"
+        }
+       ],
+       "lines": [
+        "I just told you. Rats. They go for the rations first, then the bread, then whatever smells of either. Every one you put down is a load saved.",
+        "They do not come out for the carriers and they do not come out for me. They will come out for you. Stand close to one and it will not run; they never run from a wizard. Then do whatever it is you do with the three colours."
+       ]
+      },
+      {
+       "id": "not_rats",
+       "text": "Those are not rats. They are machines. Look at the legs.",
+       "when": {
+        "facts": [
+         {
+          "name": "pests_left",
+          "gte": 1
+         }
+        ]
+       },
+       "once": true,
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "keeper_told_machines"
+        }
+       ],
+       "lines": [
+        "They are rats. I have been keeper of this store for eleven years and I know a rat when it eats my grain.",
+        "Clicking is just what the big ones do."
+       ]
+      },
+      {
+       "id": "not_rats_again",
+       "text": "Six legs. Metal. It clicked at me.",
+       "when": {
+        "facts": [
+         {
+          "name": "pests_left",
+          "gte": 1
+         },
+         {
+          "name": "keeper_told_machines",
+          "gte": 1
+         }
+        ]
+       },
+       "once": true,
+       "lines": [
+        "A rat with opinions, then. Put it down all the same."
+       ]
+      },
+      {
+       "id": "log_for_mentor",
+       "text": "My teacher needs a log for the brazier. Could the store spare one?",
+       "when": {
+        "fact": [
+         "mentor_wants_log"
+        ],
+        "not_fact": [
+         "log_for_mentor"
+        ]
+       },
+       "effects": [
+        {
+         "kind": "ware_delta",
+         "good": "log",
+         "n": -1
+        },
+        {
+         "kind": "fact",
+         "id": "log_for_mentor"
+        },
+        {
+         "kind": "relationship",
+         "delta": 2
+        }
+       ],
+       "lines": [
+        "For {mentor}? Take one. Take it from the dry stack, not the green. And tell them the account is open; they never let it close."
+       ]
+      },
+      {
+       "id": "log_for_mentor_short",
+       "text": "My teacher needs a log for the brazier. Could the store spare one?",
+       "when": {
+        "fact": [
+         "mentor_wants_log"
+        ],
+        "not_fact": [
+         "log_for_mentor"
+        ],
+        "facts": [
+         {
+          "name": "logs",
+          "lte": 0
+         }
+        ]
+       },
+       "lines": [
+        "Not a log in the place. Ask the lumberjack, or wait for the carriers."
+       ]
+      },
+      {
+       "id": "bye",
+       "text": "I'll leave you to it.",
+       "lines": [
+        "Mind the boards."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

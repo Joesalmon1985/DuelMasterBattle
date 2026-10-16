@@ -61,24 +61,34 @@ def public_view(rec: dict[str, Any]) -> dict[str, Any]:
 def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -> tuple[dict, dict]:
     player = wizard.combatant(world, int(opp.get("player_max_casts", opp.get("max_casts", 8))))  # a forgiving budget for the apprentice is configuration, not a different rule
     pool = list(player["attack_pool"])
-    enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": "wizard", "kind": "wizard",
+    enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": str(opp.get("archetype", "wizard")), "kind": "wizard",
              "weave_size": player["weave_size"], "ward_size": player["ward_size"], "attack_pool": list(pool), "ward_pool": list(pool),
              "allow_repeats": True, "max_casts": int(opp.get("max_casts", 8)), "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
              "bot_logic": opp["bot_logic"], "bot_solver_cap": int(opp.get("bot_solver_cap", 60)), "bot_mistake_rate": float(opp.get("bot_mistake_rate", 0.0)),
              "think_min_seconds": float(opp["think_min_seconds"]), "think_max_seconds": float(opp["think_max_seconds"])}
     if fixed_ward:
         enemy["fixed_ward"] = [int(x) for x in fixed_ward]
+    if opp.get("ward_pool"):  # an opponent that only weaves some colours (the rats): its Ward is drawn from them, and Python reproduces it from the same pool
+        enemy["ward_pool"] = [int(c) for c in opp["ward_pool"] if int(c) in pool] or list(pool)
+    w = wizard.wiz(world)
+    if w.pop("wounded", None):  # a lost scrap with a rat (pests.py): one cast fewer in the next duel, then it heals
+        player["max_casts"] = max(2, int(player["max_casts"]) - 1)
+        player["wounded"] = True
     return player, enemy
 
 
-def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None, display_name: str | None = None) -> dict[str, Any]:
-    """Open a lease against `opponent_id`; the reply has the shape `DmbDuelLeaseAdapter.begin_from_start_reply` reads."""
-    if opponent_id not in opponents():
+def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None, display_name: str | None = None,
+          spec: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Open a lease against `opponent_id` (from `opponents.json`, or `spec` for an opponent built at run time: the Trial's monsters); the reply has the
+    shape `DmbDuelLeaseAdapter.begin_from_start_reply` reads."""
+    if spec is None and opponent_id not in opponents():
         return {"status": "rejected", "reason": "unknown_opponent"}
     cur = active(world)
     if cur is not None:
         return {"status": "rejected", "reason": "duel_open", "payload": {"public": public_view(cur), "duel": cur}}
-    opp = opponents()[opponent_id]
+    opp = spec if spec is not None else opponents()[opponent_id]
+    if spec is not None and spec.get("fixed_ward") and not fixed_ward:
+        fixed_ward = list(spec["fixed_ward"])
     attempts = wizard.wiz(world)["duels"]["attempts"]
     attempt = 1 + sum(1 for a in attempts if a["purpose"] == purpose)
     bot_seed = zlib.crc32(f"{world.seed}|{purpose}|{attempt}".encode()) & 0x7FFFFFFF
@@ -153,8 +163,10 @@ def verify(rec: dict[str, Any], report: dict[str, Any]) -> tuple[bool, str]:
         return False, "victory_unearned"
     if outcome in ("clash",) and not broke_any:
         return False, "clash_unearned"
-    if outcome in ("defeat", "stalemate") and broke_any:
+    if outcome == "defeat" and broke_any:
         return False, "broke_ward_but_no_win"
+    if outcome == "stalemate" and broke_any and int(report.get("enemy_casts", 0)) != len(history):
+        return False, "broke_ward_but_no_win"  # a draw is both Wards broken in the same round (ward.py): the enemy cast as often as the player
     return True, "ok"
 
 
@@ -208,7 +220,8 @@ def resolve(world: Any, lease_id: str, report: dict[str, Any]) -> dict[str, Any]
     duels["attempts"].append({"purpose": rec["purpose"], "attempt": rec["attempt"], "outcome": result, "casts": int(report.get("player_casts", 0)),
                               "game_ms": int(world.dmb.clock.get("game_ms", 0))})
     events.log(world, "duel_resolved", lease=lease_id, purpose=rec["purpose"], outcome=result)
-    return {"status": "resolved", "outcome": result, "verified": True, "purpose": rec["purpose"], "attempt": rec["attempt"]}
+    return {"status": "resolved", "outcome": result, "verified": True, "purpose": rec["purpose"], "attempt": rec["attempt"],
+            "broke": any(bool(h.get("broke")) for h in report.get("history", []))}  # a draw with the enemy's Ward broken is both broken in one round; without, both ran dry
 
 
 def abandon(world: Any, reason: str = "abandoned") -> dict[str, Any]:

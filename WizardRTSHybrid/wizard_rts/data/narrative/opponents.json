@@ -28,5 +28,35 @@
     "think_max_seconds": 75.0,
     "max_casts": 8,
     "player_max_casts": 12
+  },
+  "opponent.rat": {
+    "display_name": "A rat",
+    "tier": "duel.tutorial_3x3",
+    "bot_logic": "random",
+    "bot_mistake_rate": 0.6,
+    "think_min_seconds": 12.0,
+    "think_max_seconds": 24.0,
+    "max_casts": 4,
+    "player_max_casts": 6,
+    "ward_pool": [
+      1,
+      6
+    ],
+    "note": "the villagers' rats: a Ward of two colours only, few casts: a brief encounter"
+  },
+  "opponent.rat_big": {
+    "display_name": "A big rat",
+    "tier": "duel.tutorial_3x3",
+    "bot_logic": "candidate_filter",
+    "bot_mistake_rate": 0.3,
+    "think_min_seconds": 10.0,
+    "think_max_seconds": 20.0,
+    "max_casts": 5,
+    "player_max_casts": 7,
+    "ward_pool": [
+      0,
+      1,
+      6
+    ]
   }
 }

@@ -73,12 +73,13 @@ class Human:
 
 
 class Table:
-    def __init__(self, humans: int = 1, ai: int = 0, seed: int = 507, enable_after: int = 40, start: bool = True) -> None:
-        self.now = 0.0
-        self.world = new_world(seed, "small", "campaign")
+    def __init__(self, humans: int = 1, ai: int = 0, seed: int = 507, enable_after: int = 40, start: bool = True, world=None, now: float = 0.0) -> None:
+        self.now = now
+        self.world = world if world is not None else new_world(seed, "small", "campaign")
         self.world.ai_enabled = False
-        self.seq = 0
-        self.advance(enable_after)  # workers exist and are working
+        self.seq = int(self.world.dmb.clock.get("clock_sequence", 0))
+        if world is None:
+            self.advance(enable_after)  # workers exist and are working
         self.session = MultiplayerSession(self.world, name="table", join_code=CODE, host_secret=SECRET, max_players=max(1, humans), ai_companions=ai,
                                           clock=lambda: self.now)
         self.people: list[Human] = []

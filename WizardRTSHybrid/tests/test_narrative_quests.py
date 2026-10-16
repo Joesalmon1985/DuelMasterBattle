@@ -61,7 +61,7 @@ def test_the_cast_are_existing_simulation_characters_and_nobody_is_created():
     for role, bb in b.items():
         assert characters.person_for(w, bb["kind"], bb["id"]) == bb["pid"]  # one Person per body: the quest uses the body's own
         assert w.dmb.people[bb["pid"]]["link"]["id"] == bb["id"] and w.dmb.people[bb["pid"]]["affiliation"] == "Red"
-    assert len(w.dmb.people) <= people_before + 3 + 8  # (the teacher, the three, and whoever the tick linked beside the wizard): no copies of workers
+    assert len(w.dmb.people) <= people_before + 3 + 16  # (the teacher, the three, the keeper and the rats, the mother, and whoever the tick linked beside the wizard): no copies of workers
     assert len({bb["pid"] for bb in b.values()}) == 3
     # their ordinary lives go on: the lumberjack still belongs to his hut
     hut = w.workers[b["cutter"]["id"]]["building"]
@@ -75,7 +75,7 @@ def test_they_look_like_everybody_else():
     for role, b in bind.items():
         row = rows[b["id"]]
         assert row["class"] in ("worker", "unit") and "has_quest" not in row and "hint" not in row  # no marker, no special row
-    assert not [r for r in rows.values() if r["class"] == "npc" and r["id"] != tutorial.state(w)["teacher"]]
+    assert not [r for r in rows.values() if r["class"] == "npc" and r["id"] != tutorial.state(w)["teacher"] and str(r.get("role", "")) not in ("keeper", "pest", "mother", "official", "contestant")]
 
 
 def test_the_cast_is_deterministic_across_processes_and_stable_through_save_and_load(tmp_path):
@@ -265,7 +265,7 @@ def test_without_the_roles_the_quest_is_not_forced_into_the_settlement():
     nh.adv(w, 3)
     r = quests.rec(w, QID)
     assert r["status"] == "unavailable" and r["why"] == "planter" and quests.status(w, QID) == "unavailable"
-    assert quests.snapshot(w) == []
+    assert [q for q in quests.snapshot(w) if q["id"] == QID] == []
     t = tutorial.state(w)["teacher"]
     tile = w.narrative["residents"][t]["tile"]
     w.player["tx"], w.player["ty"] = tile[0] + 1, tile[1]

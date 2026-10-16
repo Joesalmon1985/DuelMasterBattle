@@ -272,19 +272,24 @@ def test_defeat_is_terminal():
     rec = cp.to_duel(w)
     lid = rec["id"]
     out = cp.fight(w, rec, False)
-    assert out["outcome"] in ("lost", "draw") and out["campaign"]["stage"] == "game_over"
+    assert out["outcome"] in ("lost", "draw") and out["campaign"]["stage"] == "duel", "the stage never records a defeat (a new wizard may arrive)"
     assert campaign.over(w) and wizard.wiz(w)["fate"]["alive"] is False and "player" in w.dmb.tombstones
+    assert wizard.wiz(w)["fate"]["terminal"], "alone and without a session, nobody can bring the apprentice back"
     assert w.dmb.leases[lid]["state"] == "RESOLVED"  # the duel was released properly
     snap = w.snapshot()["story"]["narrative"]["journal"]["campaign"]
-    assert snap["stage"] == "game_over" and snap["game_over"]["text"] == "The apprentice was defeated."
+    assert snap["stage"] == "duel" and snap["game_over"]["text"] == "The apprentice was defeated."
     assert [e["kind"] for e in w.narrative["log"]].count("player_died") == 1
-    # nothing can go on with the dead character
+    from wizard_rts.narrative import mortality
+
+    body = mortality.body_of(w, mortality.me(w))
+    assert body and any(e.get("id") == body and e.get("dead") for e in w.snapshot()["entities"]), "the body lies in the world"
+    # nothing can go on with the dead character (saving the world is allowed: it is permanent, the body is part of it)
     for op in ({"op": "pose", "tx": 1, "ty": 1}, {"op": "fire", "target": next(iter(w.trees))}, {"op": "talk", "npc": cp.mentor(w)}, {"op": "interact"},
-               {"op": "move", "units": [], "tx": 1, "ty": 1}, {"op": "save", "slot": "x"}):
+               {"op": "move", "units": [], "tx": 1, "ty": 1}):
         assert server._handle(w, op)["reason"] == "game_over", op
     ms = int(w.dmb.clock["game_ms"])
     nh.adv(w, 30)
-    assert int(w.dmb.clock["game_ms"]) == ms  # the world is held
+    assert int(w.dmb.clock["game_ms"]) > ms  # the world goes on without the apprentice
     # recorded once, however many times the report is repeated
     again = story.dispatch(w, {"op": "duel_resolve", "duel_id": lid, **cp.play(rec, win=False)})
     assert again.get("reason") == "game_over" or again.get("status") in ("idempotent", "rejected")
@@ -311,14 +316,13 @@ def test_every_other_way_out_of_the_lethal_duel_is_the_apprentices_death(how, tm
     assert not w.dmb.leases[rec["id"]]["state"] == "ACTIVE" and wizard.wiz(w)["fate"]["alive"] is False
 
 
-def test_a_dead_apprentice_is_never_restored_into_an_active_game(tmp_path):
+def test_a_dead_apprentice_is_saved_with_the_world_and_loads_dead(tmp_path):
     w = nh.world()
     persist.save_world(w, tmp_path / "before.pkl")  # an earlier valid save is still valid
     cp.fight(w, cp.to_duel(w), False)
-    with pytest.raises(persist.SaveError) as err:
-        persist.save_world(w, tmp_path / "after.pkl")
-    assert err.value.reason == "game_over" and not (tmp_path / "after.pkl").exists()
-    assert server._handle(w, {"op": "save", "slot": "quit"})["reason"] == "game_over"
+    out = persist.save_world(w, tmp_path / "after.pkl")  # the world is permanent: the dead apprentice and the body are part of it
+    after, _ = persist.load_world(out["path"])
+    assert campaign.over(after) and after.narrative["mortality"]["bodies"]
     older, _ = persist.load_world(tmp_path / "before.pkl")
     assert not campaign.over(older) and campaign.stage(older) == "training"  # loading an earlier save is the player's explicit choice
     # even if a dead world were written by some other route, it loads as dead
@@ -336,7 +340,7 @@ def test_new_game_gives_a_fresh_living_world():
     reply = server._handle(w, {"op": "new_game"})
     fresh = reply["_swap"]
     assert reply["status"] == "ok" and not campaign.over(fresh) and campaign.stage(fresh) == "training" and fresh is not w
-    assert wizard.spells(fresh) == [] and fresh.dmb.people[tutorial.state(fresh)["teacher"]]["alive"]
+    assert wizard.spells(fresh) == [0, 1, 6] and not wizard.wiz(fresh)["lessons"] and fresh.dmb.people[tutorial.state(fresh)["teacher"]]["alive"]
     assert reply["snapshot"] is not None
 
 
@@ -345,8 +349,8 @@ def test_new_game_gives_a_fresh_living_world():
 def test_the_aftermath_uses_ordinary_people_who_react_as_themselves():
     w = nh.world()
     cp.to_aftermath(w)
-    before = len(residents.table(w))
-    assert before == 2  # the mentor's body and the stranger: no one else was created to carry the story
+    before = len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother", "official", "contestant")])
+    assert before == 2  # the mentor's body and the stranger: no one else was created to carry the story (the village's own residents aside)
     seen = {}
     for role in ("lumberjack", "ranger"):
         wid = nh.find_worker(w, role)
@@ -357,7 +361,7 @@ def test_the_aftermath_uses_ordinary_people_who_react_as_themselves():
         assert any(c["id"] == "topic:t_happened" for c in r["choices"]) and any(c["id"] == "topic:t_leave" for c in r["choices"])
         nh.end(w, wid)
     assert seen["lumberjack"] != seen["ranger"]  # a forester and a woodcutter do not say the same thing
-    assert len(residents.table(w)) == before
+    assert len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother", "official", "contestant")]) == before
     cid = next(i for i in w.carriers if w.carriers[i]["faction_name"] == "Red")
     nh.stand_by(w, "carrier", cid)
     assert nh.talk(w, cid)["lines"]
@@ -510,11 +514,12 @@ def test_every_scene_and_aftermath_line_formats_and_names_exist():
     data = json.loads((nh.__file__ and __import__("pathlib").Path(nh.__file__).resolve().parents[1] / "wizard_rts" / "data" / "narrative" / "dialogue" / "campaign_scenes.json").read_text())
     assert set(data["scenes"]) == {"notice", "confrontation", "confrontation_alone", "victory"}
     for sid, sc in data["scenes"].items():
-        assert sc["final"] in ("arrival", "duel", "aftermath"), sid
+        assert sc["final"] in ("arrival", "departure", "aftermath"), sid
         assert sc["pages"] and all(p["lines"] for p in sc["pages"]), sid
     kills = [p for sc in data["scenes"].values() for p in sc["pages"] if any(e["kind"] == "kill_mentor" for e in p.get("effects", []))]
     assert len(kills) == 1  # one place in the story kills the mentor
-    assert sum(1 for sc in data["scenes"].values() if sc["final"] == "duel") == 2  # the two ways to the duel
+    assert sum(1 for sc in data["scenes"].values() if sc["final"] == "departure") == 2  # the two confrontations end with the stranger leaving, a duel only if challenged
+    assert all(r["id"] == "challenge" for r in data["response_sets"]["challenge_or_not"][:1])  # the challenge is a choice, the first one offered
 
 
 # ------------------------------------------------------------------ 9. more guarantees
@@ -522,7 +527,8 @@ def test_every_scene_and_aftermath_line_formats_and_names_exist():
 def test_the_progression_is_applied_not_just_the_flags():
     w = nh.world()
     for lesson in ("meet", "colours", "told_ward", "hidden_ward"):
-        wizard.complete_lesson(w, lesson)  # flags only: no spells (an inconsistent state)
+        wizard.complete_lesson(w, lesson)  # flags only: no spells (an inconsistent state, as an old save might hold)
+    wizard.wiz(w)["spells"], wizard.wiz(w)["weave_size"] = [], 0
     assert wizard.spells(w) == []
     nh.adv(w, 3)
     assert campaign.stage(w) == "explore" and wizard.spells(w) == [0, 1, 6] and wizard.wiz(w)["weave_size"] == 3

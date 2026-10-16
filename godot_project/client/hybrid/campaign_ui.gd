@@ -78,8 +78,8 @@ func _sync() -> void:
 	if c.is_empty():
 		return
 	var go = c.get("game_over", {})
-	if typeof(go) == TYPE_DICTIONARY and not (go as Dictionary).is_empty():
-		_show_game_over(go)
+	if typeof(go) == TYPE_DICTIONARY and not (go as Dictionary).is_empty() and not world.mp:
+		_show_game_over(go)  # the classic single-process server only; a hosted Wizard World shows the session's ending instead (hybrid_world._show_ending)
 		return
 	if scene_active or world._duel_open:
 		return

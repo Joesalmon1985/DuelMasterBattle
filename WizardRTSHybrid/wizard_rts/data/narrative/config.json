@@ -1,5 +1,5 @@
 {
-  "narrative_version": 1,
+  "narrative_version": 2,
   "narrative": {
     "unlock_after_ms": 1200000,
     "slots_per_settlement": 3,
@@ -42,10 +42,37 @@
       "wonder": 2
     },
     "mentor_relationship": 40,
-    "dead_after_defeat": "The apprentice was defeated."
+    "dead_after_defeat": "The apprentice was defeated.",
+    "training_fallback_ms": 300000,
+    "start_with_colours": true,
+    "departure_grace_ms": 90000
   },
   "party": {
     "training_grace_ms": 120000,
     "scene_grace_ms": 90000
+  },
+  "mortality": {
+    "resurrect_ms": 6000,
+    "resurrect_range": 2,
+    "home_radius": 20,
+    "ending_grace_s": 4.0,
+    "mother_relationship": 60,
+    "accost_every_ms": 45000,
+    "accost_range": 2,
+    "mother_walk_every_ms": 8000
+  },
+  "catch_up": {
+    "minutes_per_real_hour": 10,
+    "cap_minutes": 20,
+    "budget_s": 120,
+    "max_absence_days": 30,
+    "min_absence_s": 60
+  },
+  "pests": {
+    "count": 5,
+    "eat_every_ms": 30000,
+    "return_ms": 1200000,
+    "return_count": 3,
+    "max_waves": 6
   }
 }

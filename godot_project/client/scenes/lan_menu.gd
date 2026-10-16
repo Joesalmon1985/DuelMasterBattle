@@ -176,6 +176,8 @@ func show_page(name: String) -> void:
 			_build_join()
 		"lobby":
 			_build_lobby()
+		"catching_up":
+			_build_catching_up()
 	_status_lbl = Label.new()
 	_status_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -221,10 +223,59 @@ func _build_host() -> void:
 
 
 func _build_private() -> void:
-	_title("Loading your campaign" if LanSession.continue_game else "Preparing your world")
-	_text("Your saved campaign is being restored on this device…" if LanSession.continue_game else "The world is being built on this device…")
+	var title := "Preparing your world"
+	var body := "The world is being built on this device…"
+	if LanSession.new_world:
+		title = "A new world"
+		body = "The old world is put aside and a new one is being built…"
+	elif LanSession.new_wizard:
+		title = "A new apprentice"
+		body = "The world saved on this device is being opened for a new apprentice…"
+	elif LanSession.continue_game:
+		title = "Opening your world"
+		body = "The world saved on this device is being opened…"
+	_title(title)
+	_text(body)
 	_hosting_started = false
 	call_deferred("_start_private")
+
+
+## The world was owed some time for the days it was closed (plan amendment 10): the host pays it with the real simulation while this page shows
+## how far it has got; Enter now forfeits what is left.
+var _cu_label: Label
+var _cu_acc := 0.0
+
+
+func _build_catching_up() -> void:
+	_title("The world turned while you were away")
+	_text("The village and its neighbours went on without you. Give it a moment to catch up, or walk in now.")
+	_cu_label = _text("", false)
+	_button("Enter now", true, _enter_now)
+	_button("Back", false, _back_to_main)
+	_poll_catch_up()
+
+
+func _poll_catch_up() -> void:
+	if LanSession.sim == null or not LanSession.sim.connected():
+		_status("Connection to the host lost.", true)
+		return
+	var r: Dictionary = LanSession.sim.op({"op": "lobby"})
+	if str(r.get("status", "")) != "ok":
+		return
+	var cu: Dictionary = r.get("session", {}).get("catch_up", {})
+	var owed := int(cu.get("owed_ms", 0))
+	var paid := int(cu.get("paid_ms", 0))
+	if _cu_label != null and is_instance_valid(_cu_label):
+		_cu_label.text = "%d of %d minutes" % [int(paid / 60000), int(ceil(float(owed) / 60000.0))]
+	if not bool(cu.get("active", false)):
+		_enter_now()
+
+
+func _enter_now() -> void:
+	if _entering_world or LanSession.sim == null:
+		return
+	LanSession.sim.op({"op": "start"})
+	_enter_world()
 
 
 func _start_private() -> void:
@@ -398,6 +449,9 @@ func _poll_lobby() -> void:
 		return
 	var s: Dictionary = r.get("session", {})
 	_lobby_state = str(s.get("state", ""))
+	var cu: Dictionary = s.get("catch_up", {})
+	if bool(cu.get("active", false)) and _lobby_info != null and is_instance_valid(_lobby_info) and LanSession.is_host:
+		_lobby_info.text = "The world is catching up on the time it was closed: %d of %d minutes. START THE WORLD walks in now." % [int(int(cu.get("paid_ms", 0)) / 60000), int(ceil(float(cu.get("owed_ms", 0)) / 60000.0))]
 	if _lobby_players != null and is_instance_valid(_lobby_players):
 		for c in _lobby_players.get_children():
 			_lobby_players.remove_child(c)
@@ -442,6 +496,11 @@ func _process(delta: float) -> void:
 		if _lobby_acc >= 0.5:
 			_lobby_acc = 0.0
 			_poll_lobby()
+	elif page == "catching_up":
+		_cu_acc += delta
+		if _cu_acc >= 0.25:
+			_cu_acc = 0.0
+			_poll_catch_up()
 	elif page in ["host", "private"] and _hosting_started:
 		_host_acc += delta
 		if _host_acc >= 0.25:
@@ -469,6 +528,10 @@ func _check_host() -> void:
 		_status("The host started but refused this device: %s" % str(reply.get("reason", "")), true)
 		return
 	if LanSession.private_session:
+		var lob: Dictionary = LanSession.sim.op({"op": "lobby"})
+		if bool(lob.get("session", {}).get("catch_up", {}).get("active", false)):
+			show_page("catching_up")
+			return
 		LanSession.sim.op({"op": "start"})
 		_enter_world()
 	else:
@@ -500,3 +563,11 @@ func ui_press(label: String) -> bool:
 
 func ui_status() -> String:
 	return _status_lbl.text if _status_lbl != null else ""
+
+
+func ui_page() -> String:
+	return page
+
+
+func ui_catch_up_text() -> String:
+	return _cu_label.text if _cu_label != null and is_instance_valid(_cu_label) else ""

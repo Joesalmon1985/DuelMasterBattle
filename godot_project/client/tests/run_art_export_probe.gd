@@ -11,6 +11,8 @@ const AssetLoader = preload("res://client/scripts/asset_loader.gd")
 
 # One of each kind the phones draw: terrain, a Widelands building, a worker, an animated worker sheet, an OpenRA unit with
 # 32 facings (hull and turret layers), an OpenRA building with construction/damage states.
+# The Trial's zones are the legacy pixel art (plan M5/M6): cave tiles, props, people, creatures and the pest sprites must load from a pack too.
+const TRIAL_PIXEL := ["res://assets/pixel/tiles/ash.png", "res://assets/pixel/tiles/bridge.png", "res://assets/pixel/tiles/cave_floor.png", "res://assets/pixel/tiles/cave_wall.png", "res://assets/pixel/tiles/grass.png", "res://assets/pixel/tiles/path.png", "res://assets/pixel/tiles/water.png", "res://assets/pixel/props/book_black.png", "res://assets/pixel/props/book_red.png", "res://assets/pixel/props/box.png", "res://assets/pixel/props/diamond.png", "res://assets/pixel/props/door_dungeon.png", "res://assets/pixel/props/fire_0.png", "res://assets/pixel/props/idol.png", "res://assets/pixel/props/mirror.png", "res://assets/pixel/props/pendant.png", "res://assets/pixel/props/ring.png", "res://assets/pixel/props/seed.png", "res://assets/pixel/props/sign.png", "res://assets/pixel/props/staff.png", "res://assets/pixel/props/stalagmite.png", "res://assets/pixel/props/stone_shard.png", "res://assets/pixel/chars/assassin_down_0.png", "res://assets/pixel/chars/blue_mage_down_0.png", "res://assets/pixel/chars/dwarf_down_0.png", "res://assets/pixel/chars/elder_down_0.png", "res://assets/pixel/chars/elf_down_0.png", "res://assets/pixel/chars/hedge_mage_down_0.png", "res://assets/pixel/chars/igbut_down_0.png", "res://assets/pixel/chars/ivy_down_0.png", "res://assets/pixel/chars/knight_down_0.png", "res://assets/pixel/chars/official_down_0.png", "res://assets/pixel/chars/red_mage_down_0.png", "res://assets/pixel/chars/throm_down_0.png", "res://assets/pixel/chars/villager_a_down_0.png", "res://assets/pixel/chars/villager_b_down_0.png", "res://assets/pixel/creatures/bloodbeast_world_0.png", "res://assets/pixel/creatures/boa_constrictor_world_0.png", "res://assets/pixel/creatures/cave_troll_world_0.png", "res://assets/pixel/creatures/flying_guardian_world_0.png", "res://assets/pixel/creatures/giant_fly_world_0.png", "res://assets/pixel/creatures/guard_dog_world_0.png", "res://assets/pixel/creatures/manticore_world_0.png", "res://assets/pixel/creatures/mirror_demon_world_0.png", "res://assets/pixel/creatures/rock_grub_world_0.png"]
 const PROBE_IDS := ["widelands.meadow1", "widelands.road", "openra.1tnk", "openra.afld", "openra.e1"]
 
 
@@ -60,6 +62,16 @@ func _run() -> void:
 		if art._tex(key) == null:
 			_fail("probe %s did not load" % id)
 			return
+	for p in TRIAL_PIXEL:
+		var t: Texture2D = AssetLoader.load_texture(str(p))
+		if t == null or t.get_width() <= 0:
+			_fail("Trial pixel art did not load: %s" % str(p))
+			return
+	for pest in ["mindustry.unit.crawler", "mindustry.unit.dagger"]:
+		if not art.items.has(pest) or art._tex(pest) == null:
+			_fail("the warehouse rats' sprite %s did not load" % pest)
+			return
+	print("ART_PROBE_TRIAL %d pixel files" % TRIAL_PIXEL.size())
 	# An animated sheet really advances: the source rectangle moves with time.
 	var animated := ""
 	for id in art.items.keys():

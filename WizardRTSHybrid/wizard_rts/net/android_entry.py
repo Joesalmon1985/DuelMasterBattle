@@ -30,19 +30,24 @@ def _run(args: dict[str, Any]) -> None:
     global _host
     try:
         from wizard_rts.net import protocol
-        from wizard_rts.net.host import HostServer, lan_addresses, load_saved_world, new_world
+        from wizard_rts.net.host import HostServer, lan_addresses, new_world, prepare_world
         from wizard_rts.net.session import MultiplayerSession
 
         _status.update(state="building_world")
         if args.get("runs_dir"):
             os.environ["DMB_RUNS"] = str(args["runs_dir"])  # where Wizard World saves live: the app's own storage, which the menu can also look at
         seed, map_size, profile = int(args.get("seed", 507)), str(args.get("map", "small")), str(args.get("profile", "campaign"))
-        world = (load_saved_world(profile) if args.get("continue") else None) or new_world(seed, map_size, profile)
+        permanent = bool(args.get("runs_dir")) or bool(args.get("continue"))
+        world, prepared = prepare_world(profile, seed, map_size, new_world_flag=bool(args.get("new_world")), new_wizard=bool(args.get("new_wizard")), permanent=permanent)
         session = MultiplayerSession(world, name=str(args.get("name", "Phone")), join_code=args.get("code"), host_secret=args.get("secret"),
                                      max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)),
                                      world_factory=lambda: new_world(seed, map_size, profile), ai_companions=1 if int(args.get("max_players", 2)) == 1 else 0)
         host = HostServer(world, session, bind=str(args.get("bind", "0.0.0.0")), port=int(args.get("port", protocol.DEFAULT_PORT)),
                           discovery_port=(int(args["discovery_port"]) if args.get("discovery_port") else None))
+        host.permanent = permanent
+        host.prepared = prepared
+        if prepared.get("loaded"):
+            host.begin_catch_up(int(prepared.get("owed_ms", 0)))
         host.start()
         _host = host
         _status.update(state="ready", port=host.port, code=session.join_code, secret=session.host_secret, lan=lan_addresses(), name=session.name,
@@ -90,7 +95,11 @@ def stop() -> str:
 
 
 def status() -> str:
-    return json.dumps({"status": "ok", "python": sys.version.split()[0], "thread_alive": bool(_thread is not None and _thread.is_alive()), **_status})
+    extra = {}
+    if _host is not None:
+        extra["catch_up"] = {k: _host.catch_up.get(k) for k in ("owed_ms", "paid_ms", "forfeited_ms", "active")}
+        extra["prepared"] = {k: v for k, v in getattr(_host, "prepared", {}).items() if k in ("loaded", "retired", "host_was_dead", "archived", "game_ms")}
+    return json.dumps({"status": "ok", "python": sys.version.split()[0], "thread_alive": bool(_thread is not None and _thread.is_alive()), **_status, **extra})
 
 
 def log_tail(n: int = 40) -> str:

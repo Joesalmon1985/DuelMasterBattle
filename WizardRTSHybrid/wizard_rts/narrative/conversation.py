@@ -76,9 +76,25 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
 
         tutorial.refresh(world)  # the stories may have unlocked a moment ago: cast them before the teacher answers
         r = sp["res"]
+        from wizard_rts.narrative import ledger, mortality, mother
+
+        facts = ledger.facts(world, mortality.me(world))
+        from wizard_rts.narrative import party
+
+        facts["mira_near"] = 1 if party.ai_near(world, 4) else 0  # the fellow apprentice within a few tiles: people may speak of her
+        if r["role"] == mother.ROLE:
+            facts.update(mother.facts(world, sp["pid"]))
+        elif r["role"] == "keeper":
+            from wizard_rts.narrative import pests
+
+            facts.update(pests.facts(world, sp["pid"]))
+            found = pests.home(world)
+            facts["logs"] = int(world.stocks.get(found[1]["id"], {}).get("log", 0)) if found else 0
         return {"template": r["graph"], "speaker": r["speaker"], "speaker_pid": sp["pid"], "name": name,
-                "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": {}}, {}
-    facts = occupations.facts_for(world, sp)
+                "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": facts}, {}
+    from wizard_rts.narrative import ledger, mortality
+
+    facts = {**ledger.facts(world, mortality.me(world)), **occupations.facts_for(world, sp)}  # the behaviour ledger is a fact for everybody
     octx = {"template": "occupation", "speaker": "occupation", "speaker_pid": sp["pid"], "name": name, "facts": facts, "cast": campaign.names_for(world, sp["pid"])}
     gctx = quests.ctx_for(world, sp)
     if gctx is not None:
@@ -137,6 +153,8 @@ def talk(world: Any, key: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "dead"}
     if sp["kind"] == "resident" and sp["res"]["status"] != "present":
         return {"status": "rejected", "reason": "dead" if sp["res"]["status"] == "dead" else "gone"}
+    if sp["kind"] == "resident" and sp["res"]["role"] == "pest":
+        return {"status": "rejected", "reason": "pest"}
     if campaign.over(world):
         return {"status": "rejected", "reason": "game_over"}
     if campaign.active_scene(world) is not None:

@@ -45,6 +45,7 @@ def start(world: Any) -> None:
 
     PeopleService(world.dmb).set_relationship(st["teacher"], "player", int(config.get("campaign", "mentor_relationship", 40)))
     campaign.state(world)
+    campaign.grant_basics(world)  # an apprentice of a season: the colours and the weave from the first moment; the lessons teach the method
 
 
 def refresh(world: Any) -> None:

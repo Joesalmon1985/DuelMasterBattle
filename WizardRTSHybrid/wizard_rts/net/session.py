@@ -24,6 +24,7 @@ Authority
 
 from __future__ import annotations
 
+import os
 import secrets
 import time
 from collections import deque
@@ -34,7 +35,7 @@ from sim.dmb.time.clock import ClockService
 
 from wizard_rts import story
 from wizard_rts.coords import tile_to_hex
-from wizard_rts.narrative import campaign, duel_lease, party
+from wizard_rts.narrative import campaign, duel_lease, ledger, mortality, mother, party
 from wizard_rts.net import ai_wizard, protocol, pvp
 from wizard_rts.net.protocol import HOST_ONLY_OPS, PASSTHROUGH_OPS, PLAYER_OPS, SOLO_OPS
 
@@ -47,6 +48,11 @@ SPAWN_RADIUS = 14
 MIN_SPAWN_DISTANCE = 2
 FACINGS = ("up", "down", "left", "right")
 NOTICE_CAP = 50
+# what a dead wizard may still do: look, listen, leave; everything that acts in the world is refused with `dead` (plan section 3.2)
+DEAD_ALLOWED = frozenset({"ping", "lobby", "start", "state", "leave", "terrain", "tile", "resources", "profile", "tech", "cards", "menu", "story_view", "journal",
+                          "inspect_building", "inspect_person", "end_talk", "opening_done", "pvp_view", "pvp_leave", "pvp_ward", "pvp_cast", "pvp_forfeit",
+                          "save", "new_game"})  # the duel that killed them is finished: its own refusals (`finished`) are the truthful ones
+ENDING_ALLOWED = frozenset({"ping", "lobby", "state", "leave", "pvp_view", "pvp_leave", "story_view", "journal", "terrain", "tile", "profile", "inspect_person", "inspect_building", "save"})
 
 
 class Link:
@@ -112,6 +118,11 @@ class MultiplayerSession:
         self._duel_counter = 0
         self.base_story = story.state(world)  # created now so every per-player record shares the same containers
         self.started_at = self.clock()
+        self.ending: dict[str, Any] | None = None  # the game has ended for the humans of this session (every human is dead): see _check_ending
+        self.on_ending: Callable[["MultiplayerSession"], None] | None = None  # the host saves the world and winds the session down
+        self.ending_handled = False
+        self.ending_grace_s = 4.0
+        self.catch_up: dict[str, Any] = {"owed_ms": 0, "paid_ms": 0, "forfeited_ms": 0, "active": False}  # the host's offline catch-up (host.py owns it)
 
     # ------------------------------------------------------------------ info
     def game_ms(self) -> int:
@@ -126,6 +137,8 @@ class MultiplayerSession:
     def lobby_view(self) -> dict[str, Any]:
         return {"name": self.name, "state": self.state, "max_players": self.max_players, "seed": int(self.world.seed), "map": str(self.world.map_size),
                 "profile": str(self.world.profile), "game_ms": self.game_ms(),
+                "catch_up": {k: self.catch_up.get(k, 0) for k in ("owed_ms", "paid_ms", "forfeited_ms", "active")},
+                "generation": party.generation(self.world) if "narrative" in self.world.__dict__ else 1,
                 "players": [{"id": l.id, "name": l.name, "host": l.host, "connected": l.connected, "colour": self.world.players[l.id].get("colour", ""),
                              "spawned": l.spawned, "ai": l.ai} for l in self._links_in_order()]}
 
@@ -167,6 +180,10 @@ class MultiplayerSession:
         party.set_present(w, link.id, link.connected or link.ai)
         with party.as_player(w, link.id):
             campaign.on_join(w)
+        mother.ensure(w, link.id)  # every apprentice has a mother in the village (she is cast lazily, like every other resident)
+
+    def _dead(self, link: Link) -> bool:
+        return "narrative" in self.world.__dict__ and mortality.is_dead(self.world, link.id)
 
     def _bind(self, link: Link, conn: Any, now: float) -> None:
         if link.conn is not None and link.conn is not conn:
@@ -330,6 +347,10 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "not_allowed_in_multiplayer", "op": op}
         if op in HOST_ONLY_OPS and not link.host:
             return {"status": "rejected", "reason": "host_only", "op": op}
+        if self.ending is not None and op not in ENDING_ALLOWED:
+            return {"status": "rejected", "reason": "ending", "op": op, "ending": dict(self.ending)}
+        if op not in DEAD_ALLOWED and self._dead(link):
+            return {"status": "rejected", "reason": "dead", "op": op}
         if op == "ping":
             return {"status": "ok", "pong": message.get("t"), "game_ms": self.game_ms()}
         if op == "lobby":
@@ -342,10 +363,35 @@ class MultiplayerSession:
             return self.state_view(link, message, now)
         if op == "move":
             return self.move(link, message, now)
+        if op == "teleport":  # headed tests: a long walk is not what they test
+            if os.environ.get("HYBRID_DEV_OPS") != "1" or self.state != "playing" or not link.spawned:
+                return {"status": "rejected", "reason": "not_allowed", "op": op}
+            self.world.players[link.id].update(tx=int(message.get("tx", 0)), ty=int(message.get("ty", 0)), facing="down")
+            return {"status": "ok", **self._pose(link)}
+        if op == "trial_teleport":  # headed tests: stand in a zone of the Trial without walking the ones before it
+            if os.environ.get("HYBRID_DEV_OPS") != "1" or self.state != "playing" or not link.spawned or "narrative" not in self.world.__dict__:
+                return {"status": "rejected", "reason": "not_allowed", "op": op}
+            from wizard_rts.trial import run as trial
+
+            rec = trial.seat_rec(self.world, link.id)
+            if rec is None or not rec["inside"]:
+                return {"status": "rejected", "reason": "not_inside", "op": op}
+            rec.update(zone=str(message.get("zone", rec["zone"])), x=int(message.get("x", rec["x"])), y=int(message.get("y", rec["y"])))
+            if rec["zone"] not in rec["visited"]:
+                rec["visited"].append(rec["zone"])
+            with self.acting(link):
+                return {"status": "ok", "view": trial.view(self.world, link.id)}
         if op.startswith("pvp_"):
             return self._pvp(link, op, message, now)
         if op in PASSTHROUGH_OPS:
-            return self._passthrough(link, op, message)
+            reply = self._passthrough(link, op, message)
+            if "narrative" in self.world.__dict__:
+                if op == "fire" and reply.get("status") == "ok":
+                    from wizard_rts.narrative import pests
+
+                    pests.note_fire(self.world, link.id, str(message.get("target", "")))
+                self._check_ending(now)  # a story duel lost to the death is a death like any other
+            return reply
         return {"status": "rejected", "reason": "unknown_op", "op": op}
 
     # ------------------------------------------------------------------ single-player save and New game
@@ -359,12 +405,32 @@ class MultiplayerSession:
         if op == "save":
             reply = server._handle(self.world, {"op": "save", "slot": str(message.get("slot", "manual"))})
             return reply if isinstance(reply, dict) else {"status": "rejected", "reason": "bad_reply"}
-        if self.world_factory is None:
-            return {"status": "rejected", "reason": "no_world_factory"}
-        fresh = self.world_factory()
-        self._swap_world(fresh)
+        return self.new_wizard(link, now)
+
+    def new_wizard(self, link: Link, now: float) -> dict[str, Any]:
+        """A new apprentice in the same world (the world is permanent, plan section 3.3): the host's wizard, dead or alive, is retired with everything
+        the world remembers of them; the host link takes a fresh seat, a new name is welcome, and the new wizard starts beside the home settlement."""
+        w = self.world
+        if "narrative" not in w.__dict__:
+            return {"status": "rejected", "reason": "no_narrative"}
+        from wizard_rts.narrative import mother as _mother, residents, tutorial
+
+        retired = party.retire(w, link.id, "new_wizard")
+        for d in list(self.duels.values()):
+            if link.id in d.players:
+                d.forfeit(link.id, "forfeit", now)
+        link.duel_id, link.invite, link.outgoing = "", None, ""
+        home = _mother.home_tile(w)
+        if home is not None:
+            tile = residents.free_tile(w, home[0], home[1], 8) or home
+            w.players[link.id].update(tx=int(tile[0]), ty=int(tile[1]), facing="down")
+        self._seat(link)
+        self.ending = None
+        self.ending_handled = False
+        self.events.append({"kind": "new_wizard", "player": link.id, "retired": retired, "game_ms": self.game_ms()})
         view = self.state_view(link, {"full": True}, now)
-        return {"status": "ok", "new_game": True, "terrain": fresh.terrain.wire() if fresh.terrain is not None else None, "snapshot": view["snapshot"]}
+        return {"status": "ok", "new_game": True, "new_wizard": True, "retired": retired, "generation": party.generation(w),
+                "terrain": w.terrain.wire() if w.terrain is not None else None, "snapshot": view["snapshot"]}
 
     def _swap_world(self, world: Any) -> None:
         """Replace the world object (New game): every seat keeps its place, its duels and invites end, the host loop adopts the new object."""
@@ -411,6 +477,9 @@ class MultiplayerSession:
     def start(self, link: Link) -> dict[str, Any]:
         if self.state == "playing":
             return {"status": "ok", "idempotent": True, "state": self.state}
+        if self.catch_up.get("active"):  # "Enter now": whatever the world is still owed is forfeited (the host writes the debt off)
+            self.catch_up["forfeited_ms"] = max(0, int(self.catch_up["owed_ms"]) - int(self.catch_up["paid_ms"]))
+            self.catch_up["active"] = False
         self.state = "playing"
         self._ensure_companions()
         for other in self._links_in_order():
@@ -456,6 +525,11 @@ class MultiplayerSession:
         duel = self.duels.get(link.duel_id)
         if duel is not None and duel.state != "finished":
             return {"status": "rejected", "reason": "in_duel", **self._pose(link)}
+        if "narrative" in self.world.__dict__:
+            from wizard_rts.trial import run as trial
+
+            if trial.inside(self.world, link.id):
+                return {"status": "rejected", "reason": "inside_trial", **self._pose(link)}
         rec = self.world.players[link.id]
         dist = abs(tx - int(rec["tx"])) + abs(ty - int(rec["ty"]))
         if dist > 1:
@@ -467,6 +541,8 @@ class MultiplayerSession:
                 return {"status": "rejected", "reason": "too_fast", **self._pose(link)}
             if self._occupied((tx, ty), link.id):
                 return {"status": "rejected", "reason": "occupied", **self._pose(link)}
+            if "narrative" in self.world.__dict__ and not mother.allows_tile(self.world, link.id, (tx, ty)):
+                return {**mother.refusal(self.world, link.id), **self._pose(link)}  # grounded: her line is the reason
             with self.acting(link):
                 r = self.world.set_pose(tx, ty, facing, snapshot=False)
             if r.get("status") != "ok":
@@ -479,8 +555,23 @@ class MultiplayerSession:
         return {"status": "ok", **self._pose(link)}
 
     # ------------------------------------------------------------------ views
+    def _drain_announcements(self) -> None:
+        """Deaths, resurrections, the rats, the mother: whatever the world announced since the last look becomes notices for every link (the one
+        addressed by a conversation gets the conversation)."""
+        if "narrative" not in self.world.__dict__:
+            return
+        for a in mortality.drain_announcements(self.world):
+            if a["kind"] == "conversation":
+                l = self.links.get(str(a.get("seat", "")))
+                if l is not None:
+                    l.notice("conversation", reply=a["reply"], npc=a["reply"].get("npc", ""), name=a["reply"].get("name", ""))
+                continue
+            for l in self.links.values():
+                l.notice(a["kind"], **{k: v for k, v in a.items() if k != "kind"})
+
     def state_view(self, link: Link, message: dict[str, Any], now: float) -> dict[str, Any]:
         full = bool(message.get("full", False))
+        self._drain_announcements()
         try:
             radius = max(8, min(120, int(message.get("radius", self.view_radius))))
         except (TypeError, ValueError):
@@ -490,15 +581,34 @@ class MultiplayerSession:
             snap = self.world.snapshot(tree_sync=not full, tree_sent=link.tree_sent, view=(int(rec["tx"]), int(rec["ty"]), radius))
         if not full:
             self._lean(snap, (int(rec["tx"]), int(rec["ty"]), radius))
+        narrative_on = "narrative" in self.world.__dict__
         for p in snap.get("players", []):
             other = self.links.get(str(p["id"]))
             p["connected"] = bool(other and other.connected)
             p["in_duel"] = bool(other and other.duel_id and self.duels.get(other.duel_id) and self.duels[other.duel_id].state != "finished")
             p["you"] = str(p["id"]) == link.id
             p["ai"] = bool(other and other.ai)
+            p["dead"] = bool(narrative_on and other and mortality.is_dead(self.world, other.id))
+            if p["dead"]:
+                p["body"] = mortality.body_of(self.world, other.id) or ""
         out = {"status": "ok", "seq": message.get("seq"), "you": link.id, "session_state": self.state, "snapshot": snap, "view_radius": radius,
                "duel": self._duel_view(link, now), "invite": self._invite_view(link, now), "outgoing": link.outgoing,
                "players_online": sum(1 for l in self.links.values() if l.connected and not l.ai), "notices": list(link.notices), "pose": self._pose(link)}
+        if narrative_on:
+            from wizard_rts.trial import run as trial
+
+            fate = mortality.fate_of(self.world, link.id)
+            out["you_dead"] = {**fate, "body": mortality.body_of(self.world, link.id) or ""} if fate and not fate.get("alive", True) else {}
+            out["resurrection"] = mortality.channel_view(self.world, link.id)
+            out["grounded"] = mother.is_grounded(self.world, link.id)
+            with self.acting(link):
+                out["trial"] = trial.view(self.world, link.id)
+            for p in snap.get("players", []):
+                srec = trial.seat_rec(self.world, str(p["id"]))
+                if srec and srec["inside"]:
+                    p["trial"] = {"zone": srec["zone"], "x": srec["x"], "y": srec["y"], "facing": srec["facing"]}
+        if self.ending is not None:
+            out["ending"] = dict(self.ending)
         link.notices.clear()
         return out
 
@@ -603,6 +713,13 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "no_such_player"}
         if not target.connected:
             return {"status": "rejected", "reason": "target_offline"}
+        if self._dead(target):
+            return {"status": "rejected", "reason": "target_dead"}
+        if "narrative" in self.world.__dict__:
+            from wizard_rts.trial import run as trial
+
+            if trial.inside(self.world, link.id) or trial.inside(self.world, target.id):
+                return {"status": "rejected", "reason": "inside_trial"}
         if self._in_open_duel(link) or self._in_open_duel(target):
             return {"status": "rejected", "reason": "already_in_duel"}
         if link.outgoing:
@@ -651,8 +768,11 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "already_in_duel"}
         duel = pvp.PvpDuel(inv["duel_id"], challenger.id, link.id, {challenger.id: challenger.name, link.id: link.name}, inv["format"],
                            pvp.duel_seed(int(self.world.seed), inv["duel_id"]), now)
-        duel.token = ClockService(self.world.dmb.clock).acquire_pause("pvp_duel", duel.id)
+        duel.token = ""  # a duel never stops the world in Wizard World (plan amendment 4): the village goes on around the duellists
         self.duels[duel.id] = duel
+        if "narrative" in self.world.__dict__:
+            ledger.bump(self.world, "pvp_duels", seat=challenger.id)
+            ledger.bump(self.world, "pvp_duels", seat=link.id)
         challenger.duel_id = duel.id
         link.duel_id = duel.id
         self.world.events.append({"kind": "pvp_duel_begun", "duel": duel.id, "players": list(duel.players)})
@@ -667,19 +787,64 @@ class MultiplayerSession:
                 l.notice(kind, **data)
 
     def _after_duel_change(self, duel: pvp.PvpDuel, now: float) -> None:
-        if duel.state == "finished" and duel.token:
+        if duel.state != "finished" or getattr(duel, "settled", False):
+            return
+        duel.settled = True  # type: ignore[attr-defined]
+        if duel.token:
             try:
                 ClockService(self.world.dmb.clock).release_pause(duel.token)
             except Exception:  # noqa: BLE001 - already released (a cycle reset)
                 pass
             duel.token = ""
-            self.world.events.append({"kind": "pvp_duel_ended", "duel": duel.id, "winner": duel.result["winner"] if duel.result else "", "reason": duel.reason})
-            self._notify_duelists(duel, "duel_finished", duel_id=duel.id)
+        winner = duel.result["winner"] if duel.result else ""
+        self.world.events.append({"kind": "pvp_duel_ended", "duel": duel.id, "winner": winner, "reason": duel.reason})
+        self._notify_duelists(duel, "duel_finished", duel_id=duel.id)
+        self._settle_duel(duel, winner, now)
+
+    def _settle_duel(self, duel: pvp.PvpDuel, winner: str, now: float) -> None:
+        """A duel between apprentices is to the death: the loser dies where they stand and their body stays (plan section 3.2). A draw kills nobody;
+        a rival who lost their connection has not fled, so a disconnect forfeit kills nobody either; a wizard who forfeits by choice has."""
+        if "narrative" not in self.world.__dict__:
+            return
+        if not winner:
+            ledger.bump(self.world, "draws")
+            return
+        loser = duel.rival(winner)
+        ledger.bump(self.world, "pvp_wins", seat=winner)
+        ledger.bump(self.world, "pvp_losses", seat=loser)
+        if duel.reason == "disconnected":
+            return
+        if loser in self.links and not self._dead(self.links[loser]):
+            mortality.die(self.world, loser, "duel", by=winner, terminal=False)
+            self._check_ending(now)
+
+    def _check_ending(self, now: float) -> None:
+        """The game ends for this session's humans when none of them is alive: a private session with its one human, a shared world with both.
+        The world itself goes on and is saved with the bodies in it (the host does that, `on_ending`)."""
+        if self.ending is not None or self.state != "playing" or "narrative" not in self.world.__dict__:
+            return
+        humans = [l for l in self.links.values() if not l.ai]
+        if not humans or not all(self._dead(l) for l in humans):
+            return
+        kind = "all_dead" if len(humans) > 1 else "human_dead"
+        self.ending = {"kind": kind, "at": now, "game_ms": self.game_ms(), "names": [l.name for l in sorted(humans, key=lambda l: l.id)]}
+        for l in humans:
+            mortality.mark_terminal(self.world, l.id)
+        for l in self.links.values():
+            l.notice("ending", ending=kind)
+        self.events.append({"kind": "ending", "ending": kind, "game_ms": self.game_ms()})
 
     # ------------------------------------------------------------------ housekeeping
     def tick(self, now: float | None = None) -> None:
         """Wall-clock admission rules: invite expiry, cast timeouts, disconnect forfeits, ghost removal. Called by the host loop."""
         now = self.clock() if now is None else now
+        if "narrative" in self.world.__dict__:
+            self._drain_announcements()
+            self._check_ending(now)
+            if self.ending is not None and not self.ending_handled and now - float(self.ending["at"]) >= self.ending_grace_s:
+                self.ending_handled = True
+                if self.on_ending is not None:
+                    self.on_ending(self)
         for ai in list(self.ais.values()):
             if ai.disabled:
                 continue

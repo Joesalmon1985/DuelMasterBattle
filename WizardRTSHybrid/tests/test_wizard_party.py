@@ -70,8 +70,9 @@ def test_a_single_human_who_loses_the_lethal_duel_is_over():
     t.wait_for_stage("confrontation")
     rec = t.through_scene(joe)["duel_lease"]["payload"]["duel"]
     fight(t, joe, rec, False)
-    assert campaign.stage(t.world) == "game_over" and campaign.over(t.world)
-    assert joe.op("talk", npc=t.mentor)["status"] == "rejected"
+    assert campaign.stage(t.world) == "duel" and campaign.over(t.world), "the stage never records a defeat; the wizard's fate does"
+    assert joe.op("talk", npc=t.mentor)["reason"] in ("dead", "ending")
+    assert t.session.ending and t.session.ending["kind"] == "human_dead", "alone, death ends the session (the world is saved with the body)"
 
 
 # ------------------------------------------------------------------ two humans
@@ -89,7 +90,7 @@ def test_two_humans_have_their_own_wizards_conversations_and_flags():
     assert a is not b
     t.learn(joe)
     with ann.seat_state():
-        assert wizard.spells(t.world) == [] and not wizard.lesson_done(t.world, "meet")
+        assert wizard.spells(t.world) == [0, 1, 6] and not wizard.lesson_done(t.world, "meet"), "the colours from the first moment; the lessons are hers to take"
     with joe.seat_state():
         assert wizard.spells(t.world) == [0, 1, 6] and wizard.lesson_done(t.world, "meet")
     # both talk to the same person at once; neither conversation closes the other's
@@ -233,7 +234,8 @@ def test_the_campaign_is_over_when_no_human_is_left():
     fight(t, joe, rec_j, False)
     assert campaign.stage(t.world) == "duel"
     fight(t, ann, rec_a, False)
-    assert campaign.stage(t.world) == "game_over" and campaign.over_for_all(t.world)
+    assert campaign.stage(t.world) == "duel" and campaign.over_for_all(t.world)
+    assert t.session.ending and t.session.ending["kind"] == "all_dead"
 
 
 def test_a_wizard_who_goes_away_never_blocks_the_story_and_is_told_what_they_missed():

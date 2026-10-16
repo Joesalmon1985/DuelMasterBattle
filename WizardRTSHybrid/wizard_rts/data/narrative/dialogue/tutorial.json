@@ -29,6 +29,154 @@
        ]
       },
       {
+       "id": "mira_near",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "mira_near",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_mira"
+        ]
+       },
+       "sets": [
+        "said_mira"
+       ],
+       "lines": [
+        "And Mira, trailing you like a second shadow. Good. She learned the stance in a week; watch her feet, not her hands, and do not let her talk you into a duel before you can hold a Ward.",
+        "Now. Where were we."
+       ]
+      },
+      {
+       "id": "log_thanks",
+       "when": {
+        "fact": [
+         "log_for_mentor"
+        ],
+        "not_fact": [
+         "mentor_thanked"
+        ]
+       },
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "mentor_thanked"
+        },
+        {
+         "kind": "relationship",
+         "delta": 5
+        }
+       ],
+       "lines": [
+        "You brought the log. Dry, from the good stack; the keeper likes you, then, which is rarer than you think.",
+        "The brazier will burn tonight. Thank you. Now, what else?"
+       ]
+      },
+      {
+       "id": "steered",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_deaths",
+          "gte": 2
+         }
+        ],
+        "forbids": [
+         "said_steered"
+        ]
+       },
+       "sets": [
+        "said_steered"
+       ],
+       "lines": [
+        "Twice dead before noon. Some mornings I wonder whether the pair of you are steering, or being steered by something that finds this funny.",
+        "Well. Whatever it is, it has not finished with you. Ask your questions."
+       ]
+      },
+      {
+       "id": "killer",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_kills",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_killer"
+        ]
+       },
+       "sets": [
+        "said_killer"
+       ],
+       "lines": [
+        "You killed your friend in the road and brought them back before supper. I had a speech prepared about what it means to hold power over another person. I am going to give it anyway, because I wrote it.",
+        "Power is a debt. You now owe one. Ask me what you like; you have at least earned the questions."
+       ]
+      },
+      {
+       "id": "died",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_deaths",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_died"
+        ]
+       },
+       "sets": [
+        "said_died"
+       ],
+       "lines": [
+        "You died. I felt it in my teeth, the way one does. And then somebody fetched you back, which is a thing I have seen done perhaps twice.",
+        "Do you know how few wizards ever learn what you now know for nothing? Try to make it worth the trouble."
+       ]
+      },
+      {
+       "id": "brawler",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "pvp_duels",
+          "gte": 3
+         }
+        ],
+        "not_lessons": [
+         "told_ward"
+        ],
+        "forbids": [
+         "said_brawler"
+        ]
+       },
+       "sets": [
+        "said_brawler"
+       ],
+       "lines": [
+        "Three duels before your first lesson. I have taught stubborn pupils and lazy ones; you are the first to arrive already out of breath.",
+        "Since you plainly know which end of a Ward is which, we can skip the part where I explain what a colour is. The method, you still need."
+       ]
+      },
+      {
        "id": "told_won_quick",
        "when": {
         "requires": [
@@ -221,6 +369,36 @@
          ],
          "weave_size": 3
         },
+        {
+         "kind": "complete_lesson",
+         "lesson": "colours"
+        }
+       ],
+       "sets": [
+        "colours"
+       ]
+      },
+      {
+       "id": "skip_theory",
+       "text": "I know the colours. Test me.",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "not_lessons": [
+         "colours"
+        ],
+        "facts": [
+         {
+          "name": "my_pvp_duels",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "So I gather. Then we skip the pages and go to the part that matters: reading what a Ward tells you. Break mine; I will tell you what it is, and you will listen to the answers instead of guessing."
+       ],
+       "effects": [
         {
          "kind": "complete_lesson",
          "lesson": "colours"
@@ -457,6 +635,27 @@
          "kind": "complete_lesson",
          "lesson": "world"
         }
+       ]
+      },
+      {
+       "id": "need_anything",
+       "text": "Is there anything you need?",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "not_fact": [
+         "mentor_wants_log"
+        ]
+       },
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "mentor_wants_log"
+        }
+       ],
+       "lines": [
+        "Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if you do not. I am old and I feel the cold, and that is the whole of the errand."
        ]
       },
       {

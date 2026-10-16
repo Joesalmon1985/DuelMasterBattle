@@ -713,6 +713,72 @@
      "id": "favour_offered"
     }
    ]
+  },
+  {
+   "id": "rumour_road",
+   "text": "Any news from the road?",
+   "when": {
+    "stage": [
+     "explore"
+    ]
+   },
+   "lines": [
+    {
+     "text": "A man in a black travelling cloak came up the east road last week asking after {mentor} by name. Polite. Too polite. I did not like it.",
+     "when": {
+      "persona": {
+       "any": [
+        "M",
+        "G",
+        "R"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Carriers say there is a stranger on the roads with light under his cloak, asking after old teachers. Carriers say a lot of things.",
+     "when": {
+      "persona": {
+       "any": [
+        "A",
+        "S",
+        "C",
+        "D"
+       ]
+      }
+     }
+    },
+    "And the usual: the Trial gate east of here opens again this season, and the road is full of fools walking towards it."
+   ]
+  },
+  {
+   "id": "who_counts",
+   "text": "Does anyone keep count of all this?",
+   "once": true,
+   "when": {
+    "facts": [
+     {
+      "name": "my_accosted",
+      "gte": 8
+     },
+     {
+      "name": "fourth_wall",
+      "lte": 1
+     }
+    ]
+   },
+   "effects": [
+    {
+     "kind": "ledger",
+     "key": "fourth_wall"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Somebody does. Not me. I get asked the same four things by every apprentice with a staff, I answer them, and the hills do not change. If you find out who is counting, tell them I would like a day off."
+    }
+   ],
+   "priority": true
   }
  ]
 }

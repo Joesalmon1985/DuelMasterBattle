@@ -1,0 +1,293 @@
+{
+ "id": "mother",
+ "note": "Placeholder authored text (owner review pending). The apprentice's mother. Variants read the behaviour ledger as facts: grounded, kills, protests, resurrections, deaths, victim (a name), child (a name).",
+ "speakers": {
+  "mother": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "id": "grounded_third",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         },
+         {
+          "name": "kills",
+          "gte": 3
+         }
+        ]
+       },
+       "lines": [
+        "I have stopped counting. {victim} is dead again, and you are standing there with that face.",
+        "I am not angry. I am past angry. I am into something the priests do not have a word for. Put them back."
+       ]
+      },
+      {
+       "id": "grounded_second",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         },
+         {
+          "name": "kills",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "You have killed your friend? Again? Well. You are not going anywhere until you put them back.",
+        "And do not tell me who started it. I was at the window."
+       ]
+      },
+      {
+       "id": "grounded_protested",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         },
+         {
+          "name": "protests",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "I heard you the first time. A fair duel. Everybody agreed. Very proper.",
+        "{victim} is still dead, and you are still not leaving this village until that changes."
+       ]
+      },
+      {
+       "id": "grounded_first",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "{child}. Come here. No, here. Look at me.",
+        "{victim} is lying in the square with the chickens walking round them, and you are off somewhere with your staff. You are not going anywhere until you put them back."
+       ]
+      },
+      {
+       "id": "thanks",
+       "when": {
+        "facts": [
+         {
+          "name": "resurrections",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "thanked"
+        ]
+       },
+       "sets": [
+        "thanked"
+       ],
+       "lines": [
+        "There. Was that so hard? Now the pair of you go and be useful, and if I see another body in my square I will put you both in it."
+       ],
+       "lines_alt": [
+        [
+         "You did as you said. Write that down somewhere; it will not always be true."
+        ]
+       ]
+      },
+      {
+       "id": "been_dead",
+       "when": {
+        "facts": [
+         {
+          "name": "deaths",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "mourned"
+        ]
+       },
+       "sets": [
+        "mourned"
+       ],
+       "lines": [
+        "You died. I want you to know that I knew. A mother knows. I was fetching water and the bucket went cold.",
+        "Whatever you do out there, you come back. That is the only rule I have ever given you."
+       ]
+      },
+      {
+       "id": "told_news",
+       "when": {
+        "stage": [
+         "aftermath",
+         "complete",
+         "victory"
+        ],
+        "facts": [
+         {
+          "name": "mentor_dead",
+          "gte": 1
+         },
+         {
+          "name": "arrived_after",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "told_news"
+        ]
+       },
+       "sets": [
+        "told_news"
+       ],
+       "lines": [
+        "Where were you? No, do not tell me. While you were off wherever you were, a stranger in a black cloak walked into the square and killed {mentor}. Just like that. Nobody could do a thing.",
+        "He said he would be back when you were strong enough to be worth the trouble. I would take that as a reason to be somewhere else, but you never listened to me either."
+       ]
+      },
+      {
+       "id": "newcomer",
+       "when": {
+        "facts": [
+         {
+          "name": "arrived_after",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "told_after"
+        ]
+       },
+       "sets": [
+        "told_after"
+       ],
+       "lines": [
+        "You came to us after it all happened. {mentor} is dead: killed in the square by a stranger who walked in as if the road was his, and walked out again the same way.",
+        {
+         "text": "There was an apprentice here before you. {previous}. Do not go the way they went; I have buried enough.",
+         "when": {
+          "facts": [
+           {
+            "name": "previous",
+            "truthy": true
+           }
+          ]
+         }
+        },
+        "Learn what you can from whoever is left. And eat something."
+       ]
+      },
+      {
+       "id": "ordinary",
+       "lines": [
+        "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange.",
+        "If you are going to the warehouse, tell them their rats are in my pantry now."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "protest",
+       "text": "It was a duel. They agreed to it.",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         }
+        ]
+       },
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "protests"
+        }
+       ],
+       "lines": [
+        "I don't care who started it. Resurrect them."
+       ]
+      },
+      {
+       "id": "leave_anyway",
+       "text": "And if I just walk off?",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         }
+        ]
+       },
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "protests"
+        }
+       ],
+       "lines": [
+        "Then you will find that every road out of this village has me standing in it. I raised you. I know how fast you walk."
+       ]
+      },
+      {
+       "id": "will_do",
+       "text": "I'll put them back.",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "Good. Stand next to them and do whatever it is you do. I will be watching from the window, so do it properly."
+       ],
+       "ends": true
+      },
+      {
+       "id": "how_are_you",
+       "text": "How are you?",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ]
+       },
+       "lines": [
+        "Old. Busy. Proud, mostly, though I would not say it to your face. Go on, you have a village to see to."
+       ],
+       "ends": true
+      },
+      {
+       "id": "bye",
+       "text": "I have to go.",
+       "when": {
+        "facts": [
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ]
+       },
+       "lines": [
+        "Go on then. Come back for supper."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  }
+ }
+}

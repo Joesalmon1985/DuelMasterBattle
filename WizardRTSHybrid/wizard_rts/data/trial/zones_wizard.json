@@ -1,0 +1,285 @@
+{
+ "note": "Wizard World's overlay on the legacy Deathtrap zones (legacy_zones.json): adapted texts, two-player rules and provenance. `ported` lists the zones the host plays; the rest are drawn by the developer tools only until their milestone. Encoding slips in the legacy export (the long dash) are corrected here.",
+ "ported": [
+  "dd_entrance",
+  "dd_fork",
+  "dd_galleries",
+  "dd_pit",
+  "dd_lower",
+  "dd_trialmaster",
+  "dd_idol",
+  "dd_grotto",
+  "dd_vaults",
+  "dd_vault_inner",
+  "dd_service",
+  "dd_mirror",
+  "dd_blood",
+  "dd_grub",
+  "dd_troglodytes",
+  "dd_manticore",
+  "dd_igbut"
+ ],
+ "zones": {
+  "dd_entrance": {
+   "passages": [
+    1,
+    270
+   ],
+   "name": "Crystal Entrance"
+  },
+  "dd_fork": {
+   "passages": [
+    66,
+    119,
+    56
+   ]
+  },
+  "dd_galleries": {
+   "passages": [
+    293,
+    382
+   ]
+  },
+  "dd_pit": {
+   "passages": [
+    154,
+    22,
+    184,
+    63,
+    311,
+    323
+   ]
+  },
+  "dd_lower": {
+   "passages": [
+    194,
+    138,
+    52,
+    169,
+    288,
+    221
+   ]
+  },
+  "dd_trialmaster": {
+   "passages": [
+    60,
+    365,
+    290,
+    191,
+    84,
+    302,
+    379
+   ]
+  },
+  "dd_idol": {
+   "passages": [
+    37,
+    240,
+    351,
+    239,
+    34,
+    89
+   ]
+  },
+  "dd_grotto": {
+   "passages": [
+    281,
+    399,
+    192
+   ]
+  },
+  "dd_vaults": {
+   "passages": [
+    162,
+    218,
+    65,
+    252
+   ]
+  },
+  "dd_vault_inner": {
+   "passages": [
+    269
+   ]
+  },
+  "dd_service": {
+   "passages": [],
+   "source": "report section 6, CSV"
+  },
+  "dd_mirror": {
+   "passages": [],
+   "source": "CSV"
+  },
+  "dd_blood": {
+   "passages": [],
+   "source": "CSV"
+  },
+  "dd_grub": {
+   "passages": [],
+   "source": "CSV, the brief's chest"
+  },
+  "dd_troglodytes": {
+   "passages": [],
+   "source": "CSV"
+  },
+  "dd_manticore": {
+   "passages": [],
+   "source": "CSV"
+  },
+  "dd_igbut": {
+   "passages": [
+    364,
+    62,
+    241,
+    400,
+    31,
+    376,
+    3
+   ]
+  }
+ },
+ "entities": {
+  "dd_entrance/dd_table": {
+   "text": "A stone table. Six boxes; five already taken. The contestants ahead of you helped themselves."
+  },
+  "dd_entrance/aid_box": {
+   "item": "sukumvit_note",
+   "text": "A box bearing the settlement's seal, the one the Rollkeeper stamped on the roll. Inside: two gold pieces, and a note in a sharp hand. SUKUMVIT: 'The Trial wants useful things, not just strong arms. Carry what matters.'",
+   "two_player": "one box per apprentice: the second finds theirs beside it"
+  },
+  "dd_fork/dd_prints_west": {
+   "text": "Wet footprints, several sets, head west along the road."
+  },
+  "dd_fork/dd_east_draught": {
+   "text": "A cold draught from the east, and a single small footprint pressed into the wet. Someone slight went this way and did not come back for their box."
+  },
+  "dd_fork/dd_empty_box": {
+   "text": "An open box, its seal broken. Someone got here first, and went west."
+  },
+  "dd_galleries/dd_torch": {
+   "item": "torch"
+  },
+  "dd_lower/black_book": {
+   "item": "vial"
+  },
+  "dd_lower/bone_ring": {
+   "item": "bone_ring"
+  },
+  "dd_lower/troll_lower1": {
+   "intro": "Two Cave Trolls blunder in, clubs up, and Throm is suddenly beside you, smelling of rope and anger.\n\n\"Mine's the big one,\" he says, and takes it.\n\nYours weaves Flame and Frost.",
+   "two_player": "with two apprentices present each duels a troll and Throm shouts advice; with one, Throm takes the second troll (his outcome is authored: he wins, wounded)"
+  },
+  "dd_fork/fly_east": {
+   "intro": "Something huge buzzes in the eastern dark. It smells of Frost."
+  },
+  "dd_trialmaster/dd_dwarf": {
+   "choice_event": "dwarf_meet",
+   "lines": [
+    "The Trialmaster at your service. Locked doors are my speciality."
+   ],
+   "lines_run_flag": {
+    "trial_ready": [
+     "The cobra is ready. He waits in the arena. Finish it."
+    ],
+    "trial_done": [
+     "The way is open. Go, and don't thank me."
+    ]
+   }
+  },
+  "dd_trialmaster/throm_arena": {
+   "ported": true,
+   "name": "Throm, delirious",
+   "intro": "They drag Throm into the arena. His eyes don't know you. The Dwarf's crossbow says only one of you leaves.\n\nThree slots of Flame, Stone and Frost; he weaves like a man asleep."
+  },
+  "dd_trialmaster/dd_tunnel_tease": {
+   "text": "A concealed tunnel breathes cold air from the south-west corner. The Dwarf's crossbow does not waver. Not yet.",
+   "text_run_flag": {
+    "trial_done": "The concealed tunnel breathes cold air from the south-west corner. The crossbow is lowered. West, then."
+   }
+  },
+  "dd_idol/guard_idol1": {
+   "intro": "The stuffed birds open their eyes. All of them.\n\nTwo colours of whatever shines: read them like a Ward and break them."
+  },
+  "dd_idol/emerald_eye": {
+   "text": "The emerald eye comes away in your hand. It is heavier than a sin.\n\nEMERALD."
+  },
+  "dd_idol/false_eye": {
+   "choice_first": true
+  },
+  "dd_grotto/dd_elf": {
+   "choice_event": "elf_rescue"
+  },
+  "dd_grotto/elf_bread": {
+   "item": "bread",
+   "clear_conditions": true,
+   "text": "Her bread, packed with healing herbs. You eat. The shaking stops; the hurt goes."
+  },
+  "dd_grotto/elf_charm": {
+   "item": "charm",
+   "text": "Her vine-charm. It curls around your wrist like it was always yours. Green things will know you carry it."
+  },
+  "dd_vaults/false_diamond": {
+   "choice_first": true
+  },
+  "dd_vaults/sapphire_box": {
+   "text": "A box, an iron key, and a sapphire the size of a robin's egg.\n\nSAPPHIRE, and the key fits the northern lock."
+  },
+  "dd_vault_inner/true_diamond": {
+   "text": "A diamond in a hall of echoes: real, cold, and yours.\n\nDIAMOND."
+  },
+  "dd_service/dd_prisoner": {
+   "choice_event": "free_prisoner"
+  },
+  "dd_service/dd_ivy": {
+   "choice_event": "ivy_toll"
+  },
+  "dd_service/dd_basket": {
+   "choice_event": "basket_ride"
+  },
+  "dd_mirror/dd_mirrors": {
+   "choice_event": "mirror_smash"
+  },
+  "dd_mirror/light_shard": {
+   "text": "A shard of mirror-light. It wants to be a spell.\n\nYou have learned LIGHT."
+  },
+  "dd_blood/blood_clue": {
+   "item": "herbs",
+   "text": "Bitter herbs, chewed and spat out. Something with a tongue hates Vine the way fire hates water.\n\n(The Bloodbeast's Ward will not hold Vine.)"
+  },
+  "dd_blood/beast_blood1": {
+   "grant_on_win": {
+    "spell": 5,
+    "text": "The beast dissolves into its own shadow, and the shadow stays.\n\nYou have learned SHADOW."
+   }
+  },
+  "dd_grub/boulder_sign": {
+   "choice_event": "boulder_run"
+  },
+  "dd_grub/trapped_chest": {
+   "choice_event": "trapped_chest",
+   "choice_first": true
+  },
+  "dd_troglodytes/dd_trog_elder": {
+   "choice_event": "trog_ritual"
+  },
+  "dd_troglodytes/dd_tube": {
+   "item": "reed",
+   "text": "A hollow tube, wax-sealed at both ends. For breathing underwater, if it comes to that."
+  },
+  "dd_manticore/red_settle": {
+   "removed": true,
+   "why": "the Red Wizard is not canon (docs/TRIAL_CANON_STATUS.md); Wizard World's rival is the stranger of the opening"
+  },
+  "dd_manticore/manticore_gate1": {
+   "intro": "The last gate has teeth, wings, and patience.\n\nFour slots. It has been waiting longer than you."
+  },
+  "dd_igbut/dd_igbut": {
+   "choice_event": "igbut_door"
+  },
+  "dd_igbut/victory_door": {
+   "text": "A door of black stone with three empty sockets, gem-sized, in a row.",
+   "text_run_flag": {
+    "dungeon_complete": "The black door stands open on daylight."
+   }
+  }
+ }
+}

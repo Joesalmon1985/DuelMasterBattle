@@ -57,9 +57,13 @@ def challenge(t: Table, human, ai) -> dict:
 
 
 def accept_and_lock(t: Table, human, ai, ward=(0, 1, 3)):
-    r = challenge(t, human, ai)
-    assert r["status"] == "ok", r
-    t.advance(5)  # a person takes a moment to answer
+    """She declines the first challenges (`accept_after_challenges`); a human who keeps asking gets the duel."""
+    for _ in range(1 + int(ai.c.get("accept_after_challenges", 0))):
+        r = challenge(t, human, ai)
+        assert r["status"] == "ok", r
+        t.advance(5)  # a person takes a moment to answer
+        if human.link.duel_id and human.link.duel_id in t.session.duels:
+            break
     duel = t.session.duels[human.link.duel_id]
     assert duel.state == "setup", "the AI accepted"
     assert human.op("pvp_ward", ward=list(ward))["status"] == "ok"
@@ -77,7 +81,7 @@ def test_a_single_player_game_has_one_ai_companion_who_is_a_participant_not_a_pr
     assert len(t.session.links) == 2 and ai.link.ai and ai.link.id in t.world.players and t.world.players[ai.link.id]["ai"] is True
     assert party.seats(t.world)[ai.link.id]["human"] is False
     with party.as_player(t.world, ai.link.id):
-        assert wizard.spells(t.world) == []  # a wizard record of its own, caught up when the lessons end, not a flag
+        assert wizard.spells(t.world) == [0, 1, 6] and not wizard.wiz(t.world)["lessons"]  # a wizard record of its own: the colours from the start, no lesson taken
     # the snapshot a client draws shows it as another wizard
     rows = {p["id"]: p for p in joe.state()["snapshot"]["players"]}
     assert rows[ai.link.id]["ai"] is True and rows[ai.link.id]["name"] == "Mira" and rows[joe.id]["you"] is True
@@ -138,7 +142,11 @@ def test_a_human_can_guess_several_times_while_the_ai_is_still_thinking_and_wins
     t.advance(3)
     notices = [n for n in joe.state()["notices"] if n["kind"] == "ai_says"]
     assert any(n["line"] == "lose" for n in notices)
-    assert ai.memory()["duels"]["lost"] == 1 and ai.relationship(joe.id) == ai_wizard.characters()["wizards"]["mira"]["start_relationship"] - 4
+    spec = ai_wizard.characters()["wizards"]["mira"]
+    assert ai.memory()["duels"]["lost"] == 1 and ai.relationship(joe.id) == spec["start_relationship"] + spec["loss_relationship"] + spec["killed_relationship"]
+    from wizard_rts.narrative import mortality
+
+    assert mortality.is_dead(t.world, ai.link.id), "a duel between apprentices is to the death: Mira lies where she fell until Joe brings her back"
     t.advance(4)
     assert joe.link.duel_id and t.session.duels[joe.link.duel_id].state == "finished"
     assert joe.op("pvp_leave")["status"] == "ok"

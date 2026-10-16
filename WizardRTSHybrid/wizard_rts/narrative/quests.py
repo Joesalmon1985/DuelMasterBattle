@@ -17,7 +17,7 @@ from typing import Any
 from wizard_rts import settlements
 from wizard_rts.narrative import characters, events, graph, occupations, wizard
 
-TEMPLATES = ("forest_dispute",)
+TEMPLATES = ("forest_dispute", "smith_dispute", "ranger_patrol")
 RETRY_MS = 30_000
 GRACE_MS = 60_000  # a participant who is gone is replaced if someone fitting turns up within this long (a hut sends a new worker after 30 s), else the quest is interrupted
 RADIUS = 40  # a candidate is within this many tiles (Chebyshev) of the settlement's centre
@@ -40,9 +40,10 @@ def status(world: Any, qid: str) -> str:
     if r["status"] in ("unavailable", "interrupted"):
         return r["status"]
     f = graph.flags(world, qid)
-    if "done" in f:
-        return "done"
-    return "active" if any(x in f for x in ("heard_cutter", "heard_planter", "witness_saw", "witness_gossip")) else "offered"
+    if "done" in f or any(x.startswith("closed_") for x in f):
+        return "done" if "done" in f or len([x for x in f if x.startswith("closed_")]) >= len(graph.load(qid).get("cast", {})) else "active"
+    active_flags = graph.load(qid).get("active_flags", ["heard_cutter", "heard_planter", "witness_saw", "witness_gossip"])
+    return "active" if any(x in f for x in active_flags) else "offered"
 
 
 # ------------------------------------------------------------------ casting
@@ -91,10 +92,16 @@ def cast(world: Any, qid: str, sid: str) -> bool:
     centre, faction = where
     template = graph.load(qid)
     taken: set[tuple[str, str]] = set()
+    for other in TEMPLATES:  # one part per person: a body already playing in another story is not cast again
+        orec = rec(world, other)
+        if other != qid and orec is not None and orec["status"] not in ("unavailable", "interrupted"):
+            taken |= {(b["kind"], b["id"]) for b in orec["bindings"].values()}
     bindings: dict[str, dict[str, Any]] = {}
     for role, spec in template["cast"].items():
         found = candidates(world, spec["pick"], centre, faction, taken)
         if not found:
+            if spec.get("optional"):
+                continue  # a part nobody is free to play: the story goes on without it (its lines are never offered)
             table(world)[qid] = {"status": "unavailable", "settlement": sid, "why": role, "retry_ms": int(world.dmb.clock.get("game_ms", 0)) + RETRY_MS,
                                  "bindings": {}, "history": []}
             return False
@@ -252,6 +259,9 @@ def objective(world: Any, qid: str) -> str:
         return "The people of this dispute are gone; it cannot be settled."
     if s not in ("offered", "active"):
         return ""
+    if qid != "forest_dispute":
+        people = ", ".join(f"{names.get(role, '?')} ({spec.get('label', role)})" for role, spec in graph.load(qid)["cast"].items())
+        return f"{graph.load(qid)['title']}: {people}."
     if not ("heard_cutter" in f and "heard_planter" in f):
         todo = []
         if "heard_cutter" not in f:

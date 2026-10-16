@@ -100,6 +100,19 @@ def _walk_adjacent(a: NetClient, b: NetClient) -> None:
     assert abs(int(a.pose["tx"]) - int(b.pose["tx"])) + abs(int(a.pose["ty"]) - int(b.pose["ty"])) <= 1, (a.pose, b.pose)
 
 
+def _revive(winner: NetClient, loser: NetClient) -> None:
+    """A duel between apprentices is to the death: the loser lies where they fell until the winner, standing beside the body, channels."""
+    r = winner.op({"op": "resurrect", "target": loser.player_id})
+    assert r["status"] == "started", r
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        if not winner.state()["snapshot"]["players"] or not any(p["id"] == loser.player_id and p.get("dead") for p in winner.state()["snapshot"]["players"]):
+            break
+        time.sleep(0.25)
+    assert not any(p["id"] == loser.player_id and p.get("dead") for p in winner.state()["snapshot"]["players"]), "the resurrection never completed"
+    loser.state(full=True)
+
+
 def _play_duel(a: NetClient, b: NetClient, ward_a: list[int], ward_b: list[int], casts: list[tuple[list[int], list[int]]]) -> tuple[dict, dict]:
     assert a.ward(ward_a)["status"] == "ok"
     assert b.ward(ward_b)["status"] == "ok"
@@ -275,7 +288,7 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert b.respond("wrong", True)["reason"] == "wrong_duel"
     acc = b.respond(duel_id, True)
     assert acc["status"] == "ok" and acc["duel"]["state"] == "setup"
-    assert rig.world.dmb.clock.get("pause_tokens"), "the shared clock pauses for the duel"
+    assert not rig.world.dmb.clock.get("pause_tokens"), "a duel never stops the world: the village goes on around the duellists"
     frozen = rig.world.dmb.clock["game_ms"]
     assert a.step(0, -1)["reason"] == "in_duel"
     assert a.op({"op": "fire", "target": "x"})["reason"] == "in_duel"
@@ -315,13 +328,19 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert va["rival_ward"] == [3, 3, 0] and vb["rival_ward"] == [0, 1, 3]  # disclosed only now
     assert va["rival_history"][-1]["attack"] == [0, 1, 3] and vb["rival_history"][-1]["attack"] == [1, 1, 1]
     assert (va["result"]["your_casts"], va["result"]["rival_casts"]) == (2, 2)
-    assert not rig.world.dmb.clock.get("pause_tokens"), "the world resumes when the duel ends"
-    assert rig.world.dmb.clock["game_ms"] == frozen
+    assert not rig.world.dmb.clock.get("pause_tokens")
+    assert rig.world.dmb.clock["game_ms"] >= frozen
     assert any(e["kind"] == "pvp_duel_ended" for e in rig.world.events)
-    # both return to the same shared world
+    # the loser is dead where they stood; the winner returns to the shared world and brings them back
     assert a.op({"op": "pvp_leave"})["status"] == "ok" and b.op({"op": "pvp_leave"})["status"] == "ok"
     assert rig.session.duels == {}
     assert a.state()["duel"] == {} and b.state()["duel"] == {}
+    sa = a.state()
+    assert sa["you_dead"]["by"] == b.player_id and sa["you_dead"]["body"], "Alice lost: she is dead and her body lies in the world"
+    assert a.step(0, -1)["reason"] == "dead"
+    assert any(e.get("id") == sa["you_dead"]["body"] and e.get("body") for e in b.state(full=True)["snapshot"]["entities"]), "Bob sees the body"
+    assert rig.session.ending is None, "Bob is alive: the game goes on"
+    _revive(b, a)
     moved = any(a.step(dx, dy)["status"] == "ok" for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)))
     assert moved
     assert _players(b.state())[a.player_id] == (int(a.pose["tx"]), int(a.pose["ty"]))
@@ -366,9 +385,11 @@ def test_pvp_casts_are_independent_and_a_simultaneous_win_has_one_winner(rig: Ri
     assert {va["result"]["outcome"], vb["result"]["outcome"]} == {"victory", "defeat"}
     assert va["result"]["winner"] == vb["result"]["winner"] != ""
     assert not rig.world.dmb.clock.get("pause_tokens")
-    # the world carries on after the duel
+    # the world carries on after the duel: the winner walks, the loser lies dead until revived
     assert a.op({"op": "pvp_leave"})["status"] == "ok" and b.op({"op": "pvp_leave"})["status"] == "ok"
-    assert any(a.step(dx, dy)["status"] == "ok" for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)))
+    winner, loser = (a, b) if va["result"]["winner"] == a.player_id else (b, a)
+    assert any(winner.step(dx, dy)["status"] == "ok" for dx, dy in ((0, -1), (-1, 0), (0, 1), (1, 0)))
+    assert loser.step(0, 1)["reason"] == "dead"
 
 
 def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
@@ -390,6 +411,7 @@ def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
     assert va["result"]["outcome"] == "victory" and vb["result"]["outcome"] == "defeat" and vb["your_casts"] == 0
     a.op({"op": "pvp_leave"})
     b.op({"op": "pvp_leave"})
+    _revive(a, b)
     # stalemate at exhaustion with equal progress
     d = a.challenge(b.player_id, fmt={"slots": 3, "colours": 3, "max_casts": 2})["duel_id"]
     b.respond(d, True)
@@ -414,6 +436,7 @@ def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
     assert not rig.world.dmb.clock.get("pause_tokens")
     assert a.op({"op": "pvp_leave"})["status"] == "ok" and b.op({"op": "pvp_leave"})["status"] == "ok"
     assert a.state()["duel"] == {}
+    assert b.state()["you_dead"], "forfeiting by choice is a death too"
 
 
 def test_pvp_timeouts_auto_cast_and_invite_expiry() -> None:
