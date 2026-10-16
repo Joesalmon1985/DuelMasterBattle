@@ -1,0 +1,4937 @@
+[
+ {
+  "id": "P01",
+  "title": "First conversation with the mentor",
+  "claim": "The first talk introduces the mentor, completes the lesson ‘meet’ and offers the lesson choices.",
+  "verdict": "confirmed",
+  "observed": {
+   "lines": [
+    "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it.",
+    "You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast.",
+    "Ask me what you like first. A wizard who does not ask questions is only a person with dangerous hands."
+   ],
+   "text": "",
+   "choices": [
+    [
+     "learn_colours",
+     "Teach me magic.",
+     true
+    ],
+    [
+     "why_not_rule",
+     "You could do anything you liked. Why does no wizard simply rule?",
+     true
+    ],
+    [
+     "need_anything",
+     "Is there anything you need?",
+     true
+    ],
+    [
+     "farewell",
+     "Thank you. I will go.",
+     true
+    ]
+   ],
+   "ends": false,
+   "check": null
+  },
+  "lesson_meet_done": true,
+  "starting_aspects": {
+   "reason": 2,
+   "empathy": 2,
+   "authority": 1,
+   "guile": 1,
+   "resolve": 2,
+   "curiosity": 3,
+   "wonder": 2
+  },
+  "mentor_regard_for_you": 40
+ },
+ {
+  "id": "P02",
+  "title": "The mentor's three skill questions on a fresh apprentice",
+  "claim": "Curiosity (demanding) and Reason (easy) pass at once; Wonder fails first, then is greyed out until evidence changes.",
+  "verdict": "confirmed",
+  "observed": {
+   "ask_wards": {
+    "lines": [
+     "You know your three colours. Try your hand against my Ward when you are ready."
+    ],
+    "text": "Skebok Hardfist leans on the staff and considers you for a moment.\nNobody asks that. Good. Three is the smallest number that can hide a pattern and still be a pattern. The old masters wove their Wards so that a Ward remembers the hand that wrote it. Mine remembers me. Yours will remember you.",
+    "choices": [
+     [
+      "ask_wards",
+      "[Curiosity] Why does a Ward have three places? Who decided that?",
+      true
+     ],
+     [
+      "ask_glow",
+      "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+      true
+     ],
+     [
+      "ask_reason",
+      "[Reason] Explain how to read fracture and echo properly, as a method.",
+      true
+     ],
+     [
+      "told_practice",
+      "Let me try to break your Ward. You tell me what it is.",
+      true
+     ],
+     [
+      "why_not_rule",
+      "You could do anything you liked. Why does no wizard simply rule?",
+      true
+     ],
+     [
+      "need_anything",
+      "Is there anything you need?",
+      true
+     ],
+     [
+      "farewell",
+      "Thank you. I will go.",
+      true
+     ]
+    ],
+    "ends": false,
+    "check": {
+     "aspect": "curiosity",
+     "label": "Curiosity",
+     "passed": true,
+     "blocked": false,
+     "score": 3,
+     "evidence": 0,
+     "relationship": 1,
+     "total": 4,
+     "threshold": 4,
+     "again": false
+    }
+   },
+   "ask_reason": {
+    "lines": [
+     "You know your three colours. Try your hand against my Ward when you are ready."
+    ],
+    "text": "Every Fade is information: if a colour fades everywhere, it is not in the Ward at all, and you can stop spending casts on it. A fracture pins a place; keep it there and vary the rest. An echo tells you where not to put a colour. Never cast what the last answer already ruled out.",
+    "choices": [
+     [
+      "ask_wards",
+      "[Curiosity] Why does a Ward have three places? Who decided that?",
+      true
+     ],
+     [
+      "ask_glow",
+      "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+      true
+     ],
+     [
+      "ask_reason",
+      "[Reason] Explain how to read fracture and echo properly, as a method.",
+      true
+     ],
+     [
+      "told_practice",
+      "Let me try to break your Ward. You tell me what it is.",
+      true
+     ],
+     [
+      "why_not_rule",
+      "You could do anything you liked. Why does no wizard simply rule?",
+      true
+     ],
+     [
+      "need_anything",
+      "Is there anything you need?",
+      true
+     ],
+     [
+      "farewell",
+      "Thank you. I will go.",
+      true
+     ]
+    ],
+    "ends": false,
+    "check": {
+     "aspect": "reason",
+     "label": "Reason",
+     "passed": true,
+     "blocked": false,
+     "score": 2,
+     "evidence": 0,
+     "relationship": 1,
+     "total": 3,
+     "threshold": 2,
+     "again": false
+    }
+   },
+   "ask_glow_first_try": {
+    "lines": [
+     "You know your three colours. Try your hand against my Ward when you are ready."
+    ],
+    "text": "...No. It is not Flame. It is something older than the schools, and the schools stopped teaching it for good reasons and bad ones. I live here and not in a tower because of it. Tell no one.",
+    "choices": [
+     [
+      "ask_wards",
+      "[Curiosity] Why does a Ward have three places? Who decided that?",
+      true
+     ],
+     [
+      "ask_glow",
+      "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+      true
+     ],
+     [
+      "ask_reason",
+      "[Reason] Explain how to read fracture and echo properly, as a method.",
+      true
+     ],
+     [
+      "told_practice",
+      "Let me try to break your Ward. You tell me what it is.",
+      true
+     ],
+     [
+      "why_not_rule",
+      "You could do anything you liked. Why does no wizard simply rule?",
+      true
+     ],
+     [
+      "need_anything",
+      "Is there anything you need?",
+      true
+     ],
+     [
+      "farewell",
+      "Thank you. I will go.",
+      true
+     ]
+    ],
+    "ends": false,
+    "check": {
+     "aspect": "wonder",
+     "label": "Wonder",
+     "passed": true,
+     "blocked": false,
+     "score": 2,
+     "evidence": 1,
+     "relationship": 1,
+     "total": 4,
+     "threshold": 4,
+     "again": false
+    }
+   },
+   "choices_now": [
+    [
+     "ask_wards",
+     "[Curiosity] Why does a Ward have three places? Who decided that?",
+     true
+    ],
+    [
+     "ask_glow",
+     "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+     true
+    ],
+    [
+     "ask_reason",
+     "[Reason] Explain how to read fracture and echo properly, as a method.",
+     true
+    ]
+   ]
+  }
+ },
+ {
+  "id": "P03",
+  "title": "Wonder question becomes available again only with new evidence",
+  "claim": "A failed check is greyed out until the score, the evidence or the regard changes.",
+  "verdict": "confirmed",
+  "observed": {
+   "first_try": {
+    "aspect": "wonder",
+    "label": "Wonder",
+    "passed": false,
+    "blocked": false,
+    "score": 2,
+    "evidence": 0,
+    "relationship": 1,
+    "total": 3,
+    "threshold": 4,
+    "again": false
+   },
+   "same_state_retry": {
+    "status": "rejected",
+    "reason": "choice_unavailable"
+   },
+   "after_hidden_ward_lesson": {
+    "aspect": "wonder",
+    "label": "Wonder",
+    "passed": true,
+    "blocked": false,
+    "score": 2,
+    "evidence": 1,
+    "relationship": 1,
+    "total": 4,
+    "threshold": 4,
+    "again": false
+   },
+   "facts_learned": [
+    "mentor_old_craft"
+   ]
+  }
+ },
+ {
+  "id": "P04",
+  "title": "The creed question can be lost for good",
+  "claim": "why_not_rule is single-use and moves to the creed node; closing the conversation at that node loses the answer.",
+  "verdict": "defect confirmed",
+  "observed": {
+   "choices_at_creed_node": [
+    "creed_d",
+    "creed_m",
+    "creed_a",
+    "creed_g",
+    "creed_s",
+    "creed_r",
+    "creed_leave"
+   ],
+   "choices_when_talking_again": [
+    "learn_colours",
+    "need_anything",
+    "farewell"
+   ],
+   "mentor_creed_fact_known": false
+  }
+ },
+ {
+  "id": "P05",
+  "title": "Two identical ‘What should I do now?’ buttons",
+  "claim": "When the Forest Dispute is offered, both ask_village and ask_village_none are open.",
+  "verdict": "defect confirmed",
+  "observed": {
+   "choices": [
+    [
+     "ask_wards",
+     "[Curiosity] Why does a Ward have three places? Who decided that?",
+     true
+    ],
+    [
+     "ask_glow",
+     "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+     true
+    ],
+    [
+     "ask_reason",
+     "[Reason] Explain how to read fracture and echo properly, as a method.",
+     true
+    ],
+    [
+     "told_practice",
+     "Let me try to break your Ward. You tell me what it is.",
+     true
+    ],
+    [
+     "hidden_duel",
+     "Fight me properly, with hidden Wards.",
+     true
+    ],
+    [
+     "why_not_rule",
+     "You could do anything you liked. Why does no wizard simply rule?",
+     true
+    ],
+    [
+     "ask_village",
+     "What should I do now?",
+     true
+    ],
+    [
+     "ask_village_none",
+     "What should I do now?",
+     true
+    ],
+    [
+     "need_anything",
+     "Is there anything you need?",
+     true
+    ],
+    [
+     "farewell",
+     "Thank you. I will go.",
+     true
+    ]
+   ],
+   "identical_buttons": [
+    [
+     "ask_village",
+     "What should I do now?",
+     true
+    ],
+    [
+     "ask_village_none",
+     "What should I do now?",
+     true
+    ]
+   ],
+   "quest_status": "offered"
+  }
+ },
+ {
+  "id": "P06",
+  "title": "The mentor's log errand",
+  "claim": "‘Is there anything you need?’ then the keeper's log choice then the thanks.",
+  "verdict": "confirmed",
+  "observed": {
+   "mentor_asks": "Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if you do not. I am old and I feel the cold, and that is the whole of the errand.",
+   "keeper_exists": true,
+   "keeper_choices": [
+    [
+     "what_matter",
+     "What's the matter with the warehouse?"
+    ],
+    [
+     "not_rats",
+     "Those are not rats. They are machines. Look at the legs."
+    ],
+    [
+     "log_for_mentor",
+     "My teacher needs a log for the brazier. Could the store spare one?"
+    ],
+    [
+     "bye",
+     "I'll leave you to it."
+    ]
+   ],
+   "keeper_reply": "For Skebok Hardfist? Take one. Take it from the dry stack, not the green. And tell them the account is open; they never let it close.",
+   "mentor_thanks": [
+    "You brought the log. Dry, from the good stack; the keeper likes you, then, which is rarer than you think.",
+    "The brazier will burn tonight. Thank you. Now, what else?"
+   ],
+   "regard_now": 45
+  }
+ },
+ {
+  "id": "P10",
+  "title": "Forest Dispute: all four endings",
+  "claim": "Each ending gives each of the three people their own closing words, a journal note and a regard change; nothing in the simulation changes.",
+  "verdict": "confirmed",
+  "observed": {
+   "compromise": {
+    "witness_choices_before_deciding": [
+     [
+      "witness_saw",
+      true
+     ],
+     [
+      "witness_gossip",
+      true
+     ],
+     [
+      "say_compromise",
+      true
+     ],
+     [
+      "say_cutter",
+      true
+     ],
+     [
+      "say_planter",
+      true
+     ],
+     [
+      "say_nothing",
+      true
+     ],
+     [
+      "leave",
+      true
+     ],
+     [
+      "topic:duty",
+      true
+     ],
+     [
+      "topic:settlement",
+      true
+     ],
+     [
+      "topic:no_barracks",
+      true
+     ]
+    ],
+    "regard_change": {
+     "cutter": 5,
+     "planter": 5,
+     "witness": 0
+    },
+    "status_right_after_decision": "active",
+    "cutter_closing": [
+     "Share the clearing. Well. I cut the old ones, Kormund Thunderaxe marks the young ones with stakes, and neither of us shouts. I can live with that.",
+     "You carried it fairly, wizard. I will not forget it."
+    ],
+    "planter_closing": [
+     "He agreed to the stakes? Then I will mark the young trees where he can see them, and he will cut the old ones. It is a start. Thank you, wizard."
+    ],
+    "witness_closing": [
+     "A shared clearing, stakes and an axe. I never thought I would see those two agree on anything. The lane will talk about it for weeks.",
+     "Thank you for listening, wizard."
+    ],
+    "cutter_second_visit": [
+     "That is behind us now, or as far behind as these things go. Thank you for hearing me out."
+    ],
+    "status_after_all_three_closed": "done",
+    "journal_notes": [
+     "The Forest Dispute: I suggested Ragtor Blackshield cut only the old trees and Kormund Thunderaxe stake the young ones. They agreed to share the clearing."
+    ],
+    "objective": ""
+   },
+   "woodcutter": {
+    "witness_choices_before_deciding": [
+     [
+      "witness_saw",
+      true
+     ],
+     [
+      "witness_gossip",
+      true
+     ],
+     [
+      "say_compromise",
+      true
+     ],
+     [
+      "say_cutter",
+      true
+     ],
+     [
+      "say_planter",
+      true
+     ],
+     [
+      "say_nothing",
+      true
+     ],
+     [
+      "leave",
+      true
+     ],
+     [
+      "topic:duty",
+      true
+     ],
+     [
+      "topic:settlement",
+      true
+     ],
+     [
+      "topic:no_barracks",
+      true
+     ]
+    ],
+    "regard_change": {
+     "cutter": 10,
+     "planter": -4,
+     "witness": 0
+    },
+    "status_right_after_decision": "active",
+    "cutter_closing": [
+     "So the settlement's need counts for something after all. Good. I will still keep clear of the staked ground, I am not a fool, but I will not be shouted at for doing my work."
+    ],
+    "planter_closing": [
+     "So timber comes first. I understand it; I plant for the settlement too. I will put the seedlings further from the hut and hope Ragtor Blackshield leaves them alone."
+    ],
+    "witness_closing": [
+     "You backed the axe. The sawmill will be pleased, and Kormund Thunderaxe will not, but the store will fill. I suppose that is something.",
+     "Thank you for hearing it out, wizard."
+    ],
+    "cutter_second_visit": [
+     "That is behind us now, or as far behind as these things go. Thank you for hearing me out."
+    ],
+    "status_after_all_three_closed": "done",
+    "journal_notes": [
+     "The Forest Dispute: I backed Ragtor Blackshield. Timber comes first, and Kormund Thunderaxe will plant further away."
+    ],
+    "objective": ""
+   },
+   "forester": {
+    "witness_choices_before_deciding": [
+     [
+      "witness_saw",
+      true
+     ],
+     [
+      "witness_gossip",
+      true
+     ],
+     [
+      "say_compromise",
+      true
+     ],
+     [
+      "say_cutter",
+      true
+     ],
+     [
+      "say_planter",
+      true
+     ],
+     [
+      "say_nothing",
+      true
+     ],
+     [
+      "leave",
+      true
+     ],
+     [
+      "topic:duty",
+      true
+     ],
+     [
+      "topic:settlement",
+      true
+     ],
+     [
+      "topic:no_barracks",
+      true
+     ]
+    ],
+    "regard_change": {
+     "cutter": -4,
+     "planter": 10,
+     "witness": 0
+    },
+    "status_right_after_decision": "active",
+    "cutter_closing": [
+     "You backed Kormund Thunderaxe. Hm. Then the sawmill goes hungry for a season and I walk further for every log. I hope the saplings are worth it."
+    ],
+    "planter_closing": [
+     "Thank you. The seedlings thank you too, though they cannot say so. I will keep them staked, and Ragtor Blackshield will have to cut elsewhere."
+    ],
+    "witness_closing": [
+     "You backed the saplings. Then it is a lean season for the sawmill, and Ragtor Blackshield will not thank you. But the trees will come back, and that is not nothing.",
+     "Thank you for hearing it out, wizard."
+    ],
+    "cutter_second_visit": [
+     "That is behind us now, or as far behind as these things go. Thank you for hearing me out."
+    ],
+    "status_after_all_three_closed": "done",
+    "journal_notes": [
+     "The Forest Dispute: I backed Kormund Thunderaxe. The young trees are staked and Ragtor Blackshield must cut elsewhere."
+    ],
+    "objective": ""
+   },
+   "stay out": {
+    "witness_choices_before_deciding": [
+     [
+      "witness_saw",
+      true
+     ],
+     [
+      "witness_gossip",
+      true
+     ],
+     [
+      "say_compromise",
+      true
+     ],
+     [
+      "say_cutter",
+      true
+     ],
+     [
+      "say_planter",
+      true
+     ],
+     [
+      "say_nothing",
+      true
+     ],
+     [
+      "leave",
+      true
+     ],
+     [
+      "topic:duty",
+      true
+     ],
+     [
+      "topic:settlement",
+      true
+     ],
+     [
+      "topic:no_barracks",
+      true
+     ]
+    ],
+    "regard_change": {
+     "cutter": -1,
+     "planter": -1,
+     "witness": 0
+    },
+    "status_right_after_decision": "active",
+    "cutter_closing": [
+     "You did nothing, then. That is also a choice, wizard. Kormund Thunderaxe and I will go on not speaking, and the trees will take care of themselves, one way or another."
+    ],
+    "planter_closing": [
+     "You stayed out of it. I hoped for more, but I will not blame you. I will keep planting and Ragtor Blackshield will keep cutting, and we will see which of us is still here in ten years."
+    ],
+    "witness_closing": [
+     "You stayed out of it. They are still not speaking, and everyone around them has noticed.",
+     "I understand why. It was theirs to settle."
+    ],
+    "cutter_second_visit": [
+     "That is behind us now, or as far behind as these things go. Thank you for hearing me out."
+    ],
+    "status_after_all_three_closed": "done",
+    "journal_notes": [
+     "The Forest Dispute: I left it to Ragtor Blackshield and Kormund Thunderaxe. They are still not speaking."
+    ],
+    "objective": ""
+   }
+  }
+ },
+ {
+  "id": "P11",
+  "title": "Forest Dispute: deciding is impossible before hearing both sides",
+  "claim": "The witness offers the four settlements only after both sides were heard; the quest has no way to fail or time out except a cast member vanishing.",
+  "verdict": "confirmed",
+  "observed": {
+   "witness_choices_at_start": [
+    "witness_saw",
+    "witness_gossip",
+    "leave",
+    "topic:duty",
+    "topic:settlement",
+    "topic:no_barracks"
+   ],
+   "deciding_early": {
+    "status": "rejected",
+    "reason": "choice_unavailable"
+   }
+  }
+ },
+ {
+  "id": "P12",
+  "title": "The Missing Granite: three solutions",
+  "claim": "Backing the mason moves one granite out of the warehouse; backing the carrier costs nothing; the Reason check finds the granite.",
+  "verdict": "confirmed",
+  "observed": {
+   "back the mason": {
+    "reply": {
+     "lines": [],
+     "text": "Then I will stop shouting. Thank you.",
+     "choices": [],
+     "ends": true,
+     "check": null
+    },
+    "granite_before_after": [
+     11,
+     10
+    ],
+    "mason_next_talk": [
+     "Granite from the store, on your word. I will not forget who stood up for me, wizard. The hearth will be finished by the week's end."
+    ],
+    "hauler_next_talk": [
+     "So the store pays for what I carried and Sketor Irontooth gets to call me a liar for free. Good to know how it works."
+    ],
+    "status": "done",
+    "regard": {
+     "mason": 5,
+     "hauler": -3
+    },
+    "reason_after": 2,
+    "journal": [
+     "The Missing Granite: I took the mason's side. The keeper gave Sketor Irontooth a load of granite from the store."
+    ]
+   },
+   "back the carrier": {
+    "reply": {
+     "lines": [],
+     "text": "Then I will walk a little lighter today.",
+     "choices": [],
+     "ends": true,
+     "check": null
+    },
+    "granite_before_after": [
+     11,
+     11
+    ],
+    "mason_next_talk": [
+     "You took Skormir Ironhelm's word over mine. Fine. I will fetch my own stone from now on, and the hearth can wait."
+    ],
+    "hauler_next_talk": [
+     "Thank you. Nobody believes a carrier. We only walk the roads all day, what would we know about what is on them."
+    ],
+    "status": "done",
+    "regard": {
+     "mason": -3,
+     "hauler": 5
+    },
+    "reason_after": 2,
+    "journal": [
+     "The Missing Granite: I took the carrier's side. Sketor Irontooth will have to fetch the stone again."
+    ]
+   },
+   "work it out (Reason)": {
+    "reply": {
+     "lines": [],
+     "text": "Skormir Ironhelm frowns.\nBy the north door. Where I put the... oh. Oh, no. Under the grout. It will be under the grout.",
+     "choices": [],
+     "ends": true,
+     "check": {
+      "aspect": "reason",
+      "label": "Reason",
+      "passed": true,
+      "blocked": false,
+      "score": 2,
+      "evidence": 1,
+      "relationship": 0,
+      "total": 3,
+      "threshold": 2,
+      "again": false
+     }
+    },
+    "granite_before_after": [
+     11,
+     11
+    ],
+    "mason_next_talk": [
+     "Under the grout sacks. The whole time. I owe Skormir Ironhelm a word, and you a drink."
+    ],
+    "hauler_next_talk": [
+     "Under the grout. I put it there myself and forgot; the keeper had me stacking grout all morning. I will go and say so."
+    ],
+    "status": "done",
+    "regard": {
+     "mason": 3,
+     "hauler": 3
+    },
+    "reason_after": 3,
+    "journal": [
+     "The Missing Granite: I worked out where the load went. Nobody was lying; the store had it all along."
+    ]
+   }
+  }
+ },
+ {
+  "id": "P13",
+  "title": "The Patrol: it can never be finished",
+  "claim": "ranger_patrol needs two closed_* flags to count as done, but only the forester ever sets one.",
+  "verdict": "defect confirmed",
+  "observed": {
+   "cast": {
+    "ranger": "Thokmir Bonebrow"
+   },
+   "advise_east": {
+    "lines": [],
+    "text": "Thokmir Bonebrow looks at you for a moment.\nAll right. East. If there are contestants on the road I will count them for you. Do not get any ideas from the count.",
+    "choices": [],
+    "ends": true,
+    "check": {
+     "aspect": "curiosity",
+     "label": "Curiosity",
+     "passed": true,
+     "blocked": false,
+     "score": 3,
+     "evidence": 0,
+     "relationship": 0,
+     "total": 3,
+     "threshold": 2,
+     "again": false
+    }
+   },
+   "ranger_after": [
+    "I have the route in my head now. Thank you for thinking it through with me; most people just tell me to be careful."
+   ],
+   "guard_after": null,
+   "flags_set": [
+    "closed_ranger",
+    "heard_ranger",
+    "patrol_east",
+    "patrol_set"
+   ],
+   "status": "active",
+   "objective": "The Patrol: Thokmir Bonebrow (patroller), ? (guard).",
+   "ranger_next_visit": [
+    "Back from the edge. Nothing out there but trees and the road, which is how I like it."
+   ]
+  }
+ },
+ {
+  "id": "P20",
+  "title": "The stranger's confrontation, page by page",
+  "claim": "Ten pages: narration, mentor and stranger argue, the mentor is killed on page 7, the stranger speaks to you (page 10), a final page offers challenge or silence.",
+  "verdict": "confirmed",
+  "observed": {
+   "pages": [
+    {
+     "page": "1/11",
+     "speaker": "narrator",
+     "text": "Skebok Hardfist has stopped what they were doing. The staff that has leaned in the corner of every lesson is in their hand.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "2/11",
+     "speaker": "Skebok Hardfist",
+     "text": "Istthea Saltrunner. I had hoped never to see this day. You have grown thin.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "3/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "Thin. Yes. Ten winters of doing what you would not teach me to do. I walked through the blight at Harrowmere while you taught children to light candles. They begged for anyone with power to command the sickness, the lords, anything. Nobody was permitted to. I learned what that costs.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "4/11",
+     "speaker": "Skebok Hardfist",
+     "text": "And you decided that the answer was to be the one permitted. Power is not a licence, Istthea Saltrunner. It is what we owe the ones who cannot do what we can.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "5/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "A comforting thing to say with a roof over your head. I came to ask you once more to stand with me. The Weave answers to the strongest. The world should too.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "6/11",
+     "speaker": "Skebok Hardfist",
+     "text": "No.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "7/11",
+     "speaker": "narrator",
+     "text": "Istthea Saltrunner lifts one hand. The light under his cloak opens like a door. Skebok Hardfist raises a Ward, a good one, three-fold and old, and it shatters like thin ice.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "flash",
+     "answers_open": []
+    },
+    {
+     "page": "8/11",
+     "speaker": "narrator",
+     "text": "Skebok Hardfist falls. The staff rolls across the dirt and lies still. All around the square, people stop and stare.",
+     "focus": [
+      97,
+      54
+     ],
+     "fx": "shake",
+     "answers_open": []
+    },
+    {
+     "page": "9/11",
+     "speaker": "narrator",
+     "text": "He turns. For the first time he sees you.",
+     "focus": [
+      79,
+      58
+     ],
+     "fx": "",
+     "answers_open": []
+    },
+    {
+     "page": "10/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": [
+      [
+       "firm",
+       "[Resolve] Try it.",
+       true
+      ],
+      [
+       "s",
+       "He was weaker than you. That is simply how power works.",
+       true
+      ],
+      [
+       "a",
+       "Nobody gave you the right to do this.",
+       true
+      ],
+      [
+       "r",
+       "He kept his vows. You have broken every one of yours.",
+       true
+      ],
+      [
+       "d",
+       "You have torn something out of this place that will not grow back.",
+       true
+      ],
+      [
+       "g",
+       "He taught half this village their trade. What does your grievance pay for that?",
+       true
+      ],
+      [
+       "m",
+       "He had a duty to this village. You had no claim on it at all.",
+       true
+      ]
+     ],
+     "chosen": "firm",
+     "answer_text": "Your voice shakes on the second word. He hears it.",
+     "stranger_reply": "\"Brave. Brave is what the dead are told they were.\"",
+     "check": {
+      "aspect": "resolve",
+      "label": "Resolve",
+      "passed": false,
+      "blocked": false,
+      "score": 2,
+      "evidence": 1,
+      "relationship": 0,
+      "total": 3,
+      "threshold": 4,
+      "again": false
+     },
+     "reaction": "neutral"
+    },
+    {
+     "page": "11/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": [
+      [
+       "challenge",
+       "Then prove it. Ward against Ward, here, now.",
+       true
+      ],
+      [
+       "let_go",
+       "(Say nothing. Let him go.)",
+       true
+      ]
+     ],
+     "chosen": "let_go",
+     "answer_text": "You keep your hands where they are. He waits a moment longer than he needs to, then turns away.",
+     "stranger_reply": "\"Wise. Or frightened. From here they look the same.\"",
+     "check": null,
+     "reaction": "neutral"
+    }
+   ],
+   "mentor_alive_before": true,
+   "mentor_alive_after": false,
+   "lethal_state": "declined",
+   "stage_after": "aftermath",
+   "last_reply": {
+    "status": "ok",
+    "ended": "confrontation",
+    "view": {},
+    "duel": {}
+   }
+  }
+ },
+ {
+  "id": "P21",
+  "title": "Resolve check against the stranger (‘Try it.’) with and without the mentor's creed",
+  "claim": "Demanding (4): Resolve 2 + hidden-Ward lesson +1 + creed fact +1 + the stranger's regard 0. Without the creed the check fails.",
+  "verdict": "confirmed",
+  "observed": {
+   "without having answered the creed question": {
+    "check": {
+     "aspect": "resolve",
+     "label": "Resolve",
+     "passed": false,
+     "blocked": false,
+     "score": 2,
+     "evidence": 1,
+     "relationship": 0,
+     "total": 3,
+     "threshold": 4,
+     "again": false
+    },
+    "answer_text": "Your voice shakes on the second word. He hears it.",
+    "reply": "\"Brave. Brave is what the dead are told they were.\"",
+    "fact_stood_firm": false
+   },
+   "after answering the creed question": {
+    "check": {
+     "aspect": "resolve",
+     "label": "Resolve",
+     "passed": true,
+     "blocked": false,
+     "score": 2,
+     "evidence": 2,
+     "relationship": 0,
+     "total": 4,
+     "threshold": 4,
+     "again": false
+    },
+    "answer_text": "You say it steadily, and for a heartbeat his certainty flickers.",
+    "reply": "\"Brave. Brave is what the dead are told they were.\"",
+    "fact_stood_firm": true
+   }
+  }
+ },
+ {
+  "id": "P22",
+  "title": "Belief replies to the stranger and how he takes them",
+  "claim": "Seven replies, one per worldview; the stranger (main S, second C) agrees with S, is neutral to A, G and C, and disagrees with M, R and D. ‘C’ needs the mentor's old-craft secret.",
+  "verdict": "confirmed",
+  "observed": {
+   "S": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"At last, a student who has been listening. Weakness is not a crime, boy, but it is a verdict.\"",
+    "reaction": "agree",
+    "worldview_after": {
+     "M": -1,
+     "A": 0,
+     "R": -1,
+     "G": 0,
+     "S": 3,
+     "D": -1,
+     "C": 0
+    },
+    "primary_worldview": "S"
+   },
+   "A": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"Rights are what the strong have left over. Hold on to yours, if you can.\"",
+    "reaction": "neutral",
+    "worldview_after": {
+     "M": -1,
+     "A": 3,
+     "R": 0,
+     "G": -1,
+     "S": 0,
+     "D": 1,
+     "C": 0
+    },
+    "primary_worldview": "A"
+   },
+   "R": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"Vows are what the weak swear to feel safe. Spare me the sermon.\"",
+    "reaction": "disagree",
+    "worldview_after": {
+     "M": 0,
+     "A": 0,
+     "R": 3,
+     "G": 0,
+     "S": -1,
+     "D": 1,
+     "C": -1
+    },
+    "primary_worldview": "R"
+   },
+   "D": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"Balance is what the powerless call their fear. Spare me the hill-talk.\"",
+    "reaction": "disagree",
+    "worldview_after": {
+     "M": 0,
+     "A": 1,
+     "R": 1,
+     "G": -1,
+     "S": -1,
+     "D": 3,
+     "C": 0
+    },
+    "primary_worldview": "D"
+   },
+   "G": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"A trade, a debt. Everything balances in the end.\"",
+    "reaction": "neutral",
+    "worldview_after": {
+     "M": 0,
+     "A": -1,
+     "R": 0,
+     "G": 3,
+     "S": 0,
+     "D": -1,
+     "C": 0
+    },
+    "primary_worldview": "G"
+   },
+   "M": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"A claim needs someone to enforce it. Look around you: who is enforcing his?\"",
+    "reaction": "disagree",
+    "worldview_after": {
+     "M": 3,
+     "A": -1,
+     "R": 0,
+     "G": 0,
+     "S": 0,
+     "D": 0,
+     "C": -1
+    },
+    "primary_worldview": "M"
+   },
+   "C": {
+    "offered": [
+     "firm",
+     "s",
+     "a",
+     "r",
+     "d",
+     "g",
+     "m",
+     "c"
+    ],
+    "reply": "\"If it is a play, it is the only one I can bear to stay in.\"",
+    "reaction": "neutral",
+    "worldview_after": {
+     "M": -1,
+     "A": 0,
+     "R": -1,
+     "G": 0,
+     "S": 1,
+     "D": 0,
+     "C": 3
+    },
+    "primary_worldview": "C"
+   },
+   "without the old-craft secret, replies offered": [
+    "firm",
+    "s",
+    "a",
+    "r",
+    "d",
+    "g",
+    "m"
+   ]
+  }
+ },
+ {
+  "id": "P23",
+  "title": "The ending choices: let him go, challenge, win, lose",
+  "claim": "Silence lets the stranger go with no duel; a challenge starts a lethal duel; a verified win makes him retreat alive; a loss kills the apprentice.",
+  "verdict": "confirmed",
+  "observed": {
+   "let him go": {
+    "final_page": {
+     "page": "11/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": [
+      [
+       "challenge",
+       "Then prove it. Ward against Ward, here, now.",
+       true
+      ],
+      [
+       "let_go",
+       "(Say nothing. Let him go.)",
+       true
+      ]
+     ],
+     "chosen": "let_go",
+     "answer_text": "You keep your hands where they are. He waits a moment longer than he needs to, then turns away.",
+     "stranger_reply": "\"Wise. Or frightened. From here they look the same.\"",
+     "check": null,
+     "reaction": "neutral"
+    },
+    "stage": "aftermath",
+    "lethal": "declined",
+    "duel_lease_started": false
+   },
+   "challenge and win": {
+    "challenge_page": {
+     "page": "11/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": [
+      [
+       "challenge",
+       "Then prove it. Ward against Ward, here, now.",
+       true
+      ],
+      [
+       "let_go",
+       "(Say nothing. Let him go.)",
+       true
+      ]
+     ],
+     "chosen": "challenge",
+     "answer_text": "You lift the staff. The square goes very quiet.",
+     "stranger_reply": "\"...Very well. On the old rules: three colours, three places. Break mine and I will leave. If I break yours, there will be one apprentice fewer, and nobody will remember who you were.\"",
+     "check": null,
+     "reaction": "neutral"
+    },
+    "stage_after_duel": "victory",
+    "duel_outcome": "won",
+    "lethal": "won",
+    "fate": null,
+    "resolve_after": 3,
+    "journal": [
+     "Skebok Hardfist, my teacher, was killed in Skorlag Hold by a wizard who called himself Istthea Saltrunner.",
+     "I defeated the stranger with the magic my teacher taught me. He withdrew from the village, alive."
+    ],
+    "victory_pages": [
+     {
+      "page": "1/4",
+      "speaker": "narrator",
+      "text": "The stranger's Ward breaks, and the light under his cloak gutters out. He staggers and stares at his own open hand as if it belonged to someone else.",
+      "focus": [
+       95,
+       53
+      ],
+      "fx": "flash",
+      "answers_open": []
+     },
+     {
+      "page": "2/4",
+      "speaker": "Istthea Saltrunner",
+      "text": "Lucky. Lucky, and taught by a better teacher than you deserve. This is not finished. There is a craft older than the schools, and I know where it is kept. I will come back when you are able to bear it.",
+      "focus": [
+       95,
+       53
+      ],
+      "fx": "",
+      "answers_open": []
+     },
+     {
+      "page": "3/4",
+      "speaker": "narrator",
+      "text": "He backs away and the cloak closes around him. By the time the square has found its voice again, the road is empty.",
+      "focus": [
+       95,
+       53
+      ],
+      "fx": "",
+      "answers_open": []
+     },
+     {
+      "page": "4/4",
+      "speaker": "narrator",
+      "text": "Skebok Hardfist lies where they fell. The settlement is silent; the work has stopped. Then, somewhere, an axe falls again, because trees do not wait for grief. People will want to talk, and you should listen.",
+      "focus": [
+       97,
+       54
+      ],
+      "fx": "",
+      "answers_open": []
+     }
+    ],
+    "stage_after_victory_scene": "aftermath",
+    "stranger_present": "present"
+   },
+   "challenge and lose": {
+    "challenge_page": {
+     "page": "11/11",
+     "speaker": "Istthea Saltrunner",
+     "text": "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me.",
+     "focus": [
+      95,
+      53
+     ],
+     "fx": "",
+     "answers_open": [
+      [
+       "challenge",
+       "Then prove it. Ward against Ward, here, now.",
+       true
+      ],
+      [
+       "let_go",
+       "(Say nothing. Let him go.)",
+       true
+      ]
+     ],
+     "chosen": "challenge",
+     "answer_text": "You lift the staff. The square goes very quiet.",
+     "stranger_reply": "\"...Very well. On the old rules: three colours, three places. Break mine and I will leave. If I break yours, there will be one apprentice fewer, and nobody will remember who you were.\"",
+     "check": null,
+     "reaction": "neutral"
+    },
+    "stage_after_duel": "duel",
+    "duel_outcome": "draw",
+    "lethal": "lost",
+    "fate": {
+     "alive": false,
+     "cause": "duel_draw",
+     "by": "person:24",
+     "game_ms": 80000,
+     "tile": [
+      79,
+      58
+     ],
+     "terminal": true,
+     "text": "The apprentice was defeated."
+    },
+    "resolve_after": 2,
+    "journal": [
+     "Skebok Hardfist, my teacher, was killed in Skorlag Hold by a wizard who called himself Istthea Saltrunner."
+    ]
+   }
+  }
+ },
+ {
+  "id": "P24",
+  "title": "If the mentor is already dead: ‘confrontation_alone’",
+  "claim": "A different scene plays when the mentor is not present when the stranger arrives.",
+  "verdict": "confirmed",
+  "observed": {
+   "pages": [
+    [
+     "1/5",
+     "narrator",
+     "The stranger stops in the middle of Skorlag Hold and looks around as if counting the houses. People watch him from doorways and say nothing."
+    ],
+    [
+     "2/5",
+     "Istthea Saltrunner",
+     "I came for my old teacher, Skebok Hardfist. I find the village has already buried them and left a child with their staff. Very well."
+    ],
+    [
+     "3/5",
+     "narrator",
+     "He turns. For the first time he sees you."
+    ],
+    [
+     "4/5",
+     "Istthea Saltrunner",
+     "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath."
+    ],
+    [
+     "5/5",
+     "Istthea Saltrunner",
+     "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the worl"
+    ]
+   ],
+   "mentor_fate": "died_earlier"
+  }
+ },
+ {
+  "id": "P30",
+  "title": "After the stranger: each trade's first words",
+  "claim": "The first reaction in the file whose trade, knowledge and persona conditions hold is spoken once per person.",
+  "verdict": "confirmed",
+  "observed": {
+   "carrier": {
+    "person": "Thokald Hardfist",
+    "reaction_selected": "carrier_any",
+    "persona_and_knowledge": {
+     "role": "carrier",
+     "knows": "rumour",
+     "main": "G",
+     "second": "C",
+     "traits": [
+      "curious",
+      "blunt"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "practical",
+     "regard": 0
+    },
+    "opening_lines": [
+     "I carry what I am given and walk where I am sent, and today I did not make my round, because nobody could.",
+     "You should not stay. A man like that has friends, or will make them, and the next one will not be so easy. There are roads out of here."
+    ],
+    "topics_offered": [
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:work",
+      "What do you carry?"
+     ],
+     [
+      "topic:load",
+      "What is that you are carrying?"
+     ],
+     [
+      "topic:t_stranger",
+      "[Curiosity] Did anyone know him? Where did he come from?"
+     ],
+     [
+      "farewell",
+      "Goodbye."
+     ]
+    ],
+    "second_talk_lines": [
+     "What is it?"
+    ]
+   },
+   "hunter": {
+    "person": "Thokmir Bonebrow",
+    "reaction_selected": "hunter_any",
+    "persona_and_knowledge": {
+     "role": "hunter",
+     "knows": "rumour",
+     "main": "R",
+     "second": "G",
+     "traits": [
+      "wry",
+      "gruff"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "reverent",
+     "regard": 0
+    },
+    "opening_lines": [
+     "I track what hides. That one did not hide at all; he walked in as if the village owed him the road. Be careful, apprentice. The ones who do not hide are the ones with nothing left to fear.",
+     "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way."
+    ],
+    "topics_offered": [
+     [
+      "ask_patrol",
+      "Which way are you thinking?"
+     ],
+     [
+      "leave",
+      "I will let you get ready."
+     ],
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:work",
+      "What do you hunt?"
+     ],
+     [
+      "topic:game",
+      "Is there much game?"
+     ],
+     [
+      "topic:t_stranger",
+      "[Curiosity] Did anyone know him? Where did he come from?"
+     ]
+    ],
+    "second_talk_lines": [
+     "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way."
+    ]
+   },
+   "lumberjack": {
+    "person": "Ragtor Blackshield",
+    "reaction_selected": "lumberjack_r",
+    "persona_and_knowledge": {
+     "role": "lumberjack",
+     "knows": "rumour",
+     "main": "R",
+     "second": "A",
+     "traits": [
+      "warm",
+      "proud"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "reverent",
+     "regard": 0
+    },
+    "opening_lines": [
+     "They say a wizard walked in with the light behind him and killed Skebok Hardfist like swatting a fly. I keep my axe sharper than I used to. For what good it would do.",
+     "I am cutting what I am meant to cut. The settlement needs timber, and the sawmill and the builders eat it faster than I can carry it.",
+     "There are 12 logs in the warehouses and it is never enough.",
+     "And now Kormund Thunderaxe says I am cutting too much. Have you come to tell me how to do my job?"
+    ],
+    "topics_offered": [
+     [
+      "what_happened",
+      "What happened between you and Kormund Thunderaxe?"
+     ],
+     [
+      "leave",
+      "I will let you get on."
+     ],
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:young",
+      "And the young trees?"
+     ],
+     [
+      "topic:store",
+      "Is there timber in the store?"
+     ],
+     [
+      "topic:t_stranger",
+      "[Curiosity] Did anyone know him? Where did he come from?"
+     ]
+    ],
+    "second_talk_lines": [
+     "I am cutting what I am meant to cut. The settlement needs timber, and the sawmill and the builders eat it faster than I can carry it.",
+     "There are 12 logs in the warehouses and it is never enough.",
+     "And now Kormund Thunderaxe says I am cutting too much. Have you come to tell me how to do my job?"
+    ]
+   },
+   "ranger": {
+    "person": "Kormund Thunderaxe",
+    "reaction_selected": "ranger_any",
+    "persona_and_knowledge": {
+     "role": "ranger",
+     "knows": "rumour",
+     "main": "A",
+     "second": "D",
+     "traits": [
+      "gruff",
+      "warm"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "wary",
+     "regard": 0
+    },
+    "opening_lines": [
+     "The young trees do not know yet. I do. Skebok Hardfist is dead, and the forest goes on without them, and I do not know which of those is crueller.",
+     "Careful. There are seedlings under your boots.",
+     "You are the wizard everyone is talking about. If you are here about Ragtor Blackshield, I will say what I told him: the young trees cannot be cut yet."
+    ],
+    "topics_offered": [
+     [
+      "what_happened",
+      "What happened between you and Ragtor Blackshield?"
+     ],
+     [
+      "leave",
+      "I will let you get on."
+     ],
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:timber",
+      "Does the settlement need more timber?"
+     ],
+     [
+      "topic:lumberjack",
+      "Do you work with the lumberjack?"
+     ],
+     [
+      "topic:t_stranger",
+      "[Curiosity] Did anyone know him? Where did he come from?"
+     ]
+    ],
+    "second_talk_lines": [
+     "Careful. There are seedlings under your boots.",
+     "You are the wizard everyone is talking about. If you are here about Ragtor Blackshield, I will say what I told him: the young trees cannot be cut yet."
+    ]
+   },
+   "soldier": {
+    "person": "Hrunrik Longfist",
+    "reaction_selected": "soldier_r",
+    "persona_and_knowledge": {
+     "role": "soldier",
+     "knows": "rumour",
+     "main": "S",
+     "second": "M",
+     "traits": [
+      "wry",
+      "pious"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "devoted",
+     "regard": 0
+    },
+    "opening_lines": [
+     "The watch heard it before we saw it: a noise like the sky tearing. A wizard in black in the square, and Skebok Hardfist dead.",
+     "They say you beat him. A child with a borrowed staff. I want to believe it, and I would also like to stop shaking.",
+     "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little."
+    ],
+    "topics_offered": [
+     [
+      "witness_saw",
+      "What did you see?"
+     ],
+     [
+      "witness_gossip",
+      "What do people say?"
+     ],
+     [
+      "leave",
+      "I will let you get on."
+     ],
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:duty",
+      "What are your duties?"
+     ],
+     [
+      "topic:settlement",
+      "How secure is the settlement?"
+     ],
+     [
+      "topic:no_barracks",
+      "Do you have a barracks?"
+     ]
+    ],
+    "second_talk_lines": [
+     "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little."
+    ]
+   },
+   "stonemason": {
+    "person": "Sketor Irontooth",
+    "reaction_selected": "stone_any",
+    "persona_and_knowledge": {
+     "role": "stonemason",
+     "knows": "rumour",
+     "main": "C",
+     "second": "M",
+     "traits": [
+      "warm",
+      "gruff"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "devoted",
+     "regard": 0
+    },
+    "opening_lines": [
+     "My grandfather cut a stone for the first wizard who lived here. He used to say the old ones did not shout. They simply asked, and the world agreed. That stranger did not ask.",
+     "There was a tradition once, before the schools. I would not know where to look for it.",
+     "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Skormir Ironhelm swears a load was carried in. I say it never came."
+    ],
+    "topics_offered": [
+     [
+      "what_happened",
+      "Tell me about the stone."
+     ],
+     [
+      "leave",
+      "I will let you work."
+     ],
+     [
+      "topic:t_happened",
+      "What happened here today?"
+     ],
+     [
+      "topic:t_meaning",
+      "How are you taking it?"
+     ],
+     [
+      "topic:t_leave",
+      "I am not strong enough for what comes next. Where could I learn more?"
+     ],
+     [
+      "topic:building",
+      "What is the stone for?"
+     ],
+     [
+      "topic:t_stranger",
+      "[Curiosity] Did anyone know him? Where did he come from?"
+     ],
+     [
+      "topic:work",
+      "What do you do?"
+     ]
+    ],
+    "second_talk_lines": [
+     "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Skormir Ironhelm swears a load was carried in. I say it never came."
+    ]
+   }
+  }
+ },
+ {
+  "id": "P31",
+  "title": "Everyday talk: first meeting, later meetings and a repeated ‘once’ topic",
+  "claim": "The introduction is said once, later greetings come from the hub bank, a question is not repeated in one conversation, and ‘once’ topics are NOT enforced.",
+  "verdict": "confirmed",
+  "observed": {
+   "lumberjack": {
+    "person": "Ragtor Blackshield",
+    "first_talk": {
+     "intro": [
+      "Mind the axe. I am Ragtor Blackshield; I cut timber for the Red settlement."
+     ],
+     "topics": [
+      [
+       "topic:work",
+       "What does a lumberjack do all day?"
+      ],
+      [
+       "topic:forest_thick",
+       "How is the forest around here?"
+      ],
+      [
+       "topic:young",
+       "And the young trees?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "second_talk": {
+     "greeting": [
+      "What is it?"
+     ],
+     "topics": [
+      [
+       "topic:young",
+       "And the young trees?"
+      ],
+      [
+       "topic:store",
+       "Is there timber in the store?"
+      ],
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "third_talk": {
+     "greeting": [
+      "What is it?"
+     ],
+     "topics": [
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "topic:opinion_wizards",
+       "What do you make of wizards, in general?"
+      ],
+      [
+       "topic:opinion_apprentice",
+       "Does it bother you, having an apprentice wizard about the place?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    }
+   },
+   "soldier": {
+    "person": "Hrunrik Longfist",
+    "first_talk": {
+     "intro": [
+      "I am Hrunrik Longfist, a soldier of the Red settlement."
+     ],
+     "topics": [
+      [
+       "topic:duty",
+       "What are your duties?"
+      ],
+      [
+       "topic:settlement",
+       "How secure is the settlement?"
+      ],
+      [
+       "topic:no_barracks",
+       "Do you have a barracks?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "second_talk": {
+     "greeting": [
+      "At ease. What is it?"
+     ],
+     "topics": [
+      [
+       "topic:no_barracks",
+       "Do you have a barracks?"
+      ],
+      [
+       "topic:quiet",
+       "Any trouble lately?"
+      ],
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "third_talk": {
+     "greeting": [
+      "At ease. What is it?"
+     ],
+     "topics": [
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "topic:opinion_wizards",
+       "What do you make of wizards, in general?"
+      ],
+      [
+       "topic:opinion_apprentice",
+       "Does it bother you, having an apprentice wizard about the place?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    }
+   },
+   "carrier": {
+    "person": "Thokald Hardfist",
+    "first_talk": {
+     "intro": [
+      "Thokald Hardfist. I carry wares along this road, one load at a time."
+     ],
+     "topics": [
+      [
+       "topic:work",
+       "What do you carry?"
+      ],
+      [
+       "topic:load",
+       "What is that you are carrying?"
+      ],
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "second_talk": {
+     "greeting": [
+      "What is it?"
+     ],
+     "topics": [
+      [
+       "topic:opinion_mentor",
+       "What do you think of Skebok Hardfist?"
+      ],
+      [
+       "topic:opinion_wizards",
+       "What do you make of wizards, in general?"
+      ],
+      [
+       "topic:opinion_apprentice",
+       "Does it bother you, having an apprentice wizard about the place?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    },
+    "third_talk": {
+     "greeting": [
+      "What is it?"
+     ],
+     "topics": [
+      [
+       "topic:opinion_apprentice",
+       "Does it bother you, having an apprentice wizard about the place?"
+      ],
+      [
+       "topic:work",
+       "What do you carry?"
+      ],
+      [
+       "topic:load",
+       "What is that you are carrying?"
+      ],
+      [
+       "farewell",
+       "Goodbye."
+      ]
+     ]
+    }
+   },
+   "once_topic_who_counts": {
+    "times_offered_in_5_visits": 2,
+    "fourth_wall_count_now": 2,
+    "my_accosted": 8
+   }
+  }
+ },
+ {
+  "id": "P32",
+  "title": "How a speaker reacts to each belief (the Ideology Reactions matrix)",
+  "claim": "reaction = agree when the speaker's main worldview scores ≥ 2 towards the reply (+1 if their second view IS the reply's view), disagree when ≤ −1, otherwise neutral.",
+  "verdict": "confirmed",
+  "observed": {
+   "matrix_primary_by_reply": {
+    "M": {
+     "M": "agree",
+     "A": "disagree",
+     "R": "neutral",
+     "G": "neutral",
+     "S": "neutral",
+     "D": "neutral",
+     "C": "disagree"
+    },
+    "A": {
+     "M": "disagree",
+     "A": "agree",
+     "R": "neutral",
+     "G": "disagree",
+     "S": "neutral",
+     "D": "neutral",
+     "C": "neutral"
+    },
+    "R": {
+     "M": "neutral",
+     "A": "neutral",
+     "R": "agree",
+     "G": "neutral",
+     "S": "disagree",
+     "D": "neutral",
+     "C": "disagree"
+    },
+    "G": {
+     "M": "neutral",
+     "A": "disagree",
+     "R": "neutral",
+     "G": "agree",
+     "S": "neutral",
+     "D": "disagree",
+     "C": "neutral"
+    },
+    "S": {
+     "M": "disagree",
+     "A": "neutral",
+     "R": "disagree",
+     "G": "neutral",
+     "S": "agree",
+     "D": "disagree",
+     "C": "neutral"
+    },
+    "D": {
+     "M": "neutral",
+     "A": "neutral",
+     "R": "neutral",
+     "G": "disagree",
+     "S": "disagree",
+     "D": "agree",
+     "C": "neutral"
+    },
+    "C": {
+     "M": "disagree",
+     "A": "neutral",
+     "R": "disagree",
+     "G": "neutral",
+     "S": "neutral",
+     "D": "neutral",
+     "C": "agree"
+    }
+   },
+   "changed_when_second_worldview_equals_the_reply": {
+    "M/A": [
+     "disagree",
+     "neutral"
+    ],
+    "M/C": [
+     "disagree",
+     "neutral"
+    ],
+    "A/M": [
+     "disagree",
+     "neutral"
+    ],
+    "A/G": [
+     "disagree",
+     "neutral"
+    ],
+    "A/D": [
+     "neutral",
+     "agree"
+    ],
+    "R/S": [
+     "disagree",
+     "neutral"
+    ],
+    "R/D": [
+     "neutral",
+     "agree"
+    ],
+    "R/C": [
+     "disagree",
+     "neutral"
+    ],
+    "G/A": [
+     "disagree",
+     "neutral"
+    ],
+    "G/D": [
+     "disagree",
+     "neutral"
+    ],
+    "S/M": [
+     "disagree",
+     "neutral"
+    ],
+    "S/R": [
+     "disagree",
+     "neutral"
+    ],
+    "S/D": [
+     "disagree",
+     "neutral"
+    ],
+    "D/A": [
+     "neutral",
+     "agree"
+    ],
+    "D/R": [
+     "neutral",
+     "agree"
+    ],
+    "D/G": [
+     "disagree",
+     "neutral"
+    ],
+    "D/S": [
+     "disagree",
+     "neutral"
+    ],
+    "C/M": [
+     "disagree",
+     "neutral"
+    ],
+    "C/R": [
+     "disagree",
+     "neutral"
+    ],
+    "C/S": [
+     "neutral",
+     "agree"
+    ]
+   },
+   "affinity_numbers": {
+    "M": {
+     "M": 3,
+     "A": -1,
+     "R": 0,
+     "G": 0,
+     "S": 0,
+     "D": 0,
+     "C": -1
+    },
+    "A": {
+     "M": -1,
+     "A": 3,
+     "R": 0,
+     "G": -1,
+     "S": 0,
+     "D": 1,
+     "C": 0
+    },
+    "R": {
+     "M": 0,
+     "A": 0,
+     "R": 3,
+     "G": 0,
+     "S": -1,
+     "D": 1,
+     "C": -1
+    },
+    "G": {
+     "M": 0,
+     "A": -1,
+     "R": 0,
+     "G": 3,
+     "S": 0,
+     "D": -1,
+     "C": 0
+    },
+    "S": {
+     "M": -1,
+     "A": 0,
+     "R": -1,
+     "G": 0,
+     "S": 3,
+     "D": -1,
+     "C": 0
+    },
+    "D": {
+     "M": 0,
+     "A": 1,
+     "R": 1,
+     "G": -1,
+     "S": -1,
+     "D": 3,
+     "C": 0
+    },
+    "C": {
+     "M": -1,
+     "A": 0,
+     "R": -1,
+     "G": 0,
+     "S": 1,
+     "D": 0,
+     "C": 3
+    }
+   }
+  }
+ },
+ {
+  "id": "P33",
+  "title": "Examples of generated villagers",
+  "claim": "Every villager's persona is drawn from the world seed and their trade; two villagers of one trade usually differ.",
+  "verdict": "confirmed",
+  "observed": {
+   "one_per_trade": [
+    {
+     "role": "carrier",
+     "name": "Thokald Hardfist",
+     "scores": {
+      "M": 0,
+      "A": 1,
+      "R": 0,
+      "G": 5,
+      "S": 0,
+      "D": 1,
+      "C": 2
+     },
+     "main": "G",
+     "second": "C",
+     "traits": [
+      "curious",
+      "blunt"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "practical",
+     "starting_regard": 0
+    },
+    {
+     "role": "hunter",
+     "name": "Thokmir Bonebrow",
+     "scores": {
+      "M": 1,
+      "A": 1,
+      "R": 4,
+      "G": 2,
+      "S": 1,
+      "D": 2,
+      "C": 1
+     },
+     "main": "R",
+     "second": "G",
+     "traits": [
+      "wry",
+      "gruff"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "reverent",
+     "starting_regard": 0
+    },
+    {
+     "role": "lumberjack",
+     "name": "Ragtor Blackshield",
+     "scores": {
+      "M": 1,
+      "A": 2,
+      "R": 4,
+      "G": 2,
+      "S": 2,
+      "D": 2,
+      "C": 1
+     },
+     "main": "R",
+     "second": "A",
+     "traits": [
+      "warm",
+      "proud"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "reverent",
+     "starting_regard": 0
+    },
+    {
+     "role": "ranger",
+     "name": "Kormund Thunderaxe",
+     "scores": {
+      "M": 0,
+      "A": 4,
+      "R": 3,
+      "G": 0,
+      "S": 2,
+      "D": 4,
+      "C": 0
+     },
+     "main": "A",
+     "second": "D",
+     "traits": [
+      "gruff",
+      "warm"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "wary",
+     "starting_regard": 0
+    },
+    {
+     "role": "soldier",
+     "name": "Hrunrik Longfist",
+     "scores": {
+      "M": 2,
+      "A": 1,
+      "R": 1,
+      "G": 2,
+      "S": 3,
+      "D": 1,
+      "C": 2
+     },
+     "main": "S",
+     "second": "M",
+     "traits": [
+      "wry",
+      "pious"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "devoted",
+     "starting_regard": 0
+    },
+    {
+     "role": "stonemason",
+     "name": "Sketor Irontooth",
+     "scores": {
+      "M": 2,
+      "A": 2,
+      "R": 1,
+      "G": 2,
+      "S": 2,
+      "D": 1,
+      "C": 3
+     },
+     "main": "C",
+     "second": "M",
+     "traits": [
+      "warm",
+      "gruff"
+     ],
+     "attitude_to_mentor": "wary",
+     "attitude_to_magic": "devoted",
+     "starting_regard": 0
+    }
+   ],
+   "four_lumberjacks": [
+    {
+     "name": "Ragtor Blackshield",
+     "main": "R",
+     "second": "A",
+     "traits": [
+      "warm",
+      "proud"
+     ],
+     "attitude_to_mentor": "respectful",
+     "attitude_to_magic": "reverent"
+    }
+   ],
+   "mentor": {
+    "scores": {
+     "M": 3,
+     "A": 0,
+     "R": 0,
+     "G": 0,
+     "S": 0,
+     "D": 6,
+     "C": 0
+    },
+    "primary": "D",
+    "secondary": "M",
+    "traits": [
+     "stoic",
+     "wry"
+    ],
+    "mentor": "respectful",
+    "magic": "reverent"
+   }
+  }
+ },
+ {
+  "id": "P34",
+  "title": "Killing a friend: the mother, the grounding, the refusal lines, resurrection",
+  "claim": "Killing a friend inside the village makes the mother walk over, speak, and refuse every step beyond the village until the friend is brought back.",
+  "verdict": "confirmed",
+  "observed": {
+   "mother_before_anything_happens": {
+    "lines": [
+     "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange.",
+     "If you are going to the warehouse, tell them their rats are in my pantry now."
+    ],
+    "choices": [
+     [
+      "how_are_you",
+      "How are you?"
+     ],
+     [
+      "bye",
+      "I have to go."
+     ]
+    ]
+   },
+   "after_the_kill": {
+    "grounded": true,
+    "kills": 1,
+    "deaths_of_ann": 1
+   },
+   "mother_walks_over_and_speaks": [
+    {
+     "lines": [
+      "Joe. Come here. No, here. Look at me.",
+      "Ann is lying in the square with the chickens walking round them, and you are off somewhere with your staff. You are not going anywhere until you put them back."
+     ],
+     "choices": [
+      [
+       "protest",
+       "It was a duel. They agreed to it."
+      ],
+      [
+       "leave_anyway",
+       "And if I just walk off?"
+      ],
+      [
+       "will_do",
+       "I'll put them back."
+      ]
+     ]
+    }
+   ],
+   "choice_protest": {
+    "text": "I don't care who started it. Resurrect them.",
+    "lines": [
+     "Joe. Come here. No, here. Look at me.",
+     "Ann is lying in the square with the chickens walking round them, and you are off somewhere with your staff. You are not going anywhere until you put them back."
+    ],
+    "choices": [
+     [
+      "protest",
+      "It was a duel. They agreed to it."
+     ],
+     [
+      "leave_anyway",
+      "And if I just walk off?"
+     ],
+     [
+      "will_do",
+      "I'll put them back."
+     ]
+    ]
+   },
+   "choice_leave_anyway": {
+    "text": "Then you will find that every road out of this village has me standing in it. I raised you. I know how fast you walk.",
+    "lines": [
+     "I heard you the first time. A fair duel. Everybody agreed. Very proper.",
+     "Ann is still dead, and you are still not leaving this village until that changes."
+    ],
+    "choices": [
+     [
+      "protest",
+      "It was a duel. They agreed to it."
+     ],
+     [
+      "leave_anyway",
+      "And if I just walk off?"
+     ],
+     [
+      "will_do",
+      "I'll put them back."
+     ]
+    ]
+   },
+   "mother_next_time_after_two_protests": {
+    "lines": [
+     "I heard you the first time. A fair duel. Everybody agreed. Very proper.",
+     "Ann is still dead, and you are still not leaving this village until that changes."
+    ]
+   },
+   "choice_will_do": {
+    "text": "Good. Stand next to them and do whatever it is you do. I will be watching from the window, so do it properly.",
+    "ends": true
+   },
+   "refusal_lines_in_order_when_you_keep_trying_to_leave": [
+    "Where do you think you are going? Ann is lying in the dirt. Put them back first.",
+    "Where do you think you are going? Ann is lying in the dirt. Put them back first.",
+    "Where do you think you are going? Ann is lying in the dirt. Put them back first.",
+    "Not one step further. I mean it. You know what you have to do.",
+    "Not one step further. I mean it. You know what you have to do.",
+    "Not one step further. I mean it. You know what you have to do.",
+    "Your friend is dead and you are going for a walk? Turn around.",
+    "Your friend is dead and you are going for a walk? Turn around.",
+    "Your friend is dead and you are going for a walk? Turn around."
+   ],
+   "step_beyond_home": {
+    "status": "rejected",
+    "reason": "not_adjacent"
+   },
+   "resurrection": {
+    "started": "started",
+    "ann_alive_again": true,
+    "grounded_now": false
+   },
+   "mother_after_resurrection": {
+    "status": "ok",
+    "reason": null,
+    "lines": [
+     "There. Was that so hard? Now the pair of you go and be useful, and if I see another body in my square I will put you both in it."
+    ],
+    "choices": [
+     [
+      "how_are_you",
+      "How are you?"
+     ],
+     [
+      "bye",
+      "I have to go."
+     ]
+    ]
+   },
+   "the_victims_mother_after_the_resurrection": {
+    "status": "ok",
+    "reason": null,
+    "lines": [
+     "You died. I want you to know that I knew. A mother knows. I was fetching water and the bucket went cold.",
+     "Whatever you do out there, you come back. That is the only rule I have ever given you."
+    ]
+   },
+   "notice_kinds_joe_received": [
+    "resurrection_started",
+    "ungrounded",
+    "wizard_resurrected"
+   ]
+  }
+ },
+ {
+  "id": "P35",
+  "title": "Two wizards: what is shared and what is private",
+  "claim": "Dialogue flags, regard and Aspect scores are per wizard; ‘times spoken to’ and ‘first reaction already spoken’ are shared by the world.",
+  "verdict": "confirmed",
+  "observed": {
+   "lumberjack_to_joe_first_meeting": [
+    "Mind the axe. I am Ragtor Blackshield; I cut timber for the Red settlement."
+   ],
+   "lumberjack_to_ann_first_meeting_after_joe": [
+    "What is it?"
+   ],
+   "quest_cast": "cast",
+   "quest_flags": {
+    "joe_after_compromise": [
+     "heard_cutter",
+     "heard_planter",
+     "outcome_compromise"
+    ],
+    "ann_before_deciding": [
+     "heard_cutter",
+     "heard_planter"
+    ],
+    "ann_after_backing_the_woodcutter": [
+     "heard_cutter",
+     "heard_planter",
+     "outcome_cutter"
+    ]
+   },
+   "woodcutter_to_joe": [
+    "Share the clearing. Well. I cut the old ones, Kormund Thunderaxe marks the young ones with stakes, and neither of us shouts. I can live with that.",
+    "You carried it fairly, wizard. I will not forget it."
+   ],
+   "woodcutter_to_ann": [
+    "So the settlement's need counts for something after all. Good. I will still keep clear of the staked ground, I am not a fool, but I will not be shouted at for doing my work."
+   ],
+   "journal_notes": {
+    "joe": [],
+    "ann": []
+   },
+   "quest_status_seen_by": {
+    "joe": "active",
+    "ann": "active"
+   },
+   "regard_of_the_woodcutter": {
+    "joe": 5,
+    "ann": 10
+   },
+   "joe_aspects": {
+    "reason": 2,
+    "empathy": 2,
+    "authority": 1,
+    "guile": 1,
+    "resolve": 2,
+    "curiosity": 3,
+    "wonder": 2
+   },
+   "ann_aspects": {
+    "reason": 2,
+    "empathy": 2,
+    "authority": 1,
+    "guile": 1,
+    "resolve": 2,
+    "curiosity": 3,
+    "wonder": 2
+   },
+   "first_reaction_after_the_stranger": {
+    "joe_hears_first": [
+     "The young trees do not know yet. I do. Skebok Hardfist is dead, and the forest goes on without them, and I do not know which of those is crueller.",
+     "He agreed to the stakes? Then I will mark the young trees where he can see them, and he will cut the old ones. It is a start. Thank you, wizard."
+    ],
+    "ann_hears_second": [
+     "So timber comes first. I understand it; I plant for the settlement too. I will put the seedlings further from the hut and hope Ragtor Blackshield leaves them alone."
+    ]
+   }
+  }
+ },
+ {
+  "id": "P36",
+  "title": "Mira: challenges, her answers, and which of her lines are never spoken",
+  "claim": "Mira declines the first two challenges, accepts the third with the ‘provoked’ lines; one of her line banks is never used.",
+  "verdict": "confirmed",
+  "observed": {
+   "greeting_when_close": [
+    [
+     "greet",
+     "I learned my colours here a season ago. Stay close and I will show you the village."
+    ]
+   ],
+   "three_challenges": [
+    [
+     1,
+     "declined",
+     null,
+     null
+    ],
+    [
+     1,
+     "ai_says",
+     "decline",
+     "A duel? We have the whole village to see. Put your staff down."
+    ],
+    [
+     2,
+     "declined",
+     null,
+     null
+    ],
+    [
+     2,
+     "ai_says",
+     "decline",
+     "Not just now. Ask me again in a little while."
+    ],
+    [
+     3,
+     "accepted",
+     null,
+     null
+    ],
+    [
+     3,
+     "ai_says",
+     "provoked",
+     "Three times. You have asked me three times. All right: Ward up."
+    ]
+   ],
+   "duel_started_after_three": true,
+   "mira_parameters": {
+    "start_relationship": 25,
+    "accept_after_challenges": 2,
+    "accept_if_relationship_at_least": -10,
+    "win_relationship": 3,
+    "loss_relationship": -4,
+    "killed_relationship": -12,
+    "resurrected_relationship": 8,
+    "think_s": [
+     2.5,
+     6.0
+    ],
+    "mistake_rate": 0.0,
+    "guess_logic": "candidate_filter"
+   },
+   "line_kinds_in_data": [
+    "accept",
+    "decline",
+    "draw",
+    "greet",
+    "i_died",
+    "killed_you",
+    "lose",
+    "provoked",
+    "rat_lost",
+    "rat_won",
+    "resurrected_you",
+    "resurrecting",
+    "trial_grounded",
+    "trial_in",
+    "trial_out",
+    "trial_zone",
+    "win",
+    "you_died_again"
+   ],
+   "line_kinds_never_spoken_by_the_code": [
+    "you_died_again"
+   ]
+  }
+ },
+ {
+  "id": "P37",
+  "title": "The keeper and the rats: what the keeper says in each situation",
+  "claim": "The first matching keeper entry is spoken; clearing the rats alone, together or by others changes the closing lines.",
+  "verdict": "confirmed",
+  "observed": {
+   "rats_at_start": {
+    "count": 5,
+    "sizes": [
+     "big",
+     "small",
+     "small",
+     "small",
+     "small"
+    ]
+   },
+   "first_visit_before_asking": {
+    "lines": [
+     "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent.",
+     "Big ones. One of them is the size of a dog and clicks when it walks. Rats, I tell you. Nobody listens."
+    ],
+    "choices": [
+     [
+      "what_matter",
+      "What's the matter with the warehouse?"
+     ],
+     [
+      "not_rats",
+      "Those are not rats. They are machines. Look at the legs."
+     ],
+     [
+      "bye",
+      "I'll leave you to it."
+     ]
+    ]
+   },
+   "asking_whats_the_matter": {
+    "text": "I just told you. Rats. They go for the rations first, then the bread, then whatever smells of either. Every one you put down is a load saved.\nThey do not come out for the carriers and they do not come out for me. They will come out for you. Stand close to one and it will not run; they never run from a wizard. Then do whatever it is you do with the three colours.",
+    "ledger_complained": 1,
+    "complaint_recorded": true
+   },
+   "not_rats": "They are rats. I have been keeper of this store for eleven years and I know a rat when it eats my grain.\nClicking is just what the big ones do.",
+   "after_complaint_nothing_killed": {
+    "lines": [
+     "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent.",
+     "Big ones. One of them is the size of a dog and clicks when it walks. Rats, I tell you. Nobody listens."
+    ],
+    "choices": [
+     [
+      "what_matter",
+      "What's the matter with the warehouse?"
+     ],
+     [
+      "not_rats_again",
+      "Six legs. Metal. It clicked at me."
+     ],
+     [
+      "bye",
+      "I'll leave you to it."
+     ]
+    ]
+   },
+   "after_two_kills": {
+    "lines": [
+     "2 down, 3 to go. They eat faster than you fight; 1 loads gone since I first counted."
+    ],
+    "choices": [
+     [
+      "what_matter",
+      "What's the matter with the warehouse?"
+     ],
+     [
+      "not_rats_again",
+      "Six legs. Metal. It clicked at me."
+     ],
+     [
+      "bye",
+      "I'll leave you to it."
+     ]
+    ]
+   },
+   "after_every_rat_killed_by_me": {
+    "lines": [
+     "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think.",
+     "The store is yours to walk through whenever you like. Mind the loose boards."
+    ],
+    "choices": [
+     [
+      "bye",
+      "I'll leave you to it."
+     ]
+    ]
+   },
+   "second_wave": {
+    "rats": 3
+   },
+   "second_wave_arrives": {
+    "lines": [
+     "They are back. Fewer this time, and bolder. I told the elders we needed a cat; they said we needed a wizard. Well. Here you are."
+    ],
+    "choices": [
+     [
+      "what_matter",
+      "What's the matter with the warehouse?"
+     ],
+     [
+      "not_rats_again",
+      "Six legs. Metal. It clicked at me."
+     ],
+     [
+      "bye",
+      "I'll leave you to it."
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "id": "P38",
+  "title": "The Trial's choice events, branch by branch",
+  "claim": "Each choice event offers its choices, applies its consequences once, and remembers the run state.",
+  "verdict": "confirmed",
+  "observed": {
+   "gate_exists": true,
+   "enter": {
+    "status": "ok"
+   },
+   "events": {
+    "statue_riddle": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "A knight went first. She counted the steps from the door to this stone; she said it aloud so I would remember. Half as many again as the years I have stood here, and I have stood here a hundred.\n\nHow many steps did she count?",
+      "choices": [
+       [
+        "100",
+        "One hundred"
+       ],
+       [
+        "150",
+        "One hundred and fifty"
+       ],
+       [
+        "200",
+        "Two hundred"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "100",
+      "setup": null,
+      "text": "No. Listen better; the Trial will not ask twice.\n\nHe raps your knuckles with his staff, hard enough to numb the hand. You are hurt: one cast fewer in your next duel.\n\nBeside him stands a knight in White Road armour, turned to stone mid-step. Serra went first. This is where first got her.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "riddle_answer_100",
+       "riddle_answered"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "150",
+      "setup": null,
+      "text": "A hundred and fifty. She could count; it did not save her.\n\nSo I will tell you one thing for it. The lion-thing that guards the last door hates the light. Remember that when you weave against it.\n\nBeside him stands a knight in White Road armour, turned to stone mid-step. Serra went first. This is where first got her.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "riddle_answer_150",
+       "riddle_answered",
+       "riddle_right"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "200",
+      "setup": null,
+      "text": "No. Listen better; the Trial will not ask twice.\n\nHe raps your knuckles with his staff, hard enough to numb the hand. You are hurt: one cast fewer in your next duel.\n\nBeside him stands a knight in White Road armour, turned to stone mid-step. Serra went first. This is where first got her.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "riddle_answer_200",
+       "riddle_answered"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "riddle_answered": true,
+        "riddle_right": true
+       }
+      },
+      "text": "You read. Good. The lion-thing below hates the light for the same reason.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "riddle_answered",
+       "riddle_right"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "riddle_answered": true
+       }
+      },
+      "text": "The stone keeps its own counsel. So do I, now.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "riddle_answered"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "throm_pit": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "A pit cuts the corridor. Far below, water moves. The far edge is a long jump, or a rope's length, if someone holds the rope.\n\nThrom: \"I hold the rope, or you hold it for me. Or we jump it together, and laugh.\"",
+      "choices": [
+       [
+        "lowered",
+        "Let him lower you"
+       ],
+       [
+        "lower_him",
+        "Offer to lower him"
+       ],
+       [
+        "jump",
+        "Jump together"
+       ],
+       [
+        "alone",
+        "Climb down alone"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "lowered",
+      "setup": null,
+      "text": "Throm: \"Down you go, villager. I have held worse.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_ally",
+       "pit_crossed"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "lower_him",
+      "setup": null,
+      "text": "Throm: \"...Throm. My name is Throm. Take the rope, then. Tightly.\"\n\nYou lower Throm by the rope. He looks very small, and then he waves you off the edge.",
+      "choices": [
+       [
+        "after_him",
+        "Climb down after him"
+       ],
+       [
+        "leave_him",
+        "Leave him"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_throm_below"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "alone",
+      "setup": {
+       "pockets": [
+        "torch"
+       ]
+      },
+      "text": "You take the wall alone. Halfway, the wall takes you. You land in the shallows, hard. You are hurt: one cast fewer in your next duel. Your torch hisses out in the water and goes to the bottom.\n\nThrom: \"Hah. Wait there; I am coming down the sensible way.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "pit_ally",
+       "pit_crossed",
+       "pit_fell",
+       "torch_lost"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "jump",
+      "setup": null,
+      "text": "You jump together, land hard, and laugh until it hurts.\n\n(It hurts. You are hurt: one cast fewer in your next duel.)",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "pit_ally",
+       "pit_crossed",
+       "pit_jump"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "after_him",
+      "setup": {
+       "flags": {
+        "pit_throm_below": true
+       }
+      },
+      "text": "Throm: \"Hah. An honest villain would have left. Come on.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_ally",
+       "pit_crossed",
+       "pit_throm_below"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "leave_him",
+      "setup": {
+       "flags": {
+        "pit_throm_below": true
+       }
+      },
+      "text": "You cross alone. Behind you, the rope goes still.\n\nYou will remember this.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_betrayed",
+       "pit_crossed",
+       "pit_throm_below"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "pit_crossed": true
+       },
+       "throm": "uneasy_ally"
+      },
+      "text": "The rope is tied off below. Throm went down first; the knots are his. Climb when you like.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_crossed"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "pit_crossed": true
+       },
+       "throm": "betrayed"
+      },
+      "text": "The rope hangs slack into the dark. Nobody is holding it. You crossed alone, and you will remember this.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_crossed"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "pit_crossed": true
+       },
+       "throm": "wounded"
+      },
+      "text": "The rope is tied off below. Throm is down there somewhere, favouring one arm.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "pit_crossed"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "black_book": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Throm: \"Don't. Whatever it is, don't.\"",
+      "choices": [
+       [
+        "drink",
+        "Drink it"
+       ],
+       [
+        "rub",
+        "Rub it on your wounds"
+       ],
+       [
+        "leave",
+        "Leave it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "drink",
+      "setup": null,
+      "text": "It tastes of ink and lightning. Your hands shake. You are poisoned: your next casts will come slower than you would like.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "poisoned"
+      ],
+      "run_flags_added": [
+       "potion_used"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "rub",
+      "setup": null,
+      "text": "It burns cold. Where it touches, the skin knits a little, though there was nothing much to knit.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "potion_used"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "rub",
+      "setup": {
+       "flags": {}
+      },
+      "text": "It burns cold. Where it touches, the skin knits a little, though there was nothing much to knit.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "potion_used"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You stopper the vial and leave it. Some things stay unknown.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "potion_used": true
+       }
+      },
+      "text": "The vial is empty now.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "potion_used"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "dwarf_meet": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Dwarf: \"Locked in, both of you. Only one continues; that is the procedure. The Trialmaster at your service: locked doors are my speciality.\"",
+      "choices": [
+       [
+        "accept",
+        "Accept the test"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "accept",
+      "setup": null,
+      "text": "Dwarf: \"Through here. Mind the cobra.\"\n\nDwarf: \"Two dice in the cup. When they land: the same as eight, less, or more?\"",
+      "choices": [
+       [
+        "same",
+        "The same as eight"
+       ],
+       [
+        "less",
+        "Less than eight"
+       ],
+       [
+        "more",
+        "More than eight"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "attack",
+      "setup": {
+       "flags": {
+        "pit_ally": true
+       }
+      },
+      "text": "Dwarf: \"Oh, we do this every Trial.\"\n\nSomething clicks. Throm sits down suddenly, holding his head. \"We do it MY way,\" the Dwarf says. You are hurt: one cast fewer in your next duel.\n\nDwarf: \"Two dice in the cup. When they land: the same as eight, less, or more?\"",
+      "choices": [
+       [
+        "same",
+        "The same as eight"
+       ],
+       [
+        "less",
+        "Less than eight"
+       ],
+       [
+        "more",
+        "More than eight"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "pit_ally",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "same",
+      "setup": {
+       "flags": {
+        "trial_started": true
+       }
+      },
+      "text": "Dwarf: The cup lifts: 10. \"Wrong. But you understood the question, which is the point.\"\n\nDwarf: \"Last: the basket. Hold its gaze, or snatch it. Choose.\"",
+      "choices": [
+       [
+        "gaze",
+        "Hold its gaze"
+       ],
+       [
+        "snatch",
+        "Snatch it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "dice_roll",
+       "trial_dice",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "less",
+      "setup": {
+       "flags": {
+        "trial_started": true
+       }
+      },
+      "text": "Dwarf: The cup lifts: 10. \"Wrong. But you understood the question, which is the point.\"\n\nDwarf: \"Last: the basket. Hold its gaze, or snatch it. Choose.\"",
+      "choices": [
+       [
+        "gaze",
+        "Hold its gaze"
+       ],
+       [
+        "snatch",
+        "Snatch it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "dice_roll",
+       "trial_dice",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "more",
+      "setup": {
+       "flags": {
+        "trial_started": true
+       }
+      },
+      "text": "Dwarf: The cup lifts: 10. \"Hm. Luck or arithmetic.\"\n\nDwarf: \"Last: the basket. Hold its gaze, or snatch it. Choose.\"",
+      "choices": [
+       [
+        "gaze",
+        "Hold its gaze"
+       ],
+       [
+        "snatch",
+        "Snatch it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "dice_roll",
+       "trial_dice",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "gaze",
+      "setup": {
+       "flags": {
+        "trial_started": true,
+        "trial_dice": true
+       }
+      },
+      "text": "You hold its gaze until it looks away first. The Dwarf writes something down.\n\nDwarf: \"Procedure complete. You've earned the map, the part of it I'm allowed to give.\"\n\nHe unrolls a scrap of oiled hide: the lower Trial, in a hand that has drawn it many times. Three gems marked. A door marked that wants Emerald, Sapphire and Diamond. And a passage from this very room, west, that is not on anyone else's map.\n\nWatching him weave the lock shut, you learn a fourth colour: Stone.\n\nDwarf: \"The cobra is ready. He waits in the arena. Finish it.\" Throm is dragged in, and his eyes do not know you.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "dwarf_map",
+       "trial_cobra",
+       "trial_dice",
+       "trial_ready",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "snatch",
+      "setup": {
+       "flags": {
+        "trial_started": true,
+        "trial_dice": true
+       }
+      },
+      "text": "Fast, but fangs graze your wrist. You are hurt: one cast fewer in your next duel.\n\nDwarf: \"Procedure complete. You've earned the map, the part of it I'm allowed to give.\"\n\nHe unrolls a scrap of oiled hide: the lower Trial, in a hand that has drawn it many times. Three gems marked. A door marked that wants Emerald, Sapphire and Diamond. And a passage from this very room, west, that is not on anyone else's map.\n\nWatching him weave the lock shut, you learn a fourth colour: Stone.\n\nDwarf: \"The cobra is ready. He waits in the arena. Finish it.\" Throm is dragged in, and his eyes do not know you.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "dwarf_map",
+       "trial_cobra",
+       "trial_dice",
+       "trial_ready",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "gaze",
+      "setup": {
+       "flags": {
+        "trial_started": true,
+        "trial_dice": true,
+        "pit_betrayed": true
+       }
+      },
+      "text": "You hold its gaze until it looks away first. The Dwarf writes something down.\n\nDwarf: \"Procedure complete. You've earned the map, the part of it I'm allowed to give.\"\n\nHe unrolls a scrap of oiled hide: the lower Trial, in a hand that has drawn it many times. Three gems marked. A door marked that wants Emerald, Sapphire and Diamond. And a passage from this very room, west, that is not on anyone else's map.\n\nWatching him weave the lock shut, you learn a fourth colour: Stone.\n\nDwarf: \"Alone, and still standing. The concealed way is yours: west, when you're ready.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "dwarf_map",
+       "pit_betrayed",
+       "trial_cobra",
+       "trial_dice",
+       "trial_done",
+       "trial_ready",
+       "trial_started"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "elf_rescue": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Dying elf: \"...help... the snake... first...\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "defeated": [
+        [
+         "dd_grotto",
+         "boa_grotto1"
+        ]
+       ]
+      },
+      "text": "The snake loosens. The elven woman breathes, barely. She is fading.",
+      "choices": [
+       [
+        "stay",
+        "Stay with her"
+       ],
+       [
+        "take",
+        "Take the charm and go"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "stay",
+      "setup": {
+       "defeated": [
+        [
+         "dd_grotto",
+         "boa_grotto1"
+        ]
+       ]
+      },
+      "text": "You hold her hand while she tells you: the final door wants gems, and one of them is a diamond. The real one is cold.\n\nDying elf: \"Take the charm. Take the bread. ...Tell the trees I was brave.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "diamond_clue",
+       "elf_gone"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "take",
+      "setup": {
+       "defeated": [
+        [
+         "dd_grotto",
+         "boa_grotto1"
+        ]
+       ]
+      },
+      "text": "You take the charm. Her voice follows you out: the final door wants gems, one is a diamond, and the real one is cold.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "diamond_clue",
+       "elf_gone"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "defeated": [
+        [
+         "dd_grotto",
+         "boa_grotto1"
+        ]
+       ],
+       "flags": {
+        "elf_gone": true
+       }
+      },
+      "text": "She is gone. The hollow smells of bread and dust.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "elf_gone"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "false_eye": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "The east eye glitters. Bigger. Greener. The scratched warnings around the base were about this one.",
+      "choices": [
+       [
+        "take",
+        "Take it"
+       ],
+       [
+        "leave",
+        "Leave it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "take",
+      "setup": null,
+      "text": "It comes away in your hand, glass, flawed glass, and every bird on the idol turns its head at once.\n\nThe second guardian does not wait to be found. It finds you.",
+      "choices": [],
+      "fight": [
+       "guard_idol2",
+       "flying_guardian"
+      ],
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "idol_alarmed",
+       "picked_false_eye"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": [
+       "glass_eye"
+      ]
+     },
+     {
+      "choice": "take",
+      "setup": {
+       "defeated": [
+        [
+         "dd_idol",
+         "guard_idol2"
+        ]
+       ]
+      },
+      "text": "Nothing else moves. You are holding a piece of green glass in a room full of dead birds.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "idol_alarmed",
+       "picked_false_eye"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": [
+       "glass_eye"
+      ]
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave it where it lies.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "picked_false_eye": true
+       }
+      },
+      "text": "A socket, empty, and a room full of dead birds.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "picked_false_eye"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "false_diamond": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "You remember the elf: the real one is cold. This one has been lying under a lamp.\n\nA diamond beside a fallen warrior, just lying there. Every instinct says trap.",
+      "choices": [
+       [
+        "take",
+        "Take it"
+       ],
+       [
+        "leave",
+        "Leave it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "fact": "diamond_is_cold"
+      },
+      "text": "You remember the elf: the real one is cold. This one has been lying under a lamp.\n\nA diamond beside a fallen warrior, just lying there. Every instinct says trap.",
+      "choices": [
+       [
+        "take",
+        "Take it"
+       ],
+       [
+        "leave",
+        "Leave it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "take",
+      "setup": null,
+      "text": "The floor opens its eye. A blade you never see draws a line across your arm, and somewhere behind you an iron bolt shoots home.\n\nYou are hurt: one cast fewer in your next duel. The jewel is glass. The inner vault has locked itself; the Basket man's rope is now the only way in.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "picked_false_diamond",
+       "vault_alarm"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": [
+       "glass_diamond"
+      ]
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave it where it lies.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "free_prisoner": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Starved man: \"...failed... they took my eyes... no, my boots...\"",
+      "choices": [
+       [
+        "free",
+        "Free him"
+       ],
+       [
+        "leave",
+        "Leave him"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "free",
+      "setup": null,
+      "text": "You cut his bonds. He presses something into your hand, bitter herbs, and babbles about the beast below.\n\nStarved man: \"Go. Stones. It loves... no. It HATES the green. Vine. Its eyes water.\"\n\n(The Bloodbeast's Ward will not hold Vine.)",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "blood_weakness",
+       "prisoner_free"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave him. The dark keeps him.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "prisoner_free": true
+       }
+      },
+      "text": "Starved man: \"Go. Stones. It loves... no. It HATES the green. Vine. Its eyes water.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "prisoner_free"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "ivy_toll": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Poison Ivy: \"Tribute, sweetling. Something useful, or thorns.\"",
+      "choices": [
+       [
+        "leave",
+        "Leave"
+       ],
+       [
+        "attack",
+        "Attack"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "torch",
+      "setup": {
+       "pockets": [
+        "torch"
+       ]
+      },
+      "text": "Poison Ivy: \"A torch? For me? ...Walk soft, sweetling. Walk soft.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "ivy_paid"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave her thorns alone.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "attack",
+      "setup": null,
+      "text": "The thorns come up all at once.",
+      "choices": [],
+      "fight": [
+       "dd_ivy",
+       "poison_ivy"
+      ],
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "basket_ride": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Basket man: \"Rope's for staff and for people Ivy likes. You're neither, yet. Sort her out, or sort out the poor sod in the cell, and we'll talk.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "ivy_paid": true
+       }
+      },
+      "text": "Basket man: \"Heard what you did. Right. The rope goes up to the vault's back room and comes down again; use the shaft at the south wall whenever you like. Don't tell the Dwarf.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "basket_ok",
+       "ivy_paid"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "prisoner_free": true,
+        "basket_ok": true
+       }
+      },
+      "text": "Basket man: \"Shaft's at the south wall. Up or down, same fare: none.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "basket_ok",
+       "prisoner_free"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "mirror_smash": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Tall mirrors, silver-backed. Something moves in them a breath after you do.",
+      "choices": [
+       [
+        "smash",
+        "Smash them"
+       ],
+       [
+        "leave",
+        "Leave them"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "smash",
+      "setup": null,
+      "text": "Silver rain. The thing in the glass never finishes stepping out.\n\n(The Mirror Demon is broken without a duel. Something bright lies in the frame.)",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "mirrors_smashed"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave the glass its dignity.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "defeated": [
+        [
+         "dd_mirror",
+         "demon_mirror1"
+        ]
+       ]
+      },
+      "text": "Silver dust, and a frame with nothing in it.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "boulder_run": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "The tunnel exhales dust. Uphill, something heavy decides.",
+      "choices": [
+       [
+        "run",
+        "Run!"
+       ],
+       [
+        "brace",
+        "Brace with Stone"
+       ],
+       [
+        "hold",
+        "Hold ground"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "run",
+      "setup": null,
+      "text": "You run like the Trial is behind you. It is. The groove in the floor runs straight; you don't. The boulder agrees to miss.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "boulder_done"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "brace",
+      "setup": null,
+      "text": "You lay Stone across the groove and lean on it. The boulder arrives, argues, and loses. Behind it, the side tunnel is open and full of somebody's abandoned kit.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "boulder_braced",
+       "boulder_done"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "brace",
+      "setup": {
+       "fact": "x"
+      },
+      "text": "You lay Stone across the groove and lean on it. The boulder arrives, argues, and loses. Behind it, the side tunnel is open and full of somebody's abandoned kit.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "boulder_braced",
+       "boulder_done"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "hold",
+      "setup": null,
+      "text": "You hold your ground. The ground holds. You don't.\n\nYou are hurt: one cast fewer in your next duel.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "boulder_done"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "boulder_done": true
+       }
+      },
+      "text": "Dust settles in the groove. Whatever rolled has rolled.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "boulder_done"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "trapped_chest": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "An iron-bound chest, lid a finger's width open. Gold glints inside. So does something else, at floor height.",
+      "choices": [
+       [
+        "jam",
+        "Jam the lid with Stone"
+       ],
+       [
+        "side",
+        "Open it from the side"
+       ],
+       [
+        "headon",
+        "Open it head-on"
+       ],
+       [
+        "leave",
+        "Leave it"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "side",
+      "setup": null,
+      "text": "You stand where the floor is unscratched and lift the lid with the butt of your staff. Blades whicker out across the place you are not standing.\n\nThe gold is real.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "chest_done",
+       "chest_gold",
+       "picked_trapped_chest"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": [
+       "gold"
+      ]
+     },
+     {
+      "choice": "headon",
+      "setup": null,
+      "text": "Teeth. The chest had teeth, and the marks on the floor had told you exactly where.\n\nYou are hurt: one cast fewer in your next duel. The gold is real, at least.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "chest_done",
+       "chest_gold",
+       "picked_trapped_chest"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": [
+       "gold"
+      ]
+     },
+     {
+      "choice": "leave",
+      "setup": null,
+      "text": "You leave the gold to whatever guards it.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "chest_done": true,
+        "chest_gold": true
+       }
+      },
+      "text": "The chest stands open, its blades spent. The gold is gone.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "chest_done",
+       "chest_gold"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "trog_ritual": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Ritual elder: \"The rite, stranger. Dance it, run it, or bleed it. The tribe does not mind which.\"",
+      "choices": [
+       [
+        "join",
+        "Join the ritual"
+       ],
+       [
+        "run",
+        "Run the arrow"
+       ],
+       [
+        "attack",
+        "Attack"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "join",
+      "setup": null,
+      "text": "You dance badly and sincerely. The tribe approves of sincerity.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "trog_rite"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "run",
+      "setup": null,
+      "text": "Bridges, drums, black water, and then, impossibly, quiet.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "trog_ran"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "attack",
+      "setup": null,
+      "text": "Their champion steps out of the drumming.",
+      "choices": [],
+      "fight": [
+       "dd_trog_elder",
+       "trog_champion"
+      ],
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "trog_rite": true
+       }
+      },
+      "text": "Ritual elder: \"Danced. Witnessed. Go with wet feet, stranger.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "trog_rite"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": null,
+      "setup": {
+       "flags": {
+        "trog_ran": true
+       }
+      },
+      "text": "The drums have stopped. The tribe keeps its distance.",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "trog_ran"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ],
+    "igbut_door": [
+     {
+      "choice": null,
+      "setup": null,
+      "text": "Igbut: \"Three gems, contestant. Emerald. Sapphire. Diamond. The door does the rest.\"",
+      "choices": [
+       [
+        "face",
+        "Face the door"
+       ],
+       [
+        "later",
+        "Not yet"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "later",
+      "setup": null,
+      "text": "Igbut: \"It waits. It is good at waiting.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "face",
+      "setup": null,
+      "text": "Igbut: \"The gnome counts on his fingers. Counts again.\"\n\nIgbut: \"Emerald. Sapphire. Diamond. THREE are required, contestant. The Trial does not bargain.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "face",
+      "setup": {
+       "gems": [
+        "emerald",
+        "sapphire",
+        "diamond"
+       ]
+      },
+      "text": "Igbut: \"Three sockets. Three gems. Place them true, and mind the bite.\"",
+      "choices": [
+       [
+        "ESD",
+        "Emerald, Sapphire, Diamond"
+       ],
+       [
+        "EDS",
+        "Emerald, Diamond, Sapphire"
+       ],
+       [
+        "SED",
+        "Sapphire, Emerald, Diamond"
+       ],
+       [
+        "SDE",
+        "Sapphire, Diamond, Emerald"
+       ],
+       [
+        "DES",
+        "Diamond, Emerald, Sapphire"
+       ],
+       [
+        "DSE",
+        "Diamond, Sapphire, Emerald"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "SED",
+      "setup": {
+       "gems": [
+        "emerald",
+        "sapphire",
+        "diamond"
+       ]
+      },
+      "text": "The sockets drink the gems. The door sighs open.\n\nIgbut: \"Ha! Walk through, Champion...\"\n\nA crossbow sings from the dark Sukumvit built. Igbut does not finish.\n\nYou walk past him into daylight, and Fang roars your name.\n\nCHAMPION OF THE TRIAL",
+      "choices": [],
+      "fight": null,
+      "champion": true,
+      "conditions": [],
+      "run_flags_added": [
+       "champion",
+       "dungeon_complete"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "ESD",
+      "setup": {
+       "gems": [
+        "emerald",
+        "sapphire",
+        "diamond"
+       ]
+      },
+      "text": "Igbut: \"1 placed true, 2 displaced.\"\n\nThe door bites. You are hurt: one cast fewer in your next duel.",
+      "choices": [
+       [
+        "ESD",
+        "Emerald, Sapphire, Diamond"
+       ],
+       [
+        "EDS",
+        "Emerald, Diamond, Sapphire"
+       ],
+       [
+        "SED",
+        "Sapphire, Emerald, Diamond"
+       ],
+       [
+        "SDE",
+        "Sapphire, Diamond, Emerald"
+       ],
+       [
+        "DES",
+        "Diamond, Emerald, Sapphire"
+       ],
+       [
+        "DSE",
+        "Diamond, Sapphire, Emerald"
+       ]
+      ],
+      "fight": null,
+      "champion": null,
+      "conditions": [
+       "wounded"
+      ],
+      "run_flags_added": [
+       "igbut_strikes:"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     },
+     {
+      "choice": "ESD",
+      "setup": {
+       "gems": [
+        "emerald",
+        "sapphire",
+        "diamond"
+       ],
+       "flags": {
+        "igbut_strikes:": 2
+       }
+      },
+      "text": "Igbut: \"1 placed true, 2 displaced.\"\n\nThe third blast throws the gems out of your hands and across the floor. The sockets grind shut.\n\nIgbut, from behind the plinth: \"They reopen. They always reopen. Pick up your stones, contestant.\"",
+      "choices": [],
+      "fight": null,
+      "champion": null,
+      "conditions": [],
+      "run_flags_added": [
+       "gems_scattered"
+      ],
+      "status": null,
+      "reason": null,
+      "pockets": []
+     }
+    ]
+   }
+  }
+ },
+ {
+  "id": "P39",
+  "title": "Why a conversation cannot start",
+  "claim": "talk() refuses with a reason (dead, too far, a duel open, a scene open, game over) or answers with a stock line (hostile stranger, busy soldier).",
+  "verdict": "confirmed",
+  "observed": {
+   "too_far": {
+    "status": "rejected",
+    "reason": "too_far"
+   },
+   "soldier_who_is_fighting": {
+    "status": "ok",
+    "lines": [
+     "Not now. Can't you see I am busy?"
+    ],
+    "ends": true
+   },
+   "a_rat": {
+    "status": "rejected",
+    "reason": "pest"
+   },
+   "the_stranger_walking_in": {
+    "status": "rejected",
+    "lines": null,
+    "ends": null
+   },
+   "while_a_scene_is_open": {
+    "status": "rejected",
+    "reason": "scene"
+   },
+   "the_dead_mentor": {
+    "status": "rejected",
+    "reason": "dead"
+   },
+   "after_losing_the_duel": {
+    "status": "rejected",
+    "reason": "game_over"
+   }
+  }
+ },
+ {
+  "id": "P40",
+  "title": "When the stranger comes",
+  "claim": "The stranger arrives when 20 s (test setting; 180 s in the game) have passed and 3 contacts are made, or after the fallback time; training ends after the lessons, a wizard duel or a death, or 300 s.",
+  "verdict": "confirmed",
+  "observed": {
+   "explore_min_ms": 180000,
+   "explore_fallback_ms": 420000,
+   "explore_min_contacts": 3,
+   "training_fallback_ms": 300000,
+   "aftermath_min_talks": 2,
+   "aftermath_fallback_ms": 150000,
+   "departure_grace_ms": 90000,
+   "arrival_distance": 14,
+   "witness_radius": 12,
+   "start_aspects": {
+    "reason": 2,
+    "empathy": 2,
+    "authority": 1,
+    "guile": 1,
+    "resolve": 2,
+    "curiosity": 3,
+    "wonder": 2
+   },
+   "mentor_relationship": 40,
+   "note": "values in config.json; these probes run with shortened timings (HYBRID_EXPLORE_* environment variables) so the stranger arrives sooner"
+  }
+ },
+ {
+  "id": "P41",
+  "title": "A log from an empty store",
+  "claim": "With no logs in the warehouses the keeper offers two identical buttons; the full one still thanks you for a log that was never taken.",
+  "verdict": "defect confirmed",
+  "observed": {
+   "logs_before_i_emptied_the_store": {
+    "building:1": 13
+   },
+   "buttons": [
+    [
+     "what_matter",
+     "What's the matter with the warehouse?"
+    ],
+    [
+     "not_rats",
+     "Those are not rats. They are machines. Look at the legs."
+    ],
+    [
+     "log_for_mentor",
+     "My teacher needs a log for the brazier. Could the store spare one?"
+    ],
+    [
+     "log_for_mentor_short",
+     "My teacher needs a log for the brazier. Could the store spare one?"
+    ],
+    [
+     "bye",
+     "I'll leave you to it."
+    ]
+   ],
+   "keeper_says_after_choosing_the_full_button": "For Skebok Hardfist? Take one. Take it from the dry stack, not the green. And tell them the account is open; they never let it close.",
+   "logs_after": {
+    "building:1": 0
+   },
+   "you_now_hold_the_fact_log_for_mentor": true
+  }
+ },
+ {
+  "id": "P42",
+  "title": "The mentor's pointer to the village quarrel",
+  "claim": "‘What should I do now?’ names the three villagers and where to find them.",
+  "verdict": "confirmed",
+  "observed": {
+   "text": "Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never carried a log or stood a watch casts for people he does not understand.\nThere is a quarrel you might hear: Ragtor Blackshield the lumberjack and Kormund Thunderaxe the forester have stopped speaking. One wants every ripe tree down for the sawmill, the other wants the young ones left to grow. Hrunrik Longfist saw part of it. Ragtor Blackshield works at the lumberjack's hut, about 19 tiles west of you. Kormund Thunderaxe works at the forester's hut, about 22 tiles west of you. It is no emergency, and you need not help; but they are ordinary people with a real disagreement, and what you say will be remembered.",
+   "world_lesson_done": true
+  }
+ },
+ {
+  "id": "P43",
+  "title": "A wizard who was away while the stranger came and went",
+  "claim": "A returning wizard is told in the journal, is marked ‘spared’, and has no scene to hold the story.",
+  "verdict": "confirmed",
+  "observed": {
+   "scene_joe_sees": "A stranger in a dark travelling cloak is walking into Skorlag Hold along the road. Nobody ",
+   "scene_for_the_absent_wizard": null,
+   "duel_result": "won",
+   "stage_before_ann_returns": "complete",
+   "ann_lethal_state": "spared",
+   "ann_journal_on_return": [
+    "A fellow apprentice broke the stranger's Ward, and he withdrew from the village, alive.",
+    "Objective: seek greater magical power. What I know is not enough; the people here believe there are teachers and traditions beyond this valley.",
+    "I came to Skorlag Hold too late: Skebok Hardfist, the teacher here, had already been killed by a wizard who called himself Istthea Saltrunner.",
+    "The stranger has been driven out of the village. I did not have to face him."
+   ]
+  }
+ },
+ {
+  "id": "P44",
+  "title": "One wizard's failed skill check and the other wizard",
+  "claim": "A failed check is remembered by a fingerprint with no wizard in it, so a second wizard with the same numbers is told they have nothing new to add on their very first try.",
+  "verdict": "defect confirmed",
+  "observed": {
+   "joe_tries_the_wonder_question": {
+    "aspect": "wonder",
+    "label": "Wonder",
+    "passed": false,
+    "blocked": false,
+    "score": 2,
+    "evidence": 0,
+    "relationship": 1,
+    "total": 3,
+    "threshold": 4,
+    "again": false
+   },
+   "ann_sees_the_wonder_button_as": [
+    [
+     "ask_glow",
+     true
+    ]
+   ],
+   "ann_tries_it": {
+    "status": "ok",
+    "reason": null,
+    "check": {
+     "aspect": "wonder",
+     "label": "Wonder",
+     "passed": false,
+     "blocked": true,
+     "score": 2,
+     "evidence": 0,
+     "relationship": 1,
+     "total": 3,
+     "threshold": 4,
+     "again": false
+    }
+   }
+  }
+ },
+ {
+  "id": "P45",
+  "title": "Two wizards both back the mason",
+  "claim": "The granite is a real ware: each wizard's own decision moves one load out of the warehouse, so two wizards can cost it two.",
+  "verdict": "confirmed",
+  "observed": {
+   "quest_cast": "cast",
+   "granite_before": 11,
+   "granite_after_joe": 10,
+   "granite_after_ann": 9
+  }
+ },
+ {
+  "id": "P46",
+  "title": "Can you talk to Mira?",
+  "claim": "Mira is a wizard seat, not a villager: she has no conversation card; she speaks only through short messages.",
+  "verdict": "confirmed",
+  "observed": {
+   "talk": {
+    "status": "rejected",
+    "reason": "no_such_person"
+   },
+   "inspect": {
+    "status": "rejected",
+    "reason": "no_such_person"
+   }
+  }
+ }
+]

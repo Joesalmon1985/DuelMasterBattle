@@ -1,0 +1,263 @@
+[
+ {
+  "id": "S-FLAG-UNUSED-01",
+  "severity": "low",
+  "kind": "Flag that nothing reads",
+  "where": "ranger_patrol",
+  "what": "Flag ‘patrol_north’ is set but no line, choice or quest rule ever tests it.",
+  "evidence": "set by PATROL.ranger.hub.c-advise_north",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FLAG-UNUSED-02",
+  "severity": "low",
+  "kind": "Flag that nothing reads",
+  "where": "tutorial",
+  "what": "Flag ‘colours’ is set but no line, choice or quest rule ever tests it.",
+  "evidence": "set by MENTOR.teacher.hub.c-learn_colours; MENTOR.teacher.hub.c-skip_theory",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FLAG-UNUSED-03",
+  "severity": "low",
+  "kind": "Flag that nothing reads",
+  "where": "tutorial",
+  "what": "Flag ‘creed_done’ is set but no line, choice or quest rule ever tests it.",
+  "evidence": "set by MENTOR.teacher.creed.c-creed_a; MENTOR.teacher.creed.c-creed_d; MENTOR.teacher.creed.c-creed_g",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FLAG-UNUSED-04",
+  "severity": "low",
+  "kind": "Flag that nothing reads",
+  "where": "tutorial",
+  "what": "Flag ‘rumour_known’ is set but no line, choice or quest rule ever tests it.",
+  "evidence": "set by MENTOR.teacher.hub.c-ask_village",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-01",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "favour_offered",
+  "what": "The wizard ‘learns’ favour_offered, but no condition, check or rule ever uses it.",
+  "evidence": "learned in EVERYDAY.shared.t-thanks_dispute",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-02",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "rollkeeper_advice",
+  "what": "The wizard ‘learns’ rollkeeper_advice, but no condition, check or rule ever uses it.",
+  "evidence": "learned in TRIALGATE.official.hub.c-advice.pass",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-03",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "seek_power_heard",
+  "what": "The wizard ‘learns’ seek_power_heard, but no condition, check or rule ever uses it.",
+  "evidence": "learned in AFTER.t-t_leave",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-04",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "stranger_careless",
+  "what": "The wizard ‘learns’ stranger_careless, but no condition, check or rule ever uses it.",
+  "evidence": "learned in AFTER.t-t_authority.pass",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-05",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "stranger_demand",
+  "what": "The wizard ‘learns’ stranger_demand, but no condition, check or rule ever uses it.",
+  "evidence": "learned in AFTER.t-t_guile.pass",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-06",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "stranger_rumour",
+  "what": "The wizard ‘learns’ stranger_rumour, but no condition, check or rule ever uses it.",
+  "evidence": "learned in PATROL.guard.hub.c-cloak",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-07",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "trial_rumour",
+  "what": "The wizard ‘learns’ trial_rumour, but no condition, check or rule ever uses it.",
+  "evidence": "learned in PATROL.ranger.hub.c-advise_east.pass; PATROL.ranger.hub.c-why_east",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-08",
+  "severity": "medium",
+  "kind": "Learned fact that nothing reads",
+  "where": "ward_method",
+  "what": "The wizard ‘learns’ ward_method, but no condition, check or rule ever uses it.",
+  "evidence": "learned in MENTOR.teacher.hub.c-ask_reason.pass",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-dwarf_map",
+  "severity": "low",
+  "kind": "Learned fact that nothing reads",
+  "where": "dwarf_map",
+  "what": "The wizard learns ‘dwarf_map’ in the Trial, but nothing tests it (it is a record only).",
+  "evidence": "trial/events.py",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-FACT-UNUSED-champion_of_the_trial",
+  "severity": "low",
+  "kind": "Learned fact that nothing reads",
+  "where": "champion_of_the_trial",
+  "what": "The wizard learns ‘champion_of_the_trial’ in the Trial, but nothing tests it (it is a record only).",
+  "evidence": "trial/events.py",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-SAMETEXT-tutorial-teacher-ask_village",
+  "severity": "medium",
+  "kind": "Identical buttons",
+  "where": "tutorial/teacher/hub",
+  "what": "Choices ask_village, ask_village_none all read “What should I do now?”; they can be offered together unless their conditions exclude each other.",
+  "evidence": "[{\"lessons\": [\"hidden_ward\"], \"quest\": {\"id\": \"forest_dispute\", \"in\": [\"offered\", \"active\", \"done\"]}, \"unlocked\": true}, {\"lessons\": [\"hidden_ward\"]}]",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-SAMETEXT-warehouse-keeper-log_for_mentor",
+  "severity": "medium",
+  "kind": "Identical buttons",
+  "where": "warehouse/keeper/hub",
+  "what": "Choices log_for_mentor, log_for_mentor_short all read “My teacher needs a log for the brazier. Could the store spare one?”; they can be offered together unless their conditions exclude each other.",
+  "evidence": "[{\"fact\": [\"mentor_wants_log\"], \"not_fact\": [\"log_for_mentor\"]}, {\"fact\": [\"mentor_wants_log\"], \"not_fact\": [\"log_for_mentor\"], \"facts\": [{\"name\": \"logs\", \"lte\": 0}]}]",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-ONCE-who_counts",
+  "severity": "medium",
+  "kind": "Setting that is ignored",
+  "where": "occupations.json topic ‘who_counts’",
+  "what": "The topic is marked ‘once’, but everyday topics are not checked for ‘once’ (only graph choices are).",
+  "evidence": "wizard_rts/narrative/occupations.py has no handling of the ‘once’ key",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.MENTOR.teacher.hub.c-ask_wards",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.MENTOR.teacher.hub.c-ask_wards",
+  "what": "Curiosity check ‘Why does a Ward have three places? Who decided that?’ needs 4; a fresh apprentice already has 4 (score 3 + guaranteed evidence 0 + regard +1). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: Because it is. That is how it was taught to me, and I never thought to ask. Perhaps you will, one day, when you know a l",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.MENTOR.teacher.hub.c-ask_reason",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.MENTOR.teacher.hub.c-ask_reason",
+  "what": "Reason check ‘Explain how to read fracture and echo properly, as a method.’ needs 2; a fresh apprentice already has 3 (score 2 + guaranteed evidence 0 + regard +1). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: Pay attention to what the Ward tells you, and do not guess the same thing twice. The rest is practice.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.GRANITE.hauler.hub.c-find_it",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.GRANITE.hauler.hub.c-find_it",
+  "what": "Reason check ‘Grout sacks, you said. Where does the keeper stack grout?’ needs 2; a fresh apprentice already has 3 (score 2 + guaranteed evidence 1 + regard +0). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: All over the place, that morning. I could not tell you.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.PATROL.ranger.hub.c-advise_east",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.PATROL.ranger.hub.c-advise_east",
+  "what": "Curiosity check ‘Go east, and look at the road. Tell me what you see at the g’ needs 2; a fresh apprentice already has 3 (score 3 + guaranteed evidence 0 + regard +0). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: East is the road and the road is the Trial and I would rather not. North, I think.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.TRIALGATE.official.hub.c-advice",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.TRIALGATE.official.hub.c-advice",
+  "what": "Empathy check ‘Any advice?’ needs 2; a fresh apprentice already has 2 (score 2 + guaranteed evidence 0 + regard +0). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: Do not go in. That is my advice to everyone, and it has never once been taken.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.AFTER.t-t_comfort",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.AFTER.t-t_comfort",
+  "what": "Empathy check ‘I am sorry. I know what {mentor} meant to you.’ needs 2; a fresh apprentice already has 2 (score 2 + guaranteed evidence 0 + regard +0). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: Thank you. I would rather not talk.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-CHECK-CK.AFTER.t-t_boast",
+  "severity": "medium",
+  "kind": "Skill check without a reachable failure",
+  "where": "CK.AFTER.t-t_boast",
+  "what": "Reason check ‘Tell me exactly what you saw.’ needs 2; a fresh apprentice already has 2 (score 2 + guaranteed evidence 0 + regard +0). Aspects never go down, so the failure lines cannot be reached unless regard falls below −24.",
+  "evidence": "fail lines: As I said.",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-REGARD-aftermath",
+  "severity": "info",
+  "kind": "Where regard is read",
+  "where": "aftermath.json",
+  "what": "2 condition(s) read the speaker's regard for you; every other regard change is only visible through the ±25 bands used by skill checks.",
+  "evidence": "",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-REGARD-occupations",
+  "severity": "info",
+  "kind": "Where regard is read",
+  "where": "occupations.json",
+  "what": "1 condition(s) read the speaker's regard for you; every other regard change is only visible through the ±25 bands used by skill checks.",
+  "evidence": "",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-WORLDVIEW-UNREAD",
+  "severity": "medium",
+  "kind": "Decision that changes nothing visible",
+  "where": "your worldview scores",
+  "what": "Your answers add to seven worldview scores, and the engine can test them (player_worldview), but 0 lines in the data do. The scores are shown in the journal snapshot only.",
+  "evidence": "data/narrative/dialogue/*.json contains no ‘player_worldview’ condition",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-ASPECT-COND-UNREAD",
+  "severity": "info",
+  "kind": "Engine feature never used",
+  "where": "aspect conditions",
+  "what": "The engine can hide a line unless an Aspect is at least N; 0 lines use it. Aspects matter only through checks.",
+  "evidence": "",
+  "source": "static analysis"
+ },
+ {
+  "id": "S-ASPECT-NEVER-DOWN",
+  "severity": "info",
+  "kind": "Rule",
+  "where": "Aspect scores",
+  "what": "0 effects lower an Aspect. Scores only rise (Reason +1 in the Granite quest, Resolve +1 for beating the stranger), so a check that passes at the start can never become failing.",
+  "evidence": "",
+  "source": "static analysis"
+ }
+]
