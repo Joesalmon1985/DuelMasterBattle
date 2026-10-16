@@ -73,6 +73,8 @@ def test_only_the_campaign_profile_gets_a_teacher():
 def test_fire_magic_has_to_be_learned_first():
     w = nh.world()
     tree = next(iter(w.trees))
+    assert wizard.knows(w, 0), "an apprentice of a season knows Flame from the first moment (plan M3)"
+    wizard.wiz(w)["spells"] = []  # a record without Flame (an older save): the gate still holds
     assert server._handle(w, {"op": "fire", "target": tree})["reason"] == "spell_unknown"
     t = go_to_teacher(w)
     nh.talk(w, t)

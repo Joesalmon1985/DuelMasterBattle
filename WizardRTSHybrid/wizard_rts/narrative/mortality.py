@@ -40,6 +40,22 @@ def _seat_exists(world: Any, seat: str) -> bool:
     return seat == party.HOST or seat in party.seats(world)
 
 
+def rename_seat(world: Any, old: str, new: str) -> None:
+    """A seat was retired (`party.retire`): its body, channel and counts now belong to the retired key."""
+    st = state(world)
+    if old in st["bodies"]:
+        pid = st["bodies"].pop(old)
+        st["bodies"][new] = pid
+        r = residents.table(world).get(pid)
+        if r is not None:
+            r["seat"], r["key"] = new, f"body:{new}"
+    if old in st["channels"]:
+        st["channels"][new] = st["channels"].pop(old)
+    for ch in st["channels"].values():
+        if ch.get("target") == old:
+            ch["target"] = new
+
+
 def fate_of(world: Any, seat: str) -> dict[str, Any] | None:
     if "narrative" not in world.__dict__ or not _seat_exists(world, seat):
         return None

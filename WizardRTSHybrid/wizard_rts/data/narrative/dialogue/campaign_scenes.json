@@ -176,6 +176,37 @@
      ]
     }
    }
+  ],
+  "challenge_or_not": [
+   {
+    "id": "challenge",
+    "text": "Then prove it. Ward against Ward, here, now.",
+    "lines": [
+     "You lift the staff. The square goes very quiet."
+    ],
+    "effects": [
+     {
+      "kind": "challenge_stranger"
+     }
+    ],
+    "reply": {
+     "neutral": [
+      "\"...Very well. On the old rules: three colours, three places. Break mine and I will leave. If I break yours, there will be one apprentice fewer, and nobody will remember who you were.\""
+     ]
+    }
+   },
+   {
+    "id": "let_go",
+    "text": "(Say nothing. Let him go.)",
+    "lines": [
+     "You keep your hands where they are. He waits a moment longer than he needs to, then turns away."
+    ],
+    "reply": {
+     "neutral": [
+      "\"Wise. Or frightened. From here they look the same.\""
+     ]
+    }
+   }
   ]
  },
  "scenes": {
@@ -192,7 +223,7 @@
    ]
   },
   "confrontation": {
-   "final": "duel",
+   "final": "departure",
    "pages": [
     {
      "speaker": "narrator",
@@ -267,7 +298,92 @@
     {
      "speaker": "attacker",
      "lines": [
-      "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath. I could end you the same way."
+      {
+       "text": "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "lte": 2
+         },
+         {
+          "name": "my_deaths",
+          "lte": 0
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. I hear you have already killed your friend in the road and dragged them back by the heels. Good. So you can be taught, after all; your teacher could not manage it in a season.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "gte": 1
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. I watched you two throwing Wards at each other in the road like children with stones while your teacher waited with the real lesson. {mentor} deserved a better pupil. So, it seems, did I.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "gte": 3
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. You have died already, I am told, and somebody was fool enough to bring you back. Do not count on it twice.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "lte": 2
+         },
+         {
+          "name": "my_deaths",
+          "gte": 1
+         }
+        ]
+       }
+      },
+      {
+       "text": "They never even finished teaching you. I can see it in how you hold that staff.",
+       "when": {
+        "not_lessons": [
+         "told_ward"
+        ]
+       }
+      },
+      {
+       "text": "There is more craft in you than your teacher let on. Interesting. It will not be enough.",
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ],
+        "facts": [
+         {
+          "name": "my_pvp_wins",
+          "gte": 2
+         }
+        ]
+       }
+      }
      ],
      "focus": "attacker",
      "responses": "$stranger_answers"
@@ -275,14 +391,15 @@
     {
      "speaker": "attacker",
      "lines": [
-      "But I am not a butcher, and I want you to understand what you are standing against. A Ward against a Ward, then, on the old rules: three colours, three places, and a boy who learned them this week. I will not even use both hands. Break mine and I will leave. If I break yours, there will be nobody left who remembers {mentor}'s name."
+      "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me."
      ],
-     "focus": "attacker"
+     "focus": "attacker",
+     "responses": "$challenge_or_not"
     }
    ]
   },
   "confrontation_alone": {
-   "final": "duel",
+   "final": "departure",
    "pages": [
     {
      "speaker": "narrator",
@@ -309,7 +426,92 @@
     {
      "speaker": "attacker",
      "lines": [
-      "The apprentice. Whatever they taught you, I am what the world is about to be. I could end you with one hand."
+      {
+       "text": "The apprentice. A child with a borrowed staff. Your teacher was the best of them, and it took me less than a breath.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "lte": 2
+         },
+         {
+          "name": "my_deaths",
+          "lte": 0
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. I hear you have already killed your friend in the road and dragged them back by the heels. Good. So you can be taught, after all; your teacher could not manage it in a season.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "gte": 1
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. I watched you two throwing Wards at each other in the road like children with stones while your teacher waited with the real lesson. {mentor} deserved a better pupil. So, it seems, did I.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "gte": 3
+         }
+        ]
+       }
+      },
+      {
+       "text": "The apprentice. You have died already, I am told, and somebody was fool enough to bring you back. Do not count on it twice.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_kills",
+          "lte": 0
+         },
+         {
+          "name": "pvp_duels",
+          "lte": 2
+         },
+         {
+          "name": "my_deaths",
+          "gte": 1
+         }
+        ]
+       }
+      },
+      {
+       "text": "They never even finished teaching you. I can see it in how you hold that staff.",
+       "when": {
+        "not_lessons": [
+         "told_ward"
+        ]
+       }
+      },
+      {
+       "text": "There is more craft in you than your teacher let on. Interesting. It will not be enough.",
+       "when": {
+        "lessons": [
+         "hidden_ward"
+        ],
+        "facts": [
+         {
+          "name": "my_pvp_wins",
+          "gte": 2
+         }
+        ]
+       }
+      }
      ],
      "focus": "attacker",
      "responses": "$stranger_answers"
@@ -317,9 +519,10 @@
     {
      "speaker": "attacker",
      "lines": [
-      "But I am not a butcher. A Ward against a Ward, then, on the old rules: three colours, three places, and a boy who learned them this week. Break mine and I will leave. If I break yours, nobody will remember who you were."
+      "I am not a butcher, and you are not enough: not for me, not yet for anything. Become more. There is a craft older than the schools, and I mean to teach the world what it is for. When you can bear to stand against me, come and find me."
      ],
-     "focus": "attacker"
+     "focus": "attacker",
+     "responses": "$challenge_or_not"
     }
    ]
   },

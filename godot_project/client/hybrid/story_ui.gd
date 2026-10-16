@@ -795,6 +795,8 @@ func journal_string() -> String:
 
 
 func set_journal_visible(on: bool) -> void:
+	if on and world.mp:
+		return  # Wizard World has no journal panel (plan amendment 11)
 	if on:
 		journal.show_card("Journal", "", journal_string(), [], [{"id": "close", "text": "Close (J)", "kind": "primary"}])
 	else:

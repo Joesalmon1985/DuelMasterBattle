@@ -204,8 +204,15 @@ def _ledger(world: Any, ctx: dict, eff: dict) -> dict:
     return {}
 
 
+def _challenge_stranger(world: Any, ctx: dict, eff: dict) -> dict:
+    """The apprentice answers the stranger's judgement with a challenge: the scene's end opens the lethal duel for this wizard alone (campaign.scene_next)."""
+    wizard.wiz(world)["lethal"] = "challenged"
+    return {}
+
+
 EFFECTS: dict[str, Callable[[Any, dict, dict], dict]] = {"learn_spell": _learn, "complete_lesson": _lesson, "begin_duel": _begin_duel, "journal_note": _note,
-                                                         "aspect": _aspect, "worldview": _worldview, "relationship": _relationship, "fact": _fact, "ledger": _ledger}
+                                                         "aspect": _aspect, "worldview": _worldview, "relationship": _relationship, "fact": _fact, "ledger": _ledger,
+                                                         "challenge_stranger": _challenge_stranger}
 REPEATABLE = {"begin_duel", "ledger"}  # every other effect is applied once per (template, id)
 
 

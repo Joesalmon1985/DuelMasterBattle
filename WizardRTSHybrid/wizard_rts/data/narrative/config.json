@@ -42,7 +42,10 @@
       "wonder": 2
     },
     "mentor_relationship": 40,
-    "dead_after_defeat": "The apprentice was defeated."
+    "dead_after_defeat": "The apprentice was defeated.",
+    "training_fallback_ms": 300000,
+    "start_with_colours": true,
+    "departure_grace_ms": 90000
   },
   "party": {
     "training_grace_ms": 120000,
@@ -57,5 +60,12 @@
     "accost_every_ms": 45000,
     "accost_range": 2,
     "mother_walk_every_ms": 8000
+  },
+  "catch_up": {
+    "minutes_per_real_hour": 10,
+    "cap_minutes": 20,
+    "budget_s": 120,
+    "max_absence_days": 30,
+    "min_absence_s": 60
   }
 }

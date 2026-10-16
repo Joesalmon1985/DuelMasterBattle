@@ -28,6 +28,8 @@ var last_error := ""
 var sim = null  # the live HybridSimClient handed from the lobby to the world
 var private_session := false  # single player: the world is hosted on 127.0.0.1 by this device, one human seat plus the AI companion, no discovery
 var continue_game := false  # host the newest saved Wizard World instead of a new one (private sessions)
+var new_wizard := false  # retire the saved wizard (dead or alive) and seat a new apprentice in the same world
+var new_world := false  # the explicit "Start a new world": archive the saves and build afresh
 
 var _host_pid := -1
 var _ready_file := ""
@@ -51,6 +53,8 @@ func reset() -> void:
 	last_error = ""
 	private_session = false
 	continue_game = false
+	new_wizard = false
+	new_world = false
 	if sim != null:
 		sim.disconnect_from_host()
 	sim = null
@@ -68,6 +72,22 @@ func has_wizard_save() -> bool:
 		if FileAccess.file_exists(runs_dir().path_join("saves/campaign/%s.pkl" % slot)):
 			return true
 	return false
+
+
+## What the menu may know about the saved world without unpickling it: the Python host writes a small JSON beside every save
+## (host_name, host_dead, generation, mentor_dead, game_ms, closed_at). The newest slot wins. {} when there is none.
+func wizard_save_info() -> Dictionary:
+	var best := {}
+	for slot in ["quit", "auto", "manual"]:
+		var path := runs_dir().path_join("saves/campaign/%s.json" % slot)
+		if not FileAccess.file_exists(path) or not FileAccess.file_exists(runs_dir().path_join("saves/campaign/%s.pkl" % slot)):
+			continue
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if typeof(parsed) != TYPE_DICTIONARY:
+			continue
+		if best.is_empty() or float(parsed.get("closed_at", 0.0)) > float(best.get("closed_at", 0.0)):
+			best = parsed
+	return best
 
 
 ## The Python 3 that runs the world on a PC: DMB_PYTHON, the repo's .dmb_windows_local.json, then `python` (Windows) or `python3`.
@@ -122,6 +142,8 @@ func hosting_backend() -> String:
 
 ## Start the Python host on this device. Returns at once; poll `host_status()` until state is "ready" or "failed".
 func start_local_host(name: String, code: String, seed_: int, map_: String, private: bool = false) -> Dictionary:
+	# The world is permanent (plan section 3.3): with `runs_dir` the host always loads the installation's newest save and builds a world only
+	# when there is none; `new_wizard` seats a new apprentice in it; `new_world` (Settings, confirmed twice) archives the saves first.
 	host_secret = random_hex(24)
 	join_code = code
 	session_name = name
@@ -132,7 +154,7 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	var bind := "127.0.0.1" if private else "0.0.0.0"
 	var args := {"port": DEFAULT_PORT, "bind": bind, "name": name, "code": code, "secret": host_secret, "seed": seed_, "map": map_,
 		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
-		"continue": continue_game and private, "runs_dir": runs_dir()}
+		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world}
 	if Engine.has_singleton("DmbPySim"):
 		var plugin = Engine.get_singleton("DmbPySim")
 		var raw: String = str(plugin.start(JSON.stringify(args)))
@@ -153,6 +175,10 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 		argv.append("--no-discovery")
 		if continue_game:
 			argv.append("--continue")
+	if new_wizard:
+		argv.append("--new-wizard")
+	if new_world:
+		argv.append("--new-world")
 	_host_pid = OS.create_process(py, argv, false)
 	if _host_pid <= 0:
 		_host_status = {"state": "failed", "error": "could not start %s (set DMB_PYTHON to your Python 3 executable)" % py}

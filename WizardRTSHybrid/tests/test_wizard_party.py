@@ -90,7 +90,7 @@ def test_two_humans_have_their_own_wizards_conversations_and_flags():
     assert a is not b
     t.learn(joe)
     with ann.seat_state():
-        assert wizard.spells(t.world) == [] and not wizard.lesson_done(t.world, "meet")
+        assert wizard.spells(t.world) == [0, 1, 6] and not wizard.lesson_done(t.world, "meet"), "the colours from the first moment; the lessons are hers to take"
     with joe.seat_state():
         assert wizard.spells(t.world) == [0, 1, 6] and wizard.lesson_done(t.world, "meet")
     # both talk to the same person at once; neither conversation closes the other's

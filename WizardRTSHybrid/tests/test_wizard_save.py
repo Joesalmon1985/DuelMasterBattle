@@ -128,11 +128,11 @@ def test_a_hash_mismatch_loads_but_is_flagged(world, tmp_path):
 
 def test_two_saves_in_a_row_differ_only_in_game_time(world, tmp_path):
     a, b = tmp_path / "a.pkl", tmp_path / "b.pkl"
-    persist.save_world(world, a)
-    persist.save_world(world, b)
-    assert a.read_bytes() == b.read_bytes()  # nothing in a save depends on when it was written
+    persist.save_world(world, a, wall_clock=lambda: 1.0)
+    persist.save_world(world, b, wall_clock=lambda: 1.0)
+    assert a.read_bytes() == b.read_bytes()  # nothing in a save depends on when it was written (the wall clock is recorded for the offline catch-up, nothing else)
     play(world, 1)
-    persist.save_world(world, b)
+    persist.save_world(world, b, wall_clock=lambda: 1.0)
     pa, pb = pickle.loads(a.read_bytes()), pickle.loads(b.read_bytes())
     assert {k for k in pa if k not in ("world", "hash", "game_ms")} == {k for k in pb if k not in ("world", "hash", "game_ms")}
     for k in ("format", "narrative_version", "profile", "seed"):

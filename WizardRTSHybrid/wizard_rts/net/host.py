@@ -27,7 +27,7 @@ for entry in (str(_HERE), str(_ROOT)):
         sys.path.insert(0, entry)
 
 from wizard_rts import history, narrative, tech  # noqa: E402
-from wizard_rts.narrative import tutorial  # noqa: E402
+from wizard_rts.narrative import clockdebt, tutorial  # noqa: E402
 from wizard_rts.net import protocol  # noqa: E402
 from wizard_rts.net.session import MultiplayerSession  # noqa: E402
 from wizard_rts.world import HybridWorld  # noqa: E402
@@ -59,6 +59,74 @@ def latest_save(profile: str = "campaign") -> Path | None:
             if best is None or mtime > best[0]:
                 best = (mtime, path)
     return best[1] if best else None
+
+
+def archive_saves(profile: str, stamp: str | None = None) -> list[str]:
+    """"Start a new world": the existing saves are renamed, never deleted (the owner can put them back by hand)."""
+    from wizard_rts.narrative import persist
+
+    stamp = stamp or time.strftime("%Y%m%d-%H%M%S")
+    out = []
+    folder = persist.saves_dir(profile)
+    if not folder.exists():
+        return out
+    for p in sorted(folder.glob("*.pkl")) + sorted(folder.glob("*.json")):
+        if ".retired-" in p.name:
+            continue
+        target = p.with_name(f"{p.stem}.retired-{stamp}{p.suffix}")
+        try:
+            os.replace(p, target)
+            out.append(str(target))
+        except OSError:
+            pass
+    return out
+
+
+def prepare_world(profile: str, seed: int, map_size: str, *, new_world_flag: bool = False, new_wizard: bool = False, now: float | None = None,
+                  permanent: bool = True) -> tuple[HybridWorld, dict[str, Any]]:
+    """The world this installation hosts (plan section 3.3). With `permanent`, the newest save is the world: it is loaded, never regenerated, and a
+    save the code cannot read is an error the caller shows (nothing silently starts over). `new_world_flag` archives the saves first (the explicit
+    "Start a new world"). On a loaded world the human seats of the last session are retired (a new session seats whoever comes); the host seat is
+    retired when its wizard is dead or when `new_wizard` was asked for, so the next apprentice is a new person in the same world. `owed_ms` is the
+    offline catch-up the host pays before the world opens (`clockdebt`)."""
+    from wizard_rts.narrative import mortality, party, persist
+
+    info: dict[str, Any] = {"loaded": False, "path": "", "owed_ms": 0, "retired": [], "archived": [], "host_was_dead": False}
+    if new_world_flag:
+        info["archived"] = archive_saves(profile)
+    path = latest_save(profile) if (permanent and not new_world_flag) else None
+    if path is None:
+        return new_world(seed, map_size, profile), info
+    try:
+        world, li = persist.load_world(path)
+    except persist.SaveError as exc:
+        if exc.prev:
+            world, li = persist.load_world(exc.prev)
+            info["recovered_from_prev"] = True
+        else:
+            raise
+    world.visual_state = True
+    world.players = {}
+    tutorial.start(world)
+    info.update(loaded=True, path=li["path"], game_ms=li["game_ms"], closed_at=li.get("closed_at"), game_version=li.get("game_version", ""), last_catch_up=li.get("catch_up", {}),
+                hash_mismatch=li.get("hash_mismatch", False))
+    if narrative.enabled(world):
+        host_seat = party.party(world).get("host", "")
+        for seat in list(party.order(world)):
+            rec = party.seats(world).get(seat)
+            if rec is not None and rec.get("human") and seat != host_seat:
+                info["retired"].append(party.retire(world, seat, "session_over"))
+        if host_seat and host_seat in party.seats(world):
+            dead = mortality.is_dead(world, host_seat)
+            info["host_was_dead"] = dead
+            if dead or new_wizard:
+                info["retired"].append(party.retire(world, host_seat, "died" if dead else "new_wizard"))
+        if now is None:
+            now = time.time()
+            if os.environ.get("HYBRID_FAKE_ABSENCE_S") and li.get("closed_at"):  # developer: pretend the installation was closed this long
+                now = float(li["closed_at"]) + float(os.environ["HYBRID_FAKE_ABSENCE_S"])
+        info["owed_ms"] = clockdebt.owed_ms(li.get("closed_at"), now)
+    return world, info
 
 
 def load_saved_world(profile: str = "campaign") -> HybridWorld | None:
@@ -128,17 +196,57 @@ class HostServer:
         session.on_ending = self._on_ending  # every human is dead: the world is saved with the bodies in it and the session winds down
         self.stop_at: float | None = None
         self.ending_save: dict[str, Any] | None = None
+        self.permanent = False  # the installation's world: saved on endings and after the catch-up
+        self.catch_up: dict[str, Any] = {"owed_ms": 0, "paid_ms": 0, "forfeited_ms": 0, "active": False, "spent_s": 0.0, "budget_s": clockdebt.settings()["budget_s"], "written_off": True}
+        session.catch_up = self.catch_up  # the lobby shows it; `start` forfeits what is left
+
+    def begin_catch_up(self, owed_ms: int) -> None:
+        """The world is owed `owed_ms` of simulated time for the installation's absence: paid in slices by `step()` while the lobby is open."""
+        owed = max(0, int(owed_ms))
+        self.catch_up.update(owed_ms=owed, paid_ms=0, forfeited_ms=0, active=owed > 0, spent_s=0.0, written_off=owed <= 0)
+
+    def _catch_up_slice(self, max_quanta: int = 5) -> None:
+        cu = self.catch_up
+        if cu["active"]:
+            for _ in range(max_quanta):
+                if cu["paid_ms"] >= cu["owed_ms"] or cu["spent_s"] >= cu["budget_s"]:
+                    cu["active"] = False
+                    break
+                t0 = self.clock()
+                self.seq += 1
+                self.world.advance(100, self.seq, snapshot=False)
+                cu["paid_ms"] += 100
+                cu["spent_s"] += self.clock() - t0
+            if cu["active"]:
+                return
+            cu["forfeited_ms"] = max(0, cu["owed_ms"] - cu["paid_ms"])
+            self.last_tick = self.clock()  # the real-time clock resumes from now, not from before the catch-up
+        if not cu["written_off"]:
+            self._write_off()
+
+    def _write_off(self) -> None:
+        """The debt is consumed: the save is rewritten at once with the new `closed_at`, so a crash (or a reconnect) can never apply it twice."""
+        cu = self.catch_up
+        cu["written_off"] = True
+        self.world.catch_up_record = {"owed_ms": cu["owed_ms"], "paid_ms": cu["paid_ms"], "forfeited_ms": cu["forfeited_ms"], "spent_s": round(cu["spent_s"], 2),
+                                      "game_ms": int(self.world.dmb.clock.get("game_ms", 0))}
+        if self.permanent and narrative.enabled(self.world):
+            self.save_world("quit")
+
+    def save_world(self, slot: str = "quit") -> dict[str, Any]:
+        from wizard_rts import server
+
+        try:
+            out = server._handle(self.world, {"op": "save", "slot": slot})
+        except Exception as exc:  # noqa: BLE001
+            out = {"status": "error", "detail": str(exc)}
+        return out if isinstance(out, dict) else {"status": "error"}
 
     def _on_ending(self, session: MultiplayerSession) -> None:
         """The session's game has ended. The host's own world (a private session, or the hosting installation's world) is saved as it is, dead
         apprentices and all; the clients read `ending` from their state polls, show it and leave; the host stops once they have, or after a while."""
-        if narrative.enabled(self.world) and session.max_players == 1:
-            from wizard_rts import server
-
-            try:
-                self.ending_save = server._handle(self.world, {"op": "save", "slot": "quit"})
-            except Exception as exc:  # noqa: BLE001 - a save that fails must not keep the session alive for ever
-                self.ending_save = {"status": "error", "detail": str(exc)}
+        if narrative.enabled(self.world) and (self.permanent or session.max_players == 1):
+            self.ending_save = self.save_world("quit")
         self.stop_at = self.clock() + 30.0
 
     def _adopt_world(self, world: HybridWorld) -> None:
@@ -172,7 +280,8 @@ class HostServer:
 
     def ready_line(self) -> str:
         info = {"port": self.port, "bind": self.bind, "discovery_port": self.discovery_port, "code": self.session.join_code, "secret": self.session.host_secret,
-                "name": self.session.name, "lan": lan_addresses(), "protocol": protocol.PROTOCOL_VERSION, "game": protocol.GAME_VERSION}
+                "name": self.session.name, "lan": lan_addresses(), "protocol": protocol.PROTOCOL_VERSION, "game": protocol.GAME_VERSION,
+                "catch_up": {k: self.catch_up[k] for k in ("owed_ms", "active")}, "prepared": {k: v for k, v in getattr(self, "prepared", {}).items() if k in ("loaded", "retired", "host_was_dead", "archived", "game_ms")}}
         return "HYBRID_HOST_READY " + json.dumps(info)
 
     def stop(self) -> None:
@@ -203,7 +312,9 @@ class HostServer:
             else:
                 self._read(key.fileobj)  # type: ignore[arg-type]
         now = self.clock()
-        self._advance(now)
+        self._catch_up_slice()
+        if not self.catch_up["active"]:
+            self._advance(now)
         self.session.tick(now)
         for conn in self.session.orphaned_conns:
             self._close(conn, notify=False)
@@ -359,13 +470,22 @@ class HostServer:
 
 
 def build(args: argparse.Namespace) -> HostServer:
+    """The app always passes `--runs-dir`, which makes the world permanent (the newest save is the world). A developer host without it builds a fresh
+    world unless `--continue` asks for the save (the old behaviour, kept for the launchers and the headed tests)."""
     if getattr(args, "runs_dir", ""):
         os.environ["DMB_RUNS"] = str(args.runs_dir)
-    world = (load_saved_world(args.profile) if getattr(args, "continue_game", False) else None) or new_world(args.seed, args.map, args.profile)
+    permanent = bool(getattr(args, "runs_dir", "")) or bool(getattr(args, "continue_game", False))
+    world, info = prepare_world(args.profile, args.seed, args.map, new_world_flag=bool(getattr(args, "new_world", False)),
+                                new_wizard=bool(getattr(args, "new_wizard", False)), permanent=permanent)
     session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius,
                                  first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)),
                                  world_factory=lambda: new_world(args.seed, args.map, args.profile), ai_companions=1 if int(args.max_players) == 1 else 0)
-    return HostServer(world, session, bind=args.bind, port=args.port, discovery_port=None if args.no_discovery else args.discovery_port)
+    host = HostServer(world, session, bind=args.bind, port=args.port, discovery_port=None if args.no_discovery else args.discovery_port)
+    host.permanent = permanent
+    host.prepared = info
+    if info.get("loaded"):
+        host.begin_catch_up(int(info.get("owed_ms", 0)))
+    return host
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -385,7 +505,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--first-joiner-hosts", action="store_true",
                     help="this machine has no wizard of its own (a PC hosting for phones): the first player to join with the code gets the host role and the START button")
     ap.add_argument("--runs-dir", default="", help="where Wizard World saves live (DMB_RUNS); the menu looks in the same folder")
-    ap.add_argument("--continue", dest="continue_game", action="store_true", help="host the newest Wizard World save of this device instead of a new world")
+    ap.add_argument("--continue", dest="continue_game", action="store_true", help="host the newest Wizard World save of this device (always the case with --runs-dir)")
+    ap.add_argument("--new-wizard", action="store_true", help="retire the host's wizard (alive or dead) and seat a new apprentice in the same world")
+    ap.add_argument("--new-world", action="store_true", help="archive the saves and build a fresh world (the explicit 'Start a new world')")
     ap.add_argument("--stats-every", type=float, default=0.0, help="print HYBRID_HOST_STATS every N seconds")
     ap.add_argument("--ready-file", default="", help="also write the ready line's JSON to this file (the Godot launcher polls it)")
     return ap.parse_args(argv)

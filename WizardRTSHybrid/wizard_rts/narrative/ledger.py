@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Any
 
 RECENT_CAP = 60
+KNOWN = ("pvp_duels", "pvp_wins", "pvp_losses", "kills", "deaths", "resurrections", "draws", "protests", "provocations", "refused_steps", "accosted")  # always present as facts (0 when nothing happened)
 
 
 def state(world: Any) -> dict[str, Any]:
@@ -47,13 +48,22 @@ def note(world: Any, kind: str, **data: Any) -> None:
     del st["recent"][:-RECENT_CAP]
 
 
+def rename_seat(world: Any, old: str, new: str) -> None:
+    st = state(world)
+    if str(old) in st["seats"]:
+        st["seats"][str(new)] = st["seats"].pop(str(old))
+
+
 def facts(world: Any, seat: str | None = None) -> dict[str, int]:
     """The counts as dialogue facts: the world's under their own names, the seat's as `my_<key>`."""
     if "narrative" not in world.__dict__:
         return {}
     st = state(world)
-    out = {k: int(v) for k, v in sorted(st["world"].items())}
+    out = {k: 0 for k in KNOWN}
+    out.update({k: int(v) for k, v in sorted(st["world"].items())})
     if seat is not None:
+        for k in KNOWN:
+            out["my_" + k] = 0
         for k, v in sorted(st["seats"].get(str(seat), {}).items()):
             out["my_" + k] = int(v)
     return out

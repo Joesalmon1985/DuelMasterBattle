@@ -9,9 +9,12 @@ clock. The server never reads the wall clock: autosave is timed by the Godot cli
 
 from __future__ import annotations
 
+import json
 import os
 import pickle
 import re
+import time
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -80,14 +83,20 @@ def _valid(path: Path) -> bool:
 
 # ------------------------------------------------------------------ save
 
-def save_world(world: Any, path: Path | str) -> dict[str, Any]:
-    """Write `world` to `path` atomically (tmp file, fsync, `os.replace`), keeping the previous valid save as `<slot>.prev.pkl`."""
+def save_world(world: Any, path: Path | str, wall_clock: Any = None) -> dict[str, Any]:
+    """Write `world` to `path` atomically (tmp file, fsync, `os.replace`), keeping the previous valid save as `<slot>.prev.pkl` and one save a day for
+    `DAILY_KEEP` days (`<slot>.<date>.pkl`). The payload carries `closed_at` (wall clock, for the offline catch-up) and the game version; a sidecar
+    `<slot>.json` says what the menu needs to know without unpickling (is the host's wizard alive, their name, the game time)."""
     path = Path(path)
     # a dead apprentice is saved like a living one: the world is permanent and the body is part of it (plan section 3.3)
     game_ms = int(world.dmb.clock.get("game_ms", 0))
     digest = world.state_hash()
+    from wizard_rts.net import protocol
+
+    closed_at = float(wall_clock() if wall_clock is not None else time.time())
     payload = {"format": save_format(), "hash": digest, "narrative_version": config.version(), "world": world,
-               "profile": world.profile, "seed": world.seed, "game_ms": game_ms}
+               "profile": world.profile, "seed": world.seed, "game_ms": game_ms, "closed_at": closed_at, "game_version": protocol.GAME_VERSION,
+               "catch_up": dict(world.__dict__.get("catch_up_record") or {})}
     blob = pickle.dumps(payload, protocol=PROTOCOL)
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -99,9 +108,57 @@ def save_world(world: Any, path: Path | str) -> dict[str, Any]:
         if path.exists() and _valid(path):  # only a good save becomes the fallback; a damaged one never replaces it
             os.replace(path, prev_path(path))
         os.replace(tmp, path)
+        _daily_copy(path, blob, closed_at)
+        _write_sidecar(world, path, game_ms, closed_at)
     except OSError as exc:
         raise SaveError("io", str(exc)) from exc
-    return {"path": str(path), "hash": digest, "game_ms": game_ms, "bytes": len(blob)}
+    return {"path": str(path), "hash": digest, "game_ms": game_ms, "bytes": len(blob), "closed_at": closed_at}
+
+
+DAILY_KEEP = 7
+
+
+def _daily_copy(path: Path, blob: bytes, closed_at: float) -> None:
+    """One copy a day (the first save of that day), the last `DAILY_KEEP` days kept: a world that must outlive updates has somewhere to go back to."""
+    day = date.fromtimestamp(closed_at).isoformat()
+    stem = path.name[: -len(".pkl")]
+    daily = path.with_name(f"{stem}.{day}.pkl")
+    if not daily.exists():
+        daily.write_bytes(blob)
+    cutoff = (date.fromtimestamp(closed_at) - timedelta(days=DAILY_KEEP)).isoformat()
+    for old in sorted(path.parent.glob(f"{stem}.????-??-??.pkl")):
+        if old.name[len(stem) + 1: len(stem) + 11] < cutoff:
+            try:
+                old.unlink()
+            except OSError:
+                pass
+
+
+def sidecar_path(path: Path) -> Path:
+    return path.with_name(path.name[: -len(".pkl")] + ".json")
+
+
+def _write_sidecar(world: Any, path: Path, game_ms: int, closed_at: float) -> None:
+    from wizard_rts.narrative import mortality, party, tutorial
+    from wizard_rts.net import protocol
+
+    info = {"game_version": protocol.GAME_VERSION, "narrative_version": config.version(), "game_ms": game_ms, "closed_at": closed_at, "seed": int(world.seed),
+            "map": str(world.map_size), "host_seat": "", "host_name": "", "host_dead": False, "generation": 1, "mentor_dead": False, "bodies": 0}
+    if "narrative" in world.__dict__:
+        host = party.party(world).get("host", "")
+        info.update(host_seat=host, host_name=mortality.name_of(world, host) if host else "", host_dead=bool(host and mortality.is_dead(world, host)),
+                    generation=party.generation(world), bodies=len((world.narrative.get("mortality") or {}).get("bodies", {})),
+                    mentor_dead=bool(tutorial.state(world).get("started") and (world.narrative.get("campaign") or {}).get("mentor_fate") in ("killed_by_stranger", "died_earlier")))
+    tmp = sidecar_path(path).with_name(sidecar_path(path).name + ".tmp")
+    tmp.write_text(json.dumps(info, indent=1), encoding="utf-8")
+    os.replace(tmp, sidecar_path(path))
+
+
+def read_sidecar(path: Path | str) -> dict[str, Any] | None:
+    try:
+        return json.loads(sidecar_path(Path(path)).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 # ------------------------------------------------------------------ load
@@ -148,4 +205,5 @@ def load_world(path: Path | str) -> tuple[Any, dict[str, Any]]:
     # (The stranger's lethal duel is the exception: being open when the game was saved and loaded is a way out of it, so `abandon` ends the game, see campaign.on_duel_void.)
     mismatch = world.state_hash() != payload["hash"]
     return world, {"path": str(path), "game_ms": int(payload.get("game_ms", 0)), "profile": payload.get("profile", world.profile),
-                   "seed": payload.get("seed", world.seed), "hash": payload["hash"], "hash_mismatch": mismatch, "recovered": mismatch}
+                   "seed": payload.get("seed", world.seed), "hash": payload["hash"], "hash_mismatch": mismatch, "recovered": mismatch,
+                   "closed_at": payload.get("closed_at"), "game_version": payload.get("game_version", ""), "catch_up": payload.get("catch_up", {})}

@@ -340,7 +340,7 @@ def test_new_game_gives_a_fresh_living_world():
     reply = server._handle(w, {"op": "new_game"})
     fresh = reply["_swap"]
     assert reply["status"] == "ok" and not campaign.over(fresh) and campaign.stage(fresh) == "training" and fresh is not w
-    assert wizard.spells(fresh) == [] and fresh.dmb.people[tutorial.state(fresh)["teacher"]]["alive"]
+    assert wizard.spells(fresh) == [0, 1, 6] and not wizard.wiz(fresh)["lessons"] and fresh.dmb.people[tutorial.state(fresh)["teacher"]]["alive"]
     assert reply["snapshot"] is not None
 
 
@@ -514,11 +514,12 @@ def test_every_scene_and_aftermath_line_formats_and_names_exist():
     data = json.loads((nh.__file__ and __import__("pathlib").Path(nh.__file__).resolve().parents[1] / "wizard_rts" / "data" / "narrative" / "dialogue" / "campaign_scenes.json").read_text())
     assert set(data["scenes"]) == {"notice", "confrontation", "confrontation_alone", "victory"}
     for sid, sc in data["scenes"].items():
-        assert sc["final"] in ("arrival", "duel", "aftermath"), sid
+        assert sc["final"] in ("arrival", "departure", "aftermath"), sid
         assert sc["pages"] and all(p["lines"] for p in sc["pages"]), sid
     kills = [p for sc in data["scenes"].values() for p in sc["pages"] if any(e["kind"] == "kill_mentor" for e in p.get("effects", []))]
     assert len(kills) == 1  # one place in the story kills the mentor
-    assert sum(1 for sc in data["scenes"].values() if sc["final"] == "duel") == 2  # the two ways to the duel
+    assert sum(1 for sc in data["scenes"].values() if sc["final"] == "departure") == 2  # the two confrontations end with the stranger leaving, a duel only if challenged
+    assert all(r["id"] == "challenge" for r in data["response_sets"]["challenge_or_not"][:1])  # the challenge is a choice, the first one offered
 
 
 # ------------------------------------------------------------------ 9. more guarantees
@@ -526,7 +527,8 @@ def test_every_scene_and_aftermath_line_formats_and_names_exist():
 def test_the_progression_is_applied_not_just_the_flags():
     w = nh.world()
     for lesson in ("meet", "colours", "told_ward", "hidden_ward"):
-        wizard.complete_lesson(w, lesson)  # flags only: no spells (an inconsistent state)
+        wizard.complete_lesson(w, lesson)  # flags only: no spells (an inconsistent state, as an old save might hold)
+    wizard.wiz(w)["spells"], wizard.wiz(w)["weave_size"] = [], 0
     assert wizard.spells(w) == []
     nh.adv(w, 3)
     assert campaign.stage(w) == "explore" and wizard.spells(w) == [0, 1, 6] and wizard.wiz(w)["weave_size"] == 3

@@ -61,9 +61,15 @@ def multi(world: Any) -> bool:
     return "narrative" in world.__dict__ and len(party(world)["order"]) > 1
 
 
+def host_actor(world: Any) -> str:
+    """The Aspect / relationship actor id of the host's wizard: `player` for the first apprentice of a world, `player:2` for the next (a new wizard in
+    a permanent world is a new person to everybody, and the people's memories of the first stay under the first's id)."""
+    return str(party(world).get("host_actor", ACTOR_HOST)) if "narrative" in world.__dict__ else ACTOR_HOST
+
+
 def actor(world: Any) -> str:
-    """The Aspect / relationship actor id of the wizard acting now (`player` for the host, the seat id for everybody else)."""
-    return world.narrative.get("actor", ACTOR_HOST) if "narrative" in world.__dict__ else ACTOR_HOST
+    """The Aspect / relationship actor id of the wizard acting now (the host's own, or the seat id for everybody else)."""
+    return world.narrative.get("actor", host_actor(world)) if "narrative" in world.__dict__ else ACTOR_HOST
 
 
 def current(world: Any) -> str:
@@ -77,7 +83,7 @@ def enroll(world: Any, seat: str, name: str, *, host: bool = False, human: bool 
     rec = p["seats"].get(seat)
     if rec is None:
         rec = {"seat": seat, "name": name, "human": bool(human), "present": True, "host": bool(host), "joined_ms": _now(world), "caught_up": False,
-               "actor": ACTOR_HOST if host else seat, "player_id": seat}
+               "actor": host_actor(world) if host else seat, "player_id": seat, "generation": int(p.get("generation", 1))}
         p["seats"][seat] = rec
         p["order"].append(seat)
         if host:
@@ -130,7 +136,7 @@ def as_player(world: Any, seat: str) -> Iterator[None]:
         if not in_guest:
             yield  # already the host
             return
-        owner, new_seat, new_actor = n["_host"], None, ACTOR_HOST
+        owner, new_seat, new_actor = n["_host"], None, host_actor(world)
     elif seat in guests(world):
         if n.get("seat") == seat:
             yield
@@ -248,3 +254,68 @@ def humans(world: Any) -> list[str]:
 
 def training_grace_ms() -> int:
     return int(config.get("party", "training_grace_ms", 120_000))
+
+
+# ------------------------------------------------------------------ generations: a new wizard in a permanent world
+
+def retired(world: Any) -> dict[str, dict[str, Any]]:
+    return party(world).setdefault("retired", {})
+
+
+def retire(world: Any, seat: str, reason: str = "new_wizard") -> str:
+    """The wizard in `seat` leaves the roster of the living players (dead and buried, or gone from the village): their private state is kept under a
+    retired key (`gone:<seat>:<n>`) with everything the world remembers of them (their body, their mother, their counts) re-pointed at it, and the seat
+    itself is free for the next apprentice. For the host seat the world's own private containers are reset to a fresh apprentice's and the host's
+    actor id moves on (`player:2`), so the people keep their memories of the first under the first's id. Returns the retired key."""
+    from wizard_rts.narrative import ledger, mortality, mother
+
+    p = party(world)
+    if seat not in p["seats"]:
+        return ""
+    gen = int(p.get("generation", 1))
+    key = f"gone:{seat}:{gen}"
+    rec = p["seats"].pop(seat)
+    n = world.narrative
+    if is_host_seat(world, seat):
+        bundle = {k: n[k] for k in SWAPPED if k in n}
+        retired_rec = {**bundle, "scene": p.get("host_scene"), "name": rec["name"], "retired": True}
+        guests(world)[key] = retired_rec
+        fresh = _fresh_private(rec["name"])
+        for k in SWAPPED:
+            n[k] = fresh[k]
+        n.get("campaign", {})["scene"] = None
+        p["generation"] = gen + 1
+        p["host_actor"] = f"player:{gen + 1}"
+        p["host"] = ""
+    elif seat in guests(world):
+        g = guests(world).pop(seat)
+        g["retired"] = True
+        guests(world)[key] = g
+    if seat in p["order"]:
+        p["order"].remove(seat)
+    rec.update(seat=key, retired=True, retired_reason=reason, retired_ms=_now(world), was=seat)
+    retired(world)[key] = rec
+    p["seats"][key] = rec  # still a seat (bodies and mothers point at it; `players()` iterates `order`, so nothing acts for it)
+    mortality.rename_seat(world, seat, key)
+    mother.rename_seat(world, seat, key)
+    ledger.rename_seat(world, seat, key)
+    from wizard_rts.narrative import events
+
+    events.log(world, "wizard_retired", seat=seat, key=key, reason=reason, dead=mortality.is_dead(world, key))
+    if not mortality.is_dead(world, key):
+        ledger.note(world, "wizard_left", seat=key, name=rec["name"])
+    return key
+
+
+def retire_humans(world: Any, reason: str = "session_over") -> list[str]:
+    """Every human seat, host included, is retired (a new session seats whoever comes). AI companions keep their seats and memories."""
+    out = []
+    for seat in list(order(world)):
+        rec = seats(world).get(seat)
+        if rec is not None and rec.get("human"):
+            out.append(retire(world, seat, reason))
+    return out
+
+
+def generation(world: Any) -> int:
+    return int(party(world).get("generation", 1)) if "narrative" in world.__dict__ else 1

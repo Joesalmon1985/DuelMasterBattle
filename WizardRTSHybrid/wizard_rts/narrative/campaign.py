@@ -36,7 +36,7 @@ from sim.dmb.people.registry import PeopleService
 from sim.dmb.time.clock import ClockService
 
 from wizard_rts import settlements
-from wizard_rts.narrative import characters, checks, config, conversation, duel_lease, events, graph, party, personas, residents, wizard
+from wizard_rts.narrative import characters, checks, config, conversation, duel_lease, events, graph, ledger, party, personas, residents, wizard
 
 SCENES = Path(__file__).resolve().parents[1] / "data" / "narrative" / "dialogue" / "campaign_scenes.json"
 STAGES = ("training", "explore", "arrival", "confrontation", "duel", "victory", "aftermath", "complete", "game_over")
@@ -66,7 +66,8 @@ def now(world: Any) -> int:
 
 def _fresh() -> dict[str, Any]:
     return {"stage": "training", "stage_ms": 0, "explore_start_ms": None, "contacts": [], "inspected": [], "scene": None, "attacker": "", "witnesses": [],
-            "mentor_fate": "", "events_seen": 0, "aftermath_talks": [], "aftermath_start_ms": None, "outcome": "", "attack_log": []}
+            "mentor_fate": "", "events_seen": 0, "aftermath_talks": [], "aftermath_start_ms": None, "outcome": "", "attack_log": [], "stranger_gone_to": None,
+            "training_ended_by": ""}
 
 
 def state(world: Any) -> dict[str, Any]:
@@ -218,10 +219,11 @@ def note_inspect(world: Any, key: str) -> None:
 
 
 def explore_due(world: Any) -> dict[str, Any]:
-    """Whether the attack is due, and why (the same answer the tests and the HUD read)."""
+    """Whether the attack is due, and why (the same answer the tests and the HUD read). Contact with the settlement is people spoken to and things
+    inspected; duels fought, deaths and resurrections count as well (an apprentice who spent the morning killing their friend has made contact)."""
     st = state(world)
     elapsed = now(world) - int(st["explore_start_ms"] or now(world))
-    contact = len(st["contacts"]) + len(st["inspected"])
+    contact = len(st["contacts"]) + len(st["inspected"]) + min(3, ledger.count(world, "pvp_duels") + ledger.count(world, "deaths") + ledger.count(world, "resurrections"))
     need = int(config.get("campaign", "explore_min_contacts", 3))
     by_play = elapsed >= int(config.get("campaign", "explore_min_ms", 180000)) and contact >= need
     by_fallback = elapsed >= int(config.get("campaign", "explore_fallback_ms", 420000))
@@ -249,7 +251,7 @@ def tick(world: Any) -> None:
     st = state(world)
     _watch_fire(world, st)
     s = st["stage"]
-    if s == "training" and _training_done(world, st):
+    if s == "training" and _training_over(world, st):
         for _seat in party.players(world):  # every wizard has the magic when the lessons are over: the progression is applied, never just the flag
             if party.multi(world) and not all(wizard.lesson_done(world, l) for l in config.get("tutorial", "essential", [])):
                 catch_up(world)  # a wizard who has not finished the lessons by now is caught up (they stay free to ask the mentor again)
@@ -265,10 +267,73 @@ def tick(world: Any) -> None:
         _arrival_step(world, st)
     elif s == "duel":
         _duel_watch(world, st)
+        _depart_check(world, st)
+    elif s == "confrontation":
+        _depart_check(world, st)
     elif s == "aftermath":
         _aftermath_step(world, st)
     if s in ("victory", "aftermath", "complete"):
         _stranger_leaves(world, st)
+
+
+def _training_over(world: Any, st: dict[str, Any]) -> bool:
+    """Training is an activity, not a gate (plan amendment 2): it is over when the lessons are done, when the apprentices have proved they can duel
+    (a duel between them, a death), or after `training_fallback_ms` of game time, whichever comes first."""
+    if _training_done(world, st):
+        st["training_ended_by"] = "lessons"
+        return True
+    if ledger.count(world, "pvp_duels") >= 1 or ledger.count(world, "deaths") >= 1:
+        st["training_ended_by"] = "play"
+        return True
+    if now(world) >= int(config.get("campaign", "training_fallback_ms", 300000)):
+        st["training_ended_by"] = "time"
+        return True
+    return False
+
+
+def grant_basics(world: Any) -> bool:
+    """An apprentice of a season knows the three colours and the weave of three from the first moment (the lessons teach the method, and remain open).
+    Acts for the wizard acting now; True when anything was granted."""
+    if not bool(config.get("campaign", "start_with_colours", True)):
+        return False
+    w = wizard.wiz(world)
+    if all(wizard.knows(world, sp) for sp in wizard.palette()) and int(w["weave_size"]) >= 3:
+        return False
+    wizard.learn(world, wizard.palette(), 3)
+    return True
+
+
+def _lethal_open(world: Any) -> bool:
+    """Is any human still to settle with the stranger: a challenge answered but not yet fought, or a duel under way?"""
+    for _seat in party.players(world, humans_only=True):
+        if wizard.wiz(world).get("lethal") in ("challenged", "active") and not over(world):
+            return True
+    return False
+
+
+def _depart_check(world: Any, st: dict[str, Any]) -> None:
+    """The stranger leaves once everybody present has had their say (and anybody who challenged him has fought): nobody is forced into anything,
+    nobody waits for ever (`departure_grace_ms` after the confrontation began)."""
+    if st["stage"] not in ("confrontation", "duel") or not st["attacker"]:
+        return
+    grace = int(config.get("campaign", "departure_grace_ms", 90000)) + int(config.get("party", "scene_grace_ms", 90000))
+    if _lethal_open(world):
+        return
+    if any_scene_open(world) and now(world) - int(st["stage_ms"]) < grace:
+        return
+    _begin_aftermath(world)
+
+
+def _begin_aftermath(world: Any) -> None:
+    st = state(world)
+    if st["stage"] in ("aftermath", "complete", "victory"):
+        return
+    if not st["outcome"]:
+        st["outcome"] = "spared"
+    world_effects(world)  # whoever walked away from the square: the mentor is dead all the same
+    st["aftermath_start_ms"] = now(world)
+    _set_stage(world, "aftermath")
+    _retreat(world, scene_ctx(world), {})
 
 
 def _training_done(world: Any, st: dict[str, Any]) -> bool:
@@ -394,13 +459,34 @@ def start_confrontation(world: Any) -> None:
     residents.table(world)[st["attacker"]]["walk"] = []
     _set_stage(world, "confrontation")
     start_scene_for_all(world, "confrontation" if present else "confrontation_alone")
+    if not party.present_humans(world) and party.multi(world):
+        world_effects(world)  # nobody is here to see it: it happens all the same (the plan's section 3.4); they will hear of it from people
+
+
+def world_effects(world: Any) -> None:
+    """The confrontation's effects on the world (the mentor's death) happen exactly once whether or not anybody reads the scene: when no human is
+    present, and when the stage moves on before the present ones acknowledged the page. Each effect is idempotent."""
+    st = state(world)
+    if st["stage"] not in ("confrontation", "duel", "victory", "aftermath", "complete") or not st["attacker"]:
+        return
+    ctx = scene_ctx(world)
+    for sid in ("confrontation",):
+        for page in scenes()[sid]["pages"]:
+            for eff in page.get("effects", []):
+                if eff["kind"] == "kill_mentor":
+                    _SCENE_EFFECTS[eff["kind"]](world, ctx, eff)
 
 
 # ------------------------------------------------------------------ scenes: pages the player acknowledges
 
 def scene_ctx(world: Any) -> dict[str, Any]:
+    """The scene's context: the cast's names and the facts the pages may read (the ledger's counts, this wizard's own with `my_`, the lessons done)."""
+    from wizard_rts.narrative import mortality
+
     st = state(world)
-    return {"template": "scene", "speaker": "scene", "speaker_pid": st["attacker"], "name": names(world)["attacker"], "cast": names(world), "facts": {}}
+    facts = ledger.facts(world, mortality.me(world))
+    facts["lessons_done"] = len(wizard.wiz(world).get("lessons", {}))
+    return {"template": "scene", "speaker": "scene", "speaker_pid": st["attacker"], "name": names(world)["attacker"], "cast": names(world), "facts": facts}
 
 
 def active_scene(world: Any) -> dict[str, Any] | None:
@@ -503,6 +589,14 @@ def scene_next(world: Any) -> dict[str, Any]:
     final = scenes()[sc["id"]].get("final", "")
     _set_scene(world, None)
     out: dict[str, Any] = {"status": "ok", "scene": None, "ended": sc["id"]}
+    if final == "departure":  # the stranger has said his piece; whoever challenged him fights, everybody else watches him go (plan amendment 1)
+        if wizard.wiz(world).get("lethal") == "challenged":
+            final = "duel"
+        else:
+            if wizard.wiz(world).get("lethal") in (None, ""):
+                wizard.wiz(world)["lethal"] = "declined"
+            _depart_check(world, st)
+            return out
     if final == "duel":
         if st["stage"] in ("victory", "aftermath", "complete"):
             # somebody else has already driven the stranger off while this wizard was reading: nothing is left to fight, and nothing is lost
@@ -536,6 +630,7 @@ def _kill_mentor(world: Any, ctx: dict[str, Any], eff: dict[str, Any]) -> None:
     if st["mentor_fate"] or pid not in world.dmb.people:
         return
     st["mentor_fate"] = "killed_by_stranger"
+    st["mentor_died_ms"] = now(world)
     wizard.wiz(world)["mentor_dead"] = True  # crosses a cycle reset with the wizard: a new cycle never casts a second mentor
     rec = world.dmb.people[pid]
     if rec.get("alive", True):
@@ -674,7 +769,11 @@ def _stranger_leaves(world: Any, st: dict[str, Any]) -> None:
     r = residents.table(world).get(st["attacker"])
     if r is not None and r["status"] == "present" and r.get("leaving") and not r.get("walk"):
         residents.remove(world, st["attacker"], "gone")
-        events.log(world, "stranger_gone", person=st["attacker"])
+        home = residents.table(world).get(mentor(world), {}).get("anchor") or [int(world.player["tx"]), int(world.player["ty"])]
+        dx, dy = int(r["tile"][0]) - int(home[0]), int(r["tile"][1]) - int(home[1])
+        compass = ("east" if abs(dx) >= abs(dy) and dx > 0 else "west" if abs(dx) >= abs(dy) else "south" if dy > 0 else "north")
+        st["stranger_gone_to"] = {"tile": [int(r["tile"][0]), int(r["tile"][1])], "direction": compass, "game_ms": now(world)}
+        events.log(world, "stranger_gone", person=st["attacker"], direction=compass, tile=list(r["tile"]))
 
 
 def complete(world: Any) -> None:
@@ -695,7 +794,7 @@ def complete(world: Any) -> None:
 
 def objective(world: Any) -> str:
     st = state(world)
-    return {"explore": "Explore the settlement and talk to the people who live in it.", "arrival": "A stranger is coming.",
+    return {"explore": "Explore the settlement and talk to the people who live in it.", "arrival": "A stranger is coming.", "confrontation": "",
             "victory": "", "aftermath": "Speak with the people of the settlement about what happened.", "complete": "Seek greater magical power.",
             "game_over": "The apprentice was defeated."}.get(st["stage"], "")
 
@@ -739,6 +838,7 @@ def on_join(world: Any) -> None:
     teacher = world.narrative.get("tutorial", {}).get("teacher", "")
     if teacher and teacher in world.dmb.people and not wizard.wiz(world).get("fate"):
         PeopleService(world.dmb).set_relationship(teacher, checks.actor(world), int(config.get("campaign", "mentor_relationship", 40)))
+    grant_basics(world)
     if st["stage"] != "training":
         catch_up(world)
     welcome_back(world)

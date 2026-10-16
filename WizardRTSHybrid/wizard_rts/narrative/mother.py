@@ -90,16 +90,49 @@ def ensure(world: Any, seat: str) -> str | None:
 
 
 def facts(world: Any, pid: str) -> dict[str, Any]:
-    """What her lines may read: whether she has her child grounded, who the victim is, and the counts."""
+    """What her lines may read: whether she has her child grounded, who the victim is, the counts, and whether her child arrived after the mentor died."""
     r = residents.table(world).get(pid) or {}
     seat = str(r.get("child", ""))
     g = state(world)["grounded"].get(seat)
-    from wizard_rts.narrative import mortality
+    from wizard_rts.narrative import campaign, mortality
 
+    st = campaign.state(world)
+    mentor_dead = 1 if st.get("mentor_fate") in ("killed_by_stranger", "died_earlier") else 0
+    joined = int(party.seats(world).get(seat, {}).get("joined_ms", 0))
+    died_ms = int(st.get("mentor_died_ms", 0) or 0)
     out = {"grounded": 1 if g else 0, "victim": mortality.name_of(world, g["victim"]) if g else "", "child": mortality.name_of(world, seat) if seat else "",
            "kills": ledger.count(world, "kills", seat), "protests": ledger.count(world, "protests", seat), "resurrections": ledger.count(world, "resurrections", seat),
-           "deaths": ledger.count(world, "deaths", seat), "role": ROLE}
+           "deaths": ledger.count(world, "deaths", seat), "role": ROLE, "mentor_dead": mentor_dead, "arrived_after": 1 if (mentor_dead and joined >= died_ms) else 0,
+           "generation": int(party.seats(world).get(seat, {}).get("generation", 1)), "previous": _previous_name(world, seat)}
     return out
+
+
+def _previous_name(world: Any, seat: str) -> str:
+    """The name of the apprentice who came before this one in the same seat (a retired wizard), or ''."""
+    best = None
+    for key, rec in sorted(party.retired(world).items()):
+        if rec.get("was") == seat.split(":")[0] and (best is None or int(rec.get("retired_ms", 0)) > int(best.get("retired_ms", 0))):
+            best = rec
+    return str(best["name"]) if best else ""
+
+
+def rename_seat(world: Any, old: str, new: str) -> None:
+    st = state(world)
+    if old in st["by_seat"]:
+        pid = st["by_seat"].pop(old)
+        st["by_seat"][new] = pid
+        r = residents.table(world).get(pid)
+        if r is not None:
+            r["child"] = new
+    for k in ("grounded", "accosts", "walks"):
+        if old in st[k]:
+            st[k][new] = st[k].pop(old)
+    for g in st["grounded"].values():
+        if g.get("victim") == old:
+            g["victim"] = new
+    heard = st.get("heard", {})
+    if old in heard:
+        heard[new] = heard.pop(old)
 
 
 # ------------------------------------------------------------------ what happens

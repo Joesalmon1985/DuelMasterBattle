@@ -121,6 +121,7 @@ class MultiplayerSession:
         self.on_ending: Callable[["MultiplayerSession"], None] | None = None  # the host saves the world and winds the session down
         self.ending_handled = False
         self.ending_grace_s = 4.0
+        self.catch_up: dict[str, Any] = {"owed_ms": 0, "paid_ms": 0, "forfeited_ms": 0, "active": False}  # the host's offline catch-up (host.py owns it)
 
     # ------------------------------------------------------------------ info
     def game_ms(self) -> int:
@@ -135,6 +136,8 @@ class MultiplayerSession:
     def lobby_view(self) -> dict[str, Any]:
         return {"name": self.name, "state": self.state, "max_players": self.max_players, "seed": int(self.world.seed), "map": str(self.world.map_size),
                 "profile": str(self.world.profile), "game_ms": self.game_ms(),
+                "catch_up": {k: self.catch_up.get(k, 0) for k in ("owed_ms", "paid_ms", "forfeited_ms", "active")},
+                "generation": party.generation(self.world) if "narrative" in self.world.__dict__ else 1,
                 "players": [{"id": l.id, "name": l.name, "host": l.host, "connected": l.connected, "colour": self.world.players[l.id].get("colour", ""),
                              "spawned": l.spawned, "ai": l.ai} for l in self._links_in_order()]}
 
@@ -379,12 +382,32 @@ class MultiplayerSession:
         if op == "save":
             reply = server._handle(self.world, {"op": "save", "slot": str(message.get("slot", "manual"))})
             return reply if isinstance(reply, dict) else {"status": "rejected", "reason": "bad_reply"}
-        if self.world_factory is None:
-            return {"status": "rejected", "reason": "no_world_factory"}
-        fresh = self.world_factory()
-        self._swap_world(fresh)
+        return self.new_wizard(link, now)
+
+    def new_wizard(self, link: Link, now: float) -> dict[str, Any]:
+        """A new apprentice in the same world (the world is permanent, plan section 3.3): the host's wizard, dead or alive, is retired with everything
+        the world remembers of them; the host link takes a fresh seat, a new name is welcome, and the new wizard starts beside the home settlement."""
+        w = self.world
+        if "narrative" not in w.__dict__:
+            return {"status": "rejected", "reason": "no_narrative"}
+        from wizard_rts.narrative import mother as _mother, residents, tutorial
+
+        retired = party.retire(w, link.id, "new_wizard")
+        for d in list(self.duels.values()):
+            if link.id in d.players:
+                d.forfeit(link.id, "forfeit", now)
+        link.duel_id, link.invite, link.outgoing = "", None, ""
+        home = _mother.home_tile(w)
+        if home is not None:
+            tile = residents.free_tile(w, home[0], home[1], 8) or home
+            w.players[link.id].update(tx=int(tile[0]), ty=int(tile[1]), facing="down")
+        self._seat(link)
+        self.ending = None
+        self.ending_handled = False
+        self.events.append({"kind": "new_wizard", "player": link.id, "retired": retired, "game_ms": self.game_ms()})
         view = self.state_view(link, {"full": True}, now)
-        return {"status": "ok", "new_game": True, "terrain": fresh.terrain.wire() if fresh.terrain is not None else None, "snapshot": view["snapshot"]}
+        return {"status": "ok", "new_game": True, "new_wizard": True, "retired": retired, "generation": party.generation(w),
+                "terrain": w.terrain.wire() if w.terrain is not None else None, "snapshot": view["snapshot"]}
 
     def _swap_world(self, world: Any) -> None:
         """Replace the world object (New game): every seat keeps its place, its duels and invites end, the host loop adopts the new object."""
@@ -431,6 +454,9 @@ class MultiplayerSession:
     def start(self, link: Link) -> dict[str, Any]:
         if self.state == "playing":
             return {"status": "ok", "idempotent": True, "state": self.state}
+        if self.catch_up.get("active"):  # "Enter now": whatever the world is still owed is forfeited (the host writes the debt off)
+            self.catch_up["forfeited_ms"] = max(0, int(self.catch_up["owed_ms"]) - int(self.catch_up["paid_ms"]))
+            self.catch_up["active"] = False
         self.state = "playing"
         self._ensure_companions()
         for other in self._links_in_order():
@@ -728,6 +754,8 @@ class MultiplayerSession:
             ledger.bump(self.world, "draws")
             return
         loser = duel.rival(winner)
+        ledger.bump(self.world, "pvp_wins", seat=winner)
+        ledger.bump(self.world, "pvp_losses", seat=loser)
         if duel.reason == "disconnected":
             return
         if loser in self.links and not self._dead(self.links[loser]):

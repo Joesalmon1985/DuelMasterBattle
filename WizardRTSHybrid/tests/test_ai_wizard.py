@@ -81,7 +81,7 @@ def test_a_single_player_game_has_one_ai_companion_who_is_a_participant_not_a_pr
     assert len(t.session.links) == 2 and ai.link.ai and ai.link.id in t.world.players and t.world.players[ai.link.id]["ai"] is True
     assert party.seats(t.world)[ai.link.id]["human"] is False
     with party.as_player(t.world, ai.link.id):
-        assert wizard.spells(t.world) == []  # a wizard record of its own, caught up when the lessons end, not a flag
+        assert wizard.spells(t.world) == [0, 1, 6] and not wizard.wiz(t.world)["lessons"]  # a wizard record of its own: the colours from the start, no lesson taken
     # the snapshot a client draws shows it as another wizard
     rows = {p["id"]: p for p in joe.state()["snapshot"]["players"]}
     assert rows[ai.link.id]["ai"] is True and rows[ai.link.id]["name"] == "Mira" and rows[joe.id]["you"] is True

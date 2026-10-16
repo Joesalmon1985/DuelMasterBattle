@@ -186,6 +186,8 @@ func _ready() -> void:
 	hud_layer.add_child(hud)
 	hud.setup(self)
 	hud.journal_requested.connect(func() -> void: story_ui.set_journal_visible(not story_ui.journal.visible))
+	if mp:
+		hud.journal_button.visible = false  # no journal in Wizard World: if you forget what somebody asked, ask them again
 	era_hud = hud.stats_label
 	var menu_layer := CanvasLayer.new()
 	menu_layer.name = "MenuLayer"
@@ -843,6 +845,8 @@ var _progress := {}  # what the journal showed last time: lessons done, quest st
 
 
 func _notice_progress() -> void:
+	if mp:
+		return  # Wizard World: no "new in your journal" flashes
 	var j: Dictionary = story_ui.journal_data() if story_ui != null else {}
 	if j.is_empty():
 		return
@@ -882,7 +886,7 @@ func _update_hud(snap: Dictionary) -> void:
 	var title := "%s - Cycle %d" % [str(era.get("era", "")).capitalize(), int(hist.get("cycle", 0))] if not era.is_empty() else "Wizard RTS"
 	if bool(hist.get("cycle_pending", false)):
 		title += " - the cycle ends"
-	hud.set_state(title, _era_text(snap), story_ui.objective_text() if story_ui != null else "")
+	hud.set_state(title, _era_text(snap), story_ui.objective_text() if (story_ui != null and not mp) else "")  # no objective line in Wizard World (plan amendment 11): people say what matters
 
 
 func _notification(what: int) -> void:

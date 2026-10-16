@@ -177,7 +177,7 @@ func _on_single_player() -> void:
 	_begin_single(false)
 
 
-func _begin_single(continue_game: bool) -> void:
+func _begin_single(continue_game: bool, new_wizard: bool = false, new_world: bool = false) -> void:
 	LanSession.reset()
 	var sfx := get_node_or_null("/root/Sfx")
 	if sfx:
@@ -188,6 +188,8 @@ func _begin_single(continue_game: bool) -> void:
 	LanSession.mode = "host"
 	LanSession.private_session = true
 	LanSession.continue_game = continue_game
+	LanSession.new_wizard = new_wizard
+	LanSession.new_world = new_world
 	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
 
 
@@ -198,34 +200,53 @@ func _open_lan(mode: String) -> void:
 	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
 
 
+## The world on this device is permanent: characters come and go. A living wizard is continued; a dead one is remembered and a new apprentice enters
+## the same world; starting a new world is a deliberate act in Settings. No save slots, no world history to pick from.
 func _show_continue_choice() -> void:
 	_clear_overlay()
+	var info: Dictionary = LanSession.wizard_save_info()
+	var who := str(info.get("host_name", ""))
+	var dead := bool(info.get("host_dead", false))
+	var gen := int(info.get("generation", 1))
 	var t := Label.new()
 	t.text = "Wizard World"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_VT.apply_label_title(t)
 	_overlay_vbox.add_child(t)
 	var l := Label.new()
-	l.text = "Your campaign is saved on this device."
+	l.name = "SaveInfo"
+	if dead:
+		l.text = "%s died. The world goes on: the village, its people and everything that happened are still there." % (who if who != "" else "Your apprentice")
+	elif who != "":
+		l.text = "%s is waiting in the world saved on this device.%s" % [who, "" if gen <= 1 else " (Apprentice %d of this world.)" % gen]
+	else:
+		l.text = "A world is saved on this device."
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_VT.apply_label_secondary(l)
 	_overlay_vbox.add_child(l)
-	var cont := Button.new()
-	cont.name = "ContinueButton"
-	cont.text = "Continue campaign"
-	cont.custom_minimum_size = Vector2(0, 76)
-	_VT.style_primary_button(cont)
-	cont.pressed.connect(func():
-		_overlay.visible = false
-		_begin_single(true))
-	_overlay_vbox.add_child(cont)
+	if not dead:
+		var cont := Button.new()
+		cont.name = "ContinueButton"
+		cont.text = "Continue as %s" % who if who != "" else "Continue"
+		cont.custom_minimum_size = Vector2(0, 76)
+		_VT.style_primary_button(cont)
+		cont.pressed.connect(func():
+			_overlay.visible = false
+			_begin_single(true))
+		_overlay_vbox.add_child(cont)
 	var fresh := Button.new()
 	fresh.name = "NewCampaignButton"
-	fresh.text = "Start a new campaign"
-	fresh.custom_minimum_size = Vector2(0, 64)
-	_VT.style_secondary_button(fresh)
-	fresh.pressed.connect(_confirm_new_campaign)
+	fresh.text = "A new apprentice"
+	fresh.custom_minimum_size = Vector2(0, 76 if dead else 64)
+	if dead:
+		_VT.style_primary_button(fresh)
+		fresh.pressed.connect(func():
+			_overlay.visible = false
+			_begin_single(true, true))
+	else:
+		_VT.style_secondary_button(fresh)
+		fresh.pressed.connect(_confirm_new_campaign)
 	_overlay_vbox.add_child(fresh)
 	_overlay_close_button("Back")
 	_overlay.visible = true
@@ -233,27 +254,59 @@ func _show_continue_choice() -> void:
 
 func _confirm_new_campaign() -> void:
 	_clear_overlay()
+	var who := str(LanSession.wizard_save_info().get("host_name", "your apprentice"))
 	var t := Label.new()
-	t.text = "Start over?"
+	t.text = "A new apprentice?"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_VT.apply_label_title(t)
 	_overlay_vbox.add_child(t)
 	var l := Label.new()
-	l.text = "A new campaign begins a new Wizard World. Your saved campaign stays until the new one saves over it."
+	l.text = "%s leaves the village for good and a new apprentice takes their place in the same world. Everything that happened stays happened. (To begin a whole new world, see Settings.)" % who
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_VT.apply_label_secondary(l)
 	_overlay_vbox.add_child(l)
 	var yes := Button.new()
 	yes.name = "ConfirmNewButton"
-	yes.text = "Start a new campaign"
+	yes.text = "A new apprentice"
 	yes.custom_minimum_size = Vector2(0, 64)
 	_VT.style_secondary_button(yes)
 	yes.pressed.connect(func():
 		_overlay.visible = false
-		_begin_single(false))
+		_begin_single(true, true))
 	_overlay_vbox.add_child(yes)
-	_overlay_close_button("Keep my campaign")
+	_overlay_close_button("Keep %s" % who)
+	_overlay.visible = true
+
+
+## Settings: the one way to start a whole new world, confirmed twice; the old saves are archived by the host, never deleted.
+func _confirm_new_world(second: bool = false) -> void:
+	_clear_overlay()
+	var t := Label.new()
+	t.text = "Start a new world?" if not second else "Are you sure?"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_title(t)
+	_overlay_vbox.add_child(t)
+	var l := Label.new()
+	l.text = ("A new world means a new village, new people and a new story from the beginning. The world saved on this device is put aside (archived, not deleted)." if not second
+		else "The present world, its people and everything that happened in it will no longer be played. This cannot be undone from inside the game.")
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(l)
+	_overlay_vbox.add_child(l)
+	var yes := Button.new()
+	yes.name = "ConfirmNewWorldButton" if second else "NewWorldButton"
+	yes.text = "Yes, start a new world" if second else "Start a new world"
+	yes.custom_minimum_size = Vector2(0, 64)
+	_VT.style_secondary_button(yes)
+	if second:
+		yes.pressed.connect(func():
+			_overlay.visible = false
+			_begin_single(false, false, true))
+	else:
+		yes.pressed.connect(func(): _confirm_new_world(true))
+	_overlay_vbox.add_child(yes)
+	_overlay_close_button("Keep my world")
 	_overlay.visible = true
 
 
@@ -302,6 +355,14 @@ func _show_settings() -> void:
 		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
 		h.add_child(check)
 		_overlay_vbox.add_child(h)
+	if LanSession.has_wizard_save():
+		var nw := Button.new()
+		nw.name = "StartNewWorldButton"
+		nw.text = "Start a new world…"
+		nw.custom_minimum_size = Vector2(0, 56)
+		_VT.style_secondary_button(nw)
+		nw.pressed.connect(func(): _confirm_new_world(false))
+		_overlay_vbox.add_child(nw)
 	var about := Label.new()
 	about.text = "Duel Master Battle %s" % LanSession.GAME_VERSION
 	about.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -349,3 +410,16 @@ func ui_show_settings() -> void:
 
 func ui_overlay_visible() -> bool:
 	return _overlay.visible
+
+
+func ui_save_info_text() -> String:
+	var l := _overlay_vbox.get_node_or_null("SaveInfo") if _overlay_vbox != null else null
+	return l.text if l != null else ""
+
+
+func ui_press_overlay(button_name: String) -> bool:
+	var b := _overlay_vbox.get_node_or_null(button_name) if _overlay_vbox != null else null
+	if b == null or not (b is Button):
+		return false
+	b.pressed.emit()
+	return true
