@@ -369,7 +369,14 @@ def view(world: Any, ctx: dict[str, Any]) -> dict[str, Any]:
     extras: dict[str, Any] = {}
     for v in node.get("variants", []):
         if holds(world, t, v.get("when"), ctx):
-            lines = _fmt(v["lines"], ctx, world, t)
+            chosen = v["lines"]
+            if v.get("lines_alt") and "id" in v:  # variety by design: a variant seen again says it another way (the sets rotate)
+                key = f"{t}/{sp}/seen:{v['id']}"
+                n = int(state(world).setdefault("seen", {}).get(key, 0))
+                state(world)["seen"][key] = n + 1
+                banks = [v["lines"]] + list(v["lines_alt"])
+                chosen = banks[n % len(banks)]
+            lines = _fmt(chosen, ctx, world, t)
             extras = apply(world, ctx, f"v:{v['id']}", v) if "id" in v else {}
             break
     choices = []

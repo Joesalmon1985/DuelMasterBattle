@@ -48,12 +48,15 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] Headed `run_hybrid_trial_full.gd` PASS over `scripts/run_lan_headed.sh trial_full` (the Dwarf's tests on the card, Throm on the REAL board (victory), the false eye's guardian from a choice (victory), the emerald, the mirrors smashed and Light, the sapphire and the diamond, Igbut's lock bites then opens, the champion's page over the daylight and the map restored at the gate, a fresh run and a deliberate loss to the Trialmastiff: dead inside the zone with the body drawn): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m6/f01..f10.png`; the camera's zone limits are restored on leaving (found by the headed run); host dev op `trial_teleport`; `docs/TRIAL_CANON_STATUS.md` updated (every zone ported, the second half's reading of the legacy)
 
 ## M7 Mira in the story and the Trial, humour pass three, polish
-- [ ] Mira's goals; Trial adaptations for a human plus Mira; variety and the fourth wall; placeholder line banks marked for review
+- [x] Mira goes to the Trial with the human (`net/ai_wizard.py` `_trial`: to the gate and in, zone by zone after the human through open exits, a tile short of them, out through the door when they leave; she faces nothing and takes nothing; a grounded Mira stays out and says why), lines `trial_in/zone/out/grounded`; the mentor mentions her once when she is near (`tutorial.json` `mira_near`, fact from `party.ai_near`); the confrontation's judgement page gives her a line (`mira_present` from `party.ai_alive`); the villagers now read the behaviour ledger too — `tests/test_mira_trial.py` (5 passed)
+- [x] Variety: `lines_alt` on a hub variant rotates its wording when seen again (`graph.py`; the keeper's quiet store and returning rats, the mother's thanks); the fourth wall noticed rarely and counted (`ledger` `fourth_wall`: a villager's `who_counts` after eight people accosted, the Rollkeeper's `why_write`, each offered only while fewer than two such lines were said)
+- [x] Owner review index of every placeholder bank: `docs/DIALOGUE_REVIEW.md` (generated string counts, tick boxes); every bank's `note` still says review pending. Not done: "pick up what she is told to" (no telling-Mira mechanic exists; left for the owner's review of M7 as a candidate)
 
 ## M8 Android and the two-phone acceptance
 - [ ] APK build, asset audit, exported-pack probe, two-phone checklist extended, build and test instructions
 
 ## Session log (newest first)
+- 16 Oct 2026 (session 1, continued): M7 done (Python). Next: M8 Android.
 - 16 Oct 2026 (session 1, continued): M6 done (Python 23 Trial tests, headed full run PASS). Next: M7 Mira in the story and the Trial.
 - 16 Oct 2026 (session 1, continued): M5 done (Python 11 tests, headed PASS). Next: M6 zones E to K.
 - 16 Oct 2026 (session 1, continued): M4 done (Python and headed PASS). `wizard_rts/trial/` package and its wiring (ops, protocol, session, mortality hooks) landed with M4 as a scaffold; M5 tests next.

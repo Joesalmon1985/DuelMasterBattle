@@ -383,6 +383,17 @@
          }
         ]
        }
+      },
+      {
+       "text": "Behind you, Mira says nothing at all, which for Mira is a speech. The stranger's eyes pass over her and come back to you.",
+       "when": {
+        "facts": [
+         {
+          "name": "mira_present",
+          "gte": 1
+         }
+        ]
+       }
       }
      ],
      "focus": "attacker",
@@ -508,6 +519,17 @@
          {
           "name": "my_pvp_wins",
           "gte": 2
+         }
+        ]
+       }
+      },
+      {
+       "text": "Behind you, Mira says nothing at all, which for Mira is a speech. The stranger's eyes pass over her and come back to you.",
+       "when": {
+        "facts": [
+         {
+          "name": "mira_present",
+          "gte": 1
          }
         ]
        }

@@ -78,6 +78,7 @@ class AiWizard:
         self.rescue_said = False
         self.next_rescue_step_at = 0.0
         self.next_pest_at = 0.0
+        self.trial_said_zone = ""  # the zone she last spoke of
 
     # ---------------------------------------------------------------- memory (saved with the world, in the party's private record)
     def memory(self) -> dict[str, Any]:
@@ -136,6 +137,8 @@ class AiWizard:
             return
         self.bot = None
         if self._rescue(now):
+            return
+        if self._trial(now):
             return
         if self._help_pests(now):
             return
@@ -273,7 +276,7 @@ class AiWizard:
             self.rescue = ""
             return False
         pid = mortality.body_of(w, self.rescue)
-        if pid is None:
+        if pid is None or str(pid).startswith("trial:"):  # a body inside the Trial: the private session has already ended (plan D2); nothing to walk to
             self.rescue = ""
             return False
         body = residents.table(w)[pid]
@@ -298,6 +301,143 @@ class AiWizard:
             if path:
                 self._step_to(path[0], now)
         return True
+
+    # ---------------------------------------------------------------- the Trial: she goes in with the human, keeps up, and comes out when they do
+    def _trial(self, now: float) -> bool:
+        """The human went through the gate: she follows them in, zone by zone, and follows them out. She faces nothing in there herself (the
+        creatures are explicit choices, and the choices are the human's); she stands where the human can see her. True while this is her business."""
+        w = self.session.world
+        if "narrative" not in w.__dict__ or self.session.ending is not None:
+            return False
+        from wizard_rts.trial import run as trial
+        from wizard_rts.trial import zones
+
+        friend = self._companion_of()
+        me_in = trial.inside(w, self.link.id)
+        you_in = friend is not None and trial.inside(w, friend.id) and not self.session._dead(friend)
+        if not me_in and not you_in:
+            return False
+        if now < self.next_step_at:
+            return True
+        lo, hi = self.c["step_s"]
+        self.next_step_at = now + self.rng.uniform(float(lo), float(hi))
+        if not me_in:  # to the gate, and in
+            gate = trial.gate_tile(w)
+            if gate is None:
+                return False
+            me = w.players[self.link.id]
+            if max(abs(int(me["tx"]) - gate[0]), abs(int(me["ty"]) - gate[1])) <= trial.ENTER_RANGE:
+                r = self.session.dispatch(self.link, {"op": "trial_enter"}, now)
+                if r.get("status") == "ok":
+                    self.trial_said_zone = zones.ENTRY_ZONE
+                    self.say(friend, "trial_in", now)
+                elif r.get("reason") == "grounded":
+                    self.say(friend, "trial_grounded", now)
+                    self.next_step_at = now + 30.0
+                return True
+            path = self._path_toward(gate, trial.ENTER_RANGE)
+            if path:
+                self._step_to(path[0], now)
+            return True
+        rec = trial.seat_rec(w, self.link.id)
+        if rec is None:
+            return False
+        if not you_in:  # the human is out (or gone): back to the door, and out
+            if rec["zone"] == zones.ENTRY_ZONE and abs(int(rec["x"]) - zones.ENTRY_POS[0]) <= 1 and int(rec["y"]) >= zones.ENTRY_POS[1]:
+                if self.session.dispatch(self.link, {"op": "trial_leave"}, now).get("status") == "ok":
+                    self.say(friend, "trial_out", now)
+                return True
+            goal_zone = zones.ENTRY_ZONE
+            goal = (zones.ENTRY_POS[0], zones.ENTRY_POS[1])
+            within = 0  # onto the doorway itself
+        else:
+            yrec = trial.seat_rec(w, friend.id)
+            goal_zone = yrec["zone"]
+            goal = (int(yrec["x"]), int(yrec["y"]))
+            within = int(self.c["follow"]["near"])
+        if rec["zone"] != self.trial_said_zone:
+            self.trial_said_zone = rec["zone"]
+            if self.rng.random() < 0.5:
+                self.say(friend, "trial_zone", now)
+        step = self._trial_step(w, rec, goal_zone, goal, within)
+        if step is not None:
+            self.session.dispatch(self.link, {"op": "trial_move", "dx": step[0], "dy": step[1]}, now)
+        return True
+
+    def _trial_step(self, w: Any, rec: dict[str, Any], goal_zone: str, goal: tuple[int, int], within: int) -> tuple[int, int] | None:
+        """The next step: toward the goal in this zone (stopping `within` tiles short), or toward the exit on the way to its zone."""
+        from wizard_rts.trial import run as trial
+        from wizard_rts.trial import zones
+
+        r = trial.run(w)
+        zid = rec["zone"]
+        if zid == goal_zone:
+            targets = {goal}
+        else:
+            nxt = self._trial_route(w, r, zid, goal_zone)
+            if nxt is None:
+                return None
+            targets = {(int(e["pos"][0]), int(e["pos"][1])) for e in zones.zone(zid)["entities"] if e["kind"] == "exit" and str(e["to_area"]) == nxt and trial._exit_open(r, e)}
+            within = 0
+        start = (int(rec["x"]), int(rec["y"]))
+        if within == 0 and start in targets:  # standing on the exit tile she came in by: the exit works on the way in, so take its twin, or step off and back
+            for t in sorted(targets):
+                if t != start and abs(t[0] - start[0]) + abs(t[1] - start[1]) == 1:
+                    return (t[0] - start[0], t[1] - start[1])
+            for d in sorted(FACING):
+                n = (start[0] + d[0], start[1] + d[1])
+                if trial.walkable(w, r, zid, n[0], n[1], rec) and not zones.exits_at(zid, n[0], n[1]):
+                    return d
+            return None
+        if any(abs(start[0] - t[0]) + abs(start[1] - t[1]) <= within for t in targets):
+            return None
+        prev: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
+        q: deque[tuple[int, int]] = deque([start])
+        while q:
+            cur = q.popleft()
+            for d in FACING:
+                n = (cur[0] + d[0], cur[1] + d[1])
+                if n in prev:
+                    continue
+                is_exit = bool(zones.exits_at(zid, n[0], n[1]))
+                if n not in targets and not (trial.walkable(w, r, zid, n[0], n[1], rec) and not is_exit):
+                    continue
+                if n in targets and within == 0 and not is_exit:
+                    pass
+                prev[n] = cur
+                if any(abs(n[0] - t[0]) + abs(n[1] - t[1]) <= within for t in targets):
+                    node: tuple[int, int] | None = n
+                    while node is not None and prev[node] != start and prev[node] is not None:
+                        node = prev[node]
+                    if node is None:
+                        return None
+                    return (node[0] - start[0], node[1] - start[1])
+                q.append(n)
+        return None
+
+    def _trial_route(self, w: Any, r: dict[str, Any], frm: str, to: str) -> str | None:
+        """The next zone on the shortest open way from `frm` to `to` (exits that the run's flags allow)."""
+        from wizard_rts.trial import run as trial
+        from wizard_rts.trial import zones
+
+        prev: dict[str, str | None] = {frm: None}
+        q: deque[str] = deque([frm])
+        while q:
+            cur = q.popleft()
+            if cur == to:
+                node = cur
+                while prev[node] is not None and prev[node] != frm:
+                    node = prev[node]  # type: ignore[assignment]
+                return node
+            for e in zones.zone(cur)["entities"]:
+                if e["kind"] != "exit" or not trial._exit_open(r, e):
+                    continue
+                nxt = str(e["to_area"])
+                if nxt in prev or nxt not in zones.ported():
+                    continue
+                prev[nxt] = cur
+                q.append(nxt)
+        return None
 
     # ---------------------------------------------------------------- the rats
     def _help_pests(self, now: float) -> bool:

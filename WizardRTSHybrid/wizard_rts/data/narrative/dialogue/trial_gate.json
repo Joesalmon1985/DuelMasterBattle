@@ -6,39 +6,288 @@
    "nodes": {
     "hub": {
      "variants": [
-      {"id": "o_unprepared", "when": {"not_lessons": ["told_ward"], "facts": [{"name": "my_trial_entries", "lte": 0}], "forbids": ["said_unprepared"]}, "sets": ["said_unprepared"],
-       "lines": ["Names for the roll. ...An apprentice? From the village? You have not so much as broken a practice Ward; I can see it in how you hold the staff.",
-                 "Five have gone in this morning: a knight, an elf, two barbarians and something in black that would not give a name. All of them had reasons. Do you have a reason, or only a staff?",
-                 "The Trial does not care. The doors open for anyone. I write the names down because somebody should."]},
-      {"id": "o_killers", "when": {"facts": [{"name": "kills", "gte": 1}], "forbids": ["said_killers"]}, "sets": ["said_killers"],
-       "lines": ["Names for the roll. I heard about you two. The village is three fields that way and I heard about you two.",
-                 "Killing each other in the road and fetching each other back. Baron Sukumvit would find that charming. He built this place for people who find such things charming.",
-                 "The doors open for anyone. Go in if you are going."]},
-      {"id": "o_again", "when": {"facts": [{"name": "my_trial_entries", "gte": 1}]},
-       "lines": ["Back again. The roll remembers you; the Trial does not. Whatever you found in there, you found it for one attempt."]},
-      {"id": "o_open", "lines": ["Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones.",
-                                 "Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name. The gate opens for anyone. I only write the names down."]}
+      {
+       "id": "o_unprepared",
+       "when": {
+        "not_lessons": [
+         "told_ward"
+        ],
+        "facts": [
+         {
+          "name": "my_trial_entries",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_unprepared"
+        ]
+       },
+       "sets": [
+        "said_unprepared"
+       ],
+       "lines": [
+        "Names for the roll. ...An apprentice? From the village? You have not so much as broken a practice Ward; I can see it in how you hold the staff.",
+        "Five have gone in this morning: a knight, an elf, two barbarians and something in black that would not give a name. All of them had reasons. Do you have a reason, or only a staff?",
+        "The Trial does not care. The doors open for anyone. I write the names down because somebody should."
+       ]
+      },
+      {
+       "id": "o_killers",
+       "when": {
+        "facts": [
+         {
+          "name": "kills",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_killers"
+        ]
+       },
+       "sets": [
+        "said_killers"
+       ],
+       "lines": [
+        "Names for the roll. I heard about you two. The village is three fields that way and I heard about you two.",
+        "Killing each other in the road and fetching each other back. Baron Sukumvit would find that charming. He built this place for people who find such things charming.",
+        "The doors open for anyone. Go in if you are going."
+       ]
+      },
+      {
+       "id": "o_again",
+       "when": {
+        "facts": [
+         {
+          "name": "my_trial_entries",
+          "gte": 1
+         }
+        ]
+       },
+       "lines": [
+        "Back again. The roll remembers you; the Trial does not. Whatever you found in there, you found it for one attempt."
+       ]
+      },
+      {
+       "id": "o_open",
+       "lines": [
+        "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones.",
+        "Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name. The gate opens for anyone. I only write the names down."
+       ]
+      }
      ],
      "choices": [
-      {"id": "what_is_it", "text": "What is the Trial?", "once": true,
-       "lines": ["A labyrinth under the hill, built to kill, by a baron who found it entertaining. One true way through, many false ones, and a door at the end that wants three gems placed in their order.", "Most who go in do not come out. The ones who do are rich and strange for the rest of their lives."]},
-      {"id": "advice", "text": "Any advice?", "when": {"forbids": ["gave_advice"]}, "sets": ["gave_advice"],
-       "check": {"aspect": "empathy", "threshold": "easy"},
-       "lines": ["The Rollkeeper looks at you for a while."],
-       "pass": {"lines": ["Pick things up. Read things. The contestants who die are the ones who run. And if your friend falls, go back for them; the Trial does not forbid it, whatever the stories say."], "effects": [{"kind": "fact", "id": "rollkeeper_advice"}]},
-       "fail": {"lines": ["Do not go in. That is my advice to everyone, and it has never once been taken."]}},
-      {"id": "unprepared_anyway", "text": "I am going in.", "when": {"not_lessons": ["told_ward"]}, "once": true,
-       "effects": [{"kind": "ledger", "key": "trial_declared_unprepared"}],
-       "lines": ["Of course you are. I will write it in the margin: 'went in without finishing the lessons'. It will make somebody laugh, later, which is more than most entries manage."]},
-      {"id": "bye", "text": "Thank you.", "lines": ["The gate is behind me. It is always behind me."], "ends": true}
+      {
+       "id": "what_is_it",
+       "text": "What is the Trial?",
+       "once": true,
+       "lines": [
+        "A labyrinth under the hill, built to kill, by a baron who found it entertaining. One true way through, many false ones, and a door at the end that wants three gems placed in their order.",
+        "Most who go in do not come out. The ones who do are rich and strange for the rest of their lives."
+       ]
+      },
+      {
+       "id": "advice",
+       "text": "Any advice?",
+       "when": {
+        "forbids": [
+         "gave_advice"
+        ]
+       },
+       "sets": [
+        "gave_advice"
+       ],
+       "check": {
+        "aspect": "empathy",
+        "threshold": "easy"
+       },
+       "lines": [
+        "The Rollkeeper looks at you for a while."
+       ],
+       "pass": {
+        "lines": [
+         "Pick things up. Read things. The contestants who die are the ones who run. And if your friend falls, go back for them; the Trial does not forbid it, whatever the stories say."
+        ],
+        "effects": [
+         {
+          "kind": "fact",
+          "id": "rollkeeper_advice"
+         }
+        ]
+       },
+       "fail": {
+        "lines": [
+         "Do not go in. That is my advice to everyone, and it has never once been taken."
+        ]
+       }
+      },
+      {
+       "id": "unprepared_anyway",
+       "text": "I am going in.",
+       "when": {
+        "not_lessons": [
+         "told_ward"
+        ]
+       },
+       "once": true,
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "trial_declared_unprepared"
+        }
+       ],
+       "lines": [
+        "Of course you are. I will write it in the margin: 'went in without finishing the lessons'. It will make somebody laugh, later, which is more than most entries manage."
+       ]
+      },
+      {
+       "id": "why_write",
+       "text": "Why write it down at all?",
+       "once": true,
+       "when": {
+        "facts": [
+         {
+          "name": "fourth_wall",
+          "lte": 1
+         }
+        ]
+       },
+       "effects": [
+        {
+         "kind": "ledger",
+         "key": "fourth_wall"
+        }
+       ],
+       "lines": [
+        "Because somebody reads it. Not here. Somewhere a long way from here somebody turns a page, and we all do what it says.",
+        "I try not to think about it. Names?"
+       ]
+      },
+      {
+       "id": "bye",
+       "text": "Thank you.",
+       "lines": [
+        "The gate is behind me. It is always behind me."
+       ],
+       "ends": true
+      }
      ]
     }
    }
   },
-  "knight": {"nodes": {"hub": {"variants": [{"lines": ["Serra of the White Road. I go in first; I always go in first. Count your steps from the door, apprentice. Everything in there is measured."]}], "choices": [{"id": "bye", "text": "Luck to you.", "lines": ["Luck is for the second one through the door."], "ends": true}]}}},
-  "elf": {"nodes": {"hub": {"variants": [{"lines": ["You are very young for this. So am I, by my people's reckoning, and nobody told me that was a reason not to come."]}], "choices": [{"id": "bye", "text": "Mind the water in there.", "lines": ["There is water? Nobody said there was water."], "ends": true}]}}},
-  "throm": {"nodes": {"hub": {"variants": [{"lines": ["Throm. You walk loud, villager. Only one of us wins this; remember it if we meet below."]}], "choices": [{"id": "bye", "text": "Then I will walk louder.", "lines": ["Hah. Good."], "ends": true}]}}},
-  "barbarian": {"nodes": {"hub": {"variants": [{"lines": ["The other barbarian says nothing at all. He is looking at the gate the way a man looks at a river he means to cross."]}], "choices": [{"id": "bye", "text": "...", "lines": ["He nods, once."], "ends": true}]}}},
-  "assassin": {"nodes": {"hub": {"variants": [{"lines": ["The figure in black does not turn. 'Apprentice,' it says, to the gate rather than to you, and that is all it says."]}], "choices": [{"id": "bye", "text": "Right.", "lines": ["Nothing."], "ends": true}]}}}
+  "knight": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "lines": [
+        "Serra of the White Road. I go in first; I always go in first. Count your steps from the door, apprentice. Everything in there is measured."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "bye",
+       "text": "Luck to you.",
+       "lines": [
+        "Luck is for the second one through the door."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "elf": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "lines": [
+        "You are very young for this. So am I, by my people's reckoning, and nobody told me that was a reason not to come."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "bye",
+       "text": "Mind the water in there.",
+       "lines": [
+        "There is water? Nobody said there was water."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "throm": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "lines": [
+        "Throm. You walk loud, villager. Only one of us wins this; remember it if we meet below."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "bye",
+       "text": "Then I will walk louder.",
+       "lines": [
+        "Hah. Good."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "barbarian": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "lines": [
+        "The other barbarian says nothing at all. He is looking at the gate the way a man looks at a river he means to cross."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "bye",
+       "text": "...",
+       "lines": [
+        "He nods, once."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  },
+  "assassin": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {
+       "lines": [
+        "The figure in black does not turn. 'Apprentice,' it says, to the gate rather than to you, and that is all it says."
+       ]
+      }
+     ],
+     "choices": [
+      {
+       "id": "bye",
+       "text": "Right.",
+       "lines": [
+        "Nothing."
+       ],
+       "ends": true
+      }
+     ]
+    }
+   }
+  }
  }
 }

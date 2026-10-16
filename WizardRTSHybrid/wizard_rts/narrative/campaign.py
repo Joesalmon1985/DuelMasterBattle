@@ -486,6 +486,7 @@ def scene_ctx(world: Any) -> dict[str, Any]:
     st = state(world)
     facts = ledger.facts(world, mortality.me(world))
     facts["lessons_done"] = len(wizard.wiz(world).get("lessons", {}))
+    facts["mira_present"] = 1 if party.ai_alive(world) else 0  # the fellow apprentice lives in this world: the pages may give her a line
     return {"template": "scene", "speaker": "scene", "speaker_pid": st["attacker"], "name": names(world)["attacker"], "cast": names(world), "facts": facts}
 
 

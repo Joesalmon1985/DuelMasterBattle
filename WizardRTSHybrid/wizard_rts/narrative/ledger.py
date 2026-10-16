@@ -12,7 +12,8 @@ from __future__ import annotations
 from typing import Any
 
 RECENT_CAP = 60
-KNOWN = ("pvp_duels", "pvp_wins", "pvp_losses", "kills", "deaths", "resurrections", "draws", "protests", "provocations", "refused_steps", "accosted")  # always present as facts (0 when nothing happened)
+KNOWN = ("pvp_duels", "pvp_wins", "pvp_losses", "kills", "deaths", "resurrections", "draws", "protests", "provocations", "refused_steps", "accosted",
+         "fourth_wall")  # fourth_wall: the rare lines that notice they are lines (capped by the banks' own conditions)  # always present as facts (0 when nothing happened)
 
 
 def state(world: Any) -> dict[str, Any]:

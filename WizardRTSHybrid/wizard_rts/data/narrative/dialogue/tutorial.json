@@ -29,6 +29,30 @@
        ]
       },
       {
+       "id": "mira_near",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "mira_near",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_mira"
+        ]
+       },
+       "sets": [
+        "said_mira"
+       ],
+       "lines": [
+        "And Mira, trailing you like a second shadow. Good. She learned the stance in a week; watch her feet, not her hands, and do not let her talk you into a duel before you can hold a Ward.",
+        "Now. Where were we."
+       ]
+      },
+      {
        "id": "log_thanks",
        "when": {
         "fact": [

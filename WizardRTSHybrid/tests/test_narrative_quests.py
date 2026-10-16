@@ -75,7 +75,7 @@ def test_they_look_like_everybody_else():
     for role, b in bind.items():
         row = rows[b["id"]]
         assert row["class"] in ("worker", "unit") and "has_quest" not in row and "hint" not in row  # no marker, no special row
-    assert not [r for r in rows.values() if r["class"] == "npc" and r["id"] != tutorial.state(w)["teacher"] and str(r.get("role", "")) not in ("keeper", "pest", "mother")]
+    assert not [r for r in rows.values() if r["class"] == "npc" and r["id"] != tutorial.state(w)["teacher"] and str(r.get("role", "")) not in ("keeper", "pest", "mother", "official", "contestant")]
 
 
 def test_the_cast_is_deterministic_across_processes_and_stable_through_save_and_load(tmp_path):

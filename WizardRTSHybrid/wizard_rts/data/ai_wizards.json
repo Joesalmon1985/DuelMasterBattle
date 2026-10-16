@@ -93,6 +93,23 @@
         ],
         "rat_lost": [
           "It got away. Under the floor. I hate the floor."
+        ],
+        "trial_in": [
+          "Wait for me. I am not letting you have all the stories.",
+          "The Rollkeeper wrote my name under yours. I saw her do it."
+        ],
+        "trial_zone": [
+          "It is colder in here than it was in the last one.",
+          "Somebody carved their initials into this wall. Somebody who did not come out, I think.",
+          "I will stand here and look useful.",
+          "Do not touch anything that looks like it wants to be touched."
+        ],
+        "trial_out": [
+          "Daylight. I had forgotten the smell of it.",
+          "Out. Good. Next time you go first again."
+        ],
+        "trial_grounded": [
+          "I cannot. My mother would hear of it before I reached the second door. Go on; tell me everything after."
         ]
       }
     }

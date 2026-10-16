@@ -152,7 +152,7 @@ def test_the_stories_unlock_after_the_essential_lessons():
     nh.adv(w, 3)
     r = quests.rec(w, "forest_dispute")
     assert r["status"] == "cast" and sorted(r["bindings"]) == ["cutter", "planter", "witness"]
-    assert len([x for x in residents.table(w).values() if x["role"] not in ("keeper", "pest", "mother")]) == 1  # nobody new appeared for the quest: it is played by people who were already here
+    assert len([x for x in residents.table(w).values() if x["role"] not in ("keeper", "pest", "mother", "official", "contestant")]) == 1  # nobody new appeared for the quest: it is played by people who were already here
     t = go_to_teacher(w)
     r = nh.talk(w, t)
     assert "ask_village" in nh.ids(r) and "hidden_duel" in nh.ids(r)

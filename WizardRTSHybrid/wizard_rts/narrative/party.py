@@ -248,6 +248,31 @@ def present_humans(world: Any) -> list[str]:
     return [s for s in order(world) if seats(world)[s]["human"] and seats(world)[s]["present"]]
 
 
+def ai_seats(world: Any) -> list[str]:
+    """The AI apprentices' seats (Mira in single player), retired ones excluded."""
+    return [s for s, rec in sorted(seats(world).items()) if not rec.get("human", True) and not str(s).startswith("gone:")]
+
+
+def ai_alive(world: Any) -> bool:
+    from wizard_rts.narrative import mortality
+
+    return any(not mortality.is_dead(world, s) for s in ai_seats(world))
+
+
+def ai_near(world: Any, tiles: int) -> bool:
+    """An AI apprentice stands within `tiles` (Manhattan) of the wizard acting now."""
+    from wizard_rts.narrative import mortality
+
+    me = world.player
+    for s in ai_seats(world):
+        rec = world.players.get(s)
+        if rec is None or mortality.is_dead(world, s):
+            continue
+        if abs(int(rec["tx"]) - int(me["tx"])) + abs(int(rec["ty"]) - int(me["ty"])) <= tiles:
+            return True
+    return False
+
+
 def humans(world: Any) -> list[str]:
     return [s for s in order(world) if seats(world)[s]["human"]]
 

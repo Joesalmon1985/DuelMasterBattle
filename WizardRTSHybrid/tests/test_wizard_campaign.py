@@ -349,7 +349,7 @@ def test_new_game_gives_a_fresh_living_world():
 def test_the_aftermath_uses_ordinary_people_who_react_as_themselves():
     w = nh.world()
     cp.to_aftermath(w)
-    before = len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother")])
+    before = len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother", "official", "contestant")])
     assert before == 2  # the mentor's body and the stranger: no one else was created to carry the story (the village's own residents aside)
     seen = {}
     for role in ("lumberjack", "ranger"):
@@ -361,7 +361,7 @@ def test_the_aftermath_uses_ordinary_people_who_react_as_themselves():
         assert any(c["id"] == "topic:t_happened" for c in r["choices"]) and any(c["id"] == "topic:t_leave" for c in r["choices"])
         nh.end(w, wid)
     assert seen["lumberjack"] != seen["ranger"]  # a forester and a woodcutter do not say the same thing
-    assert len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother")]) == before
+    assert len([r for r in residents.table(w).values() if r["role"] not in ("keeper", "pest", "mother", "official", "contestant")]) == before
     cid = next(i for i in w.carriers if w.carriers[i]["faction_name"] == "Red")
     nh.stand_by(w, "carrier", cid)
     assert nh.talk(w, cid)["lines"]
