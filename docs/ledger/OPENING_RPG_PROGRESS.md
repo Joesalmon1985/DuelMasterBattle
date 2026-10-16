@@ -44,8 +44,8 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] Headed `run_hybrid_trial_a_d.gd` PASS over `scripts/run_lan_headed.sh trial` (gate on the map, enter unprepared, cave tiles built, real validated steps and a wall, Sukumvit's box into the pocket strip, the crystal, the exit into the Footprint Fork, a sign, the Giant Fly on the REAL board (victory removes it), leaving refused away from the door): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m5/t01..t07.png`; `docs/TRIAL_CANON_STATUS.md` updated (zones A to D ported, the port's reading of the legacy)
 
 ## M6 The Trial, second half
-- [ ] Zones E to K; spell and weave growth; the champion's exit
-- [ ] `run_hybrid_trial_full.gd`; `test_trial.py` extended; canon table updated
+- [x] Zones E to K ported (`zones_wizard.json` overlay: every zone played, Throm's forced duel kept, the Red Wizard removed as not canon), `trial/events.py` with the Dwarf's lock-in / dice (a seeded roll per run and seat) / cobra, the elf, the false eye (wakes the second guardian: a duel born of a choice), the false diamond (seals the inner vault), the prisoner, Ivy's toll (the torch, or a lethal duel), the Basket man, the mirrors (Light without a duel), the boulder and the chest (Stone), the troglodytes (rite, run, or their champion), Igbut's gem lock (placed/displaced feedback, a bite per wrong order, the third scatters the gems); exits honour run flags; people faced in a duel are leases; learned weaknesses ban colours from a Ward (`opponents.spec(ban=)`); growth: Stone (the Dwarf), Light (the shard), Shadow (the Bloodbeast); a dry stalemate against a lethal creature is a death, a true draw (both Wards broken) is not; the champion's exit ends the run and lets everyone out; the board shows the creature's own face (`archetype`) — `tests/test_trial.py` (23 passed)
+- [x] Headed `run_hybrid_trial_full.gd` PASS over `scripts/run_lan_headed.sh trial_full` (the Dwarf's tests on the card, Throm on the REAL board (victory), the false eye's guardian from a choice (victory), the emerald, the mirrors smashed and Light, the sapphire and the diamond, Igbut's lock bites then opens, the champion's page over the daylight and the map restored at the gate, a fresh run and a deliberate loss to the Trialmastiff: dead inside the zone with the body drawn): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m6/f01..f10.png`; the camera's zone limits are restored on leaving (found by the headed run); host dev op `trial_teleport`; `docs/TRIAL_CANON_STATUS.md` updated (every zone ported, the second half's reading of the legacy)
 
 ## M7 Mira in the story and the Trial, humour pass three, polish
 - [ ] Mira's goals; Trial adaptations for a human plus Mira; variety and the fourth wall; placeholder line banks marked for review
@@ -54,6 +54,7 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] APK build, asset audit, exported-pack probe, two-phone checklist extended, build and test instructions
 
 ## Session log (newest first)
+- 16 Oct 2026 (session 1, continued): M6 done (Python 23 Trial tests, headed full run PASS). Next: M7 Mira in the story and the Trial.
 - 16 Oct 2026 (session 1, continued): M5 done (Python 11 tests, headed PASS). Next: M6 zones E to K.
 - 16 Oct 2026 (session 1, continued): M4 done (Python and headed PASS). `wizard_rts/trial/` package and its wiring (ops, protocol, session, mortality hooks) landed with M4 as a scaffold; M5 tests next.
 - 16 Oct 2026 (session 1): M0, M1, M2, M3 done (Python and Godot, headed PASS for each). Next: M4 the village.

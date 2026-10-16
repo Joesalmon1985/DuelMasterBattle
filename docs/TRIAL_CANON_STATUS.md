@@ -23,17 +23,17 @@ Sources: `DD/Deathtrap_Dungeon_Canonical_Adaptation_Report.md`, the backbone JSO
 | Footprint Galleries (`dd_galleries`) | 293, 382 | implemented | **ported (M5)** | the old man's riddle, the petrified Knight, torch, bell, chest, Guard Dog |
 | Throm's Pit (`dd_pit`) | 154, 22, 184, 63, 311, 323 | implemented | **ported (M5)**: the first wizard to cross decides for the run | lower / be lowered / jump / climb alone; ally or betray |
 | Lower Route (`dd_lower`) | 194, 138, 52, 169, 288, 221 | implemented | **ported (M5)** | red book (weave), black book (potion), Cave Trolls (Throm fights one), bone ring |
-| Trialmaster Complex (`dd_trialmaster`) | 60, 365, 290, 191, 84, 302, 379 | implemented | M6 | Dwarf, dice, cobra, Throm's forced duel, the concealed way |
-| Idol Cavern (`dd_idol`) | 37, 240, 351, 239, 34, 89 | implemented | M6 | Flying Guardians, emerald eye, the false eye |
-| Drowned Grotto (`dd_grotto`) | 281, 399, 192 | implemented | M6 | Boa Constrictor, the dying Elf, bread, charm (diamond clue) |
-| Sapphire Vaults (`dd_vaults`, `dd_vault_inner`) | 162, 218, 65, 252, 269 | implemented | M6 | sapphire and iron key, the false diamond, the true diamond |
-| Service Tunnels (`dd_service`) | report section 6 (Poison Ivy, the prisoner), CSV | implemented | M6 | prisoner (Bloodbeast weakness), Poison Ivy's toll, the Basket man's lift |
-| Mirror Gallery (`dd_mirror`) | CSV (Mirror Demon) | implemented | M6 | smash the mirrors or duel |
-| Bloodbeast Lair (`dd_blood`) | CSV (Bloodbeast) | implemented | M6 | weakness bans Vine from its Ward |
-| Grub Tunnels (`dd_grub`) | CSV (Rock Grub), boulder, trapped chest | implemented | M6 | run / hold / brace with Stone; the chest's blades |
-| Troglodyte Cavern (`dd_troglodytes`) | CSV (Troglodytes) | implemented | M6 | ritual, run the arrow, or the champion |
-| Manticore Gate (`dd_manticore`) | CSV (Manticore) | implemented | M6 | plus the optional Red Wizard rematch (legacy rival, see below) |
-| Igbut's Door (`dd_igbut`) | 364, 62, 241, 400, 31, 376, 3 | implemented | M6 | gem check, three-position lock with aggregate feedback, the final crossbow |
+| Trialmaster Complex (`dd_trialmaster`) | 60, 365, 290, 191, 84, 302, 379 | implemented | **ported (M6)**: the Dwarf's lock-in, dice (a seeded roll per run and seat) and cobra as one conversation; Stone taught at the end; Throm's forced duel as a lethal lease when he is alive and not betrayed; the concealed way opens on `trial_done` | Dwarf, dice, cobra, Throm's forced duel, the concealed way |
+| Idol Cavern (`dd_idol`) | 37, 240, 351, 239, 34, 89 | implemented | **ported (M6)**: the false eye asks first and wakes the second guardian (a duel born of the choice); the emerald waits for both guardians | Flying Guardians, emerald eye, the false eye |
+| Drowned Grotto (`dd_grotto`) | 281, 399, 192 | implemented | **ported (M6)**: the boa first, then the elf's two farewells; the bread clears conditions; the charm; the diamond clue as a fact | Boa Constrictor, the dying Elf, bread, charm (diamond clue) |
+| Sapphire Vaults (`dd_vaults`, `dd_vault_inner`) | 162, 218, 65, 252, 269 | implemented | **ported (M6)**: the false diamond asks first (the elf's clue shown when known), taking it wounds and seals the inner vault (`vault_alarm`), the iron key opens it otherwise | sapphire and iron key, the false diamond, the true diamond |
+| Service Tunnels (`dd_service`) | report section 6 (Poison Ivy, the prisoner), CSV | implemented | **ported (M6)**: the prisoner's weakness, Ivy's toll (the torch, or a lethal duel), the Basket man's lift once Ivy is paid or the prisoner freed; the way back to the fork once the east loop was walked | prisoner (Bloodbeast weakness), Poison Ivy's toll, the Basket man's lift |
+| Mirror Gallery (`dd_mirror`) | CSV (Mirror Demon) | implemented | **ported (M6)**: smashing the mirrors breaks the demon without a duel; the shard teaches Light | smash the mirrors or duel |
+| Bloodbeast Lair (`dd_blood`) | CSV (Bloodbeast) | implemented | **ported (M6)**: the herbs or the prisoner ban Vine from its Ward (`opponents.spec(ban=)`); a win teaches Shadow | weakness bans Vine from its Ward |
+| Grub Tunnels (`dd_grub`) | CSV (Rock Grub), boulder, trapped chest | implemented | **ported (M6)**: the boulder (run, brace with Stone, hold and be hurt), the chest (jam with Stone, from the side, head-on and be hurt): the gold is an item | run / hold / brace with Stone; the chest's blades |
+| Troglodyte Cavern (`dd_troglodytes`) | CSV (Troglodytes) | implemented | **ported (M6)**: the rite, the run, or the champion (a lethal lease from the choice); the reed opens the undertow back to the grotto | ritual, run the arrow, or the champion |
+| Manticore Gate (`dd_manticore`) | CSV (Manticore) | implemented | **ported (M6)**: a boss lease; the old man's answer bans Light from its Ward (the legacy's addition, kept and labelled not canon); the Red Wizard's rematch is **removed** (not canon) | plus the optional Red Wizard rematch (legacy rival, see below) |
+| Igbut's Door (`dd_igbut`) | 364, 62, 241, 400, 31, 376, 3 | implemented | **ported (M6)**: the gem check, the six orders with placed/displaced feedback, a bite per wrong order, the third scatters the gems to be picked up again; the right order (Sapphire, Emerald, Diamond, the legacy's) crowns the champion, ends the run and lets everyone out | gem check, three-position lock with aggregate feedback, the final crossbow |
 
 ## Encounters and consequences
 
@@ -76,6 +76,15 @@ the Guard Dog's one-colour Ward and the Cave Troll are lethal (a lost duel is a 
 a loser escape wounded. A draw (both Wards broken in one round) leaves the creature where it was. `events.py` holds the riddle, Throm's pit
 and the black book as the book has them; the riddle's number stays unverified (see above). The run is shared: one live run per world, a position
 and pockets per wizard, taken and defeated things gone for everyone, bodies of an ended run left for the next contestants to search.
+
+## The second half's reading of the legacy (M6)
+
+`events.py` ports every choice event of `story_events.gd` to run state shared by the apprentices in a run (the first to decide, decides); a choice
+can begin a duel (`fight` on the prompt) or crown the champion (`champion`). People faced in a duel (Throm, Ivy, the troglodytes' champion) are
+leases like the creatures, and a lost one is a death. The dice are a seeded roll (`random.Random` on the run id and the seat): the world keeps its
+determinism. Weave and colour growth: the red book (a fourth place), the Dwarf's test (Stone), the mirror shard (Light), the Bloodbeast (Shadow),
+as the palette mapping below records. The champion's exit ends the run for everyone inside (the doors open; the next entrant begins a new run);
+a run can also end with every wizard inside dead (M5).
 
 ## Palette mapping (the legacy's colours in Wizard World)
 

@@ -31,7 +31,9 @@ INTERACT_RANGE = 1
 GATE_DISTANCE = (18, 30)
 CONTESTANTS = [("knight", "Serra of the White Road", "knight"), ("elf", "An elven woman", "elf"), ("throm", "Throm", "throm"),
                ("barbarian2", "A second barbarian", "barbarian"), ("assassin", "A figure in black", "assassin")]
-ITEM_NAMES = {"sukumvit_note": "Sukumvit's note and two gold pieces", "torch": "a dry torch", "vial": "a vial from the black book", "bone_ring": "a druidic bone ring"}
+ITEM_NAMES = {"sukumvit_note": "Sukumvit's note and two gold pieces", "torch": "a dry torch", "vial": "a vial from the black book", "bone_ring": "a druidic bone ring",
+              "bread": "the elf's bread", "charm": "the elf's vine-charm", "reed": "a hollow reed", "herbs": "bitter herbs", "gold": "the chest's gold",
+              "glass_eye": "a green glass eye", "glass_diamond": "a glass diamond"}
 MAX_POCKETS = 8
 
 
@@ -228,10 +230,12 @@ def _visible(world: Any, r: dict[str, Any], zid: str, e: dict[str, Any], rec: di
         return False
     if e["kind"] == "pickup" and e["id"] in zs["taken"]:
         return False
-    if e["kind"] == "creature" and e["id"] in zs["defeated"]:
+    if e["kind"] in ("creature", "npc") and e["id"] in zs["defeated"]:
         return False
     if e["kind"] == "wizard":
-        return False  # the legacy's rival wizard is not canon and not ported
+        if e["id"] == "throm_arena" and r["throm"] in ("betrayed", "dead"):
+            return False  # left at the pit, or already fallen: nobody to drag into the arena
+        return bool(e.get("ported"))  # Throm's forced duel is; the legacy's rival wizard is not canon and not ported
     return True
 
 
@@ -271,7 +275,8 @@ def view(world: Any, seat: str | None = None) -> dict[str, Any]:
         if s != rec["seat"] and o["inside"] and o["zone"] == zid:
             others.append({"seat": s, "name": mortality.name_of(world, s), "x": o["x"], "y": o["y"], "facing": o["facing"], "dead": mortality.is_dead(world, s)})
     bodies = [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"])} for s, b in sorted(r["bodies"].items()) if b["zone"] == zid]
-    bodies += [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"]), "old": True} for s, b in sorted(state(world)["dead"].items()) if b["zone"] == zid]
+    bodies += [{"seat": s, "name": b["name"], "x": b["x"], "y": b["y"], "pockets": list(b["pockets"]), "old": True} for s, b in sorted(state(world)["dead"].items())
+               if b["zone"] == zid and not s.startswith(r["id"] + ":")]  # this run's own dead are listed above, as themselves
     return {"run": r["id"], "zone": zid, "name": z["name"], "pos": [rec["x"], rec["y"]], "facing": rec["facing"], "entities": ents, "others": others, "bodies": bodies,
             "pockets": [{"id": i, "name": ITEM_NAMES.get(i, i)} for i in rec["pockets"]], "gems": list(rec["gems"]), "conditions": list(rec["conditions"]),
             "throm": r["throm"], "ended": r.get("ended"), "visited": list(rec["visited"]), "at_door": _at_door(rec)}
@@ -292,6 +297,14 @@ def _occupied(world: Any, r: dict[str, Any], zid: str, x: int, y: int, except_se
         if b["zone"] == zid and b["x"] == x and b["y"] == y:
             return True
     return False
+
+
+def _exit_open(r: dict[str, Any], ex: dict[str, Any]) -> bool:
+    if ex.get("requires_run_flag") and not r["flags"].get(ex["requires_run_flag"]):
+        return False
+    if ex.get("blocked_by_run_flag") and r["flags"].get(ex["blocked_by_run_flag"]):
+        return False
+    return True
 
 
 def walkable(world: Any, r: dict[str, Any], zid: str, x: int, y: int, rec: dict[str, Any]) -> bool:
@@ -323,12 +336,14 @@ def move(world: Any, dx: int, dy: int, facing: str | None = None) -> dict[str, A
     rec["facing"] = {(0, -1): "up", (0, 1): "down", (-1, 0): "left", (1, 0): "right"}[(int(dx), int(dy))]
     zid = rec["zone"]
     nx, ny = int(rec["x"]) + int(dx), int(rec["y"]) + int(dy)
-    exits = zones.exits_at(zid, nx, ny)
+    exits = [ex for ex in zones.exits_at(zid, nx, ny) if _exit_open(r, ex)]
     if exits:
         ex = exits[0]
         to = str(ex["to_area"])
         if to not in zones.ported():
             return {"status": "rejected", "reason": "not_yet", "text": "The way on is dark and unfinished; the Trial has not opened it to you."}
+        if zid == "dd_fork" and to == "dd_service":
+            r["flags"]["fork_east_open"] = True  # the east loop reconnects (p.119, 56): the service tunnels' way back to the fork is open
         rec.update(zone=to, x=int(ex["to_pos"][0]), y=int(ex["to_pos"][1]), facing=str(ex.get("facing", rec["facing"])))
         rec["steps"] += 1
         if to not in rec["visited"]:
@@ -371,6 +386,12 @@ def _take(world: Any, r: dict[str, Any], rec: dict[str, Any], zid: str, e: dict[
         out["spell"] = int(grant["spell"])
     if grant.get("run_flag"):
         r["flags"][grant["run_flag"]] = True
+    if e.get("set_flag"):
+        r["flags"][e["set_flag"]] = True
+    if e.get("clear_conditions"):
+        rec["conditions"] = []
+        wizard.wiz(world).pop("wounded", None)
+        out["cleared"] = True
     if e.get("run_pickup") or e.get("item") or grant.get("gem"):
         zs["taken"].append(e["id"])  # unique: the other apprentice finds it gone (the aid box is the one exception: one each)
     r["flags"]["picked_" + e["id"]] = True
@@ -399,7 +420,15 @@ def interact(world: Any, entity_id: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "too_far"}
     kind = e["kind"]
     if kind in ("sign", "logs", "corpse", "door"):
-        return {"status": "ok", "text": _text(r, e), "kind": kind}
+        out = {"status": "ok", "text": _text(r, e), "kind": kind}
+        if e.get("choice_event"):  # the mirrors, the boulder's groove: a reading with a decision
+            prompt = trial_events.EVENTS[e["choice_event"]](world, r, rec, None)
+            out["event"] = e["choice_event"]
+            out["prompt"] = prompt
+        return out
+    if kind == "pickup" and e.get("choice_first"):  # the false eye, the false diamond, the chest: the choice is the taking
+        prompt = trial_events.EVENTS[e["choice_event"]](world, r, rec, None)
+        return {"status": "ok", "kind": kind, "text": "", "event": e["choice_event"], "prompt": prompt}
     if kind == "pickup":
         if e["id"] == "aid_box" and e["id"] in _zone_state(r, zid)["taken"] and not r["flags"].get(f"aid_box:{seat}"):
             r["flags"][f"aid_box:{seat}"] = True  # one box per apprentice (the two-player rule): the second finds theirs beside it
@@ -419,7 +448,11 @@ def interact(world: Any, entity_id: str) -> dict[str, Any]:
             prompt = trial_events.EVENTS[e["choice_event"]](world, r, rec, None)
             out["event"] = e["choice_event"]
             out["prompt"] = prompt
+            if prompt.get("fight"):
+                return _fight_from_prompt(world, out, prompt)
         return out
+    if kind == "wizard":  # Throm's forced duel: a person faced like a creature
+        return fight(world, entity_id)
     if kind == "creature":
         return fight(world, entity_id)
     return {"status": "rejected", "reason": "nothing_to_do"}
@@ -437,7 +470,49 @@ def choose(world: Any, entity_id: str, choice: str) -> dict[str, Any]:
     out = trial_events.EVENTS[e["choice_event"]](world, r, rec, str(choice))
     if out.get("status") == "rejected":
         return out
-    return {"status": "ok", "event": e["choice_event"], "prompt": out}
+    reply = {"status": "ok", "event": e["choice_event"], "prompt": out}
+    if out.get("fight"):
+        return _fight_from_prompt(world, reply, out)
+    if out.get("champion"):
+        _champion_exit(world, seat)
+        reply["champion"] = True
+    return reply
+
+
+def _fight_from_prompt(world: Any, reply: dict[str, Any], prompt: dict[str, Any]) -> dict[str, Any]:
+    """A choice began a duel (the false eye wakes the guardian, Ivy's thorns, the troglodytes' champion): the lease rides on the reply."""
+    eid, enemy_id = prompt["fight"]
+    f = fight(world, str(eid), enemy_id=str(enemy_id), comes_to_you=True)
+    if f.get("status") not in ("started", "resolved"):
+        return {**reply, "fight_refused": f.get("reason", "")}
+    f["prompt"] = dict(prompt)
+    f["intro"] = "\n\n".join(x for x in (str(prompt.get("text", "")), str(f.get("intro", ""))) if x)  # what the choice did, then the creature
+    return f
+
+
+def _champion_exit(world: Any, seat: str) -> None:
+    """The door opened for `seat`: the Trial is over for this year. The champion walks out into daylight; everyone still inside is let out at the
+    gate (the doors open); bodies and what they hold stay for the next run, which the next entrant begins."""
+    from wizard_rts.narrative import mortality
+
+    r = run(world)
+    if r is None:
+        return
+    gate = gate_tile(world)
+    for s, o in sorted(r["seats"].items()):
+        if not o["inside"]:
+            continue
+        o["inside"] = False
+        if gate is not None and not mortality.is_dead(world, s):
+            t = residents.free_tile(world, gate[0], gate[1], 3) or gate
+            with party.at_seat(world, s):
+                world.player.update(tx=int(t[0]), ty=int(t[1]), facing="down")
+    r["ended"] = {"why": "champion", "seat": seat, "game_ms": _now(world)}
+    for s, b in r["bodies"].items():
+        state(world)["dead"][f"{r['id']}:{s}"] = dict(b)
+    events.log(world, "trial_run_ended", run=r["id"], why="champion", seat=seat)
+    _announce(world, "trial_champion", seat=seat, name=mortality.name_of(world, seat), run=r["id"])
+    _announce(world, "trial_run_ended", run=r["id"], why="champion")
 
 
 def _search_body(world: Any, r: dict[str, Any], rec: dict[str, Any], zid: str, who: str) -> dict[str, Any]:
@@ -460,7 +535,16 @@ def _search_body(world: Any, r: dict[str, Any], rec: dict[str, Any], zid: str, w
 
 # ------------------------------------------------------------------ fighting
 
-def fight(world: Any, entity_id: str) -> dict[str, Any]:
+def _ban_for(world: Any, r: dict[str, Any], enemy_id: str) -> list[int]:
+    """Colours the apprentice knows to be missing from a creature's Ward: the Bloodbeast's (the prisoner, the herbs), the Manticore's (the old man)."""
+    if enemy_id == "bloodbeast" and (r["flags"].get("blood_weakness") or wizard.knows_fact(world, "bloodbeast_hates_vine")):
+        return [trial_events.VINE]
+    if enemy_id == "manticore" and wizard.knows_fact(world, "manticore_hates_light"):
+        return [trial_events.LIGHT]
+    return []
+
+
+def fight(world: Any, entity_id: str, enemy_id: str | None = None, comes_to_you: bool = False) -> dict[str, Any]:
     seat = me(world)
     r = run(world)
     rec = seat_rec(world, seat)
@@ -468,14 +552,15 @@ def fight(world: Any, entity_id: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "not_inside"}
     zid = rec["zone"]
     e = zones.entity(zid, entity_id)
-    if e is None or e["kind"] != "creature" or not _visible(world, r, zid, e, rec):
+    if e is None or not _visible(world, r, zid, e, rec) or (e["kind"] not in ("creature", "wizard") and not enemy_id):
         return {"status": "rejected", "reason": "no_such_entity"}
-    if not _adjacent(rec, e):
+    if not comes_to_you and not _adjacent(rec, e):
         return {"status": "rejected", "reason": "too_far"}
     if duel_lease.active(world) is not None:
         return {"status": "rejected", "reason": "duel_open"}
-    sp = opponents.spec(str(e["enemy_id"]), wizard.combatant(world)["attack_pool"])
-    lease = duel_lease.begin(world, "trial:" + str(e["enemy_id"]), purpose=f"trial:{zid}:{entity_id}", display_name=sp["display_name"], spec=sp)
+    enemy_id = str(enemy_id or e["enemy_id"])
+    sp = opponents.spec(enemy_id, wizard.combatant(world)["attack_pool"], ban=_ban_for(world, r, enemy_id))
+    lease = duel_lease.begin(world, "trial:" + enemy_id, purpose=f"trial:{zid}:{entity_id}:{enemy_id}", display_name=sp["display_name"], spec=sp)
     if lease["status"] != "started":
         return {"status": "rejected", "reason": lease.get("reason", "no_lease")}
     party_rec = party.seats(world).get(seat, {})
@@ -486,20 +571,21 @@ def fight(world: Any, entity_id: str) -> dict[str, Any]:
         out = duel_lease.resolve(world, lease["payload"]["duel"]["id"], report)
         done = on_duel_resolved(world, lease["payload"]["duel"], out) if out.get("status") == "resolved" else {}
         return {"status": "resolved", "auto": True, "outcome": out.get("outcome"), **done}
-    return {"status": "started", "duel_lease": lease, "intro": str(e.get("intro", "")), "lethal": sp["lethal"], "enemy": str(e["enemy_id"])}
+    return {"status": "started", "duel_lease": lease, "intro": str(e.get("intro", "")), "lethal": sp["lethal"], "enemy": enemy_id, "name": sp["display_name"]}
 
 
 def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> dict[str, Any]:
     from wizard_rts.narrative import mortality
 
-    _t, zid, eid = str(lease["purpose"]).split(":", 2)
+    parts = str(lease["purpose"]).split(":", 3)
+    _t, zid, eid = parts[0], parts[1], parts[2]
     seat = me(world)
     r = run(world)
     rec = seat_rec(world, seat)
     e = zones.entity(zid, eid)
     if r is None or rec is None or e is None:
         return {"trial": True, "gone": True}
-    enemy = str(e["enemy_id"])
+    enemy = parts[3] if len(parts) > 3 else str(e.get("enemy_id", ""))
     if out.get("outcome") == "won":
         zs = _zone_state(r, zid)
         if eid not in zs["defeated"]:
@@ -511,12 +597,43 @@ def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> 
         ledger.bump(world, "trial_wins", seat=seat)
         events.log(world, "trial_won", seat=seat, zone=zid, entity=eid, enemy=enemy)
         _announce(world, "trial_won", seat=seat, zone=zid, entity=eid, enemy=enemy)
+        reply: dict[str, Any] = {"trial": True, "killed": True, "entity": eid}
+        grant = e.get("grant_on_win") or {}
+        if grant.get("spell") is not None:
+            wizard.learn(world, [int(grant["spell"])])
+            reply["spell"] = int(grant["spell"])
+        if grant.get("weave"):
+            wizard.learn(world, [], int(grant["weave"]))
+            reply["weave"] = int(grant["weave"])
+        if eid == "throm_arena":
+            r["throm"] = "dead"
+            r["contestants"]["throm"] = "dead"
+            r["flags"]["trial_done"] = True
+        if eid == "dd_trog_elder":
+            r["flags"]["trog_beaten"] = True
+        if eid == "dd_ivy":
+            r["flags"]["ivy_paid"] = True
+            r["flags"]["ivy_dead"] = True
+        name = opponents.bestiary()[enemy]["display_name"] if enemy in opponents.bestiary() else enemy
         text = {"troll_lower1": "Your troll goes down. Throm finishes his, but his arm hangs wrong.\n\n\"Keep walking,\" he says. \"Don't look at it.\"\n\nSomething glints where your troll fell.",
-                "fly_east": "The fly spins down into the dark, buzzing, and does not come up.", "dog_gal1": "The mastiff folds, silent to the end."}.get(eid, f"{opponents.bestiary()[enemy]['display_name']} is broken. The path is clearer.")
-        return {"trial": True, "killed": True, "text": text, "entity": eid}
-    if out.get("outcome") == "draw":  # both Wards broke in the same breath: nobody wins, nobody dies, the creature stays
+                "fly_east": "The fly spins down into the dark, buzzing, and does not come up.", "dog_gal1": "The mastiff folds, silent to the end.",
+                "boa_grotto1": "The snake loosens. The elven woman breathes, barely.",
+                "throm_arena": "Throm falls. The delirium goes out of him like water, and for a moment he knows you.\n\n\"...Good fight, villager.\"\n\nThe Dwarf approaches with a loaded crossbow, and does not lower it. \"Only I know the way onward. West, when you're ready.\"",
+                "dd_trog_elder": "Their champion falls. The tribe backs off, drumming: respect, or arithmetic.",
+                "dd_ivy": "The thorns go slack. Ivy's last word is not a word.",
+                "guard_idol2": "The second guardian comes apart in a storm of feathers. The emerald eye is yours to take.",
+                "manticore_gate1": "The Manticore's Ward shatters. It looks at you with something like interest, and lets you pass.",
+                "demon_mirror1": "The thing from the glass comes apart into silver. Something bright is left in the frame."}.get(eid, grant.get("text") or f"{name} is broken. The path is clearer.")
+        if grant.get("text") and eid not in ("beast_blood1",):
+            text = text + "\n\n" + str(grant["text"])
+        elif grant.get("text"):
+            text = str(grant["text"])
+        reply["text"] = text
+        return reply
+    if out.get("outcome") == "draw" and out.get("broke"):  # both Wards broke in the same breath: nobody wins, nobody dies, the creature stays
         events.log(world, "trial_draw", seat=seat, zone=zid, entity=eid, enemy=enemy)
         return {"trial": True, "killed": False, "draw": True, "text": f"You break each other's Wards in the same breath. {opponents.bestiary()[enemy]['display_name']} backs off into the dark, and so do you.", "entity": eid}
+    # a loss, or both ran dry: against a lethal creature the apprentice is finished either way
     lethal = enemy in opponents.LETHAL
     if lethal:
         mortality.die(world, seat, f"trial:{enemy}", by=enemy, terminal=False)

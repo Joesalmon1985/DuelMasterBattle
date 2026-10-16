@@ -368,6 +368,19 @@ class MultiplayerSession:
                 return {"status": "rejected", "reason": "not_allowed", "op": op}
             self.world.players[link.id].update(tx=int(message.get("tx", 0)), ty=int(message.get("ty", 0)), facing="down")
             return {"status": "ok", **self._pose(link)}
+        if op == "trial_teleport":  # headed tests: stand in a zone of the Trial without walking the ones before it
+            if os.environ.get("HYBRID_DEV_OPS") != "1" or self.state != "playing" or not link.spawned or "narrative" not in self.world.__dict__:
+                return {"status": "rejected", "reason": "not_allowed", "op": op}
+            from wizard_rts.trial import run as trial
+
+            rec = trial.seat_rec(self.world, link.id)
+            if rec is None or not rec["inside"]:
+                return {"status": "rejected", "reason": "not_inside", "op": op}
+            rec.update(zone=str(message.get("zone", rec["zone"])), x=int(message.get("x", rec["x"])), y=int(message.get("y", rec["y"])))
+            if rec["zone"] not in rec["visited"]:
+                rec["visited"].append(rec["zone"])
+            with self.acting(link):
+                return {"status": "ok", "view": trial.view(self.world, link.id)}
         if op.startswith("pvp_"):
             return self._pvp(link, op, message, now)
         if op in PASSTHROUGH_OPS:

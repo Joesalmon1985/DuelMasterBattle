@@ -23,11 +23,14 @@ def bestiary() -> dict[str, Any]:
     return json.loads(DATA.read_text(encoding="utf-8"))["opponents"]
 
 
-def spec(enemy_id: str, player_pool: list[int]) -> dict[str, Any]:
-    """An opponent spec in the shape `duel_lease.begin(spec=...)` takes."""
+def spec(enemy_id: str, player_pool: list[int], ban: list[int] | None = None) -> dict[str, Any]:
+    """An opponent spec in the shape `duel_lease.begin(spec=...)` takes. `ban`: colours its Ward cannot hold (a weakness the apprentice learned)."""
     b = bestiary()[enemy_id]
     pool = [int(c) for c in b.get("ward_pool", []) if int(c) in player_pool] or list(player_pool)
+    if ban:
+        pool = [c for c in pool if c not in ban] or pool
     out = {"display_name": str(b.get("display_name", enemy_id)), "tier": "duel.wizard_3x3", "bot_logic": str(b.get("bot_logic", "candidate_filter")),
+           "archetype": str(b.get("archetype", enemy_id)),
            "bot_solver_cap": int(b.get("bot_solver_cap", 60)), "bot_mistake_rate": 0.0,
            "think_min_seconds": float(b.get("think_min_seconds", 10.0)), "think_max_seconds": float(b.get("think_max_seconds", 18.0)),
            "max_casts": 8 if enemy_id in BOSS else 6, "player_max_casts": 10 if enemy_id in BOSS else 8, "ward_pool": pool, "enemy_id": enemy_id,

@@ -61,7 +61,7 @@ def public_view(rec: dict[str, Any]) -> dict[str, Any]:
 def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -> tuple[dict, dict]:
     player = wizard.combatant(world, int(opp.get("player_max_casts", opp.get("max_casts", 8))))  # a forgiving budget for the apprentice is configuration, not a different rule
     pool = list(player["attack_pool"])
-    enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": "wizard", "kind": "wizard",
+    enemy = {"id": "story_rival", "display_name": opp["display_name"], "archetype": str(opp.get("archetype", "wizard")), "kind": "wizard",
              "weave_size": player["weave_size"], "ward_size": player["ward_size"], "attack_pool": list(pool), "ward_pool": list(pool),
              "allow_repeats": True, "max_casts": int(opp.get("max_casts", 8)), "min_cast_seconds": 5.0, "max_cast_seconds": 60.0,
              "bot_logic": opp["bot_logic"], "bot_solver_cap": int(opp.get("bot_solver_cap", 60)), "bot_mistake_rate": float(opp.get("bot_mistake_rate", 0.0)),
@@ -220,7 +220,8 @@ def resolve(world: Any, lease_id: str, report: dict[str, Any]) -> dict[str, Any]
     duels["attempts"].append({"purpose": rec["purpose"], "attempt": rec["attempt"], "outcome": result, "casts": int(report.get("player_casts", 0)),
                               "game_ms": int(world.dmb.clock.get("game_ms", 0))})
     events.log(world, "duel_resolved", lease=lease_id, purpose=rec["purpose"], outcome=result)
-    return {"status": "resolved", "outcome": result, "verified": True, "purpose": rec["purpose"], "attempt": rec["attempt"]}
+    return {"status": "resolved", "outcome": result, "verified": True, "purpose": rec["purpose"], "attempt": rec["attempt"],
+            "broke": any(bool(h.get("broke")) for h in report.get("history", []))}  # a draw with the enemy's Ward broken is both broken in one round; without, both ran dry
 
 
 def abandon(world: Any, reason: str = "abandoned") -> dict[str, Any]:

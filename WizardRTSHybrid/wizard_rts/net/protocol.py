@@ -27,7 +27,7 @@ PLAYER_OPS = frozenset({
     "resurrect",  # bring a dead wizard back: a channel beside the body (narrative/mortality.py)
     "pest_fight",  # fight a warehouse rat standing beside it (narrative/pests.py)
     "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view",  # the Trial of Champions (wizard_rts/trial)
-    "teleport",  # headed tests only: the host must run with HYBRID_DEV_OPS=1 (session.py refuses it otherwise)
+    "teleport", "trial_teleport",  # headed tests only: the host must run with HYBRID_DEV_OPS=1 (session.py refuses them otherwise)
     "save", "new_game",  # a single-player session only (session._solo_op); a shared world has no save slot of its own
     "pvp_challenge", "pvp_respond", "pvp_ward", "pvp_cast", "pvp_forfeit", "pvp_leave", "pvp_view",
 })

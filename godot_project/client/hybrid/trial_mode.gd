@@ -150,7 +150,11 @@ func _enter_zone(v: Dictionary) -> void:
 func apply(v: Dictionary) -> void:
 	if v.is_empty():
 		if active:
+			var keep := _card_kind == "champion" and card.visible
 			_exit_zone()
+			if keep:
+				world._input_locked = true  # the champion reads the last page over the daylight
+				card.visible = true
 		return
 	if not active or str(v.get("zone", "")) != world.area_id:
 		_enter_zone(v)  # resurrected inside, or the picture fell behind the host
@@ -355,7 +359,7 @@ func _handle(id: String, reply: Dictionary) -> void:
 	if reply.has("weave"):
 		_toast("Your weave grows: %d places." % int(reply["weave"]), 4.0)
 	if reply.has("spell"):
-		_toast("A new colour: %s." % str(reply["spell"]), 4.0)
+		_toast("A new colour: %s." % _colour_name(int(reply["spell"])), 4.0)
 	var text := _reply_text(reply)
 	var title := _title_of(id, reply)
 	if reply.has("prompt") and typeof(reply["prompt"]) == TYPE_DICTIONARY:
@@ -369,6 +373,13 @@ func _handle(id: String, reply: Dictionary) -> void:
 		_card_kind = "text"
 		_show(title, "", text, [], [{"id": "close", "text": "Continue", "kind": "primary"}])
 	_refresh_view()
+
+
+const COLOUR_NAMES := {0: "Flame", 1: "Frost", 3: "Stone", 4: "Light", 5: "Shadow", 6: "Vine"}
+
+
+func _colour_name(c: int) -> String:
+	return str(COLOUR_NAMES.get(c, "colour %d" % c))
 
 
 func _title_of(id: String, reply: Dictionary) -> String:
@@ -398,7 +409,7 @@ func _show_prompt(id: String, prompt: Dictionary, lead: String, title: String) -
 	_card_entity = id
 	_card_kind = "prompt"
 	var body := str(prompt.get("text", ""))
-	if lead != "" and not body.begins_with(lead):
+	if lead != "" and not body.begins_with(lead) and lead != body:
 		body = lead + "\n\n" + body
 	var choices: Array = []
 	for c in prompt.get("choices", []):
@@ -466,20 +477,35 @@ func _on_choice(id: String) -> void:
 			_toast("You cannot bring them back from here (%s)." % str(reply.get("reason", "")))
 		return
 	if _card_kind == "prompt":
-		var reply: Dictionary = world._sim.op({"op": "trial_choose", "entity": _card_entity, "choice": id})
+		var entity := _card_entity
+		var reply: Dictionary = world._sim.op({"op": "trial_choose", "entity": entity, "choice": id})
 		last_reply = reply
+		if str(reply.get("status", "")) == "started":  # the choice began a duel: the false eye's guardian, Ivy's thorns, the tribe's champion
+			_close_card()
+			_handle(entity, reply)
+			return
 		if str(reply.get("status", "")) != "ok":
 			_close_card()
 			_toast("That is no longer possible (%s)." % str(reply.get("reason", "")))
 			return
+		if bool(reply.get("champion", false)):
+			_close_card()
+			_show("", "", str(reply.get("prompt", {}).get("text", "")), [], [{"id": "close", "text": "Into the daylight", "kind": "primary"}])
+			_card_kind = "champion"
+			world._sfx().fracture(3)
+			return
 		if reply.has("prompt") and typeof(reply["prompt"]) == TYPE_DICTIONARY:
-			_show_prompt(_card_entity, reply["prompt"], "", card.title_label.text)
+			_show_prompt(entity, reply["prompt"], "", card.title_label.text)
 		else:
 			_close_card()
 		_refresh_view()
 
 
 func _on_footer(id: String) -> void:
+	if _card_kind == "champion":
+		_card_kind = ""
+		_close_card()
+		return
 	if _card_kind == "lease":
 		var lease := _pending_lease
 		_pending_lease = {}
@@ -503,6 +529,8 @@ func after_duel(t: Dictionary) -> void:
 		world._sfx().defeat()
 	else:
 		world._sfx().denied()
+	if t.has("spell"):
+		_toast("A new colour: %s." % _colour_name(int(t["spell"])), 4.0)
 	if str(t.get("text", "")) != "":
 		_toast(str(t["text"]), 6.0)
 
@@ -541,7 +569,8 @@ func _exit_zone() -> void:
 	_others.clear()
 	card.hide_card()
 	_card_entity = ""
-	_card_kind = ""
+	if _card_kind != "champion":
+		_card_kind = ""
 	strip.visible = false
 	leave_btn.visible = false
 	for c in world._tiles_root.get_children():
@@ -559,6 +588,10 @@ func _exit_zone() -> void:
 	world.area = {"id": "hybrid", "name": "Wizard RTS", "rows": ["."]}
 	world.grid_w = 2000
 	world.grid_h = 2000
+	world._camera.limit_left = -10000000  # load_area clamped the camera to the zone; the hex world has no such edge
+	world._camera.limit_top = -10000000
+	world._camera.limit_right = 10000000
+	world._camera.limit_bottom = 10000000
 	world._hud_area_lbl.text = "Wizard RTS"
 	world._prompt_lbl.text = ""
 	world._touch.set_action_label("")
