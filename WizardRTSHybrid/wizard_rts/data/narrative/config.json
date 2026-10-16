@@ -67,5 +67,12 @@
     "budget_s": 120,
     "max_absence_days": 30,
     "min_absence_s": 60
+  },
+  "pests": {
+    "count": 5,
+    "eat_every_ms": 30000,
+    "return_ms": 1200000,
+    "return_count": 3,
+    "max_waves": 6
   }
 }

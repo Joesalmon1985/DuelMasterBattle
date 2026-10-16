@@ -1,0 +1,22 @@
+{
+ "note": "Wizard World's overlay on the legacy Deathtrap zones (legacy_zones.json): adapted texts, two-player rules and provenance. `ported` lists the zones the host plays; the rest are drawn by the developer tools only until their milestone. Encoding slips in the legacy export (the long dash) are corrected here.",
+ "ported": ["dd_entrance", "dd_fork", "dd_galleries", "dd_pit", "dd_lower"],
+ "zones": {
+  "dd_entrance": {"passages": [1, 270], "name": "Crystal Entrance"},
+  "dd_fork": {"passages": [66, 119, 56]},
+  "dd_galleries": {"passages": [293, 382]},
+  "dd_pit": {"passages": [154, 22, 184, 63, 311, 323]},
+  "dd_lower": {"passages": [194, 138, 52, 169, 288, 221]}
+ },
+ "entities": {
+  "dd_entrance/dd_table": {"text": "A stone table. Six boxes; five already taken. The contestants ahead of you helped themselves."},
+  "dd_entrance/aid_box": {"item": "sukumvit_note", "text": "A box bearing the settlement's seal, the one the Rollkeeper stamped on the roll. Inside: two gold pieces, and a note in a sharp hand. SUKUMVIT: 'The Trial wants useful things, not just strong arms. Carry what matters.'", "two_player": "one box per apprentice: the second finds theirs beside it"},
+  "dd_fork/dd_prints_west": {"text": "Wet footprints, several sets, head west along the road."},
+  "dd_fork/dd_east_draught": {"text": "A cold draught from the east, and a single small footprint pressed into the wet. Someone slight went this way and did not come back for their box."},
+  "dd_fork/dd_empty_box": {"text": "An open box, its seal broken. Someone got here first, and went west."},
+  "dd_galleries/dd_torch": {"item": "torch"},
+  "dd_lower/black_book": {"item": "vial"},
+  "dd_lower/bone_ring": {"item": "bone_ring"},
+  "dd_lower/troll_lower1": {"intro": "Two Cave Trolls blunder in, clubs up, and Throm is suddenly beside you, smelling of rope and anger.\n\n\"Mine's the big one,\" he says, and takes it.\n\nYours weaves Flame and Frost.", "two_player": "with two apprentices present each duels a troll and Throm shouts advice; with one, Throm takes the second troll (his outcome is authored: he wins, wounded)"}
+ }
+}

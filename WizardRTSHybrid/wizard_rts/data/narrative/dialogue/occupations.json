@@ -713,6 +713,43 @@
      "id": "favour_offered"
     }
    ]
+  },
+  {
+   "id": "rumour_road",
+   "text": "Any news from the road?",
+   "when": {
+    "stage": [
+     "explore"
+    ]
+   },
+   "lines": [
+    {
+     "text": "A man in a black travelling cloak came up the east road last week asking after {mentor} by name. Polite. Too polite. I did not like it.",
+     "when": {
+      "persona": {
+       "any": [
+        "M",
+        "G",
+        "R"
+       ]
+      }
+     }
+    },
+    {
+     "text": "Carriers say there is a stranger on the roads with light under his cloak, asking after old teachers. Carriers say a lot of things.",
+     "when": {
+      "persona": {
+       "any": [
+        "A",
+        "S",
+        "C",
+        "D"
+       ]
+      }
+     }
+    },
+    "And the usual: the Trial gate east of here opens again this season, and the road is full of fools walking towards it."
+   ]
   }
  ]
 }

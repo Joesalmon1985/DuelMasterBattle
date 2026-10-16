@@ -57,7 +57,7 @@ def carry_over(old: Any, new: Any) -> dict[str, Any]:
 def tick(world: Any) -> None:
     """Once per game second, from `story.story_quantum`, only when the state exists: the link watcher, then characters for the bodies the
     wizard has come near. Later milestones hang residents, the tutorial and the director here."""
-    from wizard_rts.narrative import characters, mortality, mother, tutorial
+    from wizard_rts.narrative import characters, mortality, mother, pests, tutorial
 
     with perf.timed("tick"):
         characters.watch(world)
@@ -66,3 +66,7 @@ def tick(world: Any) -> None:
         tutorial.tick(world)
         mortality.tick(world)
         mother.tick(world)
+        pests.tick(world)
+        from wizard_rts.trial import run as trial
+
+        trial.tick(world)

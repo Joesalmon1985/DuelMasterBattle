@@ -29,6 +29,31 @@
        ]
       },
       {
+       "id": "log_thanks",
+       "when": {
+        "fact": [
+         "log_for_mentor"
+        ],
+        "not_fact": [
+         "mentor_thanked"
+        ]
+       },
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "mentor_thanked"
+        },
+        {
+         "kind": "relationship",
+         "delta": 5
+        }
+       ],
+       "lines": [
+        "You brought the log. Dry, from the good stack; the keeper likes you, then, which is rarer than you think.",
+        "The brazier will burn tonight. Thank you. Now, what else?"
+       ]
+      },
+      {
        "id": "steered",
        "when": {
         "requires": [
@@ -586,6 +611,27 @@
          "kind": "complete_lesson",
          "lesson": "world"
         }
+       ]
+      },
+      {
+       "id": "need_anything",
+       "text": "Is there anything you need?",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "not_fact": [
+         "mentor_wants_log"
+        ]
+       },
+       "effects": [
+        {
+         "kind": "fact",
+         "id": "mentor_wants_log"
+        }
+       ],
+       "lines": [
+        "Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if you do not. I am old and I feel the cold, and that is the whole of the errand."
        ]
       },
       {

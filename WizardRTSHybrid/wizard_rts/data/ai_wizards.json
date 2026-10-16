@@ -5,12 +5,30 @@
     "mira": {
       "name": "Mira",
       "role": "fellow apprentice",
-      "persona": {"primary": "D", "secondary": "R", "traits": ["curious", "gentle"], "magic": "reverent", "mentor": "fond"},
-      "think_s": [5.0, 11.0],
+      "persona": {
+        "primary": "D",
+        "secondary": "R",
+        "traits": [
+          "curious",
+          "gentle"
+        ],
+        "magic": "reverent",
+        "mentor": "fond"
+      },
+      "think_s": [
+        5.0,
+        11.0
+      ],
       "guess_logic": "candidate_filter",
       "mistake_rate": 0.0,
-      "step_s": [0.45, 0.8],
-      "follow": {"near": 2, "far": 6},
+      "step_s": [
+        0.45,
+        0.8
+      ],
+      "follow": {
+        "near": 2,
+        "far": 6
+      },
       "start_relationship": 25,
       "accept_if_relationship_at_least": -10,
       "accept_after_challenges": 2,
@@ -20,18 +38,62 @@
       "resurrected_relationship": 8,
       "challenges_unprompted": false,
       "lines": {
-        "greet": ["I learned my colours here a season ago. Stay close and I will show you the village.", "Another apprentice! Do you duel? I could use the practice."],
-        "decline": ["Not just now. Ask me again in a little while.", "A duel? We have the whole village to see. Put your staff down.", "I would rather not. Why do you keep asking?"],
-        "accept": ["Very well. Hide your Ward and I will hide mine.", "Gladly. Three colours, no tricks.", "A race, then. Do not think too long."],
-        "provoked": ["Fine. FINE. You want a duel, you have one. Do not cry to your mother afterwards.", "Three times. You have asked me three times. All right: Ward up."],
-        "win": ["Your Ward held that time. The next one will not be so easy for you.", "Broken! Practice makes it easier, you will see."],
-        "lose": ["Well cast. You read my Ward faster than I read yours.", "You were quicker. I will remember how you opened."],
-        "draw": ["Neither of us broke through. Again some day."],
-        "killed_you": ["Oh no. Oh, no no no. Stay there. Stay exactly there, I know the words.", "I did not mean... well, I did mean, but not like that. Hold on."],
-        "resurrecting": ["Hold still. This is the one lesson I paid attention to.", "Breathe. No, you cannot, that is the point. I am working on it."],
-        "resurrected_you": ["There. You are back. We are not telling anyone about this.", "You were dead for a bit. How was it? Never mind. Do not do it again."],
-        "i_died": ["You brought me back. I remember exactly who put me there, as well.", "Dead. I was dead. You owe me a very large favour and I intend to collect it."],
-        "you_died_again": ["Again? You are making a habit of this.", "I am going to start charging."]
+        "greet": [
+          "I learned my colours here a season ago. Stay close and I will show you the village.",
+          "Another apprentice! Do you duel? I could use the practice."
+        ],
+        "decline": [
+          "Not just now. Ask me again in a little while.",
+          "A duel? We have the whole village to see. Put your staff down.",
+          "I would rather not. Why do you keep asking?"
+        ],
+        "accept": [
+          "Very well. Hide your Ward and I will hide mine.",
+          "Gladly. Three colours, no tricks.",
+          "A race, then. Do not think too long."
+        ],
+        "provoked": [
+          "Fine. FINE. You want a duel, you have one. Do not cry to your mother afterwards.",
+          "Three times. You have asked me three times. All right: Ward up."
+        ],
+        "win": [
+          "Your Ward held that time. The next one will not be so easy for you.",
+          "Broken! Practice makes it easier, you will see."
+        ],
+        "lose": [
+          "Well cast. You read my Ward faster than I read yours.",
+          "You were quicker. I will remember how you opened."
+        ],
+        "draw": [
+          "Neither of us broke through. Again some day."
+        ],
+        "killed_you": [
+          "Oh no. Oh, no no no. Stay there. Stay exactly there, I know the words.",
+          "I did not mean... well, I did mean, but not like that. Hold on."
+        ],
+        "resurrecting": [
+          "Hold still. This is the one lesson I paid attention to.",
+          "Breathe. No, you cannot, that is the point. I am working on it."
+        ],
+        "resurrected_you": [
+          "There. You are back. We are not telling anyone about this.",
+          "You were dead for a bit. How was it? Never mind. Do not do it again."
+        ],
+        "i_died": [
+          "You brought me back. I remember exactly who put me there, as well.",
+          "Dead. I was dead. You owe me a very large favour and I intend to collect it."
+        ],
+        "you_died_again": [
+          "Again? You are making a habit of this.",
+          "I am going to start charging."
+        ],
+        "rat_won": [
+          "One rat fewer. They are not rats, you know. I have told him.",
+          "Got one. It clicked at me. Rats do not click."
+        ],
+        "rat_lost": [
+          "It got away. Under the floor. I hate the floor."
+        ]
       }
     }
   }

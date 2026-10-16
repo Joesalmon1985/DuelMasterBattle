@@ -104,6 +104,7 @@ var _res_fx: Dictionary = {}  # the resurrection channel in progress near us: {t
 var _res_label: Label
 var _ending: Dictionary = {}  # the session has ended for the humans (every one of them dead)
 var _ending_shown := false
+var _pest_fx: Dictionary = {}  # a rat breaking apart beside the wizard: {tile, t}
 
 
 func _ready() -> void:
@@ -540,6 +541,17 @@ func _cmd(kind: String, payload: Dictionary = {}) -> Dictionary:
 			var reply: Dictionary = _sim.op(_story_duel_report(payload))
 			_story_follow_up = reply.get("follow_up", null)
 			_story_duel_id = ""
+			var pest = reply.get("pest", null)
+			if typeof(pest) == TYPE_DICTIONARY and not (pest as Dictionary).is_empty():
+				if bool(pest.get("killed", false)):
+					_pest_fx = {"tile": _john_pos, "t": 0.9}
+					_sfx().fracture(3)
+					if mp:
+						_mp_toast_show("The rat breaks apart. %d left." % int(pest.get("left", 0)) if int(pest.get("left", 0)) > 0 else "The rat breaks apart. The warehouse is quiet.", 4.0)
+				else:
+					_sfx().denied()
+					if mp:
+						_mp_toast_show("It got away under the floor. You are hurt: one cast fewer next time.", 4.0)
 			return reply
 		return {}
 	if kind != "ResolveHazardDuel":
@@ -678,6 +690,7 @@ func _draw() -> void:
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
 	_draw_resurrection()
+	_draw_pest_fx()
 	if god != null:
 		god.draw_overlay(self)
 
@@ -1597,3 +1610,24 @@ func ui_ending() -> Dictionary:
 
 func ui_resurrect(target: String) -> Dictionary:
 	return _sim.op({"op": "resurrect", "target": target})
+
+
+func _draw_pest_fx() -> void:
+	if _pest_fx.is_empty():
+		return
+	var t: float = float(_pest_fx.get("t", 0.0)) - get_process_delta_time()
+	if t <= 0.0:
+		_pest_fx = {}
+		return
+	_pest_fx["t"] = t
+	var tile: Vector2i = _pest_fx["tile"]
+	var c := Vector2((float(tile.x) + 0.5) * float(TPX), (float(tile.y) + 0.5) * float(TPX))
+	var k := 1.0 - t / 0.9
+	for i in 8:  # bits of shell flying off
+		var a := float(i) * TAU / 8.0 + 0.4
+		canvas_item_draw_bit(c + Vector2(cos(a), sin(a)) * (10.0 + 50.0 * k), 5.0 * (1.0 - k), Color(0.35, 0.33, 0.3, 1.0 - k))
+	draw_circle(c, 6.0 + 30.0 * k, Color(1.0, 0.6, 0.2, 0.6 * (1.0 - k)))
+
+
+func canvas_item_draw_bit(at: Vector2, r: float, col: Color) -> void:
+	draw_rect(Rect2(at - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), col, true)

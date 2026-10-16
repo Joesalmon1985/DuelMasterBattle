@@ -77,6 +77,7 @@ class AiWizard:
         self.rescue = ""  # the seat of a dead human it is walking to
         self.rescue_said = False
         self.next_rescue_step_at = 0.0
+        self.next_pest_at = 0.0
 
     # ---------------------------------------------------------------- memory (saved with the world, in the party's private record)
     def memory(self) -> dict[str, Any]:
@@ -135,6 +136,8 @@ class AiWizard:
             return
         self.bot = None
         if self._rescue(now):
+            return
+        if self._help_pests(now):
             return
         self._greet(now)
         self._treat(now)
@@ -291,6 +294,43 @@ class AiWizard:
         if now >= self.next_rescue_step_at:
             lo, hi = self.c["step_s"]
             self.next_rescue_step_at = now + self.rng.uniform(float(lo), float(hi))
+            path = self._path_toward(goal, 1)
+            if path:
+                self._step_to(path[0], now)
+        return True
+
+    # ---------------------------------------------------------------- the rats
+    def _help_pests(self, now: float) -> bool:
+        """Once a human has heard the keeper's complaint, she walks to the nearest rat and fights it (on the Python core, verified like a board duel).
+        True while she is busy with that."""
+        w = self.session.world
+        if "narrative" not in w.__dict__ or now < self.next_pest_at:
+            return False
+        from wizard_rts.narrative import pests, residents
+
+        inf = pests.live(w)
+        if inf is None or not pests.anyone_complained(w):
+            return False
+        me = w.players[self.link.id]
+        best = None
+        for pid in pests.pests_of(w, inf):
+            r = residents.table(w)[pid]
+            d = abs(int(r["tile"][0]) - int(me["tx"])) + abs(int(r["tile"][1]) - int(me["ty"]))
+            if d <= 40 and (best is None or d < best[0]):
+                best = (d, pid, (int(r["tile"][0]), int(r["tile"][1])))
+        if best is None:
+            return False
+        d, pid, goal = best
+        if d <= pests.FIGHT_RANGE:
+            reply = self.session.dispatch(self.link, {"op": "pest_fight", "target": pid}, now)
+            self.next_pest_at = now + self.rng.uniform(8.0, 14.0)
+            friend = self._companion_of()
+            if reply.get("status") == "resolved":
+                self.say(friend, "rat_won" if reply.get("killed") else "rat_lost", now)
+            return True
+        if now >= self.next_step_at:
+            lo, hi = self.c["step_s"]
+            self.next_step_at = now + self.rng.uniform(float(lo), float(hi))
             path = self._path_toward(goal, 1)
             if path:
                 self._step_to(path[0], now)

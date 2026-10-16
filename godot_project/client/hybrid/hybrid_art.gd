@@ -724,6 +724,9 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		if bool(e.get("dead", false)):
 			_draw_body(canvas, c)
 			return
+		if str(e.get("figure", "")).begins_with("pest:"):
+			_draw_pest(canvas, e, c, tpx)
+			return
 		if bool(e.get("hostile", false)):  # the stranger: the one figure with an aura (he is an event in the world, not a villager)
 			var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 260.0)
 			canvas.draw_circle(c + Vector2(0, 6), 30.0 + 5.0 * pulse, Color(0.35, 0.1, 0.55, 0.30))
@@ -746,6 +749,29 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		canvas.draw_rect(Rect2(c + Vector2(-16, -10), Vector2(32, 36)), Color(0.02, 0.02, 0.03), true)
 		canvas.draw_arc(c + Vector2(0, -10), 16, PI, TAU, 16, Color(0.7, 0.6, 0.4), 4.0)
 		canvas.draw_string(font, c + Vector2(-58, 50), "Disused gallery (E)", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.9, 0.85, 0.7) if not open else Color(0.6, 1, 0.7))
+
+
+## What the villagers call a rat: a miniature of an imported Mindustry unit (the crawler for the small ones, the dagger for the big one), scurrying on
+## the spot, with a faint click of legs. The sprites are the catalogue's own (`mindustry.unit.<name>`), so the export audit covers them (D33: no new entity).
+func _draw_pest(canvas: CanvasItem, e: Dictionary, c: Vector2, tpx: int) -> void:
+	var name := str(e.get("figure", "pest:crawler")).trim_prefix("pest:")
+	var big := name != "crawler"
+	var t: float = Time.get_ticks_msec() / 1000.0
+	var seed_f := float(abs(hash(str(e.get("id", "")))) % 1000) / 1000.0
+	var jitter := Vector2(sin(t * 9.0 + seed_f * 12.0) * 3.0, cos(t * 7.0 + seed_f * 9.0) * 2.0)
+	var tex: Texture2D = industry._sprite(self, "mindustry.unit." + name)
+	var scale := (0.62 if big else 0.42) * (tpx / 40.0)
+	canvas.draw_set_transform(c + jitter, sin(t * 3.0 + seed_f * 6.0) * 0.35, Vector2.ONE)
+	if tex != null:
+		var size := Vector2(tex.get_width(), tex.get_height()) * scale
+		canvas.draw_texture_rect(tex, Rect2(-size * 0.5, size), false)
+	else:
+		canvas.draw_circle(Vector2.ZERO, 12.0 if big else 8.0, Color(0.35, 0.33, 0.3))
+		for k in 6:
+			var a := float(k) * TAU / 6.0
+			canvas.draw_line(Vector2(cos(a), sin(a)) * 8.0, Vector2(cos(a), sin(a)) * (16.0 + 3.0 * sin(t * 12.0 + k)), Color(0.2, 0.2, 0.2), 2.0)
+	canvas.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	canvas.draw_circle(c + jitter + Vector2(0, 4), 2.5, Color(1.0, 0.3, 0.2, 0.6 + 0.4 * sin(t * 6.0)))  # the eye
 
 
 ## A person who has died where they fell: a robed figure lying down with the staff beside them (drawn, not a sprite: the tribes' art has no fallen pose).

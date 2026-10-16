@@ -43,8 +43,13 @@ def _seat_exists(world: Any, seat: str) -> bool:
 def rename_seat(world: Any, old: str, new: str) -> None:
     """A seat was retired (`party.retire`): its body, channel and counts now belong to the retired key."""
     st = state(world)
+    from wizard_rts.trial import run as trial
+
+    trial.rename_seat(world, old, new)
     if old in st["bodies"]:
         pid = st["bodies"].pop(old)
+        if str(pid).startswith("trial:"):
+            pid = "trial:" + new
         st["bodies"][new] = pid
         r = residents.table(world).get(pid)
         if r is not None:
@@ -71,6 +76,10 @@ def is_dead(world: Any, seat: str) -> bool:
 
 def body_of(world: Any, seat: str) -> str | None:
     pid = state(world)["bodies"].get(str(seat))
+    if pid and pid.startswith("trial:"):
+        from wizard_rts.trial import run as trial
+
+        return pid if trial.body_of(world, str(seat)) is not None else None
     return pid if pid and pid in residents.table(world) else None
 
 
@@ -136,7 +145,13 @@ def die(world: Any, seat: str, cause: str, *, by: str = "", terminal: bool | Non
                      "text": config.get("campaign", "dead_after_defeat", "The apprentice was defeated.")}
         w["deaths"] = int(w.get("deaths", 0)) + 1
         actor = party.actor(world)
-    pid = _lay_body(world, seat, tile, cause)
+    from wizard_rts.trial import run as trial
+
+    if trial.on_death(world, seat):  # inside the Trial: the body lies in the zone with the wizard's pockets, not on the world map
+        pid = "trial:" + str(seat)
+        st["bodies"][str(seat)] = pid
+    else:
+        pid = _lay_body(world, seat, tile, cause)
     world.dmb.tombstones[actor] = {"kind": "wizard", "display_name": name_of(world, seat), "cause_id": cause, "profile_refs": {}, "body": pid}
     st["deaths"] = int(st["deaths"]) + 1
     events.log(world, "wizard_died", seat=seat, cause=cause, by=by, tile=list(tile), body=pid)
@@ -220,32 +235,50 @@ def resurrect_begin(world: Any, caster: str, target: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "no_body"}
     if str(caster) in state(world)["channels"]:
         return {"status": "rejected", "reason": "already_channelling"}
-    body = residents.table(world)[pid]
-    me_rec = _pose_rec(world, caster)
-    dist = abs(int(me_rec["tx"]) - int(body["tile"][0])) + abs(int(me_rec["ty"]) - int(body["tile"][1]))
-    if dist > resurrect_range():
-        return {"status": "rejected", "reason": "too_far", "distance": dist, "range": resurrect_range()}
+    if pid.startswith("trial:"):
+        from wizard_rts.trial import run as trial
+
+        dist = trial.resurrect_distance(world, caster, seat)
+        if dist is None or dist > resurrect_range():
+            return {"status": "rejected", "reason": "too_far", "distance": dist if dist is not None else -1, "range": resurrect_range()}
+        b = trial.body_of(world, seat) or {}
+        tile = [int(b.get("x", 0)), int(b.get("y", 0))]
+    else:
+        body = residents.table(world)[pid]
+        me_rec = _pose_rec(world, caster)
+        dist = abs(int(me_rec["tx"]) - int(body["tile"][0])) + abs(int(me_rec["ty"]) - int(body["tile"][1]))
+        if dist > resurrect_range():
+            return {"status": "rejected", "reason": "too_far", "distance": dist, "range": resurrect_range()}
+        tile = list(body["tile"])
     now = _now(world)
-    state(world)["channels"][str(caster)] = {"target": seat, "body": pid, "started_ms": now, "until_ms": now + resurrect_ms(), "tile": list(body["tile"])}
+    state(world)["channels"][str(caster)] = {"target": seat, "body": pid, "started_ms": now, "until_ms": now + resurrect_ms(), "tile": tile}
     events.log(world, "resurrection_started", by=caster, seat=seat)
-    _announce(world, "resurrection_started", by=caster, by_name=name_of(world, caster), seat=seat, name=name_of(world, seat), tile=list(body["tile"]), ms=resurrect_ms())
-    return {"status": "started", "target": seat, "until_ms": now + resurrect_ms(), "ms": resurrect_ms(), "tile": list(body["tile"])}
+    _announce(world, "resurrection_started", by=caster, by_name=name_of(world, caster), seat=seat, name=name_of(world, seat), tile=tile, ms=resurrect_ms())
+    return {"status": "started", "target": seat, "until_ms": now + resurrect_ms(), "ms": resurrect_ms(), "tile": tile}
 
 
 def _complete(world: Any, caster: str, ch: dict[str, Any]) -> None:
     seat, pid = ch["target"], ch["body"]
-    body = residents.table(world).pop(pid, None)
-    tile = tuple(body["tile"]) if body else tuple(ch["tile"])
-    world.dmb.people.pop(pid, None)
-    world.dmb.tombstones.pop(pid, None)
+    in_trial = str(pid).startswith("trial:")
+    if in_trial:
+        from wizard_rts.trial import run as trial
+
+        trial.on_resurrected(world, seat)
+        tile = tuple(ch["tile"])
+    else:
+        body = residents.table(world).pop(pid, None)
+        tile = tuple(body["tile"]) if body else tuple(ch["tile"])
+        world.dmb.people.pop(pid, None)
+        world.dmb.tombstones.pop(pid, None)
     with party.at_seat(world, seat):
         w = wizard.wiz(world)
         w.pop("fate", None)
         w["resurrections"] = int(w.get("resurrections", 0)) + 1
         world.dmb.tombstones.pop(party.actor(world), None)
     state(world)["bodies"].pop(str(seat), None)
-    rec = _pose_rec(world, seat)
-    rec.update(tx=int(tile[0]), ty=int(tile[1]), facing="down")
+    if not in_trial:
+        rec = _pose_rec(world, seat)
+        rec.update(tx=int(tile[0]), ty=int(tile[1]), facing="down")
     events.log(world, "wizard_resurrected", seat=seat, by=caster, tile=list(tile))
     ledger.bump(world, "resurrections", seat=caster)
     ledger.note(world, "resurrection", seat=seat, by=caster)
@@ -295,12 +328,21 @@ def tick(world: Any) -> None:
     st = state(world)
     now = _now(world)
     for caster, ch in sorted(st["channels"].items()):
-        if is_dead(world, caster) or ch["body"] not in residents.table(world) or not is_dead(world, ch["target"]):
+        in_trial = str(ch["body"]).startswith("trial:")
+        if is_dead(world, caster) or not is_dead(world, ch["target"]) or (not in_trial and ch["body"] not in residents.table(world)):
             abandon(world, caster, "gone")
             continue
-        body = residents.table(world)[ch["body"]]
-        me_rec = _pose_rec(world, caster)
-        dist = abs(int(me_rec["tx"]) - int(body["tile"][0])) + abs(int(me_rec["ty"]) - int(body["tile"][1]))
+        if in_trial:
+            from wizard_rts.trial import run as trial
+
+            dist = trial.resurrect_distance(world, caster, ch["target"])
+            if dist is None:
+                abandon(world, caster, "gone")
+                continue
+        else:
+            body = residents.table(world)[ch["body"]]
+            me_rec = _pose_rec(world, caster)
+            dist = abs(int(me_rec["tx"]) - int(body["tile"][0])) + abs(int(me_rec["ty"]) - int(body["tile"][1]))
         if dist > resurrect_range():
             abandon(world, caster, "walked_away")
             continue

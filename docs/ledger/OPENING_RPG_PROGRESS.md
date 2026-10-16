@@ -34,9 +34,9 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] `tests/test_free_opening.py` 9 passed; `test_wizard_campaign`, `test_wizard_party`, `test_wizard_tutorial`, `test_ai_wizard`, `test_permanent_world` updated to the new rules (150 passed together); headed `run_hybrid_apprentice.gd` win and lose PASS through the real board with the challenge as the player's choice; shots `WizardRTSHybrid/docs/evidence/opening_rpg/m3/`
 
 ## M4 The village
-- [ ] Warehouse infestation: pests, disruption factor, keeper, leases, Mira joining, recast
-- [ ] Three situations and the foreshadowing; humour pass two
-- [ ] `tests/test_village_situations.py`; headed `run_hybrid_warehouse.gd`
+- [x] Warehouse infestation: `narrative/pests.py` (five rats eat the warehouse's food into `narrative:eaten`, waves return, keeper complains, rat leases `opponent.rat`/`rat_big` with a small Ward pool, a loss wounds the wizard: one cast fewer next duel), Mira helps after the keeper complained (`net/ai_wizard.py` `_help_pests`, AI leases resolved by `narrative/autoduel.py` on the Python core) — `tests/test_village.py` (10 passed)
+- [x] Three situations and the foreshadowing: `warehouse.json` keeper, `smith_dispute.json` (mason v carrier, backing the mason costs granite through `ware_delta`), `ranger_patrol.json` (ranger, hunter/lumberjack fallback, optional guard; `why_east` → fact `trial_rumour`; the guard mentions the cloaked stranger), tutorial variants steered/killer/died/brawler, `need_anything` → `mentor_wants_log`, shared topic `rumour_road`; humour pass two in those banks (placeholder text, owner review pending) — `test_narrative_quests`, `test_wizard_tutorial`, `test_wizard_campaign` (52 passed)
+- [x] Headed `run_hybrid_warehouse.gd` PASS (rats drawn as Mindustry crawler/dagger sprites, rat card, keeper complaint, first fight, warehouse clear, thanks): evidence `WizardRTSHybrid/docs/evidence/opening_rpg/m4/w01..w06.png`
 
 ## M5 The Trial, first half
 - [ ] `wizard_rts/trial/`: run, zones, positions, shared items, triggers, choices, conditions, leases, death, run end and reset
@@ -54,4 +54,5 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] APK build, asset audit, exported-pack probe, two-phone checklist extended, build and test instructions
 
 ## Session log (newest first)
+- 16 Oct 2026 (session 1, continued): M4 done (Python and headed PASS). `wizard_rts/trial/` package and its wiring (ops, protocol, session, mortality hooks) landed with M4 as a scaffold; M5 tests next.
 - 16 Oct 2026 (session 1): M0, M1, M2, M3 done (Python and Godot, headed PASS for each). Next: M4 the village.

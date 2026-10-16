@@ -68,17 +68,27 @@ def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -
              "think_min_seconds": float(opp["think_min_seconds"]), "think_max_seconds": float(opp["think_max_seconds"])}
     if fixed_ward:
         enemy["fixed_ward"] = [int(x) for x in fixed_ward]
+    if opp.get("ward_pool"):  # an opponent that only weaves some colours (the rats): its Ward is drawn from them, and Python reproduces it from the same pool
+        enemy["ward_pool"] = [int(c) for c in opp["ward_pool"] if int(c) in pool] or list(pool)
+    w = wizard.wiz(world)
+    if w.pop("wounded", None):  # a lost scrap with a rat (pests.py): one cast fewer in the next duel, then it heals
+        player["max_casts"] = max(2, int(player["max_casts"]) - 1)
+        player["wounded"] = True
     return player, enemy
 
 
-def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None, display_name: str | None = None) -> dict[str, Any]:
-    """Open a lease against `opponent_id`; the reply has the shape `DmbDuelLeaseAdapter.begin_from_start_reply` reads."""
-    if opponent_id not in opponents():
+def begin(world: Any, opponent_id: str, *, purpose: str, fixed_ward: list[int] | None = None, display_name: str | None = None,
+          spec: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Open a lease against `opponent_id` (from `opponents.json`, or `spec` for an opponent built at run time: the Trial's monsters); the reply has the
+    shape `DmbDuelLeaseAdapter.begin_from_start_reply` reads."""
+    if spec is None and opponent_id not in opponents():
         return {"status": "rejected", "reason": "unknown_opponent"}
     cur = active(world)
     if cur is not None:
         return {"status": "rejected", "reason": "duel_open", "payload": {"public": public_view(cur), "duel": cur}}
-    opp = opponents()[opponent_id]
+    opp = spec if spec is not None else opponents()[opponent_id]
+    if spec is not None and spec.get("fixed_ward") and not fixed_ward:
+        fixed_ward = list(spec["fixed_ward"])
     attempts = wizard.wiz(world)["duels"]["attempts"]
     attempt = 1 + sum(1 for a in attempts if a["purpose"] == purpose)
     bot_seed = zlib.crc32(f"{world.seed}|{purpose}|{attempt}".encode()) & 0x7FFFFFFF

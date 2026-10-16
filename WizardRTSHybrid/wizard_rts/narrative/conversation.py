@@ -81,6 +81,12 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
         facts = ledger.facts(world, mortality.me(world))
         if r["role"] == mother.ROLE:
             facts.update(mother.facts(world, sp["pid"]))
+        elif r["role"] == "keeper":
+            from wizard_rts.narrative import pests
+
+            facts.update(pests.facts(world, sp["pid"]))
+            found = pests.home(world)
+            facts["logs"] = int(world.stocks.get(found[1]["id"], {}).get("log", 0)) if found else 0
         return {"template": r["graph"], "speaker": r["speaker"], "speaker_pid": sp["pid"], "name": name,
                 "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": facts}, {}
     facts = occupations.facts_for(world, sp)
@@ -142,6 +148,8 @@ def talk(world: Any, key: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "dead"}
     if sp["kind"] == "resident" and sp["res"]["status"] != "present":
         return {"status": "rejected", "reason": "dead" if sp["res"]["status"] == "dead" else "gone"}
+    if sp["kind"] == "resident" and sp["res"]["role"] == "pest":
+        return {"status": "rejected", "reason": "pest"}
     if campaign.over(world):
         return {"status": "rejected", "reason": "game_over"}
     if campaign.active_scene(world) is not None:

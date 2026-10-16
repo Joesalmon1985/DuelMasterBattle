@@ -1,0 +1,73 @@
+{
+ "id": "smith_dispute",
+ "title": "The Missing Granite",
+ "note": "Placeholder authored text (owner review pending). A dispute between the mason and a carrier over stone that never arrived. Narrative-only but for one real ware: backing the mason costs the warehouse a load of granite (the keeper hands it over). The cast is the settlement's own people.",
+ "active_flags": ["heard_mason", "heard_hauler"],
+ "cast": {
+  "mason": {"pick": [{"kind": "worker", "roles": ["stonemason"]}], "label": "mason"},
+  "hauler": {"pick": [{"kind": "carrier"}], "label": "carrier"}
+ },
+ "speakers": {
+  "mason": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {"id": "m_done_mason", "when": {"requires": ["outcome_mason"], "forbids": ["closed_mason"]}, "sets": ["closed_mason"],
+       "effects": [{"kind": "relationship", "delta": 5}, {"kind": "journal_note", "text": "The Missing Granite: I took the mason's side. The keeper gave {mason} a load of granite from the store."}],
+       "lines": ["Granite from the store, on your word. I will not forget who stood up for me, wizard. The hearth will be finished by the week's end."]},
+      {"id": "m_done_hauler", "when": {"requires": ["outcome_hauler"], "forbids": ["closed_mason"]}, "sets": ["closed_mason"],
+       "effects": [{"kind": "relationship", "delta": -3}],
+       "lines": ["You took {hauler}'s word over mine. Fine. I will fetch my own stone from now on, and the hearth can wait."]},
+      {"id": "m_done_found", "when": {"requires": ["outcome_found"], "forbids": ["closed_mason"]}, "sets": ["closed_mason"],
+       "effects": [{"kind": "relationship", "delta": 3}, {"kind": "journal_note", "text": "The Missing Granite: I worked out where the load went. Nobody was lying; the store had it all along."}],
+       "lines": ["Under the grout sacks. The whole time. I owe {hauler} a word, and you a drink."]},
+      {"id": "m_after", "when": {"requires": ["closed_mason"]}, "lines": ["Stone is stone. We are past it."]},
+      {"id": "m_open", "lines": ["Do you see this wall? No, you do not, because there is no wall, because there is no granite. {hauler} swears a load was carried in. I say it never came."]}
+     ],
+     "choices": [
+      {"id": "what_happened", "text": "Tell me about the stone.", "when": {"forbids": ["heard_mason"]}, "sets": ["heard_mason"],
+       "lines": ["Six loads were due from the quarry. Five came. {hauler} carried the sixth, {hauler} says. I have five, and a hearth with a hole in it."]},
+      {"id": "back_mason", "text": "I believe you. I will ask the keeper for a load from the store.", "when": {"requires": ["heard_mason", "heard_hauler"], "forbids": ["outcome_mason", "outcome_hauler", "outcome_found"]}, "sets": ["outcome_mason"],
+       "effects": [{"kind": "ware_delta", "good": "granite", "n": -1}, {"kind": "ledger", "key": "sided_with_mason"}],
+       "lines": ["Then I will stop shouting. Thank you."], "ends": true},
+      {"id": "leave", "text": "I will let you work.", "lines": ["Such as it is."], "ends": true}
+     ]
+    }
+   }
+  },
+  "hauler": {
+   "nodes": {
+    "hub": {
+     "variants": [
+      {"id": "h_done_mason", "when": {"requires": ["outcome_mason"], "forbids": ["closed_hauler"]}, "sets": ["closed_hauler"],
+       "effects": [{"kind": "relationship", "delta": -3}],
+       "lines": ["So the store pays for what I carried and {mason} gets to call me a liar for free. Good to know how it works."]},
+      {"id": "h_done_hauler", "when": {"requires": ["outcome_hauler"], "forbids": ["closed_hauler"]}, "sets": ["closed_hauler"],
+       "effects": [{"kind": "relationship", "delta": 5}, {"kind": "journal_note", "text": "The Missing Granite: I took the carrier's side. {mason} will have to fetch the stone again."}],
+       "lines": ["Thank you. Nobody believes a carrier. We only walk the roads all day, what would we know about what is on them."]},
+      {"id": "h_done_found", "when": {"requires": ["outcome_found"], "forbids": ["closed_hauler"]}, "sets": ["closed_hauler"],
+       "effects": [{"kind": "relationship", "delta": 3}],
+       "lines": ["Under the grout. I put it there myself and forgot; the keeper had me stacking grout all morning. I will go and say so."]},
+      {"id": "h_after", "when": {"requires": ["closed_hauler"]}, "lines": ["Roads to walk. Was there something?"]},
+      {"id": "h_open", "lines": ["If this is about the granite, I carried it. In through the north door, down on the floor, done. Whatever {mason} did with it after is {mason}'s affair."]}
+     ],
+     "choices": [
+      {"id": "what_happened", "text": "What happened to the sixth load?", "when": {"forbids": ["heard_hauler"]}, "sets": ["heard_hauler"],
+       "lines": ["I carried it. The keeper was shouting about grout sacks that morning, everything went everywhere, but the stone went in. I am not a thief and I am not a fool."]},
+      {"id": "back_hauler", "text": "I believe you. The mason can fetch the stone again.", "when": {"requires": ["heard_mason", "heard_hauler"], "forbids": ["outcome_mason", "outcome_hauler", "outcome_found"]}, "sets": ["outcome_hauler"],
+       "effects": [{"kind": "ledger", "key": "sided_with_hauler"}],
+       "lines": ["Then I will walk a little lighter today."], "ends": true},
+      {"id": "find_it", "text": "Grout sacks, you said. Where does the keeper stack grout?",
+       "when": {"requires": ["heard_mason", "heard_hauler"], "forbids": ["outcome_mason", "outcome_hauler", "outcome_found"]},
+       "check": {"aspect": "reason", "threshold": "easy", "evidence": [{"id": "both_heard", "when": {"requires": ["heard_mason"]}, "mod": 1}]},
+       "lines": ["{name} frowns."],
+       "pass": {"sets": ["outcome_found"], "effects": [{"kind": "ledger", "key": "found_the_granite"}, {"kind": "aspect", "aspect": "reason", "delta": 1}],
+                "lines": ["By the north door. Where I put the... oh. Oh, no. Under the grout. It will be under the grout."], "ends": true},
+       "fail": {"lines": ["All over the place, that morning. I could not tell you."]}},
+      {"id": "leave", "text": "I will let you get on.", "lines": ["Roads do not walk themselves."], "ends": true}
+     ]
+    }
+   }
+  }
+ }
+}

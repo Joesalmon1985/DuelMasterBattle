@@ -204,6 +204,29 @@ def _ledger(world: Any, ctx: dict, eff: dict) -> dict:
     return {}
 
 
+def _ware_delta(world: Any, ctx: dict, eff: dict) -> dict:
+    """A ware leaves (n < 0) or reaches (n > 0) the home settlement's warehouse through the economy's own move, into or out of the `narrative:consumed`
+    bin, so the ware ledger still balances: the mason's granite, the mentor's log. Nothing is created from nothing."""
+    from wizard_rts import economy
+    from wizard_rts.narrative import pests
+
+    found = pests.home(world)
+    if found is None:
+        return {"ware_error": "no_home"}
+    _sid, b = found
+    good, n = str(eff["good"]), int(eff.get("n", -1))
+    ok = economy.move_good(world, b["id"], "narrative:consumed", good, -n) if n < 0 else economy.move_good(world, "narrative:consumed", b["id"], good, n)
+    events.log(world, "ware_delta", good=good, n=n, ok=ok, template=ctx.get("template", ""))
+    return {"ware": {"good": good, "n": n, "ok": ok}}
+
+
+def _pests_complained(world: Any, ctx: dict, eff: dict) -> dict:
+    from wizard_rts.narrative import mortality, pests
+
+    pests.complained(world, mortality.me(world))
+    return {}
+
+
 def _challenge_stranger(world: Any, ctx: dict, eff: dict) -> dict:
     """The apprentice answers the stranger's judgement with a challenge: the scene's end opens the lethal duel for this wizard alone (campaign.scene_next)."""
     wizard.wiz(world)["lethal"] = "challenged"
@@ -212,8 +235,8 @@ def _challenge_stranger(world: Any, ctx: dict, eff: dict) -> dict:
 
 EFFECTS: dict[str, Callable[[Any, dict, dict], dict]] = {"learn_spell": _learn, "complete_lesson": _lesson, "begin_duel": _begin_duel, "journal_note": _note,
                                                          "aspect": _aspect, "worldview": _worldview, "relationship": _relationship, "fact": _fact, "ledger": _ledger,
-                                                         "challenge_stranger": _challenge_stranger}
-REPEATABLE = {"begin_duel", "ledger"}  # every other effect is applied once per (template, id)
+                                                         "challenge_stranger": _challenge_stranger, "ware_delta": _ware_delta, "pests_complained": _pests_complained}
+REPEATABLE = {"begin_duel", "ledger", "pests_complained"}  # every other effect is applied once per (template, id)
 
 
 def apply(world: Any, ctx: dict[str, Any], rid: str, block: dict[str, Any]) -> dict[str, Any]:
