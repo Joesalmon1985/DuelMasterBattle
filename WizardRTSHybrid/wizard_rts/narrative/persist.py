@@ -13,7 +13,6 @@ import json
 import os
 import pickle
 import re
-import time
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -93,7 +92,9 @@ def save_world(world: Any, path: Path | str, wall_clock: Any = None) -> dict[str
     digest = world.state_hash()
     from wizard_rts.net import protocol
 
-    closed_at = float(wall_clock() if wall_clock is not None else time.time())
+    from wizard_rts import wallclock
+
+    closed_at = float(wall_clock() if wall_clock is not None else wallclock.now())
     payload = {"format": save_format(), "hash": digest, "narrative_version": config.version(), "world": world,
                "profile": world.profile, "seed": world.seed, "game_ms": game_ms, "closed_at": closed_at, "game_version": protocol.GAME_VERSION,
                "catch_up": dict(world.__dict__.get("catch_up_record") or {})}
