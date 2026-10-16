@@ -90,7 +90,7 @@ caravans and the factions' wars are the same on both phones because one simulati
 
 **Competitive play.** Walk up to the other wizard. When you are within two tiles, a **⚔ Duel** button appears above ✦.
 Tap it; the other phone shows the challenge with **Accept** / **Decline**. On Accept both boards open: each of you sets a
-Ward of three spells and taps **Lock**, then you both guess **at the same time**: there are no turns, so whoever thinks faster
+Ward of three spells and taps **Lock** (a wizard's first three duels have three colours; from the fourth duel on there are four, Light joining once both of you have played three), then you both guess **at the same time**: there are no turns, so whoever thinks faster
 makes more guesses while the other is still deciding, and the first guess that breaks the other's Ward wins at once. Each of you
 has ten casts. The rival's Ward stays hidden (`?`) until the end; the host scores every cast, so neither phone can cheat. The result screen names the winner and shows both Wards; **Continue** on both
 returns you to the world where you left it. The world is paused during a duel and resumes afterwards. The fire-magic

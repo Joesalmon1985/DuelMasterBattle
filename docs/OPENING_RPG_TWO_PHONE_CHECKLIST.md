@@ -10,7 +10,7 @@ Both phones on the same APK (0.3.0, version code 3; a 0.2.0 phone is refused wit
 
 ## A. Immediate murder, and the body (M1)
 
-1. Both in the world. Phone A walks up to Phone B, taps **⚔ Duel**; B accepts. Both lock a Ward; play until one Ward breaks.
+1. Both in the world. Phone A walks up to Phone B, taps **⚔ Duel**; B accepts. Both lock a Ward; play until one Ward breaks. Each wizard's first three duels have three colours, the fourth has four (the invitation says "4 colours"). Duels between wizards have no wait between casts; in story duels (rats, the Trial's creatures) the cast button charges for two seconds instead of five; Mira thinks for 2.5 to 6 seconds a cast.
 2. The loser's screen: "You are dead." banner, the avatar gone, a body on the ground where they stood, a **Watch <name>** button that follows
    the survivor with the camera. The winner's screen: the body row, no standing avatar for the loser.
 3. The loser taps nothing for a while: the world goes on (workers move), no Game Over.

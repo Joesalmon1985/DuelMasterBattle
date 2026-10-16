@@ -8,7 +8,7 @@ status is `docs/TRIAL_CANON_STATUS.md`. Every line of dialogue is placeholder pr
 
 You and your friend (or you and Mira) start beside your home village, each with a mother, a staff and the three colours: Flame,
 Frost, Vine. Nobody tells you what to do. The mentor will teach you to hold and break a Ward if you ask; you can skip the lessons.
-Anyone can be challenged to a Ward duel at any time, and a duel between apprentices is to the death: the loser's body lies where it
+Anyone can be challenged to a Ward duel at any time (three colours in each wizard's first three duels, four from the fourth: Light joins once both have played three), and a duel between apprentices is to the death: the loser's body lies where it
 fell. The living one can stand beside the body and **Bring them back**: a channel of a few seconds, in full view of the village. Your
 mother hears of a killing and comes to have words; while she is grounding you, you do not leave the village. Mira refuses the
 first two challenges; the third time she is provoked, and she means it.
