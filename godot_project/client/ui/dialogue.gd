@@ -10,6 +10,8 @@ signal formal_closed(speaker_id: String, rewarded: bool)
 signal choice_made(speaker_id: String, choice_id: String)
 signal ambient_spoken(speaker_id: String)
 
+const _CharBus = preload("res://client/characters/character_bus.gd")
+
 const PAGE_SIZE := 3
 
 var _label  # WorldInteractionLabel
@@ -44,6 +46,7 @@ func show_ambient(speaker_id: String, line: String) -> void:
 	_aspect_text = ""
 	if _label != null and _label.has_method("begin_speech"):
 		_label.begin_speech([line], [])
+	_CharBus.speak_text(speaker_id, line)  # whoever chats visibly moves their mouth
 	ambient_spoken.emit(speaker_id)
 
 
@@ -61,6 +64,7 @@ func open_formal(speaker_id: String, lines: Array, choices: Array, aspect_interj
 	var page := _page_choices()
 	if _label != null and _label.has_method("begin_speech"):
 		_label.begin_speech(speech, page)
+	_CharBus.speak_text(speaker_id, " ".join(PackedStringArray(speech)))
 	formal_opened.emit(speaker_id)
 
 
@@ -83,6 +87,7 @@ func walk_away() -> void:
 		_label.collapse()
 	var sid := _speaker_id
 	_formal = false
+	_CharBus.stop_speaking(sid)
 	formal_closed.emit(sid, rewarded)
 
 
@@ -137,6 +142,8 @@ func _on_response_chosen(_key: String, index: int) -> void:
 		else:
 			choice_id = str(absolute)
 	_pending_reward = true
+	_CharBus.stop_speaking(_speaker_id)
+	_CharBus.speak("john", 1.2)  # the wizard's reply
 	choice_made.emit(_speaker_id, choice_id)
 	_release()
 	_formal = false

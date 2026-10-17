@@ -1,0 +1,4086 @@
+{
+ "bands": [
+  "line",
+  "skin",
+  "a",
+  "b",
+  "c",
+  "detail"
+ ],
+ "beard_styles": [
+  "stubble",
+  "short",
+  "mustache",
+  "long",
+  "braided",
+  "goatee"
+ ],
+ "cell": [
+  56,
+  48
+ ],
+ "clip_sets": {
+  "civil": [
+   "idle",
+   "walk",
+   "talk",
+   "hurt",
+   "die",
+   "surprise",
+   "work"
+  ],
+  "full": [
+   "idle",
+   "walk",
+   "talk",
+   "hurt",
+   "die",
+   "surprise",
+   "work",
+   "cast",
+   "celebrate"
+  ]
+ },
+ "clips": {
+  "cast": {
+   "frames": 5,
+   "start": 29
+  },
+  "celebrate": {
+   "frames": 4,
+   "start": 34
+  },
+  "die": {
+   "frames": 5,
+   "start": 18
+  },
+  "hurt": {
+   "frames": 2,
+   "start": 16
+  },
+  "idle": {
+   "frames": 4,
+   "start": 0
+  },
+  "surprise": {
+   "frames": 2,
+   "start": 23
+  },
+  "talk": {
+   "frames": 6,
+   "start": 10
+  },
+  "walk": {
+   "frames": 6,
+   "start": 4
+  },
+  "work": {
+   "frames": 4,
+   "start": 25
+  }
+ },
+ "dmb": {
+  "caravan": "merchant",
+  "clubman": "clubman",
+  "settlers": "settler",
+  "slinger": "slinger",
+  "spearman": "spearman"
+ },
+ "fps": {
+  "cast": 8,
+  "celebrate": 7,
+  "die": 7,
+  "hurt": 8,
+  "idle": 3,
+  "revive": 6,
+  "surprise": 6,
+  "talk": 8,
+  "walk": 9,
+  "work": 5
+ },
+ "hair": [
+  [
+   44,
+   34,
+   40
+  ],
+  [
+   78,
+   50,
+   36
+  ],
+  [
+   118,
+   78,
+   46
+  ],
+  [
+   150,
+   92,
+   50
+  ],
+  [
+   228,
+   192,
+   112
+  ],
+  [
+   190,
+   94,
+   50
+  ],
+  [
+   168,
+   168,
+   176
+  ],
+  [
+   230,
+   230,
+   236
+  ]
+ ],
+ "hair_styles": {
+  "adult": [
+   "short",
+   "swept",
+   "long",
+   "ponytail",
+   "bun",
+   "spiky",
+   "curly",
+   "bob",
+   "balding",
+   "braid"
+  ],
+  "child": [
+   "short",
+   "swept",
+   "ponytail",
+   "bun",
+   "spiky",
+   "curly",
+   "bob",
+   "braid"
+  ]
+ },
+ "hair_weights": [
+  3,
+  4,
+  4,
+  3,
+  2,
+  2,
+  1,
+  1
+ ],
+ "jobs": {
+  "armorsmith": "smith",
+  "baker": "baker",
+  "baker_master": "baker",
+  "beekeeper": "herder",
+  "berry_farmer": "gardener",
+  "blackroot_farmer": "farmer",
+  "blacksmith": "smith",
+  "blacksmith_master": "smith",
+  "brewer": "brewer",
+  "brewer_master": "brewer",
+  "brickmaker": "mason",
+  "builder": "builder",
+  "carpenter": "carpenter",
+  "carrier": "carrier",
+  "cassava_farmer": "farmer",
+  "cattlebreeder": "herder",
+  "charcoal_burner": "charcoal",
+  "claydigger": "digger",
+  "cocoa_farmer": "farmer",
+  "cook": "cook",
+  "diker": "digger",
+  "donkeybreeder": "herder",
+  "dressmaker": "weaver",
+  "farmer": "farmer",
+  "ferry": "shipwright",
+  "fishbreeder": "fisher",
+  "fisher": "fisher",
+  "forester": "forester",
+  "fruit_collector": "gardener",
+  "gamekeeper": "forester",
+  "gardener": "gardener",
+  "geologist": "geologist",
+  "gold_digger": "miner",
+  "gold_smelter": "smith",
+  "helmsmith": "smith",
+  "horsebreeder": "herder",
+  "hunter": "hunter",
+  "hunter_gatherer": "hunter",
+  "innkeeper": "cook",
+  "jungle_master": "forester",
+  "jungle_preserver": "forester",
+  "landlady": "cook",
+  "liana_cutter": "forester",
+  "lime_burner": "smith",
+  "lumberjack": "woodcutter",
+  "miller": "miller",
+  "miner": "miner",
+  "miner_chief": "miner",
+  "miner_master": "miner",
+  "pigbreeder": "herder",
+  "ranger": "forester",
+  "recruit": "recruit",
+  "reed_farmer": "farmer",
+  "reindeer_breeder": "herder",
+  "sawyer": "carpenter",
+  "scout": "scout",
+  "seamstress": "weaver",
+  "seamstress_master": "weaver",
+  "shepherd": "herder",
+  "shipwright": "shipwright",
+  "smelter": "smith",
+  "smoker": "cook",
+  "spiderbreeder": "herder",
+  "stone_carver": "mason",
+  "stonecutter": "mason",
+  "stonemason": "mason",
+  "stonemason_worker": "mason",
+  "tapir_breeder": "herder",
+  "toolsmith": "smith",
+  "trainer": "trainer",
+  "vinefarmer": "gardener",
+  "vintner": "brewer",
+  "weaponsmith": "smith",
+  "weaver": "weaver",
+  "wilderness_keeper": "forester",
+  "woodcutter": "woodcutter",
+  "woodcutter_master": "woodcutter"
+ },
+ "loop": {
+  "cast": false,
+  "celebrate": true,
+  "die": false,
+  "hurt": false,
+  "idle": true,
+  "surprise": false,
+  "talk": true,
+  "walk": true,
+  "work": true
+ },
+ "named": {
+  "archmage": {
+   "beard": "long",
+   "hair": 7,
+   "hair_style": "long",
+   "outfit": "wizard",
+   "pal": {
+    "a": [
+     110,
+     70,
+     170
+    ],
+    "b": [
+     70,
+     44,
+     120
+    ],
+    "c": [
+     236,
+     186,
+     70
+    ]
+   },
+   "skin": 1
+  },
+  "assassin": {
+   "beard": "none",
+   "hair": 0,
+   "hair_style": "swept",
+   "outfit": "assassin",
+   "skin": 2
+  },
+  "blue_apprentice": {
+   "beard": "none",
+   "hair": 4,
+   "hair_style": "short",
+   "outfit": "wizard",
+   "pal": {
+    "a": [
+     60,
+     110,
+     190
+    ],
+    "b": [
+     40,
+     70,
+     140
+    ],
+    "c": [
+     240,
+     220,
+     120
+    ]
+   },
+   "skin": 0
+  },
+  "blue_mage": {
+   "beard": "none",
+   "hair": 7,
+   "hair_style": "bald",
+   "outfit": "blue_mage",
+   "skin": 1
+  },
+  "child": {
+   "beard": "none",
+   "hair": 2,
+   "hair_style": "short",
+   "outfit": "child",
+   "pal": {
+    "a": [
+     206,
+     150,
+     100
+    ],
+    "b": [
+     80,
+     74,
+     100
+    ],
+    "c": [
+     220,
+     170,
+     80
+    ]
+   },
+   "skin": 1
+  },
+  "dwarf": {
+   "beard": "braided",
+   "hair": 3,
+   "hair_style": "short",
+   "outfit": "dwarf",
+   "skin": 2
+  },
+  "eightfold_warden": {
+   "beard": "goatee",
+   "hair": 0,
+   "hair_style": "short",
+   "outfit": "wizard_battle",
+   "pal": {
+    "a": [
+     150,
+     70,
+     60
+    ],
+    "b": [
+     90,
+     70,
+     80
+    ],
+    "c": [
+     240,
+     190,
+     80
+    ]
+   },
+   "skin": 3
+  },
+  "elder": {
+   "beard": "long",
+   "hair": 7,
+   "hair_style": "balding",
+   "outfit": "elder_green",
+   "skin": 1
+  },
+  "elf": {
+   "beard": "none",
+   "hair": 4,
+   "hair_style": "long",
+   "outfit": "elf",
+   "skin": 0
+  },
+  "farmer": {
+   "beard": "stubble",
+   "hair": 3,
+   "hair_style": "short",
+   "outfit": "farmer",
+   "skin": 2
+  },
+  "halvard": {
+   "beard": "none",
+   "hair": 7,
+   "hair_style": "bald",
+   "outfit": "blue_mage",
+   "skin": 1
+  },
+  "hedge_mage": {
+   "beard": "none",
+   "hair": 3,
+   "hair_style": "bald",
+   "outfit": "hedge_mage",
+   "skin": 1
+  },
+  "igbut": {
+   "beard": "none",
+   "hair": 1,
+   "hair_style": "bob",
+   "outfit": "igbut",
+   "skin": 2
+  },
+  "ivy": {
+   "beard": "none",
+   "hair": [
+    150,
+    70,
+    170
+   ],
+   "hair_style": "long",
+   "outfit": "ivy",
+   "skin": 0
+  },
+  "john": {
+   "beard": "none",
+   "hair": 2,
+   "hair_style": "short",
+   "outfit": "john",
+   "skin": 1
+  },
+  "john_staff": {
+   "beard": "none",
+   "hair": 2,
+   "hair_style": "short",
+   "outfit": "john_staff",
+   "skin": 1
+  },
+  "knight": {
+   "beard": "none",
+   "hair": 6,
+   "hair_style": "short",
+   "outfit": "knight",
+   "skin": 1
+  },
+  "matron": {
+   "beard": "none",
+   "hair": 6,
+   "hair_style": "bun",
+   "outfit": "matron",
+   "skin": 2
+  },
+  "miner": {
+   "beard": "short",
+   "hair": 1,
+   "hair_style": "short",
+   "outfit": "miner",
+   "skin": 2
+  },
+  "mirror_mage": {
+   "beard": "none",
+   "hair": 6,
+   "hair_style": "bald",
+   "outfit": "wizard_hooded",
+   "pal": {
+    "a": [
+     190,
+     200,
+     214
+    ],
+    "b": [
+     120,
+     130,
+     150
+    ],
+    "c": [
+     150,
+     230,
+     255
+    ]
+   },
+   "skin": 1
+  },
+  "official": {
+   "beard": "mustache",
+   "hair": 6,
+   "hair_style": "short",
+   "outfit": "official",
+   "skin": 1
+  },
+  "player": {
+   "beard": "none",
+   "hair": 2,
+   "hair_style": "short",
+   "outfit": "wizard",
+   "pal": {
+    "a": [
+     60,
+     110,
+     190
+    ],
+    "b": [
+     40,
+     70,
+     140
+    ],
+    "c": [
+     240,
+     220,
+     120
+    ]
+   },
+   "skin": 1
+  },
+  "reaper": {
+   "beard": "none",
+   "hair": 0,
+   "hair_style": "bald",
+   "outfit": "reaper",
+   "skin": 0
+  },
+  "red_mage": {
+   "beard": "none",
+   "hair": 5,
+   "hair_style": "bald",
+   "outfit": "red_mage",
+   "skin": 1
+  },
+  "shepherd": {
+   "beard": "long",
+   "hair": 6,
+   "hair_style": "short",
+   "outfit": "herder",
+   "skin": 1
+  },
+  "thorn_adept": {
+   "beard": "none",
+   "hair": 3,
+   "hair_style": "braid",
+   "outfit": "wizard_druid",
+   "pal": {
+    "a": [
+     86,
+     140,
+     70
+    ],
+    "b": [
+     96,
+     76,
+     54
+    ],
+    "c": [
+     210,
+     160,
+     70
+    ]
+   },
+   "skin": 2
+  },
+  "throm": {
+   "beard": "goatee",
+   "hair": 1,
+   "hair_style": "bald",
+   "outfit": "throm",
+   "skin": 3
+  },
+  "villager_a": {
+   "beard": "none",
+   "hair": 2,
+   "hair_style": "short",
+   "outfit": "carrier",
+   "pal": {
+    "a": [
+     80,
+     110,
+     170
+    ],
+    "b": [
+     70,
+     66,
+     80
+    ],
+    "c": [
+     150,
+     100,
+     60
+    ]
+   },
+   "skin": 1
+  },
+  "villager_b": {
+   "beard": "mustache",
+   "hair": 7,
+   "hair_style": "balding",
+   "outfit": "carrier",
+   "pal": {
+    "a": [
+     150,
+     110,
+     80
+    ],
+    "b": [
+     80,
+     76,
+     84
+    ],
+    "c": [
+     120,
+     90,
+     60
+    ]
+   },
+   "skin": 2
+  },
+  "woodcutter": {
+   "beard": "short",
+   "hair": 1,
+   "hair_style": "short",
+   "outfit": "woodcutter",
+   "skin": 2
+  },
+  "worker": {
+   "beard": "none",
+   "hair": 1,
+   "hair_style": "short",
+   "outfit": "builder",
+   "skin": 2
+  }
+ },
+ "openra": {
+  "e1": "e1",
+  "e2": "e2",
+  "e3": "e3",
+  "e4": "e4",
+  "e6": "e6",
+  "e7": "e7",
+  "mech": "mechanic",
+  "medi": "medic",
+  "shok": "shock",
+  "spy": "spy",
+  "thf": "thief",
+  "zombie": "zombie"
+ },
+ "outfits": {
+  "assassin": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short",
+    "swept"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     52,
+     50,
+     64
+    ],
+    "b": [
+     40,
+     40,
+     52
+    ],
+    "c": [
+     150,
+     40,
+     50
+    ]
+   }
+  },
+  "baker": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     112,
+     96,
+     84
+    ],
+    "c": [
+     240,
+     238,
+     232
+    ]
+   }
+  },
+  "blue_mage": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bald"
+   ],
+   "magic": [
+    150,
+    230,
+    255
+   ],
+   "pal": {
+    "a": [
+     70,
+     150,
+     220
+    ],
+    "b": [
+     40,
+     100,
+     180
+    ],
+    "c": [
+     190,
+     240,
+     255
+    ]
+   }
+  },
+  "brewer": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T1",
+    "b": [
+     100,
+     80,
+     70
+    ],
+    "c": [
+     150,
+     100,
+     60
+    ]
+   }
+  },
+  "builder": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     100,
+     94,
+     110
+    ],
+    "c": [
+     196,
+     150,
+     70
+    ]
+   }
+  },
+  "carpenter": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     188,
+     150,
+     96
+    ],
+    "b": [
+     100,
+     90,
+     90
+    ],
+    "c": [
+     130,
+     88,
+     56
+    ]
+   }
+  },
+  "carrier": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "long",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid",
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     120,
+     100,
+     84
+    ],
+    "c": [
+     176,
+     120,
+     70
+    ]
+   }
+  },
+  "charcoal": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     70,
+     62,
+     62
+    ],
+    "b": [
+     56,
+     50,
+     54
+    ],
+    "c": [
+     120,
+     90,
+     66
+    ]
+   }
+  },
+  "child": {
+   "beards": [
+    "none"
+   ],
+   "body": "child",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": "T1",
+    "c": [
+     220,
+     170,
+     80
+    ]
+   }
+  },
+  "clubman": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "long",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid",
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     110,
+     74
+    ],
+    "b": [
+     100,
+     80,
+     66
+    ],
+    "c": [
+     180,
+     80,
+     56
+    ]
+   }
+  },
+  "cook": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     100,
+     86,
+     78
+    ],
+    "c": [
+     240,
+     238,
+     232
+    ]
+   }
+  },
+  "digger": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     158,
+     120,
+     86
+    ],
+    "b": [
+     90,
+     80,
+     74
+    ],
+    "c": [
+     120,
+     96,
+     66
+    ]
+   }
+  },
+  "dwarf": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     100,
+     70
+    ],
+    "b": [
+     86,
+     66,
+     56
+    ],
+    "c": [
+     120,
+     80,
+     50
+    ]
+   }
+  },
+  "e1": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     110,
+     70
+    ],
+    "b": [
+     78,
+     90,
+     60
+    ],
+    "c": [
+     70,
+     62,
+     52
+    ]
+   }
+  },
+  "e2": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     120,
+     100,
+     70
+    ],
+    "b": [
+     80,
+     74,
+     56
+    ],
+    "c": [
+     200,
+     80,
+     40
+    ]
+   }
+  },
+  "e3": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     80,
+     104,
+     120
+    ],
+    "b": [
+     70,
+     80,
+     90
+    ],
+    "c": [
+     70,
+     62,
+     52
+    ]
+   }
+  },
+  "e4": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     190,
+     90,
+     50
+    ],
+    "b": [
+     86,
+     54,
+     46
+    ],
+    "c": [
+     60,
+     50,
+     50
+    ]
+   }
+  },
+  "e6": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     232,
+     190,
+     56
+    ],
+    "b": [
+     70,
+     90,
+     130
+    ],
+    "c": [
+     240,
+     210,
+     70
+    ]
+   }
+  },
+  "e7": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "ponytail"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     210,
+     200,
+     180
+    ],
+    "b": [
+     70,
+     90,
+     120
+    ],
+    "c": [
+     190,
+     50,
+     50
+    ]
+   }
+  },
+  "elder": {
+   "beards": [
+    "long",
+    "braided",
+    "long",
+    "short"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "balding",
+    "short",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     120,
+     190
+    ],
+    "b": [
+     90,
+     70,
+     130
+    ],
+    "c": [
+     226,
+     190,
+     90
+    ]
+   }
+  },
+  "elder_green": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     150,
+     90
+    ],
+    "b": [
+     60,
+     100,
+     66
+    ],
+    "c": [
+     220,
+     190,
+     90
+    ]
+   }
+  },
+  "elf": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     170,
+     96
+    ],
+    "b": [
+     120,
+     96,
+     70
+    ],
+    "c": [
+     226,
+     196,
+     90
+    ]
+   }
+  },
+  "farmer": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     232,
+     218,
+     182
+    ],
+    "b": "T1",
+    "c": [
+     206,
+     168,
+     80
+    ]
+   }
+  },
+  "fisher": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     80,
+     128,
+     150
+    ],
+    "b": [
+     92,
+     100,
+     118
+    ],
+    "c": [
+     238,
+     236,
+     230
+    ]
+   }
+  },
+  "forester": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     84,
+     130,
+     74
+    ],
+    "b": [
+     96,
+     82,
+     64
+    ],
+    "c": [
+     150,
+     110,
+     60
+    ]
+   }
+  },
+  "gardener": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     220,
+     214,
+     180
+    ],
+    "b": "T1",
+    "c": [
+     94,
+     140,
+     80
+    ]
+   }
+  },
+  "geologist": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     92,
+     86,
+     98
+    ],
+    "c": [
+     200,
+     160,
+     70
+    ]
+   }
+  },
+  "healer": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    120,
+    255,
+    170
+   ],
+   "pal": {
+    "a": [
+     226,
+     232,
+     226
+    ],
+    "b": [
+     90,
+     160,
+     120
+    ],
+    "c": [
+     90,
+     190,
+     130
+    ]
+   }
+  },
+  "hedge_mage": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bald"
+   ],
+   "magic": [
+    120,
+    255,
+    90
+   ],
+   "pal": {
+    "a": [
+     70,
+     120,
+     56
+    ],
+    "b": [
+     46,
+     80,
+     46
+    ],
+    "c": [
+     150,
+     220,
+     80
+    ]
+   }
+  },
+  "herder": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     210,
+     200,
+     176
+    ],
+    "b": "T1",
+    "c": [
+     190,
+     150,
+     70
+    ]
+   }
+  },
+  "hunter": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     120,
+     66
+    ],
+    "b": [
+     110,
+     86,
+     64
+    ],
+    "c": [
+     150,
+     100,
+     56
+    ]
+   }
+  },
+  "igbut": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bob"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     80,
+     160,
+     160
+    ],
+    "b": [
+     50,
+     100,
+     110
+    ],
+    "c": [
+     226,
+     190,
+     90
+    ]
+   }
+  },
+  "ivy": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     70,
+     150,
+     70
+    ],
+    "b": [
+     60,
+     100,
+     56
+    ],
+    "c": [
+     150,
+     80,
+     170
+    ]
+   }
+  },
+  "john": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     190,
+     66,
+     60
+    ],
+    "b": [
+     70,
+     66,
+     90
+    ],
+    "c": [
+     120,
+     84,
+     56
+    ]
+   }
+  },
+  "john_staff": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     190,
+     66,
+     60
+    ],
+    "b": [
+     70,
+     66,
+     90
+    ],
+    "c": [
+     120,
+     84,
+     56
+    ]
+   }
+  },
+  "knight": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     156,
+     170
+    ],
+    "b": [
+     96,
+     100,
+     116
+    ],
+    "c": [
+     200,
+     60,
+     60
+    ]
+   }
+  },
+  "mason": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     170,
+     168,
+     160
+    ],
+    "b": [
+     96,
+     90,
+     100
+    ],
+    "c": "T2"
+   }
+  },
+  "matron": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bun"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     70,
+     80
+    ],
+    "b": [
+     110,
+     60,
+     70
+    ],
+    "c": [
+     238,
+     232,
+     224
+    ]
+   }
+  },
+  "mechanic": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     70,
+     100,
+     150
+    ],
+    "b": [
+     60,
+     84,
+     128
+    ],
+    "c": [
+     180,
+     70,
+     56
+    ]
+   }
+  },
+  "medic": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     240,
+     238,
+     232
+    ],
+    "b": [
+     120,
+     150,
+     170
+    ],
+    "c": [
+     230,
+     236,
+     236
+    ]
+   }
+  },
+  "merchant": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     60,
+     56,
+     78
+    ],
+    "c": [
+     226,
+     180,
+     70
+    ]
+   }
+  },
+  "miller": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     232,
+     226,
+     214
+    ],
+    "b": [
+     150,
+     140,
+     130
+    ],
+    "c": [
+     238,
+     236,
+     228
+    ]
+   }
+  },
+  "miner": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     92,
+     106
+    ],
+    "b": [
+     62,
+     58,
+     70
+    ],
+    "c": [
+     212,
+     156,
+     60
+    ]
+   }
+  },
+  "official": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     120,
+     70,
+     160
+    ],
+    "b": [
+     80,
+     50,
+     110
+    ],
+    "c": [
+     226,
+     190,
+     90
+    ]
+   }
+  },
+  "reaper": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bald"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     46,
+     42,
+     54
+    ],
+    "b": [
+     34,
+     30,
+     40
+    ],
+    "c": [
+     90,
+     80,
+     100
+    ]
+   }
+  },
+  "recruit": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     110,
+     100,
+     96
+    ],
+    "c": [
+     150,
+     120,
+     80
+    ]
+   }
+  },
+  "red_mage": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bald"
+   ],
+   "magic": [
+    255,
+    150,
+    60
+   ],
+   "pal": {
+    "a": [
+     190,
+     76,
+     44
+    ],
+    "b": [
+     110,
+     40,
+     34
+    ],
+    "c": [
+     255,
+     170,
+     60
+    ]
+   }
+  },
+  "scout": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     110,
+     120,
+     100
+    ],
+    "b": [
+     86,
+     74,
+     66
+    ],
+    "c": [
+     150,
+     110,
+     60
+    ]
+   }
+  },
+  "settler": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     100,
+     96,
+     110
+    ],
+    "c": [
+     170,
+     120,
+     70
+    ]
+   }
+  },
+  "shipwright": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     238,
+     236,
+     228
+    ],
+    "b": [
+     70,
+     90,
+     130
+    ],
+    "c": [
+     180,
+     60,
+     56
+    ]
+   }
+  },
+  "shock": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     80,
+     90,
+     150
+    ],
+    "b": [
+     60,
+     64,
+     110
+    ],
+    "c": [
+     110,
+     220,
+     255
+    ]
+   }
+  },
+  "slinger": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "long",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid",
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     110,
+     96,
+     80
+    ],
+    "c": [
+     86,
+     110,
+     70
+    ]
+   }
+  },
+  "smith": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "long",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid",
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     150,
+     110,
+     90
+    ],
+    "b": [
+     80,
+     74,
+     84
+    ],
+    "c": [
+     130,
+     88,
+     56
+    ]
+   }
+  },
+  "soldier_amazon": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "ponytail",
+    "braid",
+    "long",
+    "bun",
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     50,
+     150,
+     96
+    ],
+    "b": [
+     200,
+     120,
+     56
+    ],
+    "c": [
+     226,
+     190,
+     80
+    ]
+   }
+  },
+  "soldier_atlantean": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     60,
+     150,
+     160
+    ],
+    "b": [
+     76,
+     100,
+     124
+    ],
+    "c": [
+     226,
+     190,
+     90
+    ]
+   }
+  },
+  "soldier_barbarian": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     140,
+     90,
+     62
+    ],
+    "b": [
+     86,
+     66,
+     58
+    ],
+    "c": [
+     190,
+     70,
+     50
+    ]
+   }
+  },
+  "soldier_empire": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     190,
+     50,
+     56
+    ],
+    "b": [
+     120,
+     90,
+     80
+    ],
+    "c": [
+     226,
+     190,
+     80
+    ]
+   }
+  },
+  "soldier_frisian": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     70,
+     110,
+     170
+    ],
+    "b": [
+     98,
+     90,
+     86
+    ],
+    "c": [
+     230,
+     200,
+     90
+    ]
+   }
+  },
+  "spearman": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     100,
+     90,
+     90
+    ],
+    "c": [
+     150,
+     120,
+     70
+    ]
+   }
+  },
+  "spy": {
+   "beards": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "stubble",
+    "short",
+    "mustache",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     88,
+     98
+    ],
+    "b": [
+     60,
+     56,
+     66
+    ],
+    "c": [
+     220,
+     220,
+     224
+    ]
+   }
+  },
+  "thief": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     60,
+     60,
+     72
+    ],
+    "b": [
+     46,
+     44,
+     54
+    ],
+    "c": [
+     140,
+     60,
+     60
+    ]
+   }
+  },
+  "throm": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "bald"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     206,
+     160,
+     120
+    ],
+    "b": [
+     90,
+     76,
+     66
+    ],
+    "c": [
+     130,
+     84,
+     50
+    ]
+   }
+  },
+  "trainer": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     70,
+     70,
+     80
+    ],
+    "c": [
+     220,
+     180,
+     70
+    ]
+   }
+  },
+  "weaver": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "long",
+    "ponytail",
+    "bun",
+    "spiky",
+    "curly",
+    "bob",
+    "braid",
+    "balding"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "T0",
+    "b": [
+     120,
+     90,
+     100
+    ],
+    "c": "T2"
+   }
+  },
+  "wizard": {
+   "beards": [
+    "none",
+    "short",
+    "long",
+    "mustache"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "wizard_battle": {
+   "beards": [
+    "none",
+    "short",
+    "goatee"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "wizard_druid": {
+   "beards": [
+    "none",
+    "long",
+    "braided"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "long",
+    "braid",
+    "curly",
+    "short"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "wizard_fire": {
+   "beards": [
+    "none",
+    "stubble"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "wizard_hooded": {
+   "beards": [
+    "none",
+    "stubble"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "wizard_witch": {
+   "beards": [
+    "none"
+   ],
+   "body": "adult",
+   "clips": "full",
+   "hairs": [
+    "long",
+    "ponytail",
+    "braid",
+    "bob"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": "W0",
+    "b": "W1",
+    "c": "W2"
+   }
+  },
+  "woodcutter": {
+   "beards": [
+    "short",
+    "long",
+    "mustache",
+    "braided",
+    "goatee",
+    "long"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "short",
+    "swept",
+    "bob",
+    "ponytail",
+    "braid",
+    "balding",
+    "long"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     190,
+     70,
+     56
+    ],
+    "b": [
+     86,
+     74,
+     66
+    ],
+    "c": [
+     86,
+     90,
+     62
+    ]
+   }
+  },
+  "zombie": {
+   "beards": [
+    "stubble",
+    "none"
+   ],
+   "body": "adult",
+   "clips": "civil",
+   "hairs": [
+    "balding",
+    "short",
+    "curly"
+   ],
+   "magic": [
+    150,
+    220,
+    255
+   ],
+   "pal": {
+    "a": [
+     96,
+     98,
+     80
+    ],
+    "b": [
+     70,
+     70,
+     70
+    ],
+    "c": [
+     80,
+     70,
+     60
+    ]
+   }
+  }
+ },
+ "portrait": {
+  "poses": [
+   "neutral",
+   "blink",
+   "talk_a",
+   "talk_b",
+   "talk_c",
+   "smile",
+   "worried",
+   "surprised",
+   "angry"
+  ],
+  "size": 64
+ },
+ "skin": [
+  [
+   255,
+   226,
+   200
+  ],
+  [
+   244,
+   206,
+   168
+  ],
+  [
+   226,
+   176,
+   128
+  ],
+  [
+   190,
+   134,
+   92
+  ],
+  [
+   148,
+   98,
+   66
+  ],
+  [
+   104,
+   68,
+   50
+  ]
+ ],
+ "skin_weights": [
+  3,
+  4,
+  4,
+  3,
+  2,
+  1
+ ],
+ "soldiers": {
+  "amazons": "soldier_amazon",
+  "atlanteans": "soldier_atlantean",
+  "barbarians": "soldier_barbarian",
+  "empire": "soldier_empire",
+  "frisians": "soldier_frisian"
+ },
+ "tribes": {
+  "amazons": [
+   [
+    [
+     70,
+     160,
+     110
+    ],
+    [
+     230,
+     150,
+     60
+    ],
+    [
+     200,
+     70,
+     70
+    ]
+   ],
+   [
+    [
+     60,
+     140,
+     150
+    ],
+    [
+     240,
+     200,
+     70
+    ],
+    [
+     170,
+     80,
+     120
+    ]
+   ],
+   [
+    [
+     120,
+     170,
+     60
+    ],
+    [
+     210,
+     110,
+     60
+    ],
+    [
+     80,
+     70,
+     140
+    ]
+   ],
+   [
+    [
+     200,
+     100,
+     60
+    ],
+    [
+     80,
+     160,
+     120
+    ],
+    [
+     230,
+     200,
+     70
+    ]
+   ]
+  ],
+  "atlanteans": [
+   [
+    [
+     60,
+     150,
+     160
+    ],
+    [
+     226,
+     206,
+     150
+    ],
+    [
+     90,
+     70,
+     130
+    ]
+   ],
+   [
+    [
+     80,
+     170,
+     150
+    ],
+    [
+     210,
+     190,
+     140
+    ],
+    [
+     70,
+     100,
+     160
+    ]
+   ],
+   [
+    [
+     50,
+     120,
+     150
+    ],
+    [
+     240,
+     224,
+     180
+    ],
+    [
+     160,
+     90,
+     80
+    ]
+   ],
+   [
+    [
+     100,
+     150,
+     190
+    ],
+    [
+     220,
+     200,
+     150
+    ],
+    [
+     60,
+     130,
+     120
+    ]
+   ]
+  ],
+  "barbarians": [
+   [
+    [
+     186,
+     92,
+     60
+    ],
+    [
+     116,
+     84,
+     60
+    ],
+    [
+     214,
+     170,
+     70
+    ]
+   ],
+   [
+    [
+     150,
+     60,
+     56
+    ],
+    [
+     96,
+     100,
+     72
+    ],
+    [
+     200,
+     150,
+     80
+    ]
+   ],
+   [
+    [
+     170,
+     120,
+     70
+    ],
+    [
+     90,
+     80,
+     70
+    ],
+    [
+     190,
+     70,
+     50
+    ]
+   ],
+   [
+    [
+     120,
+     86,
+     60
+    ],
+    [
+     150,
+     70,
+     50
+    ],
+    [
+     226,
+     190,
+     90
+    ]
+   ]
+  ],
+  "empire": [
+   [
+    [
+     70,
+     100,
+     170
+    ],
+    [
+     220,
+     214,
+     200
+    ],
+    [
+     190,
+     60,
+     70
+    ]
+   ],
+   [
+    [
+     110,
+     80,
+     150
+    ],
+    [
+     200,
+     196,
+     186
+    ],
+    [
+     220,
+     180,
+     70
+    ]
+   ],
+   [
+    [
+     60,
+     120,
+     160
+    ],
+    [
+     232,
+     226,
+     214
+    ],
+    [
+     160,
+     50,
+     60
+    ]
+   ],
+   [
+    [
+     150,
+     60,
+     70
+    ],
+    [
+     210,
+     206,
+     196
+    ],
+    [
+     80,
+     100,
+     160
+    ]
+   ]
+  ],
+  "frisians": [
+   [
+    [
+     96,
+     150,
+     80
+    ],
+    [
+     214,
+     186,
+     90
+    ],
+    [
+     110,
+     90,
+     70
+    ]
+   ],
+   [
+    [
+     80,
+     130,
+     110
+    ],
+    [
+     226,
+     200,
+     110
+    ],
+    [
+     150,
+     100,
+     70
+    ]
+   ],
+   [
+    [
+     130,
+     160,
+     70
+    ],
+    [
+     190,
+     170,
+     130
+    ],
+    [
+     80,
+     100,
+     130
+    ]
+   ],
+   [
+    [
+     70,
+     120,
+     150
+    ],
+    [
+     220,
+     200,
+     120
+    ],
+    [
+     120,
+     150,
+     80
+    ]
+   ]
+  ]
+ },
+ "version": 1,
+ "views": [
+  "down",
+  "side",
+  "up"
+ ],
+ "wizard_sets": [
+  [
+   [
+    110,
+    70,
+    170
+   ],
+   [
+    70,
+    44,
+    120
+   ],
+   [
+    236,
+    186,
+    70
+   ]
+  ],
+  [
+   [
+    60,
+    110,
+    190
+   ],
+   [
+    40,
+    70,
+    140
+   ],
+   [
+    240,
+    220,
+    120
+   ]
+  ],
+  [
+   [
+    170,
+    50,
+    60
+   ],
+   [
+    110,
+    34,
+    50
+   ],
+   [
+    250,
+    190,
+    80
+   ]
+  ],
+  [
+   [
+    50,
+    140,
+    90
+   ],
+   [
+    36,
+    96,
+    70
+   ],
+   [
+    230,
+    210,
+    110
+   ]
+  ],
+  [
+   [
+    200,
+    120,
+    40
+   ],
+   [
+    130,
+    70,
+    36
+   ],
+   [
+    255,
+    230,
+    150
+   ]
+  ],
+  [
+   [
+    60,
+    150,
+    160
+   ],
+   [
+    40,
+    100,
+    120
+   ],
+   [
+    230,
+    240,
+    250
+   ]
+  ],
+  [
+   [
+    150,
+    70,
+    150
+   ],
+   [
+    100,
+    44,
+    110
+   ],
+   [
+    250,
+    210,
+    120
+   ]
+  ],
+  [
+   [
+    90,
+    96,
+    120
+   ],
+   [
+    56,
+    60,
+    84
+   ],
+   [
+    190,
+    230,
+    255
+   ]
+  ]
+ ]
+}

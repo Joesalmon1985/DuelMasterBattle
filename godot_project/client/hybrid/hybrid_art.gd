@@ -1,6 +1,7 @@
 extends RefCounted
 
 const HexCoords = preload("res://client/hybrid/hex_coords.gd")
+const Crowd = preload("res://client/characters/character_crowd.gd")
 
 ## Draws imported Widelands and OpenRA sprites. Missing catalogue entries are
 ## recorded and not replaced with rectangles.
@@ -17,6 +18,7 @@ var missing: Array[String] = []
 var show_markers := false
 var faction_colors: Dictionary = {}
 var selected: Dictionary = {}
+var crowd = Crowd.new()  # every person (worker, carrier, soldier, story NPC) is drawn by the character system, not from borrowed sprites
 
 
 const IndustryView = preload("res://client/hybrid/industry_view.gd")
@@ -178,6 +180,9 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 			var hy := int(entity.get("ty", 0))
 			canvas.draw_circle(Vector2(hx * tpx + tpx * 0.5, hy * tpx + tpx * 0.5), 14, Color(0.62, 0.18, 0.78))
 		return
+	if crowd.handles(entity):
+		_draw_person(canvas, entity, tpx)
+		return
 	var item: Dictionary = _item_for(entity)
 	if item.is_empty():
 		if definition not in missing:
@@ -221,6 +226,23 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
 	_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 	_draw_health(canvas, entity, anchor)
+
+
+## A person: the character system draws the figure; the faction ring, cargo and health bar keep their old meaning.
+func _draw_person(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
+	var anchor := Vector2(int(entity.get("tx", 0)) * tpx + tpx * 0.5, int(entity.get("ty", 0)) * tpx + tpx * 0.5)
+	var drawn := entity
+	if MOBILE.has(str(entity.get("class", ""))):
+		drawn = _motion(entity)
+		anchor = Vector2(drawn["_vx"] * tpx + tpx * 0.5, drawn["_vy"] * tpx + tpx * 0.5)
+	var zoom: float = canvas.get_viewport().get_canvas_transform().get_scale().x
+	var fallen: bool = entity.get("alive", true) == false
+	if not fallen:
+		_draw_marker(canvas, entity, anchor)
+	crowd.draw(canvas, drawn, anchor, _dt, zoom)
+	if not fallen:
+		_draw_cargo(canvas, entity, anchor, crowd.head_height())
+		_draw_health(canvas, entity, anchor)
 
 
 ## An OpenRA building sits on its real footprint: one source cell (24 px) per tile, top-left at the footprint's corner, so the
@@ -351,6 +373,7 @@ func begin_frame(time_scale: float) -> void:
 	_dt = clampf(float(now - _last_ms) / 1000.0, 0.0, 0.1)
 	_last_ms = now
 	_ts = maxf(time_scale, 1.0)
+	crowd.begin_frame(_dt)
 	_frames += 1
 	if _frames % 300 == 0:
 		for id in _vis.keys():
@@ -394,6 +417,7 @@ func _motion(entity: Dictionary) -> Dictionary:
 	out["_vy"] = pos.y
 	out["_moving"] = moving
 	var cls := str(entity.get("class", ""))
+	out["_face"] = face
 	if cls != "unit":
 		out["facing"] = face
 	var anim := str(entity.get("anim", ""))
@@ -616,6 +640,13 @@ func _frame_size(item: Dictionary, tex: Texture2D) -> Vector2:
 func _remember(key: String, path: String) -> void:
 	if path == "":
 		return
+	# An exported build (the Android APK) contains the imported texture, not the source PNG, so Image.load("res://x.png") finds
+	# nothing there: go through the resource loader first and keep the raw file read as the development-time fallback.
+	if ResourceLoader.exists(path):
+		var res := load(path) as Texture2D
+		if res != null:
+			textures[key] = res
+			return
 	var image := Image.new()
 	var err := image.load(path)
 	if err != OK:
@@ -708,13 +739,12 @@ func _draw_story(canvas: CanvasItem, e: Dictionary, tpx: int) -> void:
 		var healer := str(e.get("role", "")) == "healer"
 		var ring := Color(0.4, 1.0, 0.55) if healer else Color(1.0, 0.8, 0.25)
 		canvas.draw_arc(c + Vector2(0, 10), 26, 0.0, TAU, 28, Color(ring.r, ring.g, ring.b, 0.9), 4.0)  # a ring on the ground: someone to talk to
-		var fig := {"id": "fig:" + str(e.get("id", "")), "class": "worker", "definition": str(e.get("figure", "widelands.barbarians_miner_worker")),
-			"tx": e["tx"], "ty": e["ty"], "facing": "se", "status": "idle", "faction_name": str(e.get("faction_name", "")), "_static": true}
-		if _item_for(fig).is_empty():
+		var zoom_n: float = canvas.get_viewport().get_canvas_transform().get_scale().x
+		if crowd.handles(e):
+			crowd.draw(canvas, e, c, _dt, zoom_n)
+		else:
 			canvas.draw_circle(c + Vector2(0, -18), 11, Color(0.95, 0.8, 0.65))
 			canvas.draw_rect(Rect2(c + Vector2(-13, -8), Vector2(26, 32)), ring, true)
-		else:
-			draw_entity(canvas, fig, tpx)
 		var name := str(e.get("label", "Healer" if healer else "Miner"))
 		var w := font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, 34).x
 		canvas.draw_rect(Rect2(c + Vector2(-w * 0.5 - 8, 32), Vector2(w + 16, 42)), Color(0, 0, 0, 0.7), true)

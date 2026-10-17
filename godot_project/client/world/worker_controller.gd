@@ -19,8 +19,9 @@ const TILE_SCALE := 4
 const TPX := TILE * TILE_SCALE
 const WALK_SPEED := 110.0
 const STOP_RADIUS := 30.0
-## Prefer readable geometric workers in the living-world pass.
-const GEOMETRIC_MODE := true
+## Workers are drawn by the character system (assets/characters). The old Polygon2D stand-ins remain only as a debug switch.
+const GEOMETRIC_MODE := false
+const _Appearance = preload("res://client/characters/character_appearance.gd")
 
 var _workers: Dictionary = {}  # person_id -> Node2D
 var _phase: Dictionary = {}  # person_id -> float 0..2 (0-1 outbound, 1-2 return)
@@ -183,11 +184,11 @@ func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 		var spr := Sprite2D.new()
 		spr.name = "Sprite"
 		spr.centered = false
+		spr.position = Vector2(-32, -88)  # feet on the worker's origin
 		worker.add_child(spr)
-		var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
-		if sprite_key.is_empty():
-			sprite_key = "worker"
+		var sprite_key := _sprite_key(row, person_id)
 		ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, "down", 0, display)
+		ActorVisual.bind_id(spr, person_id)
 	var waypoints: Array = row.get("waypoints", [])
 	if not waypoints.is_empty():
 		worker.position = _grid_to_world(waypoints[0].get("grid", [4, 5]))
@@ -198,6 +199,14 @@ func _spawn_worker(person_id: String, row: Dictionary) -> Node2D:
 	_pause[person_id] = float(hash(person_id + ":pause") % 40) / 80.0
 	_sync_meta(worker, row)
 	return worker
+
+
+## The legacy projection names a sprite or an occupation; the character system turns either into one stable person per id.
+func _sprite_key(row: Dictionary, person_id: String) -> String:
+	var key := str(row.get("sprite", row.get("visual_profile", "")))
+	if key != "" and key != "worker" and _Appearance.has_named(key):
+		return key
+	return _Appearance.person_key(person_id, str(row.get("public_occupation", row.get("public_role", row.get("occupation", key)))))
 
 
 func _standing_label(row: Dictionary) -> String:
@@ -259,9 +268,7 @@ func _sync_meta(worker: Node2D, row: Dictionary) -> void:
 		return
 	var spr: Sprite2D = worker.get_node_or_null("Sprite")
 	if spr != null:
-		var sprite_key := str(row.get("sprite", row.get("visual_profile", "worker")))
-		if sprite_key.is_empty():
-			sprite_key = "worker"
+		var sprite_key := _sprite_key(row, str(worker.get_meta("person_id", "")))
 		var facing := str(spr.get_meta("facing", "down"))
 		ActorVisual.apply(spr, PIXEL_ROOT, sprite_key, facing, 0, display)
 
@@ -286,6 +293,10 @@ func _face_sprite(worker: Node2D, delta: Vector2) -> void:
 
 func _set_activity(worker: Node2D, activity: String, carry_resource, loaded: bool) -> void:
 	worker.set_meta("industry_cue", activity)
+	var sprite_node: Node = worker.get_node_or_null("Sprite")
+	var cview = ActorVisual.view_of(sprite_node)
+	if cview != null:
+		cview.working = activity in ["working", "pushing"]
 	worker.set_meta("carry_resource", str(carry_resource) if carry_resource != null else "")
 	worker.set_meta("loaded", bool(loaded))
 	var pip_name := "CarryPip"

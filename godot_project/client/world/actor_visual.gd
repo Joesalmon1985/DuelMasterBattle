@@ -1,8 +1,16 @@
 extends RefCounted
 class_name DmbActorVisual
-## One fallback for a character sprite that is not on disk.
-## Never calls load() on a missing resource. The stand-in is a generated
-## rectangle-and-circle texture plus a name label, so the NPC stays visible.
+## One path for every character that stands on a Sprite2D node (the player, other LAN wizards, cutscene actors, area NPCs).
+## With the character library present (assets/characters) the node gets a DmbCharView child that draws and animates the person;
+## the old 16x24 PNG pairs are only a fallback when that library is missing, and the geometric stand-in below is the last resort.
+
+const _Lib = preload("res://client/characters/character_library.gd")
+const _Appearance = preload("res://client/characters/character_appearance.gd")
+const _View = preload("res://client/characters/character_view.gd")
+const _Bus = preload("res://client/characters/character_bus.gd")
+
+## Sprite2D scale of a character cell: a 38-pixel figure comes out about 96 screen px tall, like the old 16x24 art at TILE_SCALE 4.
+const CHAR_NODE_SCALE := 2.5
 
 ## Target displayed height in screen pixels (texture height × scale.y).
 ## 16×24 art at scale 4 → 96px; all humanoids normalise to this footprint.
@@ -20,6 +28,9 @@ static func resource_exists(pixel_root: String, rel: String) -> bool:
 ## Apply a real texture, or a geometric placeholder if the resource is missing.
 ## Returns true when the placeholder path was used.
 static func apply(node: Sprite2D, pixel_root: String, sprite: String, facing: String, frame: int, label: String) -> bool:
+	if _Lib.available():
+		_apply_character(node, sprite, facing, label)
+		return false
 	var rel := rel_path(sprite, facing, frame)
 	var missing := not resource_exists(pixel_root, rel)
 	node.set_meta("sprite", sprite)
@@ -38,6 +49,52 @@ static func apply(node: Sprite2D, pixel_root: String, sprite: String, facing: St
 	return false
 
 
+static func _apply_character(node: Sprite2D, sprite: String, facing: String, label: String) -> void:
+	var tag := sprite + "|" + label
+	node.set_meta("sprite", sprite)
+	node.set_meta("facing", facing)
+	node.set_meta("placeholder", false)
+	node.set_meta("label", label)
+	var view = node.get_node_or_null("CharView")
+	if view == null or str(node.get_meta("char_tag", "")) != tag:
+		var look = _Appearance.for_sprite(sprite, label)
+		var id: String = str(node.get_meta("char_id", label.to_lower() if label != "" else sprite))
+		if view == null:
+			view = _View.new()
+			view.name = "CharView"
+			node.add_child(view)
+			view.setup(look, id)
+		else:
+			view.set_look(look)
+		node.set_meta("char_tag", tag)
+		node.set_meta("char_id", id)
+	node.texture = null
+	node.scale = Vector2(CHAR_NODE_SCALE, CHAR_NODE_SCALE)
+	_clear_label(node)
+	view.face(facing)
+
+
+## Make the node answer to a stable id (an entity id) on the presentation bus, so dialogue and combat events find it.
+static func bind_id(node: Node, id: String) -> void:
+	if node == null or id == "":
+		return
+	node.set_meta("char_id", id)
+	var view = view_of(node)
+	if view != null:
+		view.character_id = id
+		view.anim.id = id
+
+
+static func set_dead(node: Node, dead: bool = true) -> void:
+	var view = view_of(node)
+	if view != null:
+		view.anim.dead = dead
+
+
+static func view_of(node: Node):
+	return node.get_node_or_null("CharView") if node != null else null
+
+
 ## Uniform world footprint: preserve aspect; never stretch X/Y independently.
 static func normalize_humanoid_scale(node: Sprite2D) -> void:
 	if node == null or node.texture == null:
@@ -52,6 +109,9 @@ static func normalize_humanoid_scale(node: Sprite2D) -> void:
 
 
 static func displayed_height_px(node: Sprite2D) -> float:
+	var cv = view_of(node)
+	if cv != null:
+		return (38.0 if cv.look.body == "adult" else 30.0) * absf(node.scale.y)  # head to toe in sprite pixels x pixel size
 	if node == null or node.texture == null:
 		return 0.0
 	return float(node.texture.get_height()) * absf(node.scale.y)

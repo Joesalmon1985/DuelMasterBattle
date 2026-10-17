@@ -537,7 +537,9 @@ func _spawn_entity(e: Dictionary) -> void:
 				_entities.append(e)
 				return
 			node = _add_actor(pos, "chars/%s_%s_0.png" % [spr, facing], Vector2(0, -8), spr, facing, str(e.get("name", spr)))
+			_ActorVisual.bind_id(node, str(e.get("id", "")))
 			if e["kind"] == "corpse":
+				_ActorVisual.set_dead(node)
 				# Lying body: rotate about the sprite centre so it stays on its tile.
 				node.centered = true
 				node.position = Vector2(pos) * TPX + Vector2(16, 8)
@@ -922,6 +924,8 @@ func ui_actor_facing(key: String) -> String:
 			if str(e.get("id", "")) == key and is_instance_valid(e.get("node")):
 				n = e["node"]
 				break
+	if n != null and n.has_meta("facing") and n.get_node_or_null("CharView") != null:
+		return str(n.get_meta("facing"))
 	if n == null or n.texture == null:
 		return ""
 	var path := n.texture.resource_path
@@ -1792,6 +1796,8 @@ func ui_entity_screen_rect(entity_id: String) -> Rect2:
 			if node.texture != null:
 				tex_size = node.texture.get_size()
 			var world := Rect2(node.global_position, tex_size * node.scale)
+			if node.get_node_or_null("CharView") != null:
+				world = Rect2(node.global_position, Vector2(TPX, TPX * 1.5))  # a character keeps the old 64 x 96 footprint
 			return Rect2(ui_world_to_screen(world.position), world.size * _camera.zoom)
 	return Rect2()
 
@@ -2650,6 +2656,8 @@ func ui_input_locked() -> bool:
 
 ## Test/inspection: the sprite key currently drawn for the controllable character.
 func ui_player_sprite_key() -> String:
+	if _john.has_meta("sprite") and _john.get_node_or_null("CharView") != null:
+		return str(_john.get_meta("sprite"))
 	var path := _john.texture.resource_path if _john.texture else ""
 	var base := path.get_file()
 	for f in ["_left_", "_right_", "_up_", "_down_"]:

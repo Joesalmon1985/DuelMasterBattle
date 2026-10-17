@@ -1,5 +1,6 @@
 extends Control
 class_name DialogueBox
+const _CharBus = preload("res://client/characters/character_bus.gd")
 
 ## Bottom-anchored dialogue panel. Text types in; tap anywhere (or Space/Enter)
 ## to finish typing or advance. `choose_async` shows tappable options.
@@ -114,7 +115,19 @@ func redirect_options() -> Array:
 	return _redirect_options.duplicate()
 
 
+## Presentation only: the character called `speaker` moves their mouth for as long as the line takes to read.
+func _voice(speaker: String, text: String) -> void:
+	if speaker != "":
+		_CharBus.speak_text(speaker.to_lower(), text)
+
+
+func _hush(speaker: String) -> void:
+	if speaker != "":
+		_CharBus.stop_speaking(speaker.to_lower())
+
+
 func say(speaker: String, text: String) -> void:
+	_voice(speaker, text)
 	if is_redirecting():
 		_redirect.semantic_say_now(speaker, text)
 		_open_silent(speaker, text)
@@ -124,15 +137,19 @@ func say(speaker: String, text: String) -> void:
 
 ## Awaitable: resolves when the player advances past this line.
 func say_async(speaker: String, text: String) -> void:
+	_voice(speaker, text)
 	if is_redirecting():
 		if _redirect.semantic_cancelled():
+			_hush(speaker)
 			return
 		_redirect.semantic_say_now(speaker, text)
 		_open_silent(speaker, text)
 		await advanced
+		_hush(speaker)
 		return
 	_show(speaker, text)
 	await advanced
+	_hush(speaker)
 
 
 func choose_async(prompt: String, options: Array) -> String:
@@ -154,6 +171,7 @@ func choose_async(prompt: String, options: Array) -> String:
 		_present_choices()
 	# else: _present_choices() runs when the final page is reached in advance().
 	var result: String = await chosen
+	_CharBus.speak("john", 1.2)  # the wizard answers: a short burst of talking whichever option was picked
 	return result
 
 

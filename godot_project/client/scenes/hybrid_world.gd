@@ -10,6 +10,7 @@ const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
 const NetDuelSim = preload("res://client/duel/net_duel_sim.gd")
 const GameBoardScene = preload("res://client/scenes/game_board.tscn")
+const CharAppearance = preload("res://client/characters/character_appearance.gd")
 
 ## Continuous hybrid world. Movement, camera, and the retained duel board
 ## come from the existing Overworld and DmbDuelLeaseAdapter. The Python
@@ -375,6 +376,8 @@ func _apply_snapshot(snap: Dictionary) -> void:
 			_blocked[Vector2i(int(item[0]), int(item[1]))] = true
 	for f in snap.get("factions", []):
 		_art.faction_colors[str(f.get("name", ""))] = Color.html(str(f.get("color", "#ffffff")))
+		CharAppearance.faction_tribes[str(f.get("name", ""))] = str(f.get("tribe", ""))
+		CharAppearance.faction_colors[str(f.get("name", ""))] = Color.html(str(f.get("color", "#ffffff")))
 	var player: Dictionary = snap.get("player", {})
 	var hex := Vector2i(int(player.get("hex", [0, 0])[0]), int(player.get("hex", [0, 0])[1]))
 	if _last_hex.x != 999999 and hex != _last_hex:
@@ -436,6 +439,7 @@ func _draw() -> void:
 		return ay < by
 	)
 	_art.begin_frame(float(_snapshot.get("time_scale", 1)))
+	_art.crowd.player_tile = Vector2(_john_pos)
 	for entity in rows:
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
@@ -621,6 +625,9 @@ func _mp_apply_players(rows: Array) -> void:
 			var idx := maxi(0, int(pid.substr(1)) - 2)
 			node = spawn_actor(key, MP_SPRITES[idx % MP_SPRITES.size()], tile, facing)
 			node.set_meta("tile", tile)
+			var cv = _ActorVisual.view_of(node)
+			if cv != null:  # every player is a wizard of their own cut and colour, stable for that player id on every client
+				cv.set_look(CharAppearance.for_player(pid, str(row.get("name", pid)), str(row.get("colour", ""))))
 			var lbl := Label.new()
 			lbl.name = "Name"
 			lbl.text = str(row.get("name", pid))
@@ -631,7 +638,7 @@ func _mp_apply_players(rows: Array) -> void:
 			lbl.add_theme_constant_override("outline_size", 5)
 			lbl.size = Vector2(160, 24)
 			lbl.scale = Vector2(1.0 / maxf(node.scale.x, 0.01), 1.0 / maxf(node.scale.y, 0.01))
-			lbl.position = Vector2(8.0 - 80.0 / maxf(node.scale.x, 0.01), -7.0)
+			lbl.position = Vector2(16.0 - 80.0 / maxf(node.scale.x, 0.01), -17.0)
 			node.add_child(lbl)
 		else:
 			var prev: Vector2i = node.get_meta("tile", tile)

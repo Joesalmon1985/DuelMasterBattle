@@ -11,6 +11,10 @@ const TILE := 26
 const KIND_COLOR := {"door": Color(0.55, 0.4, 0.25), "logs": Color(0.6, 0.6, 0.7), "sign": Color(0.9, 0.85, 0.6), "pickup": Color(0.95, 0.8, 0.2), "exit": Color(0.4, 0.9, 0.5)}
 const COLOURS := [Color(0.9, 0.25, 0.2), Color(0.3, 0.55, 0.95), Color(0.3, 0.8, 0.35), Color(0.95, 0.85, 0.25), Color(0.7, 0.4, 0.9), Color(0.95, 0.6, 0.2)]
 const COLOUR_NAMES := ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]
+const CharBus = preload("res://client/characters/character_bus.gd")
+const CharAppearance = preload("res://client/characters/character_appearance.gd")
+const CharPortrait = preload("res://client/characters/dialogue_portrait.gd")
+const PLAYER_ID := "john"  # the presentation id of the local wizard (the Sprite2D labelled "John")
 
 var world: Node
 var layer: CanvasLayer
@@ -19,6 +23,7 @@ var dialog_title: Label
 var dialog_text: RichTextLabel
 var choices_box: VBoxContainer
 var npc_id := ""
+var portrait: Control
 var dungeon: Control
 var inv_label: Label
 var msg_label: Label
@@ -119,8 +124,15 @@ func objective_text() -> String:
 func _build_dialog() -> void:
 	dialog = PanelContainer.new()
 	dialog.name = "StoryDialog"
-	dialog.position = Vector2(300, 360)
-	dialog.custom_minimum_size = Vector2(760, 0)
+	dialog.custom_minimum_size = Vector2(560, 0)
+	dialog.anchor_left = 0.0
+	dialog.anchor_right = 1.0
+	dialog.anchor_top = 1.0
+	dialog.anchor_bottom = 1.0
+	dialog.offset_left = 8.0
+	dialog.offset_right = -8.0
+	dialog.offset_bottom = -12.0
+	dialog.grow_vertical = Control.GROW_DIRECTION_BEGIN  # the panel grows upwards from the bottom edge, so the speaker stays in view
 	dialog.visible = false
 	var box := StyleBoxFlat.new()  # an opaque, framed panel: the conversation must be readable over a busy settlement
 	box.bg_color = Color(0.09, 0.07, 0.12, 0.96)
@@ -129,9 +141,17 @@ func _build_dialog() -> void:
 	box.set_corner_radius_all(6)
 	box.set_content_margin_all(12)
 	dialog.add_theme_stylebox_override("panel", box)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	dialog.add_child(row)
+	portrait = CharPortrait.new()
+	portrait.name = "Portrait"
+	portrait.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	row.add_child(portrait)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
-	dialog.add_child(v)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(v)
 	dialog_title = Label.new()
 	dialog_title.name = "DialogTitle"
 	dialog_title.add_theme_font_size_override("font_size", 22)
@@ -140,7 +160,7 @@ func _build_dialog() -> void:
 	dialog_text = RichTextLabel.new()
 	dialog_text.name = "DialogText"
 	dialog_text.fit_content = true
-	dialog_text.custom_minimum_size = Vector2(736, 70)
+	dialog_text.custom_minimum_size = Vector2(380, 70)
 	dialog_text.bbcode_enabled = false
 	dialog_text.add_theme_font_size_override("normal_font_size", 18)
 	v.add_child(dialog_text)
@@ -332,11 +352,31 @@ func _toast(text: String) -> void:
 	print("STORY toast: ", text)
 
 
+func _npc_entity(id: String) -> Dictionary:
+	for e in world._snapshot.get("entities", []):
+		if typeof(e) == TYPE_DICTIONARY and str(e.get("id", "")) == id:
+			return e
+	return {}
+
+
+## The person on the other side of the table: the same look as their figure in the world, turned towards the wizard, speaking.
+func _begin_conversation(reply: Dictionary, text: String) -> void:
+	var e := _npc_entity(npc_id)
+	if not e.is_empty():
+		var look = CharAppearance.for_entity(e)
+		portrait.show_person(look, npc_id)
+		var dx := float(e.get("tx", 0)) - float(world._john_pos.x)
+		var dy := float(e.get("ty", 0)) - float(world._john_pos.y)
+		world.face_john("right" if dx > 0 and absf(dx) >= absf(dy) else ("left" if dx < 0 and absf(dx) >= absf(dy) else ("down" if dy > 0 else "up")))
+	CharBus.speak_text(npc_id, text)
+
+
 func _show_dialog(reply: Dictionary) -> void:
 	dialog.visible = true
 	world._input_locked = true
 	dialog_title.text = "%s  [%s]" % [str(reply.get("name", "")), str(reply.get("quest_status", ""))]
 	dialog_text.text = "\n".join(PackedStringArray(reply.get("lines", [])))
+	_begin_conversation(reply, dialog_text.text)
 	for c in choices_box.get_children():
 		choices_box.remove_child(c)
 		c.queue_free()
@@ -351,9 +391,21 @@ func _show_dialog(reply: Dictionary) -> void:
 
 
 func _choose(choice: String) -> void:
+	var said := ""
+	for b in choices_box.get_children():
+		if b.name == "Choice_%s" % choice and b is Button:
+			said = (b as Button).text
 	var reply := _op({"op": "choose", "npc": npc_id, "choice": choice})
 	if str(reply.get("status", "")) == "ok":
 		dialog_text.text = str(reply.get("text", "")) + "\n\n" + "\n".join(PackedStringArray(reply.get("lines", [])))
+		# the wizard answers first, then the person replies: the one whose line it is, is the one who moves their mouth
+		CharBus.stop_speaking(npc_id)
+		CharBus.speak_text(PLAYER_ID, said if said != "" else "Yes.")
+		var reply_text := dialog_text.text
+		var wait := minf(CharBus.line_seconds(said), 1.6)
+		get_tree().create_timer(wait).timeout.connect(func() -> void:
+			if dialog.visible:
+				CharBus.speak_text(npc_id, reply_text))
 		for c in choices_box.get_children():
 			choices_box.remove_child(c)
 			c.queue_free()
@@ -367,6 +419,8 @@ func _choose(choice: String) -> void:
 
 
 func close_dialog() -> void:
+	CharBus.stop_speaking(npc_id)
+	CharBus.stop_speaking(PLAYER_ID)
 	dialog.visible = false
 	world._input_locked = dungeon.visible
 
