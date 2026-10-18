@@ -100,7 +100,10 @@ def ensure_gate(world: Any) -> None:
         if t is None:
             continue
         taken.add(t)
-        pid = residents.create(world, settlement=sid, role="contestant", graph="trial_gate", speaker=cid, tile=t, tribe=tribe, faction="", key=f"contestant:{cid}")
+        from wizard_rts.narrative import graph as _graph
+
+        speaker = cid if cid in _graph.load("trial_gate")["speakers"] else sprite  # the second barbarian speaks with the barbarian's lines (there is no `barbarian2` speaker)
+        pid = residents.create(world, settlement=sid, role="contestant", graph="trial_gate", speaker=speaker, tile=t, tribe=tribe, faction="", key=f"contestant:{cid}")
         world.dmb.people[pid]["name"] = name
         world.dmb.people[pid]["display_name"] = name
         residents.table(world)[pid]["contestant"] = cid

@@ -1,0 +1,3482 @@
+{
+ "crawl_conversations": {
+  "results": {
+   "mentor": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 15,
+    "choices_tried": [
+     "ask_glow",
+     "ask_reason",
+     "ask_village",
+     "ask_village_none",
+     "ask_wards",
+     "creed_d",
+     "farewell",
+     "hidden_duel",
+     "learn_colours",
+     "need_anything",
+     "told_practice",
+     "why_not_rule"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it. You have read the three Colours and ",
+      "choices": [
+       [
+        "learn_colours",
+        "Teach me magic.",
+        true
+       ],
+       [
+        "why_not_rule",
+        "You could do anything you liked. Why does no wizard simply rule?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "learn_colours",
+      "button": "Teach me magic.",
+      "status": "ok",
+      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Three colours to begin: Flame, which burns; Frost, which stills; Vine, which bind",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "why_not_rule",
+        "You could do anything you liked. Why does no wizard simply rule?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "ask_wards",
+      "button": "[Curiosity] Why does a Ward have three places? Who decided t",
+      "status": "ok",
+      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Skebok Hardfist leans on the staff and considers you for a moment.\nNobody asks th",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "why_not_rule",
+        "You could do anything you liked. Why does no wizard simply rule?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false,
+      "check": {
+       "aspect": "curiosity",
+       "label": "Curiosity",
+       "passed": true,
+       "blocked": false,
+       "score": 3,
+       "evidence": 0,
+       "relationship": 1,
+       "total": 4,
+       "threshold": 4,
+       "again": false
+      }
+     },
+     {
+      "choice": "ask_glow",
+      "button": "[Wonder] There is a light around your staff when you cast. T",
+      "status": "ok",
+      "reply": "You know your three colours. Try your hand against my Ward when you are ready. ...No. It is not Flame. It is something older than the schools, and the schools s",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "why_not_rule",
+        "You could do anything you liked. Why does no wizard simply rule?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false,
+      "check": {
+       "aspect": "wonder",
+       "label": "Wonder",
+       "passed": true,
+       "blocked": false,
+       "score": 2,
+       "evidence": 1,
+       "relationship": 1,
+       "total": 4,
+       "threshold": 4,
+       "again": false
+      }
+     },
+     {
+      "choice": "ask_reason",
+      "button": "[Reason] Explain how to read fracture and echo properly, as ",
+      "status": "ok",
+      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Every Fade is information: if a colour fades everywhere, it is not in the Ward at",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "why_not_rule",
+        "You could do anything you liked. Why does no wizard simply rule?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false,
+      "check": {
+       "aspect": "reason",
+       "label": "Reason",
+       "passed": true,
+       "blocked": false,
+       "score": 2,
+       "evidence": 0,
+       "relationship": 1,
+       "total": 3,
+       "threshold": 2,
+       "again": false
+      }
+     },
+     {
+      "choice": "told_practice",
+      "button": "Let me try to break your Ward. You tell me what it is.",
+      "status": "ok",
+      "reply": "My Ward is Frost, Vine, Frost. I will not change it. Break it in as few casts as you can.",
+      "choices": [],
+      "ends": true,
+      "duel": true,
+      "duel_outcome": "won"
+     },
+     {
+      "choice": "hidden_duel",
+      "button": "Fight me properly, with hidden Wards.",
+      "status": "ok",
+      "reply": "Mine is hidden now, and so is yours. We cast until one Ward breaks. Do not pull your casts; I will know.",
+      "choices": [],
+      "ends": true,
+      "duel": true,
+      "duel_outcome": "won"
+     },
+     {
+      "choice": "why_not_rule",
+      "button": "You could do anything you liked. Why does no wizard simply r",
+      "status": "ok",
+      "reply": "Skebok Hardfist is quiet for a while.\nBecause power is a debt, not a deed. Whoever can break a Ward can break a door, a promise, a person. The more you can do, ",
+      "choices": [
+       [
+        "creed_d",
+        "Then what we can do belongs to the land, not to us.",
+        true
+       ],
+       [
+        "creed_m",
+        "Then a wizard serves, the way a good steward serves.",
+        true
+       ],
+       [
+        "creed_a",
+        "Or nobody should rule anybody, wizard or not.",
+        true
+       ],
+       [
+        "creed_g",
+        "Then pay it honestly: teach, trade, and keep fair books.",
+        true
+       ],
+       [
+        "creed_s",
+        "And yet someone has to lead, and surely those who understand the Weave should.",
+        true
+       ],
+       [
+        "creed_r",
+        "I think it is a vow, whether we say so or not.",
+        true
+       ],
+       [
+        "creed_leave",
+        "I will think about it.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "creed_d",
+      "button": "Then what we can do belongs to the land, not to us.",
+      "status": "ok",
+      "reply": "I have taught you what I can for now. \"Yes,\" Skebok Hardfist says, and the old face softens. \"Balance. We borrow from the world. You listen better than you pret",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "hidden_duel",
+        "Fight me properly, with hidden Wards.",
+        true
+       ],
+       [
+        "ask_village",
+        "What should I do now?",
+        true
+       ],
+       [
+        "ask_village_none",
+        "What should I do now?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "ask_village",
+      "button": "What should I do now?",
+      "status": "ok",
+      "reply": "I have taught you what I can for now. Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never ca",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "hidden_duel",
+        "Fight me properly, with hidden Wards.",
+        true
+       ],
+       [
+        "ask_village",
+        "What should I do now?",
+        true
+       ],
+       [
+        "ask_village_none",
+        "What should I do now?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "ask_village_none",
+      "button": "What should I do now?",
+      "status": "ok",
+      "reply": "I have taught you what I can for now. Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never ca",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "hidden_duel",
+        "Fight me properly, with hidden Wards.",
+        true
+       ],
+       [
+        "ask_village",
+        "What should I do now?",
+        true
+       ],
+       [
+        "ask_village_none",
+        "What should I do now?",
+        true
+       ],
+       [
+        "need_anything",
+        "Is there anything you need?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "need_anything",
+      "button": "Is there anything you need?",
+      "status": "ok",
+      "reply": "I have taught you what I can for now. Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if ",
+      "choices": [
+       [
+        "ask_wards",
+        "[Curiosity] Why does a Ward have three places? Who decided that?",
+        true
+       ],
+       [
+        "ask_glow",
+        "[Wonder] There is a light around your staff when you cast. That is not Flame, is it?",
+        true
+       ],
+       [
+        "ask_reason",
+        "[Reason] Explain how to read fracture and echo properly, as a method.",
+        true
+       ],
+       [
+        "told_practice",
+        "Let me try to break your Ward. You tell me what it is.",
+        true
+       ],
+       [
+        "hidden_duel",
+        "Fight me properly, with hidden Wards.",
+        true
+       ],
+       [
+        "ask_village",
+        "What should I do now?",
+        true
+       ],
+       [
+        "ask_village_none",
+        "What should I do now?",
+        true
+       ],
+       [
+        "farewell",
+        "Thank you. I will go.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "keeper": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 6,
+    "choices_tried": [
+     "bye",
+     "log_for_mentor",
+     "not_rats",
+     "not_rats_again",
+     "what_matter"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "choices": [
+       [
+        "what_matter",
+        "What's the matter with the warehouse?",
+        true
+       ],
+       [
+        "not_rats",
+        "Those are not rats. They are machines. Look at the legs.",
+        true
+       ],
+       [
+        "log_for_mentor",
+        "My teacher needs a log for the brazier. Could the store spare one?",
+        true
+       ],
+       [
+        "bye",
+        "I'll leave you to it.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_matter",
+      "button": "What's the matter with the warehouse?",
+      "status": "ok",
+      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "choices": [
+       [
+        "what_matter",
+        "What's the matter with the warehouse?",
+        true
+       ],
+       [
+        "not_rats",
+        "Those are not rats. They are machines. Look at the legs.",
+        true
+       ],
+       [
+        "log_for_mentor",
+        "My teacher needs a log for the brazier. Could the store spare one?",
+        true
+       ],
+       [
+        "bye",
+        "I'll leave you to it.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "not_rats",
+      "button": "Those are not rats. They are machines. Look at the legs.",
+      "status": "ok",
+      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "choices": [
+       [
+        "what_matter",
+        "What's the matter with the warehouse?",
+        true
+       ],
+       [
+        "log_for_mentor",
+        "My teacher needs a log for the brazier. Could the store spare one?",
+        true
+       ],
+       [
+        "bye",
+        "I'll leave you to it.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "log_for_mentor",
+      "button": "My teacher needs a log for the brazier. Could the store spar",
+      "status": "ok",
+      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "choices": [
+       [
+        "what_matter",
+        "What's the matter with the warehouse?",
+        true
+       ],
+       [
+        "not_rats_again",
+        "Six legs. Metal. It clicked at me.",
+        true
+       ],
+       [
+        "bye",
+        "I'll leave you to it.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "not_rats_again",
+      "button": "Six legs. Metal. It clicked at me.",
+      "status": "ok",
+      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "choices": [
+       [
+        "what_matter",
+        "What's the matter with the warehouse?",
+        true
+       ],
+       [
+        "bye",
+        "I'll leave you to it.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "bye",
+      "button": "I'll leave you to it.",
+      "status": "ok",
+      "reply": "Mind the boards.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "mother": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 4,
+    "choices_tried": [
+     "bye",
+     "how_are_you"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange. If you are going to the warehouse, tell them their rats are in",
+      "choices": [
+       [
+        "how_are_you",
+        "How are you?",
+        true
+       ],
+       [
+        "bye",
+        "I have to go.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "how_are_you",
+      "button": "How are you?",
+      "status": "ok",
+      "reply": "Old. Busy. Proud, mostly, though I would not say it to your face. Go on, you have a village to see to.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "bye",
+      "button": "I have to go.",
+      "status": "ok",
+      "reply": "Go on then. Come back for supper.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "official": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 5,
+    "choices_tried": [
+     "advice",
+     "bye",
+     "what_is_it",
+     "why_write"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "choices": [
+       [
+        "what_is_it",
+        "What is the Trial?",
+        true
+       ],
+       [
+        "advice",
+        "[Empathy] Any advice?",
+        true
+       ],
+       [
+        "why_write",
+        "Why write it down at all?",
+        true
+       ],
+       [
+        "bye",
+        "Thank you.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_is_it",
+      "button": "What is the Trial?",
+      "status": "ok",
+      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "choices": [
+       [
+        "advice",
+        "[Empathy] Any advice?",
+        true
+       ],
+       [
+        "why_write",
+        "Why write it down at all?",
+        true
+       ],
+       [
+        "bye",
+        "Thank you.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "advice",
+      "button": "[Empathy] Any advice?",
+      "status": "ok",
+      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "choices": [
+       [
+        "why_write",
+        "Why write it down at all?",
+        true
+       ],
+       [
+        "bye",
+        "Thank you.",
+        true
+       ]
+      ],
+      "ends": false,
+      "check": {
+       "aspect": "empathy",
+       "label": "Empathy",
+       "passed": true,
+       "blocked": false,
+       "score": 2,
+       "evidence": 0,
+       "relationship": 0,
+       "total": 2,
+       "threshold": 2,
+       "again": false
+      }
+     },
+     {
+      "choice": "why_write",
+      "button": "Why write it down at all?",
+      "status": "ok",
+      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "choices": [
+       [
+        "bye",
+        "Thank you.",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "bye",
+      "button": "Thank you.",
+      "status": "ok",
+      "reply": "The gate is behind me. It is always behind me.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "contestant:assassin": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 2,
+    "choices_tried": [
+     "bye"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "The figure in black does not turn. 'Apprentice,' it says, to the gate rather than to you, and that is all it says.",
+      "choices": [
+       [
+        "bye",
+        "Right.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "bye",
+      "button": "Right.",
+      "status": "ok",
+      "reply": "Nothing.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "contestant:barbarian2": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 2,
+    "choices_tried": [
+     "bye"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "The other barbarian says nothing at all. He is looking at the gate the way a man looks at a river he means to cross.",
+      "choices": [
+       [
+        "bye",
+        "...",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "bye",
+      "button": "...",
+      "status": "ok",
+      "reply": "He nods, once.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "contestant:elf": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 2,
+    "choices_tried": [
+     "bye"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "You are very young for this. So am I, by my people's reckoning, and nobody told me that was a reason not to come.",
+      "choices": [
+       [
+        "bye",
+        "Mind the water in there.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "bye",
+      "button": "Mind the water in there.",
+      "status": "ok",
+      "reply": "There is water? Nobody said there was water.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "contestant:knight": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 2,
+    "choices_tried": [
+     "bye"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Serra of the White Road. I go in first; I always go in first. Count your steps from the door, apprentice. Everything in there is measured.",
+      "choices": [
+       [
+        "bye",
+        "Luck to you.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "bye",
+      "button": "Luck to you.",
+      "status": "ok",
+      "reply": "Luck is for the second one through the door.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "contestant:throm": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 2,
+    "choices_tried": [
+     "bye"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Throm. You walk loud, villager. Only one of us wins this; remember it if we meet below.",
+      "choices": [
+       [
+        "bye",
+        "Then I will walk louder.",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "bye",
+      "button": "Then I will walk louder.",
+      "status": "ok",
+      "reply": "Hah. Good.",
+      "choices": [],
+      "ends": true
+     }
+    ]
+   },
+   "forest_dispute:cutter": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 12,
+    "choices_tried": [
+     "leave",
+     "topic:forest_thick",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:store",
+     "topic:work",
+     "topic:young",
+     "what_do_you_want",
+     "what_happened"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "I am cutting what I am meant to cut. The settlement needs timber, and the sawmill and the builders eat it faster than I can carry it. There are 11 logs in the w",
+      "choices": [
+       [
+        "what_happened",
+        "What happened between you and Kormund Thunderaxe?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_happened",
+      "button": "What happened between you and Kormund Thunderaxe?",
+      "status": "ok",
+      "reply": "Back again? Everyone has an opinion on this. The old trees near my hut were ripe. Kormund Thunderaxe has been planting new saplings in the same clearings and sa",
+      "choices": [
+       [
+        "what_do_you_want",
+        "What would settle it for you?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "what_do_you_want",
+      "button": "What would settle it for you?",
+      "status": "ok",
+      "reply": "Back again? Everyone has an opinion on this. A part of the forest I may cut without being shouted at. And a promise that nobody plants on top of my next tree.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Mind the axe, then.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:young",
+      "button": "And the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles close by. I leave those alone, mostly.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:store",
+      "button": "Is there timber in the store?",
+      "status": "ok",
+      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Not at all. Folk like you remind us to be better than we are.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What does a lumberjack do all day?",
+      "status": "ok",
+      "reply": "I walk out to a tree that has stood long enough, fell it, carry the log back and start again.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:forest_thick",
+      "button": "How is the forest around here?",
+      "status": "ok",
+      "reply": "Plenty of tall trees within a short walk: 116 of them near me right now.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "forest_dispute:planter": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 12,
+    "choices_tried": [
+     "leave",
+     "topic:lumberjack",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:timber",
+     "topic:work",
+     "topic:young",
+     "what_do_you_want",
+     "what_happened"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Careful. There are seedlings under your boots. You are the wizard everyone is talking about. If you are here about Ragtor Blackshield, I will say what I told hi",
+      "choices": [
+       [
+        "what_happened",
+        "What happened between you and Ragtor Blackshield?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_happened",
+      "button": "What happened between you and Ragtor Blackshield?",
+      "status": "ok",
+      "reply": "Careful where you step. I plant where the old ones were felled, so the forest comes back. There are 5 saplings and poles around me right now, and Ragtor Blacksh",
+      "choices": [
+       [
+        "what_do_you_want",
+        "What would settle it for you?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "what_do_you_want",
+      "button": "What would settle it for you?",
+      "status": "ok",
+      "reply": "Careful where you step. Stakes around the young trees, and a word that he will leave them be. That is all. I do not need him to like me.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Mind the seedlings.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:timber",
+      "button": "Does the settlement need more timber?",
+      "status": "ok",
+      "reply": "It always does. But a forest cut faster than it grows is a forest that ends.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:lumberjack",
+      "button": "Do you work with the lumberjack?",
+      "status": "ok",
+      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "I would rather you did not stand near my work, if it is the same to you.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What does a forester do?",
+      "status": "ok",
+      "reply": "I find open ground, dig a hole and plant a sapling. Then I do it again. The trees do the rest, slowly.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:young",
+      "button": "How are the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles within sight of me. Every one of them is a log in some future year.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "forest_dispute:witness": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 13,
+    "choices_tried": [
+     "leave",
+     "say_compromise",
+     "topic:duty",
+     "topic:no_barracks",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:quiet",
+     "topic:settlement",
+     "witness_gossip",
+     "witness_saw"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "You have heard them both. Well? Everyone wants to know what the wizard thinks.",
+      "choices": [
+       [
+        "witness_saw",
+        "What did you see?",
+        true
+       ],
+       [
+        "witness_gossip",
+        "What do people say?",
+        true
+       ],
+       [
+        "say_compromise",
+        "Suggest they share the clearing: Ragtor Blackshield cuts the old trees, Kormund Thunderaxe stakes the young ones.",
+        true
+       ],
+       [
+        "say_cutter",
+        "Back Ragtor Blackshield: the settlement needs timber now.",
+        true
+       ],
+       [
+        "say_planter",
+        "Back Kormund Thunderaxe: let the young trees grow.",
+        true
+       ],
+       [
+        "say_nothing",
+        "Stay out of it. It is theirs to settle.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ],
+       [
+        "topic:no_barracks",
+        "Do you have a barracks?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "witness_saw",
+      "button": "What did you see?",
+      "status": "ok",
+      "reply": "You have heard them both. Well? Everyone wants to know what the wizard thinks. Ragtor Blackshield with an axe on one shoulder, Kormund Thunderaxe with a basket ",
+      "choices": [
+       [
+        "witness_gossip",
+        "What do people say?",
+        true
+       ],
+       [
+        "say_compromise",
+        "Suggest they share the clearing: Ragtor Blackshield cuts the old trees, Kormund Thunderaxe stakes the young ones.",
+        true
+       ],
+       [
+        "say_cutter",
+        "Back Ragtor Blackshield: the settlement needs timber now.",
+        true
+       ],
+       [
+        "say_planter",
+        "Back Kormund Thunderaxe: let the young trees grow.",
+        true
+       ],
+       [
+        "say_nothing",
+        "Stay out of it. It is theirs to settle.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ],
+       [
+        "topic:no_barracks",
+        "Do you have a barracks?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "witness_gossip",
+      "button": "What do people say?",
+      "status": "ok",
+      "reply": "You have heard them both. Well? Everyone wants to know what the wizard thinks. That Ragtor Blackshield cuts without looking and Kormund Thunderaxe plants withou",
+      "choices": [
+       [
+        "say_compromise",
+        "Suggest they share the clearing: Ragtor Blackshield cuts the old trees, Kormund Thunderaxe stakes the young ones.",
+        true
+       ],
+       [
+        "say_cutter",
+        "Back Ragtor Blackshield: the settlement needs timber now.",
+        true
+       ],
+       [
+        "say_planter",
+        "Back Kormund Thunderaxe: let the young trees grow.",
+        true
+       ],
+       [
+        "say_nothing",
+        "Stay out of it. It is theirs to settle.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ],
+       [
+        "topic:no_barracks",
+        "Do you have a barracks?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "say_compromise",
+      "button": "Suggest they share the clearing: Ragtor Blackshield cuts the",
+      "status": "ok",
+      "reply": "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little. I will pass that on. It might work, if neither of them has to",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ],
+       [
+        "topic:no_barracks",
+        "Do you have a barracks?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Keep your eyes open, wizard.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:no_barracks",
+      "button": "Do you have a barracks?",
+      "status": "ok",
+      "reply": "No barracks yet. We are few and the settlement is small.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:quiet",
+        "Any trouble lately?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:quiet",
+      "button": "Any trouble lately?",
+      "status": "ok",
+      "reply": "Quiet, so far. I do not trust the quiet, but I will take it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Keeps to themselves. Clever, I suppose, but clever is not the same as caring.\nStubborn as a root. Which is not a complaint.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Somebody should be in charge who can actually do things. It might as well be them.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Bother me? It makes me prouder of the village, if you want the truth.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:duty",
+        "What are your duties?",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:duty",
+      "button": "What are your duties?",
+      "status": "ok",
+      "reply": "I stand ready. If strangers come, I am the one who goes out to meet them.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:settlement",
+        "How secure is the settlement?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:settlement",
+      "button": "How secure is the settlement?",
+      "status": "ok",
+      "reply": "1 of us stand with the Red settlement. It is not many.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "smith_dispute:mason": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 10,
+    "choices_tried": [
+     "leave",
+     "topic:building",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:rocks",
+     "topic:work",
+     "what_happened"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Skormir Ironhelm swears a load was carried in. I say it never came.",
+      "choices": [
+       [
+        "what_happened",
+        "Tell me about the stone.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:building",
+        "What is the stone for?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_happened",
+      "button": "Tell me about the stone.",
+      "status": "ok",
+      "reply": "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Skormir Ironhelm swears a load was carried in. I say it never came.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:building",
+        "What is the stone for?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you work.",
+      "status": "ok",
+      "reply": "Such as it is.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:building",
+      "button": "What is the stone for?",
+      "status": "ok",
+      "reply": "For building, mostly. Every wall and every foundation starts as somebody's rock.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Keeps to themselves. Clever, I suppose, but clever is not the same as caring.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Have you noticed they all talk in threes? Three colours, three places. As if somebody had written it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Bother me? It makes me prouder of the village, if you want the truth.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you do?",
+      "status": "ok",
+      "reply": "I chip granite from the rock near the quarry and carry it back to be stored. Slow work, but stone does not rot.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:rocks",
+      "button": "How much rock is left?",
+      "status": "ok",
+      "reply": "33 rock formations still stand around me. Plenty of work yet.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "smith_dispute:hauler": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 11,
+    "choices_tried": [
+     "back_hauler",
+     "leave",
+     "topic:empty",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:work",
+     "what_happened"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "If this is about the granite, I carried it. In through the north door, down on the floor, done. Whatever Sketor Irontooth did with it after is Sketor Irontooth'",
+      "choices": [
+       [
+        "what_happened",
+        "What happened to the sixth load?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you carry?",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "what_happened",
+      "button": "What happened to the sixth load?",
+      "status": "ok",
+      "reply": "If this is about the granite, I carried it. In through the north door, down on the floor, done. Whatever Sketor Irontooth did with it after is Sketor Irontooth'",
+      "choices": [
+       [
+        "back_hauler",
+        "I believe you. The mason can fetch the stone again.",
+        true
+       ],
+       [
+        "find_it",
+        "[Reason] Grout sacks, you said. Where does the keeper stack grout?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you carry?",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "back_hauler",
+      "button": "I believe you. The mason can fetch the stone again.",
+      "status": "ok",
+      "reply": "Then I will walk a little lighter today.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Roads do not walk themselves.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "I would rather you did not stand near my work, if it is the same to you.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you carry?",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you carry?",
+      "status": "ok",
+      "reply": "Whatever the buildings hand me: logs, stone, and what the settlement needs next. I walk my stretch of road and hand it on.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:empty",
+      "button": "Are you carrying anything?",
+      "status": "ok",
+      "reply": "Nothing just now. I walk back and forth until someone has something for me.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "ranger_patrol:ranger": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 12,
+    "choices_tried": [
+     "advise_north",
+     "ask_patrol",
+     "leave",
+     "topic:game",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:work",
+     "why_east"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way.",
+      "choices": [
+       [
+        "ask_patrol",
+        "Which way are you thinking?",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "ask_patrol",
+      "button": "Which way are you thinking?",
+      "status": "ok",
+      "reply": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way. North along the fe",
+      "choices": [
+       [
+        "why_east",
+        "Why does nobody go east?",
+        true
+       ],
+       [
+        "advise_north",
+        "Go north. The fences matter more than the road.",
+        true
+       ],
+       [
+        "advise_east",
+        "[Curiosity] Go east, and look at the road. Tell me what you see at the gate.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "why_east",
+      "button": "Why does nobody go east?",
+      "status": "ok",
+      "reply": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way. The Trial. The for",
+      "choices": [
+       [
+        "advise_north",
+        "Go north. The fences matter more than the road.",
+        true
+       ],
+       [
+        "advise_east",
+        "[Curiosity] Go east, and look at the road. Tell me what you see at the gate.",
+        true
+       ],
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "advise_north",
+      "button": "Go north. The fences matter more than the road.",
+      "status": "ok",
+      "reply": "North it is. The deer will be disappointed.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get ready.",
+      "status": "ok",
+      "reply": "Dusk, then.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Not at all. Folk like you remind us to be better than we are.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you hunt?",
+      "status": "ok",
+      "reply": "Whatever the woods give: deer, mostly. I track it, shoot it and carry it back.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:game",
+      "button": "Is there much game?",
+      "status": "ok",
+      "reply": "7 animals within sight of me this morning.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "worker:lumberjack": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 10,
+    "choices_tried": [
+     "leave",
+     "topic:forest_thick",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:store",
+     "topic:work",
+     "topic:young"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Share the clearing. Well. I cut the old ones, Kormund Thunderaxe marks the young ones with stakes, and neither of us shouts. I can live with that. You carried i",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Mind the axe, then.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:forest_thick",
+      "button": "How is the forest around here?",
+      "status": "ok",
+      "reply": "Plenty of tall trees within a short walk: 116 of them near me right now.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:store",
+      "button": "Is there timber in the store?",
+      "status": "ok",
+      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What does a lumberjack do all day?",
+      "status": "ok",
+      "reply": "I walk out to a tree that has stood long enough, fell it, carry the log back and start again.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Not at all. Folk like you remind us to be better than we are.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:young",
+      "button": "And the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles close by. I leave those alone, mostly.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "worker:ranger": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 10,
+    "choices_tried": [
+     "leave",
+     "topic:lumberjack",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:timber",
+     "topic:work",
+     "topic:young"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "He agreed to the stakes? Then I will mark the young trees where he can see them, and he will cut the old ones. It is a start. Thank you, wizard.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get on.",
+      "status": "ok",
+      "reply": "Mind the seedlings.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:young",
+      "button": "How are the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles within sight of me. Every one of them is a log in some future year.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:lumberjack",
+      "button": "Do you work with the lumberjack?",
+      "status": "ok",
+      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:work",
+        "What does a forester do?",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What does a forester do?",
+      "status": "ok",
+      "reply": "I find open ground, dig a hole and plant a sapling. Then I do it again. The trees do the rest, slowly.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "I would rather you did not stand near my work, if it is the same to you.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:timber",
+      "button": "Does the settlement need more timber?",
+      "status": "ok",
+      "reply": "It always does. But a forest cut faster than it grows is a forest that ends.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "worker:stonemason": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 9,
+    "choices_tried": [
+     "leave",
+     "topic:building",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:rocks",
+     "topic:work"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "You took Skormir Ironhelm's word over mine. Fine. I will fetch my own stone from now on, and the hearth can wait.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:building",
+        "What is the stone for?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you work.",
+      "status": "ok",
+      "reply": "Such as it is.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:building",
+      "button": "What is the stone for?",
+      "status": "ok",
+      "reply": "For building, mostly. Every wall and every foundation starts as somebody's rock.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Have you noticed they all talk in threes? Three colours, three places. As if somebody had written it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you do?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you do?",
+      "status": "ok",
+      "reply": "I chip granite from the rock near the quarry and carry it back to be stored. Slow work, but stone does not rot.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Bother me? It makes me prouder of the village, if you want the truth.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:rocks",
+      "button": "How much rock is left?",
+      "status": "ok",
+      "reply": "33 rock formations still stand around me. Plenty of work yet.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Keeps to themselves. Clever, I suppose, but clever is not the same as caring.\nThey taught half the settlement their letters, and never raised a hand to anyone.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   },
+   "worker:hunter": {
+    "opened": true,
+    "exhausted": true,
+    "ops": 8,
+    "choices_tried": [
+     "leave",
+     "topic:game",
+     "topic:opinion_apprentice",
+     "topic:opinion_mentor",
+     "topic:opinion_wizards",
+     "topic:work"
+    ],
+    "defects": [],
+    "transcript": [
+     {
+      "talk": "Back from the edge. Nothing out there but trees and the road, which is how I like it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get ready.",
+      "status": "ok",
+      "reply": "Dusk, then.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you hunt?",
+      "status": "ok",
+      "reply": "Whatever the woods give: deer, mostly. I track it, shoot it and carry it back.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
+      "status": "ok",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:game",
+      "button": "Is there much game?",
+      "status": "ok",
+      "reply": "7 animals within sight of me this morning.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_apprentice",
+      "button": "Does it bother you, having an apprentice wizard about the pl",
+      "status": "ok",
+      "reply": "Not at all. Folk like you remind us to be better than we are.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ]
+      ],
+      "ends": false
+     }
+    ]
+   }
+  },
+  "defects": {}
+ }
+}
