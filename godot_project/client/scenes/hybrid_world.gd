@@ -1324,6 +1324,32 @@ func _mp_notice(n: Dictionary) -> void:
 			_mp_toast_show("A new cycle begins")
 		"ai_says":
 			_mp_toast_show("%s: %s" % [who, str(n.get("text", ""))], 6.0)  # an AI wizard speaking in its own voice
+		"rung":
+			# the world's magic ladder reached a rung (narrative/progression.py): a card in the speaker's name, over whatever we were doing
+			var gain := str(n.get("gain", "more magic"))
+			var roles: Dictionary = {"mentor": "Your mentor", "mira": "Your fellow apprentice", "voice": "Your own %s" % str(n.get("name", "voice"))}
+			var role: String = str(roles.get(str(n.get("speaker", "")), ""))
+			var title: String = str(n.get("name", ""))
+			var body := str(n.get("text", "")) + "\n\n" + ("The weave of this world: %d colours, %d slots. (%s)" % [int((n.get("colours", []) as Array).size()), int(n.get("weave", 3)), gain])
+			if campaign_ui != null:
+				campaign_ui.show_notice("rung", title, role, body)
+			else:
+				_mp_toast_show("New magic: %s" % gain, 6.0)
+		"inner_voice":
+			if campaign_ui != null:
+				campaign_ui.show_notice("inner_voice", str(n.get("aspect", "A voice")), "says, from somewhere behind your eyes", str(n.get("text", "")))
+			else:
+				_mp_toast_show("%s: %s" % [str(n.get("aspect", "")), str(n.get("text", ""))], 7.0)
+		"pests_noticed":
+			_mp_toast_show("Rats in the Central Warehouse: %d of them. The journal has it." % int(n.get("count", 0)), 5.0)
+		"pest_scorched":
+			if str(n.get("seat", "")) != LanSession.player_id:
+				_mp_toast_show("%s scorched the big rat; it bolts." % who, 4.0)
+		"pests_scattered":
+			_mp_toast_show("The warehouse is a ruin. The rats have scattered.", 5.0)
+		"pest_killed":
+			if str(n.get("how", "")) == "burned" and str(n.get("seat", "")) != LanSession.player_id:
+				_mp_toast_show("%s burned a rat." % who, 4.0)
 		"wizard_died":
 			if str(n.get("seat", "")) != LanSession.player_id:
 				_mp_toast_show("%s has fallen." % who, 5.0)
@@ -1542,8 +1568,12 @@ func _dead_text() -> String:
 	var line := "You are dead."
 	if killer != "":
 		line = "%s killed you." % killer
+	if str(_dead_info.get("cause", "")) == "duel" and killer == "" and str(_dead_info.get("by", "")) != "":
+		line = "You walked out of a duel to the death. The duel did not walk out of you."
 	if who != "":
 		line += "\n%s can bring you back." % who
+	elif str(_dead_info.get("rescuer", "")) != "":
+		line += "\n%s is coming." % str(_dead_info.get("rescuer", ""))
 	else:
 		line += "\nNobody is left to bring you back."
 	return line

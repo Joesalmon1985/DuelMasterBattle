@@ -1,6 +1,6 @@
 {
  "id": "mother",
- "note": "Placeholder authored text (owner review pending). The apprentice's mother. Variants read the behaviour ledger as facts: grounded, kills, protests, resurrections, deaths, victim (a name), child (a name).",
+ "note": "Placeholder authored text (owner review pending). The apprentice's mother. Variants read the behaviour ledger as facts: grounded, kills, protests, resurrections, deaths, victim (a name), child (a name). Added 18 Oct 2026: arson, burned_village, idle, empty_store, second_generation.",
  "speakers": {
   "mother": {
    "nodes": {
@@ -122,6 +122,145 @@
        "lines": [
         "You died. I want you to know that I knew. A mother knows. I was fetching water and the bucket went cold.",
         "Whatever you do out there, you come back. That is the only rule I have ever given you."
+       ]
+      },
+      {
+       "id": "arson",
+       "when": {
+        "facts": [
+         {
+          "name": "my_burned_people",
+          "gte": 1
+         },
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_arson"
+        ]
+       },
+       "sets": [
+        "said_arson"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": -10
+        }
+       ],
+       "lines": [
+        "{child}. Sit down. No. Sit.",
+        "Skormir's mother came to my door. Do you know what I said to her? Nothing. There is nothing to say to a woman whose son was set alight by the child you raised. I stood there. She stood there. Then she went home.",
+        "You will not do it again. I am not asking."
+       ]
+      },
+      {
+       "id": "burned_village",
+       "when": {
+        "facts": [
+         {
+          "name": "my_burned_home_buildings",
+          "gte": 1
+         },
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_burned_village"
+        ]
+       },
+       "sets": [
+        "said_burned_village"
+       ],
+       "lines": [
+        "I can smell it from here. The whole square can. Your father built with those people and you have burned what they built because you could.",
+        "Eat something. Then go and stand in front of whoever it was and let them say what they like to you. That is the least of it."
+       ]
+      },
+      {
+       "id": "idle",
+       "when": {
+        "facts": [
+         {
+          "name": "idle_minutes",
+          "gte": 12
+         },
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ]
+       },
+       "lines": [
+        "There you are. I was about to send the chickens to look for you. Have you done anything today? No. I can tell by your hands; they are clean."
+       ],
+       "lines_alt": [
+        [
+         "Still nothing? The day does not wait, {child}. Neither, I promise you, does the stranger people keep speaking of."
+        ]
+       ]
+      },
+      {
+       "id": "empty_store",
+       "when": {
+        "facts": [
+         {
+          "name": "food_left",
+          "lte": 0
+         },
+         {
+          "name": "played_minutes",
+          "gte": 5
+         },
+         {
+          "name": "grounded",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_empty_store"
+        ]
+       },
+       "sets": [
+        "said_empty_store"
+       ],
+       "lines": [
+        "The store is empty. The keeper says rats; the keeper says a lot of things, but this time I went and looked, and he is right.",
+        "We will eat what is in the pantry and then we will eat what the neighbours spare us. You might have mentioned, while you were doing whatever you were doing, that you can set a rat on fire from three paces."
+       ]
+      },
+      {
+       "id": "second_generation",
+       "when": {
+        "facts": [
+         {
+          "name": "generation",
+          "gte": 2
+         },
+         {
+          "name": "previous",
+          "truthy": true
+         },
+         {
+          "name": "arrived_after",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "told_after",
+         "said_generation"
+        ]
+       },
+       "sets": [
+        "said_generation"
+       ],
+       "lines": [
+        "You have {previous}'s way of standing. I am sorry; I should not have said that on your first morning. Eat something.",
+        "This village has buried one apprentice this season. It would rather not learn the trick of it. Be careful out there, and come home at night."
        ]
       },
       {

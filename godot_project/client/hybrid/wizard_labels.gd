@@ -279,8 +279,17 @@ func _render() -> void:
 		if e.has("pest"):
 			var near_pest: bool = _manhattan(e) <= PEST_RANGE
 			var me_dead: bool = world.has_method("ui_dead") and world.ui_dead()
-			subtitle = "What the villagers call a rat"
+			var big: bool = str(e.get("pest", {}).get("size", "")) == "big"
+			subtitle = ("The big one, " if big else "") + "what the villagers call a rat" + (" (scorched)" if bool(e.get("pest", {}).get("scorched", false)) else "")
 			actions.append({"id": "pest", "text": "Drive it off" if near_pest else "Drive it off (walk closer)", "kind": "primary", "disabled": not near_pest or me_dead})
+			# fire magic works on a rat as on a tree (the server decides: narrative/pests.py burn); the card offers it beside the duel
+			var near_fire: bool = distance_to(e) <= FIRE_RANGE
+			var burn_rat := "Burn it with fire magic"
+			if not flame_known():
+				burn_rat += " (you have no magic yet)"
+			elif not near_fire:
+				burn_rat += " (walk closer)"
+			actions.append({"id": "burn", "text": burn_rat, "disabled": not (near_fire and flame_known()) or me_dead})
 		elif not bool(_who.get("dead", e.get("dead", false))) and not bool(_who.get("hostile", e.get("hostile", false))):
 			actions.append({"id": "talk", "text": "Talk" if close_enough else "Talk (walk closer)", "kind": "primary", "disabled": not close_enough})
 		elif bool(e.get("body", false)) and str(e.get("seat", "")) != LanSession.player_id:
@@ -311,7 +320,7 @@ func _render() -> void:
 		burn_text += " (you have no magic yet)"
 	elif not near:
 		burn_text += " (walk closer)"
-	if cls != "npc":  # the narrative people (the mentor's body, the stranger) are not targets of the world's fire magic
+	if cls != "npc":  # the narrative people (the mentor's body, the stranger) are not targets of the world's fire magic; the rats got their button above
 		actions.append({"id": "burn", "text": burn_text, "disabled": not can_burn})
 	# The card is only rebuilt when WHO it is about or WHAT can be done changes; a changing description (a building's status text) is updated in place,
 	# so a click that is in flight on a button is never lost to a rebuild.
@@ -342,8 +351,10 @@ func describe_person(e: Dictionary) -> String:
 		bits.append("Health %d of %d." % [int(e.get("hp", 0)) / 100, int(e.get("max_hp", 0)) / 100])
 	elif cls == "npc":
 		if e.has("pest"):
-			bits.append("Six legs, a shell, and a click when it moves. Plainly a machine. The keeper says it is a rat. It is in the grain either way." if str(e.get("pest", {}).get("size", "")) == "small"
-				else "The size of a dog, and it clicks when it walks. The keeper is adamant that this is a rat.")
+			bits.append("Six legs, a shell, and a click when it moves. Plainly a machine. The keeper says it is a rat. It is in the grain either way. It will burn like anything else." if str(e.get("pest", {}).get("size", "")) == "small"
+				else "The size of a dog, and it clicks when it walks. The keeper is adamant that this is a rat. One burst of Flame only scorches it; a Ward broken on it is surer.")
+			if bool(e.get("pest", {}).get("scorched", false)):
+				bits.append("Its shell is blackened: one more burst would finish it.")
 		elif bool(e.get("body", false)):
 			bits.append("An apprentice, dead where they fell. The weave of three can call them back, if somebody stands beside them and holds it.")
 		elif bool(e.get("dead", false)):
@@ -390,6 +401,8 @@ func _on_action(id: String) -> void:
 		var reply := cast_fire(target)
 		if str(reply.get("status", "")) == "ok":
 			close()
+			if str(reply.get("class", "")) == "pest":
+				world.story_ui._toast("The big rat is scorched and bolts." if bool(reply.get("scorched", false)) else ("The rat burns. %d left." % int(reply.get("left", 0)) if reply.has("left") else "The rat burns."))
 		else:
 			_note = fire_message(str(reply.get("reason", "failed")))
 			_render()

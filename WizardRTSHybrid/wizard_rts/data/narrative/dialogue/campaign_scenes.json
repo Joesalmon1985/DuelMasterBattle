@@ -220,7 +220,8 @@
      ],
      "focus": "attacker"
     }
-   ]
+   ],
+   "dismissible": true
   },
   "confrontation": {
    "final": "departure",
@@ -586,6 +587,48 @@
      "focus": "mentor"
     }
    ]
+  },
+  "confrontation_missed": {
+   "final": "",
+   "pages": [
+    {
+     "speaker": "narrator",
+     "focus": "mentor",
+     "lines": [
+      "It is over before you have looked up. {mentor} is dead in the square of {settlement}, and the stranger has walked out the way he came in, unhurried, as if the village were a room he had finished with.",
+      "Nobody waited for you. Nobody, it turns out, had to."
+     ]
+    },
+    {
+     "speaker": "narrator",
+     "focus": "player",
+     "lines": [
+      {
+       "text": "You were somewhere else. The village will want to know where, and you will find that you do not have a good answer.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_talks",
+          "lte": 2
+         }
+        ]
+       }
+      },
+      {
+       "text": "You were busy. Everyone agrees you were busy. Nobody can say with what.",
+       "when": {
+        "facts": [
+         {
+          "name": "my_talks",
+          "gte": 3
+         }
+        ]
+       }
+      }
+     ]
+    }
+   ],
+   "dismissible": true
   }
  }
 }

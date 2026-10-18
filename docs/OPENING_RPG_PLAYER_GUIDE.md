@@ -1,4 +1,4 @@
-# Wizard World: the opening, the village and the Trial of Champions (player guide, 0.3.0)
+# Wizard World: the opening, the village and the Trial of Champions (player guide, 0.4.0)
 
 One page on what the game is now, for the two of you with phones (or one of you with Mira). The programme that built it is
 `docs/PLAN_OPENING_RPG_AND_DEATHTRAP.md`; what was tested and how is `docs/ledger/OPENING_RPG_PROGRESS.md`; the Trial's canon
@@ -8,8 +8,8 @@ status is `docs/TRIAL_CANON_STATUS.md`. Every line of dialogue is placeholder pr
 
 You and your friend (or you and Mira) start beside your home village, each with a mother, a staff and the three colours: Flame,
 Frost, Vine. Nobody tells you what to do. The mentor will teach you to hold and break a Ward if you ask; you can skip the lessons.
-Anyone can be challenged to a Ward duel at any time (three colours in each wizard's first three duels, four from the fourth: Light joins once both have played three), and a duel between apprentices is to the death: the loser's body lies where it
-fell. The living one can stand beside the body and **Bring them back**: a channel of a few seconds, in full view of the village. Your
+Anyone can be challenged to a Ward duel at any time, and a duel between apprentices is to the death: the loser's body lies where it
+fell. Walking out of a duel you demanded counts as losing it. The living one can stand beside the body and **Bring them back**: a channel of a few seconds, in full view of the village. Your
 mother hears of a killing and comes to have words; while she is grounding you, you do not leave the village. Mira refuses the
 first two challenges; the third time she is provoked, and she means it.
 
@@ -22,12 +22,23 @@ Everything that happens is kept: bodies, the mentor's fate, the warehouse's eate
 generation later, where people remember the previous one. The host's world catches up on the time it was closed (ten simulated
 minutes per real hour, capped), and the lobby says so while it does. **Start a new world** is in Settings behind two confirmations.
 
+## The magic grows with the world
+
+Every duel in the world starts at three colours (Flame, Frost, Vine) and three slots. The world's magic grows on its own ladder, by duels fought by
+anyone (lessons, rats, the stranger, the Trial's creatures, duels between apprentices) or by minutes played, whichever comes first: a fourth colour, Light,
+after three duels or twelve minutes; a fourth slot after five duels or twenty-five minutes; Stone after seven or forty; Shadow after ten or sixty. The gain
+belongs to the world: it is there for a new apprentice, after a death, after Continue, after a week away. When a rung comes, whoever is nearest to it tells
+you (the mentor if he lives, else Mira, else your own strongest Aspect) on a card that interrupts whatever you were doing, except a duel already on the
+board. The journal's MAGIC IN THIS WORLD line says what the next rung is and how far off.
+
 ## The village
 
 Walk up to anyone and tap **✦** to talk. The villagers have jobs, opinions and a memory of what you did (the ledger: who you
 killed, who you brought back, how often you protest to your mother). Three things are going on from the first minute: rats are
-eating the warehouse's food (the keeper complains to whoever asks; fight a rat by standing beside it and tapping **Drive it off**, a
-small Ward duel on the real board; Mira helps once the keeper has complained to you), the mason and a carrier are arguing over
+eating the warehouse's food (walk within sight of the warehouse and the journal has it; the keeper complains to whoever asks; fight a rat by standing
+beside it and tapping **Drive it off**, a small Ward duel on the real board, or **Burn it with fire magic** like anything else, though the big one only
+scorches the first time and a rat burned beside the store takes a load of food with it; Mira helps once the keeper has complained to you; the rats come
+back in smaller waves, six in all, and the keeper has something to say about each), the mason and a carrier are arguing over
 granite, and the ranger is getting a patrol together for the east road, where a stranger in a cloak has been asking after the
 mentor. The stranger comes whether you listen or not. If nobody is there to face him, the mentor dies alone.
 
@@ -51,8 +62,15 @@ stand in the Trial's doorway. Tap a person or a thing to use it directly. **⚔ 
 buttons; the pause menu has Save, Leave and the Trial's own exit when you are inside. The pocket strip (top left, inside the Trial)
 lists what you carry, your gems and whether you are hurt.
 
-## What is not in 0.3.0
+## The world notices
 
-Nothing from the PC side has been played on a phone yet (the owner's two-phone run is `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`).
+People remember what you do, and say so: a store eaten empty while you stood about, forty trees burned, a carrier set alight, the same villager accosted
+five times, a stranger faced thirty tiles away, an apprentice who died in the Trial the generation before. Your own Aspects speak up at the absurd
+moments, once each. Mira remarks on an idle quarter-hour and on a duel you walked out of; if you die in single player and she can reach your body, she
+brings you back before the ending card comes.
+
+## What is not in 0.4.0
+
+Nothing from 0.4.0 has been played on a phone yet (the owner's two-phone run is `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`).
 The dialogue is placeholder prose. Mira does not fight in the Trial and does not pick things up for you. The Trial's unverified
 passages stay unverified (`docs/TRIAL_CANON_STATUS.md`).

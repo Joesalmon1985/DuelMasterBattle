@@ -50,7 +50,12 @@ def hash_without_players(w) -> str:
 
 
 def kill_host(t: Table) -> None:
+    """The host dies with nobody able to bring them back (Mira, if she is in the world, is too far to walk to the body): the session ends."""
     joe = t.people[0]
+    for s in party.ai_seats(t.world):
+        rec = t.world.players.get(s)
+        if rec is not None:
+            rec["tx"], rec["ty"] = int(joe.pose["tx"]) + 95, int(joe.pose["ty"])
     mortality.die(t.world, joe.id, "trap", terminal=False)
     t.session.tick(t.now)
     assert t.session.ending is not None

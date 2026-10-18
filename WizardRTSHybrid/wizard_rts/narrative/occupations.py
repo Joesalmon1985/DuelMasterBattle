@@ -137,6 +137,8 @@ def view(world: Any, sp: dict[str, Any], ctx: dict[str, Any], intro: bool = True
     entry = data()["roles"][role_key(sp)]
     count = max(0, talks(world, sp["pid"]) - 1)  # `note_talk` has already counted this conversation
     pool = entry["intro"] if count == 0 else entry["hub"]
+    if count >= int(data().get("often_after", 5)) and data().get("often"):
+        pool = data()["often"]  # the fifth visit and after: they have noticed you keep coming back
     lines = [pool[_rng(world, sp["pid"], count, "open").randrange(len(pool))]] if intro else []
     lines = graph._fmt(lines, ctx)
     if intro:

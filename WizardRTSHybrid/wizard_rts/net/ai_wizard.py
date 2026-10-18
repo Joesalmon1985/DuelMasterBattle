@@ -79,6 +79,9 @@ class AiWizard:
         self.next_rescue_step_at = 0.0
         self.next_pest_at = 0.0
         self.trial_said_zone = ""  # the zone she last spoke of
+        self.next_idle_at = 0.0
+        self.idle_said = 0
+        self.seen_deeds: dict[str, int] = {}
 
     # ---------------------------------------------------------------- memory (saved with the world, in the party's private record)
     def memory(self) -> dict[str, Any]:
@@ -143,6 +146,8 @@ class AiWizard:
         if self._help_pests(now):
             return
         self._greet(now)
+        self._react_to_deeds(now)
+        self._idle_remark(now)
         self._treat(now)
         self._follow(now)
 
@@ -227,7 +232,7 @@ class AiWizard:
                 mem["duels"]["won"] += 1
                 self._adjust(key, int(self.c["win_relationship"]))
                 if other is not None and self.session._dead(other):
-                    self.say(other, "killed_you", now)
+                    self.say(other, "you_forfeited" if (duel.reason == "forfeit" and self.c["lines"].get("you_forfeited")) else "killed_you", now)
                     self.rescue, self.rescue_said = rival, False
                 else:
                     self.say(other, "win", now)
@@ -503,6 +508,39 @@ class AiWizard:
         if abs(int(a["tx"]) - int(b["tx"])) + abs(int(a["ty"]) - int(b["ty"])) <= 4:
             self.greeted.add(friend.id)
             self.say(friend, "greet", now)
+
+    def _react_to_deeds(self, now: float) -> None:
+        """The first time the human burns a person, and the first time they burn a home building, she says so (once each)."""
+        friend = self._companion_of()
+        if friend is None or "narrative" not in self.session.world.__dict__:
+            return
+        from wizard_rts.narrative import ledger
+
+        for key, line in (("burned_people", "you_burned_someone"), ("burned_home_buildings", "you_burned_the_store")):
+            n = ledger.count(self.session.world, key, friend.id)
+            if n > 0 and not self.seen_deeds.get(key):
+                self.seen_deeds[key] = n
+                if self.c["lines"].get(line):
+                    self.say(friend, line, now)
+                    return
+
+    def _idle_remark(self, now: float) -> None:
+        """A human who has done nothing for a while hears about it, in her voice, a few times at most (`idle_after_s`, `idle_every_s`, `idle_max`)."""
+        friend = self._companion_of()
+        if friend is None or not friend.connected or now < self.next_idle_at:
+            return
+        after = float(self.c.get("idle_after_s", 180.0))
+        last = self.session.last_human_act_at.get(friend.id)
+        if last is None:
+            last = getattr(self.session, "started_at", None)
+            if last is None:
+                self.session.started_at = now  # type: ignore[attr-defined]
+                last = now
+        if now - last < after or self.idle_said >= int(self.c.get("idle_max", 4)):
+            return
+        self.idle_said += 1
+        self.next_idle_at = now + float(self.c.get("idle_every_s", 240.0))
+        self.say(friend, "idle", now)
 
     def _walkable(self, t: tuple[int, int]) -> bool:
         w = self.session.world

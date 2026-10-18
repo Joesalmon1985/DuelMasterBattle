@@ -72,6 +72,7 @@ def tick(world: Any) -> None:
         from wizard_rts.trial import run as trial
 
         trial.tick(world)
-        from wizard_rts.narrative import progression
+        from wizard_rts.narrative import progression, voice
 
         progression.tick(world)
+        voice.tick(world)

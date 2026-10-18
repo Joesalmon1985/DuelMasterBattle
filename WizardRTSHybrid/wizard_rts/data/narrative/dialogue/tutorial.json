@@ -1,11 +1,103 @@
 {
  "id": "tutorial",
- "note": "Placeholder authored text (owner review pending). The mentor's lessons: meet, colours, told_ward, hidden_ward, then the world. The mentor is the apprentice's teacher; their conviction is that magic is a responsibility, not an entitlement.",
+ "note": "Placeholder authored text (owner review pending). The mentor's lessons: meet, colours, told_ward, hidden_ward, then the world. The mentor is the apprentice's teacher; their conviction is that magic is a responsibility, not an entitlement. Added 18 Oct 2026: never_came, second_generation, arsonist, tree_burner, absent, empty_store (facts from conversation.common_facts and the ledger).",
  "speakers": {
   "teacher": {
    "nodes": {
     "hub": {
      "variants": [
+      {
+       "id": "never_came",
+       "when": {
+        "forbids": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "played_minutes",
+          "gte": 15
+         }
+        ]
+       },
+       "sets": [
+        "meet",
+        "said_never_came"
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "meet"
+        }
+       ],
+       "lines": [
+        "So you exist. I had begun to wonder. A quarter of an hour of the morning gone, the brazier lit for nobody, and here you are at last with the look of somebody who has been very busy at nothing.",
+        "I will not ask where you were. Ask me what you like; the day is shorter than it was."
+       ]
+      },
+      {
+       "id": "second_generation",
+       "when": {
+        "forbids": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "generation",
+          "gte": 2
+         },
+         {
+          "name": "previous",
+          "truthy": true
+         }
+        ]
+       },
+       "sets": [
+        "meet",
+        "said_generation"
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "meet"
+        }
+       ],
+       "lines": [
+        "You are not {previous}. I know that. I had the speech ready for {previous} and I will give you a different one, when I have thought of it.",
+        "They stood where you are standing. They had the same three colours and the same borrowed staff. Try to want it more than they did; it was the wanting that was short. Ask me what you like."
+       ]
+      },
+      {
+       "id": "arsonist_first",
+       "when": {
+        "forbids": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_burned_people",
+          "gte": 1
+         }
+        ]
+       },
+       "sets": [
+        "meet",
+        "said_arsonist"
+       ],
+       "effects": [
+        {
+         "kind": "complete_lesson",
+         "lesson": "meet"
+        },
+        {
+         "kind": "relationship",
+         "delta": -15
+        }
+       ],
+       "lines": [
+        "There you are. I was going to say 'late again'. I had the whole speech. Then two carriers came past my door with the smell on them and told me what the new apprentice had done with the one spell they were born knowing.",
+        "So. No speech. You know Flame; I will not insult us both by teaching it. Ask me what you like, and understand that I am answering a stranger."
+       ]
+      },
       {
        "id": "first",
        "when": {
@@ -50,6 +142,121 @@
        "lines": [
         "And Mira, trailing you like a second shadow. Good. She learned the stance in a week; watch her feet, not her hands, and do not let her talk you into a duel before you can hold a Ward.",
         "Now. Where were we."
+       ]
+      },
+      {
+       "id": "arsonist",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_burned_people",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_arsonist"
+        ]
+       },
+       "sets": [
+        "said_arsonist"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": -15
+        }
+       ],
+       "lines": [
+        "I taught you Flame to light a brazier. You have used it on a person. I am not going to shout; I shouted at my own teacher once and it changed nothing.",
+        "Here is what will happen. The village will remember, and so will I, and every lesson from now on will be given to somebody I am slightly afraid of. Ask your questions."
+       ]
+      },
+      {
+       "id": "tree_burner",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "my_burned_trees",
+          "gte": 8
+         },
+         {
+          "name": "my_burned_people",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_trees"
+        ]
+       },
+       "sets": [
+        "said_trees"
+       ],
+       "lines": [
+        "The lumberjack came to see me. He wanted to know whether the new apprentice was being trained to compete with him, because you have burned eight trees and he has only felled six.",
+        "I told him it was a lesson. Make it one. Ask me something."
+       ]
+      },
+      {
+       "id": "absent",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "idle_minutes",
+          "gte": 10
+         }
+        ],
+        "forbids": [
+         "said_absent"
+        ]
+       },
+       "sets": [
+        "said_absent"
+       ],
+       "lines": [
+        "You have been standing about. Do not tell me you have not; I can see the square from here and I have watched you not move for the better part of ten minutes.",
+        "Magic does not come to people who wait for it. That is a lie, as it happens, it comes to everyone eventually; but it comes faster to people who ask. So ask."
+       ],
+       "lines_alt": [
+        [
+         "Back from wherever it is you stand. Well?"
+        ]
+       ]
+      },
+      {
+       "id": "empty_store",
+       "when": {
+        "requires": [
+         "meet"
+        ],
+        "facts": [
+         {
+          "name": "food_left",
+          "lte": 0
+         },
+         {
+          "name": "played_minutes",
+          "gte": 5
+         }
+        ],
+        "forbids": [
+         "said_empty_store"
+        ]
+       },
+       "sets": [
+        "said_empty_store"
+       ],
+       "lines": [
+        "The keeper tells me the store is empty. Rats. He says it the way other men say 'wizards'.",
+        "I mention it because an apprentice with Flame and a weave of three could have done something about five rats, and did not. Ask me what you like; I will be thinking about supper."
        ]
       },
       {

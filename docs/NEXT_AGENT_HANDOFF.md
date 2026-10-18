@@ -1,5 +1,26 @@
 # Next agent handoff
 
+## 18 Oct 2026: stress testing, the magic ladder, the rats, the noticing dialogue, 0.4.0 (branch `feature/player-stress-and-progression`, from `main` at `1b9513dd`)
+
+The owner approved `docs/PLAN_PLAYER_STRESS_AND_PROGRESSION.md` (plan first, then the ladder revised to the owner's three rules: after three duels the
+fourth colour comes whatever else happened; after an hour of play four slots and six colours; the gain belongs to the world and survives death, a new
+apprentice, save and restart; a due rung interrupts anything but a duel on the board). Ledger: `docs/ledger/PLAYER_STRESS_PROGRESS.md`. Findings:
+`docs/PLAYER_STRESS_REPORT.md` (fifteen misbehaving-apprentice scenarios, `tests/test_player_stress.py`, observations in
+`WizardRTSHybrid/docs/evidence/stress/`). In one paragraph: `narrative/progression.py` is the world's magic ladder (duels or play minutes, rungs Light, a fourth
+slot, Stone, Shadow; floors under `wizard.combatant` and `pvp.make_format`; the ladder's colour order replaced the old Stone-based PvP pool, so every test
+and headed script now wards with Flame, Frost, Vine; announced by the mentor, Mira or the apprentice's strongest Aspect through a `rung` notice and the client's
+notice card); rats burn like anything else (`magic.fire` class `pest`, `pests.burn`: the big one is scorched first, a rat beside the store costs a food ware), a
+ruin scatters them, the keeper thanks per wave and closes the waves, the rats have a journal entry; the world notices the player (`narrative/deeds.py` arson
+ledger, `narrative/voice.py` inner voice spoken by the Aspects, `conversation.common_facts` for idleness, generation, visits, food; new variants for the
+mentor, mother, Rollkeeper, contestants, villagers, keeper, Mira); mechanics fixed from the stress findings: the ending waits 150 s while Mira can reach the
+body (she brings a forfeiting apprentice back in single player), a scene nobody answered becomes `confrontation_missed` and a page that asks nothing gives
+way to a conversation, a lone apprentice's stranger walks in after the grace, quest replacements are never double-cast, the hub speech is not repeated under
+an answer, absent ledger keys read as 0 (the Rollkeeper's unprepared line never fired before), the fourth wall counts talks. GAME_VERSION 0.4.0, Android
+code 4, protocol 3, narrative version 3. Branch clean-up done (25 local, 42 remote merged branches, two worktrees, two stashes). Tests: see the ledger's
+session log for the counts. Not done: a phone has not run 0.4.0; the dialogue is placeholder prose (`docs/DIALOGUE_REVIEW.md`); the rung card and the
+inner-voice card were checked by the headless parse test and the headed runs named in the ledger, not by a human. Rules kept: content frozen, never
+`git add -A`, `docs/release_notes.md` never committed, merging into `main` is the owner's call.
+
 ## 16 Oct 2026 (later): the opening RPG and the Trial of Champions, 0.3.0 (branch `feature/opening-rpg-and-trial`, from `main` at `e6e6399b`)
 
 The owner signed off `docs/PLAN_OPENING_RPG_AND_DEATHTRAP.md` and lifted the checkpoints ("work through to M8"). All eight milestones are on

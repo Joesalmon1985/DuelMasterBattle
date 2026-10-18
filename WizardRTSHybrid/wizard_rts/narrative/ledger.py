@@ -13,7 +13,10 @@ from typing import Any
 
 RECENT_CAP = 60
 KNOWN = ("pvp_duels", "pvp_wins", "pvp_losses", "kills", "deaths", "resurrections", "draws", "protests", "provocations", "refused_steps", "accosted",
-         "fourth_wall", "talks", "pests_killed", "pests_burned", "pest_escapes", "burned_trees", "burned_rocks", "burned_buildings", "burned_people", "burned_soldiers")  # fourth_wall: the rare lines that notice they are lines (capped by the banks' own conditions)  # always present as facts (0 when nothing happened)
+         "fourth_wall", "talks", "pests_killed", "pests_burned", "pest_escapes", "burned_trees", "burned_rocks", "burned_buildings", "burned_people", "burned_soldiers",
+         "burned_animals", "burned_things", "burned_home_buildings", "missed_the_stranger", "inner_voice",
+         "trial_entries", "trial_entered_unprepared", "trial_wins", "trial_champion", "keeper_complained_to", "keeper_told_machines", "burned_warehouse",
+         "infestations_cleared", "keeper_thanked", "challenges_declined", "lessons_skipped", "attacked_during_scene", "upset_wins")  # a key that is absent reads as 0, never as "unknown"  # fourth_wall: the rare lines that notice they are lines (capped by the banks' own conditions)  # always present as facts (0 when nothing happened)
 
 
 def state(world: Any) -> dict[str, Any]:

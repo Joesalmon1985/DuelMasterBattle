@@ -146,4 +146,13 @@ def snapshot(world: Any) -> dict[str, Any]:
             "next_lesson": next_lesson_hint(world), "objective": objective(world), "spells": [wizard.SPELL_NAMES.get(s, str(s)) for s in w["spells"]],
             "weave_size": int(w["weave_size"]), "magic_gated": world.profile == "campaign", "unlocked": graph.unlocked(world),
             "duel": {"lease": lease["id"], "purpose": lease["purpose"]} if lease else {}, "quests": _rats_journal(world) + quests.snapshot(world),
-            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world))}
+            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world)), "magic": _magic(world)}
+
+
+def _magic(world: Any) -> dict[str, Any]:
+    from wizard_rts.narrative import progression
+
+    try:
+        return progression.view(world)
+    except Exception:  # noqa: BLE001
+        return {}

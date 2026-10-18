@@ -334,6 +334,17 @@ def _begin_aftermath(world: Any) -> None:
     st["aftermath_start_ms"] = now(world)
     _set_stage(world, "aftermath")
     _retreat(world, scene_ctx(world), {})
+    _replace_stale_scenes(world)
+
+
+def _replace_stale_scenes(world: Any) -> None:
+    """A wizard who never answered the stranger (away, or simply not pressing) still has the notice or the confrontation open after it is all over.
+    That page is replaced by one that says what they missed, so the text is never a lie and nothing stays blocked behind a scene nobody will finish."""
+    for seat in party.players(world):
+        sc = _scene(world)
+        if sc is not None and sc["id"] in ("notice", "confrontation", "confrontation_alone"):
+            start_scene(world, "confrontation_missed")
+            ledger.bump(world, "missed_the_stranger", seat=seat or party.party(world).get("host", ""))
 
 
 def _training_done(world: Any, st: dict[str, Any]) -> bool:
@@ -355,9 +366,10 @@ def _training_done(world: Any, st: dict[str, Any]) -> bool:
 
 def _arrival_ready(world: Any, st: dict[str, Any]) -> bool:
     """The walk-in waits for the notice to be read, but not for ever."""
+    waited = now(world) - int(st.get("arrival_ms") or 0) > int(config.get("campaign", "arrival_walk_cap_ms", 60000)) + int(config.get("party", "scene_grace_ms", 90000))
     if not party.multi(world):
-        return not st["scene"]
-    return not any_scene_open(world) or now(world) - int(st.get("arrival_ms") or 0) > int(config.get("campaign", "arrival_walk_cap_ms", 60000)) + int(config.get("party", "scene_grace_ms", 90000))
+        return not st["scene"] or waited  # a lone apprentice who never reads the notice does not hold the stranger on the road for ever either
+    return not any_scene_open(world) or waited
 
 
 def _duel_watch(world: Any, st: dict[str, Any]) -> None:
@@ -492,6 +504,20 @@ def scene_ctx(world: Any) -> dict[str, Any]:
 
 def active_scene(world: Any) -> dict[str, Any] | None:
     return _scene(world)
+
+
+def dismiss_if_idle(world: Any) -> bool:
+    """A scene that asks nothing (`dismissible`: the stranger's notice, the page about what you missed) gives way when the player does something else,
+    such as talking to a villager; a page with a question keeps its claim. True when a scene was closed."""
+    sc = _scene(world)
+    if sc is None or not scenes()[sc["id"]].get("dismissible"):
+        return False
+    v = scene_view(world)
+    if v is not None and v["needs_answer"]:
+        return False
+    _set_scene(world, None)
+    events.log(world, "scene_dismissed", scene=sc["id"])
+    return True
 
 
 def start_scene(world: Any, scene_id: str) -> None:

@@ -48,6 +48,8 @@ SPAWN_RADIUS = 14
 MIN_SPAWN_DISTANCE = 2
 FACINGS = ("up", "down", "left", "right")
 NOTICE_CAP = 50
+RESCUE_WAIT_S = 150.0  # a dead human's ending waits this long (wall clock) while a living AI apprentice can still walk to the body and bring them back
+IDLE_OPS = frozenset({"ping", "lobby", "state", "journal", "story_view", "terrain", "tile", "profile", "menu", "tech", "cards", "resources", "pvp_view", "move", "teleport", "save"})
 # what a dead wizard may still do: look, listen, leave; everything that acts in the world is refused with `dead` (plan section 3.2)
 DEAD_ALLOWED = frozenset({"ping", "lobby", "start", "state", "leave", "terrain", "tile", "resources", "profile", "tech", "cards", "menu", "story_view", "journal",
                           "inspect_building", "inspect_person", "end_talk", "opening_done", "pvp_view", "pvp_leave", "pvp_ward", "pvp_cast", "pvp_forfeit",
@@ -121,6 +123,8 @@ class MultiplayerSession:
         self.ending: dict[str, Any] | None = None  # the game has ended for the humans of this session (every human is dead): see _check_ending
         self.on_ending: Callable[["MultiplayerSession"], None] | None = None  # the host saves the world and winds the session down
         self.ending_handled = False
+        self.rescue_until: dict[str, float] = {}  # dead human seat -> wall time until which the ending waits for the AI's rescue
+        self.last_human_act_at: dict[str, float] = {}  # human seat -> wall time of their last real command (not a poll, not a step)
         self.ending_grace_s = 4.0
         self.catch_up: dict[str, Any] = {"owed_ms": 0, "paid_ms": 0, "forfeited_ms": 0, "active": False}  # the host's offline catch-up (host.py owns it)
 
@@ -345,6 +349,16 @@ class MultiplayerSession:
         op = str(message.get("op", ""))
         if op not in PLAYER_OPS:
             return {"status": "rejected", "reason": "not_allowed_in_multiplayer", "op": op}
+        if not link.ai and op not in IDLE_OPS and "narrative" in self.world.__dict__:
+            self.last_human_act_at[link.id] = now
+            with self.acting(link):
+                from wizard_rts.narrative import wizard as _wizard
+
+                w = _wizard.wiz(self.world)
+                last = int(w.get("last_act_ms", 0) or 0)
+                if last and self.game_ms() - last >= 60_000:
+                    w["idle_gap_ms"] = self.game_ms() - last  # how long they had done nothing before this act (a burst of acts within a minute keeps it)
+                w["last_act_ms"] = self.game_ms()
         if op in HOST_ONLY_OPS and not link.host:
             return {"status": "rejected", "reason": "host_only", "op": op}
         if self.ending is not None and op not in ENDING_ALLOWED:
@@ -387,9 +401,9 @@ class MultiplayerSession:
             reply = self._passthrough(link, op, message)
             if "narrative" in self.world.__dict__:
                 if op == "fire" and reply.get("status") == "ok":
-                    from wizard_rts.narrative import pests
+                    from wizard_rts.narrative import deeds
 
-                    pests.note_fire(self.world, link.id, str(message.get("target", "")))
+                    deeds.note_fire(self.world, link.id, str(reply.get("class", "")), str(message.get("target", "")))
                 self._deliver_rungs(now)  # a duel just resolved may have moved the world's ladder: the card rides on the very next poll
                 self._check_ending(now)  # a story duel lost to the death is a death like any other
             return reply
@@ -567,6 +581,11 @@ class MultiplayerSession:
                 if l is not None:
                     l.notice("conversation", reply=a["reply"], npc=a["reply"].get("npc", ""), name=a["reply"].get("name", ""))
                 continue
+            if a.get("to"):  # addressed to one wizard (the inner voice, a private notice)
+                l = self.links.get(str(a["to"]))
+                if l is not None:
+                    l.notice(a["kind"], **{k: v for k, v in a.items() if k not in ("kind", "to")})
+                continue
             for l in self.links.values():
                 l.notice(a["kind"], **{k: v for k, v in a.items() if k != "kind"})
 
@@ -600,6 +619,8 @@ class MultiplayerSession:
 
             fate = mortality.fate_of(self.world, link.id)
             out["you_dead"] = {**fate, "body": mortality.body_of(self.world, link.id) or ""} if fate and not fate.get("alive", True) else {}
+            if out["you_dead"] and self.ending is None:
+                out["you_dead"]["rescuer"] = self.rescuer_for(link.id)  # "Mira is coming": the client says so on the death card
             out["resurrection"] = mortality.channel_view(self.world, link.id)
             out["grounded"] = mother.is_grounded(self.world, link.id)
             from wizard_rts.narrative import progression
@@ -834,6 +855,38 @@ class MultiplayerSession:
             mortality.die(self.world, loser, "duel", by=winner, terminal=False)
             self._check_ending(now)
 
+    def rescuer_for(self, seat: str) -> str:
+        """The name of the living AI apprentice who can still walk to this dead human's body (the ending waits for her), or ''."""
+        from wizard_rts.narrative import residents
+
+        if "narrative" not in self.world.__dict__:
+            return ""
+        pid = mortality.body_of(self.world, seat)
+        if not pid or str(pid).startswith("trial:") or pid not in residents.table(self.world):
+            return ""
+        body = residents.table(self.world)[pid]
+        for ai in sorted(self.ais.values(), key=lambda a: a.link.id):
+            if ai.disabled or ai.dead():
+                continue
+            me = self.world.players.get(ai.link.id)
+            if me is None:
+                continue
+            if abs(int(me["tx"]) - int(body["tile"][0])) + abs(int(me["ty"]) - int(body["tile"][1])) <= ai_wizard.RESCUE_GIVE_UP:
+                return ai.link.name
+        return ""
+
+    def _rescuer_coming(self, now: float) -> bool:
+        waiting = False
+        for l in self.links.values():
+            if l.ai or not self._dead(l):
+                continue
+            if not self.rescuer_for(l.id):
+                continue
+            until = self.rescue_until.setdefault(l.id, now + RESCUE_WAIT_S)
+            if now < until:
+                waiting = True
+        return waiting
+
     def _deliver_rungs(self, now: float) -> None:
         """A rung of the world's magic ladder owed to a wizard is told the moment they are not on a duel board: it interrupts a conversation or a quest
         page (the owner's rule), never a duel in progress."""
@@ -862,7 +915,10 @@ class MultiplayerSession:
             return
         humans = [l for l in self.links.values() if not l.ai]
         if not humans or not all(self._dead(l) for l in humans):
+            self.rescue_until.clear()
             return
+        if self._rescuer_coming(now):
+            return  # Mira is an apprentice of this world too: while she can reach the body, the adventure is not over
         kind = "all_dead" if len(humans) > 1 else "human_dead"
         self.ending = {"kind": kind, "at": now, "game_ms": self.game_ms(), "names": [l.name for l in sorted(humans, key=lambda l: l.id)]}
         for l in humans:

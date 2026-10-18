@@ -216,6 +216,8 @@ def test_a_private_session_ends_when_its_human_dies_and_the_host_saves(tmp_path,
     t = Table(humans=1, ai=1)
     joe = t.people[0]
     (ai,) = t.session.ais.values()
+    mira = t.world.players[ai.link.id]
+    mira["tx"], mira["ty"] = joe.pose["tx"] + 95, joe.pose["ty"]  # too far to walk to the body: nobody can bring him back
     mortality.die(t.world, joe.id, "duel", by=ai.link.id, terminal=False)
     t.session.tick(t.now)
     assert t.session.ending["kind"] == "human_dead"
@@ -346,3 +348,23 @@ def test_narrative_off_worlds_are_untouched():
 
 
 # The colours and slots of a duel between players follow the world's magic ladder since 18 Oct 2026: tests/test_progression.py.
+
+
+def test_in_single_player_the_ending_waits_while_mira_can_reach_the_body_and_she_brings_you_back():
+    t = Table(humans=1, ai=1)
+    joe = t.people[0]
+    (ai,) = t.session.ais.values()
+    from test_ai_wizard import bring_together
+
+    bring_together(t, joe, ai)
+    mortality.die(t.world, joe.id, "duel", by=ai.link.id, terminal=False)
+    t.session.tick(t.now)
+    assert t.session.ending is None, "Mira is an apprentice of this world: while she can reach the body the adventure is not over"
+    assert joe.state()["you_dead"]["rescuer"] == "Mira"
+    for _ in range(60):
+        t.advance(1)
+        if not mortality.is_dead(t.world, joe.id):
+            break
+    assert not mortality.is_dead(t.world, joe.id) and t.session.ending is None
+    lines = [n["line"] for n in joe.state()["notices"] if n["kind"] == "ai_says"]
+    assert "resurrecting" in lines or "resurrected_you" in lines

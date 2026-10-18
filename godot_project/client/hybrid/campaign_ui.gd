@@ -14,6 +14,8 @@ var story_ui: Node
 var layer: CanvasLayer
 var scene_card: Control   # a sheet at the bottom, like a conversation
 var over_card: Control    # the Game Over modal
+var notice_card: Control  # a sheet for the world's own interruptions: a rung of the magic ladder, the inner voice (one at a time, queued)
+var _notices: Array = []
 var flash: ColorRect
 var scene_active := false
 var over_shown := false
@@ -39,6 +41,10 @@ func setup(p_world: Node, p_story_ui: Node) -> void:
 	layer.add_child(over_card)
 	over_card.setup(world, "modal", "GameOver")
 	over_card.footer_pressed.connect(_on_over)
+	notice_card = NarrativeCard.new()
+	layer.add_child(notice_card)
+	notice_card.setup(world, "sheet", "WorldNotice")
+	notice_card.footer_pressed.connect(func(_id: String) -> void: _next_notice())
 	flash = ColorRect.new()
 	flash.name = "SceneFlash"
 	flash.color = Color(1, 1, 1, 0)
@@ -49,6 +55,30 @@ func setup(p_world: Node, p_story_ui: Node) -> void:
 
 func covering() -> bool:
 	return scene_active or over_shown
+
+
+## The world interrupts (the owner's rule for the magic ladder): a card in the speaker's name over whatever the player was doing, Continue to go on.
+## Several in a row are shown one after another. `kind` is "rung" or "inner_voice"; the server already closed any conversation it interrupted.
+func show_notice(kind: String, who: String, role: String, body: String) -> void:
+	_notices.append({"kind": kind, "who": who, "role": role, "body": body})
+	if not notice_card.visible:
+		_next_notice()
+
+
+func _next_notice() -> void:
+	if _notices.is_empty():
+		notice_card.hide_card()
+		return
+	var n: Dictionary = _notices.pop_front()
+	if story_ui != null and story_ui.dialog.visible:
+		story_ui.close_dialog()  # the server ended the conversation; the card goes too
+	notice_card.show_card(str(n["who"]), str(n["role"]), str(n["body"]), [], [{"id": "next", "text": "Continue", "kind": "primary"}])
+	if str(n["kind"]) == "rung" and world.has_method("_sfx"):
+		world._sfx().victory()
+
+
+func notice_showing() -> bool:
+	return notice_card != null and notice_card.visible
 
 
 func campaign() -> Dictionary:

@@ -1,0 +1,243 @@
+{
+ "id": "inner_voice",
+ "note": "Placeholder authored text (owner review pending). The apprentice's own strongest Aspect speaks at absurd moments (narrative/voice.py). `aspect` names who speaks (reason, empathy, authority, guile, resolve, curiosity, wonder, or best = the highest). Facts: the behaviour ledger (my_burned_trees, my_burned_people, my_kills, my_deaths, my_talks, my_pest_escapes, my_pests_burned, my_trial_entered_unprepared, missed_the_stranger...), idle_minutes, played_minutes, generation, previous, food_left, colours_known, weave_now, lessons_done, in_trial, dead. One firing per trigger per wizard unless `repeat`; two game-minutes between any two.",
+ "triggers": [
+  {
+   "id": "tenth_tree",
+   "aspect": "curiosity",
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_trees",
+      "gte": 10
+     }
+    ]
+   },
+   "lines": [
+    "You have now established, to a standard that would satisfy any court, that trees burn. The lesson is complete. There is nothing further to learn from the eleventh."
+   ]
+  },
+  {
+   "id": "first_person_burned",
+   "aspect": "empathy",
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_people",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    "That was a person. They had a name; the carriers will have it by nightfall, and so will their mother. You felt the heat on your own face. Remember that you felt it."
+   ]
+  },
+  {
+   "id": "arsonist",
+   "aspect": "reason",
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_things",
+      "gte": 25
+     }
+    ]
+   },
+   "lines": [
+    "Twenty-five. You are not exploring the limits of the spell any more; the spell has no limits you can find from here. What you are exploring is whether anyone will stop you. Nobody will. That is the answer. It is not a good one."
+   ]
+  },
+  {
+   "id": "warehouse_burned",
+   "aspect": "reason",
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_home_buildings",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    "Consider the order of events: the village had a problem, which was rats in its food; it now has no food. By any accounting that is a worse problem, and it is signed with your name."
+   ]
+  },
+  {
+   "id": "killed_friend_twice",
+   "aspect": "empathy",
+   "when": {
+    "facts": [
+     {
+      "name": "my_kills",
+      "gte": 2
+     }
+    ]
+   },
+   "lines": [
+    "Twice. The first time could be called a lesson. The second time is a habit, and you can feel it settling into your hands like a tool you know how to hold."
+   ]
+  },
+  {
+   "id": "idle_ten",
+   "aspect": "resolve",
+   "when": {
+    "facts": [
+     {
+      "name": "idle_minutes",
+      "gte": 10
+     },
+     {
+      "name": "dead",
+      "lte": 0
+     }
+    ]
+   },
+   "repeat": true,
+   "max": 2,
+   "lines": [
+    "Ten minutes. The rats have eaten, the carriers have walked their road twice, the mentor has looked at the door three times. You have breathed. It is a start, of a kind."
+   ],
+   "lines_alt": [
+    [
+     "Still here. Still nothing. The valley is beginning to treat you as a feature of the landscape, like a rock, and the rocks do not get a fourth colour either. Actually, they do now. Think about that."
+    ]
+   ]
+  },
+  {
+   "id": "unprepared",
+   "aspect": "wonder",
+   "when": {
+    "facts": [
+     {
+      "name": "my_trial_entered_unprepared",
+      "gte": 1
+     },
+     {
+      "name": "in_trial",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    "No lesson. Not one. You are walking into a hole in the ground that has eaten five people this season with three colours you learned from a book and a feeling that it will probably be fine. Hold on to the feeling. It is the only equipment you brought."
+   ]
+  },
+  {
+   "id": "accosted_eight",
+   "aspect": "authority",
+   "when": {
+    "facts": [
+     {
+      "name": "my_talks",
+      "gte": 12
+     },
+     {
+      "name": "played_minutes",
+      "lte": 10
+     }
+    ]
+   },
+   "lines": [
+    "Twelve people in ten minutes. You are not talking to them; you are counting them. They can tell. Try listening to one."
+   ]
+  },
+  {
+   "id": "lost_to_rats",
+   "aspect": "resolve",
+   "when": {
+    "facts": [
+     {
+      "name": "my_pest_escapes",
+      "gte": 2
+     }
+    ]
+   },
+   "lines": [
+    "A rat. Two colours. It has beaten you twice. You are going to stand there and tell yourself the Ward was unfair, and the rat is going to go back to the grain, and only one of you is going to be right about how the morning went."
+   ]
+  },
+  {
+   "id": "four_slots",
+   "aspect": "wonder",
+   "when": {
+    "facts": [
+     {
+      "name": "weave_now",
+      "gte": 4
+     }
+    ]
+   },
+   "lines": [
+    "A fourth place in the weave. You did not earn it, exactly; it arrived, the way the stranger will arrive, because enough time has passed. The question you are not asking is what else arrives on a timer."
+   ]
+  },
+  {
+   "id": "missed",
+   "aspect": "guile",
+   "when": {
+    "facts": [
+     {
+      "name": "my_missed_the_stranger",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    "You were thirty tiles from the square when it happened. Nobody can prove you heard. You can stop rehearsing the face now; nobody is going to ask you for it."
+   ]
+  },
+  {
+   "id": "store_empty",
+   "aspect": "reason",
+   "when": {
+    "facts": [
+     {
+      "name": "food_left",
+      "lte": 0
+     },
+     {
+      "name": "played_minutes",
+      "gte": 5
+     }
+    ]
+   },
+   "lines": [
+    "The store is empty. Not low: empty. There is a number for how long a village can run on an empty store, and the keeper knows it, and he is not going to tell you, because you did not ask when it mattered."
+   ]
+  },
+  {
+   "id": "generation",
+   "aspect": "best",
+   "when": {
+    "facts": [
+     {
+      "name": "generation",
+      "gte": 2
+     },
+     {
+      "name": "played_minutes",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    "You are not the first. There was {previous}, and before the valley has finished grieving them you are standing in their footprints with the same staff. The village is being polite about it. Watch how long that lasts."
+   ]
+  },
+  {
+   "id": "died_twice",
+   "aspect": "resolve",
+   "when": {
+    "facts": [
+     {
+      "name": "my_deaths",
+      "gte": 2
+     }
+    ]
+   },
+   "lines": [
+    "Twice dead, twice back. Most people get the one lesson about what the inside of the dark looks like. You are collecting them."
+   ]
+  }
+ ]
+}

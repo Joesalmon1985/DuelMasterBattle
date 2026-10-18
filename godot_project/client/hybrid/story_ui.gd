@@ -750,6 +750,16 @@ func journal_string() -> String:
 		out.append("")
 	var spells: Array = j.get("spells", [])
 	out.append("Spells: %s.  Weave: %d slots." % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
+	var magic = j.get("magic", {})
+	if typeof(magic) == TYPE_DICTIONARY and not (magic as Dictionary).is_empty():
+		out.append("")
+		out.append("MAGIC IN THIS WORLD")
+		out.append("  %s.  Weave of %d.  %d duels fought, %d minutes played." % [", ".join(PackedStringArray(magic.get("colour_names", []))), int(magic.get("weave", 3)), int(magic.get("duels", 0)), int(magic.get("played_min", 0))])
+		var nxt = magic.get("next", null)
+		if typeof(nxt) == TYPE_DICTIONARY and not (nxt as Dictionary).is_empty():
+			out.append("  Next: %s, in %d duels or %d minutes, whichever comes first." % [str(nxt.get("gain", "")), int(nxt.get("in_duels", 0)), int(ceil(float(nxt.get("in_minutes", 0))))])
+		else:
+			out.append("  The weave is complete: six colours, four slots. Whatever comes next is yours to earn.")
 	out.append("")
 	out.append("LESSONS")
 	for l in j.get("lessons", []):

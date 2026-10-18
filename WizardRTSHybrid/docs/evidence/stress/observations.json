@@ -28,6 +28,11 @@
     "stage": "aftermath"
    },
    {
+    "min": 17.5,
+    "scene_open": "confrontation_missed",
+    "needs_answer": false
+   },
+   {
     "min": 20.0,
     "stage": "complete"
    }
@@ -61,14 +66,23 @@
     "waves_over": 0,
     "max_waves": 6
    },
-   "ledger": {},
+   "ledger": {
+    "inner_voice": 2,
+    "missed_the_stranger": 1
+   },
    "lessons_expired": true,
    "notices": [
     "started",
     "pests_arrived",
     "ai_says",
+    "ai_says",
+    "inner_voice",
+    "ai_says",
+    "inner_voice",
+    "ai_says",
     "rung_reached",
     "rung",
+    "ai_says",
     "rung_reached",
     "rung",
     "rung_reached",
@@ -86,22 +100,34 @@
     "choices": []
    },
    "keeper": {
-    "status": "rejected",
-    "reason": "scene",
-    "text": "",
-    "choices": []
+    "status": "ok",
+    "reason": null,
+    "text": "There is nothing left. Not a ration, not a crust. 65 loads, and I counted every one of them go while the village's two wizards did whatever it is you do. You may stop now. There is nothing left to defend. The rats will leave when they are hungry, which is more than I can say for anyone else.",
+    "choices": [
+     "what_matter",
+     "not_rats",
+     "bye"
+    ]
    },
    "mother": {
-    "status": "rejected",
-    "reason": "scene",
-    "text": "",
-    "choices": []
+    "status": "ok",
+    "reason": null,
+    "text": "There you are. I was about to send the chickens to look for you. Have you done anything today? No. I can tell by your hands; they are clean.",
+    "choices": [
+     "how_are_you",
+     "bye"
+    ]
    },
    "official": {
-    "status": "rejected",
-    "reason": "scene",
-    "text": "",
-    "choices": []
+    "status": "ok",
+    "reason": null,
+    "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name",
+    "choices": [
+     "what_is_it",
+     "advice",
+     "why_write",
+     "bye"
+    ]
    }
   },
   "objective": "Seek greater magical power."
@@ -135,18 +161,23 @@
     "stage": "aftermath"
    },
    {
+    "min": 17.5,
+    "scene_open": "confrontation_missed",
+    "needs_answer": false
+   },
+   {
     "min": 20.0,
     "stage": "complete"
    }
   ],
   "stage": "complete",
-  "scene_now": "Skebok Hardfist has stopped what they were doing. The staff that has leaned in the corner of every lesson is in their hand.",
+  "scene_now": "It is over before you have looked up. Skebok Hardfist is dead in the square of Skorlag Hold, and the stranger has walked out the way he came in, unhurried, as if the village were a room he had finishe",
   "outcome": "spared",
   "mentor_alive": false
  },
  "leave_at_once": {
   "rollkeeper": {
-   "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name",
+   "text": "Names for the roll. ...An apprentice? From the village? You have not so much as broken a practice Ward; I can see it in how you hold the staff. Five have gone in this morning: a knight, an elf, two barbarians and something in black that would not give a name. All of them had reasons. Do you have a r",
    "choices": [
     "what_is_it",
     "advice",
@@ -194,17 +225,17 @@
    "mother": {
     "status": "ok",
     "reason": null,
-    "text": "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange. If you are going to the warehouse, tell them their rats are in my pantry now."
+    "text": "You have Joe's way of standing. I am sorry; I should not have said that on your first morning. Eat something. This village has buried one apprentice this season. It would rather not learn the trick of it. Be careful out there, and come home at night."
    },
    "mentor": {
     "status": "ok",
     "reason": null,
-    "text": "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it. You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast. Ask me what you like first. A wizard who does not ask questions "
+    "text": "You are not Joe. I know that. I had the speech ready for Joe and I will give you a different one, when I have thought of it. They stood where you are standing. They had the same three colours and the same borrowed staff. Try to want it more than they did; it was the wanting that was short. Ask me wh"
    },
    "official": {
     "status": "ok",
     "reason": null,
-    "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name"
+    "text": "Names for the roll. Yours goes under Joe's. I remember them; I remember everyone. I do not remember many of them twice. The Trial does not know you are new. That is the one kindness it has."
    },
    "keeper": {
     "status": "ok",
@@ -249,18 +280,18 @@
    ]
   },
   "official": {
-   "distinct_openings": 1,
+   "distinct_openings": 4,
    "openings": [
+    "Names for the roll. ...An apprentice? From the village? You have not so much as broken a p",
     "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
-    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
-    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
+    "Still here. The roll has your name on it three times now, which is a record, and the Trial",
     "...",
-    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
-    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f"
+    "Still here. The roll has your name on it three times now, which is a record, and the Trial",
+    "Four times. I have started a second column."
    ]
   },
   "worker": {
-   "distinct_openings": 4,
+   "distinct_openings": 6,
    "fourth_wall": "Somebody does. Not me. I get asked the same four things by every apprentice with a staff, I answer them, and the hills do not change. If you find out who is counting, tell them I would like a day off.",
    "accosted": null
   }
@@ -328,15 +359,58 @@
     "accepted": true,
     "forfeit": "ok",
     "dead_after": true,
-    "mira_resurrected_me": false,
-    "ending": {
-     "kind": "human_dead",
-     "at": 63.000000000000625,
-     "game_ms": 63000,
-     "names": [
-      "Joe"
-     ]
-    }
+    "mira_resurrected_me": true,
+    "ending": null
+   },
+   {
+    "n": 4,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 5,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 6,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": true,
+    "forfeit": "ok",
+    "dead_after": true,
+    "mira_resurrected_me": true,
+    "ending": null
+   },
+   {
+    "n": 7,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 8,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 9,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": true,
+    "forfeit": "ok",
+    "dead_after": true,
+    "mira_resurrected_me": true,
+    "ending": null
+   },
+   {
+    "n": 10,
+    "challenge": "rejected",
+    "reason": "busy_in_story",
+    "accepted": false
    }
   ],
   "mira": [
@@ -344,16 +418,31 @@
    "decline: A duel? We have the whole village to see. Put your staff down.",
    "decline: Not just now. Ask me again in a little while.",
    "provoked: Three times. You have asked me three times. All right: Ward up.",
-   "killed_you: I did not mean... well, I did mean, but not like that. Hold on."
+   "you_forfeited: That is not how it works. You cannot leave a Ward half-broken and go for a walk.",
+   "resurrecting: Hold still. This is the one lesson I paid attention to.",
+   "resurrected_you: You were dead for a bit. How was it? Never mind. Do not do it again.",
+   "decline: A duel? We have the whole village to see. Put your staff down.",
+   "decline: I would rather not. Why do you keep asking?",
+   "provoked: Three times. You have asked me three times. All right: Ward up.",
+   "you_forfeited: That is not how it works. You cannot leave a Ward half-broken and go for a walk.",
+   "resurrecting: Hold still. This is the one lesson I paid attention to.",
+   "resurrected_you: There. You are back. We are not telling anyone about this.",
+   "decline: A duel? We have the whole village to see. Put your staff down.",
+   "decline: I would rather not. Why do you keep asking?",
+   "provoked: Three times. You have asked me three times. All right: Ward up.",
+   "you_forfeited: That is not how it works. You cannot leave a Ward half-broken and go for a walk.",
+   "resurrecting: Breathe. No, you cannot, that is the point. I am working on it.",
+   "resurrected_you: You were dead for a bit. How was it? Never mind. Do not do it again."
   ],
   "ledger": {
-   "deaths": 1,
-   "provocations": 2,
-   "pvp_duels": 1,
-   "pvp_losses": 1
+   "deaths": 3,
+   "inner_voice": 1,
+   "provocations": 6,
+   "pvp_duels": 3,
+   "pvp_losses": 3
   },
-  "relationship": 28,
-  "dead": true
+  "relationship": 34,
+  "dead": false
  },
  "burn_everything": {
   "burned": {
@@ -374,19 +463,30 @@
    "unit": 5
   },
   "afterwards": {
-   "mentor": "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it. You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast. Ask me what you like first. A wizard who does not ask questions ",
-   "mother": "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange. If you are going to the warehouse, tell them their rats are in my pantry now.",
+   "mentor": "There you are. I was going to say 'late again'. I had the whole speech. Then two carriers came past my door with the smell on them and told me what the new apprentice had done with the one spell they were born knowing. So. No speech. You know Flame; I will not insult us both by teaching it. Ask me w",
+   "mother": "Joe. Sit down. No. Sit. Skormir's mother came to my door. Do you know what I said to her? Nothing. There is nothing to say to a woman whose son was set alight by the child you raised. I stood there. She stood there. Then she went home. You will not do it again. I am not asking.",
    "keeper": "There is no warehouse. You are standing in what was the warehouse. The rats have gone to wherever rats go when the grain is ash, and I am a keeper of nothing. I will stand here anyway. Somebody should."
   },
   "ledger": {
+   "burned_buildings": 1,
+   "burned_home_buildings": 1,
+   "burned_people": 20,
+   "burned_rocks": 10,
+   "burned_soldiers": 5,
+   "burned_things": 46,
+   "burned_trees": 10,
    "burned_warehouse": 1,
+   "inner_voice": 1,
    "talks": 4
   },
   "notices": [
    "started",
    "pests_arrived",
    "ai_says",
-   "pests_scattered"
+   "ai_says",
+   "pests_scattered",
+   "inner_voice",
+   "ai_says"
   ],
   "mira": []
  },
@@ -4159,6 +4259,7 @@
    "max_waves": 6
   },
   "ledger": {
+   "inner_voice": 1,
    "keeper_complained_to": 1,
    "pest_escapes": 5,
    "talks": 2
@@ -4238,6 +4339,7 @@
    "max_waves": 6
   },
   "ledger": {
+   "inner_voice": 1,
    "keeper_thanked": 6,
    "pest_escapes": 1,
    "pests_killed": 20,
@@ -4314,6 +4416,7 @@
   ],
   "ledger": {
    "accosted": 3,
+   "inner_voice": 1,
    "kills": 3,
    "protests": 6,
    "provocations": 6,
@@ -4447,18 +4550,18 @@
   "inside": true
  },
  "never_enter": {
-  "first": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five ha",
+  "first": "Names for the roll. ...An apprentice? From the village? You have not so much as broken a practice Ward; I can see it in how you hold the staff. Five have gone in this morning: a knight, an elf, two ba",
   "after_15_min": {
    "status": "rejected",
    "reason": "scene",
    "text": ""
   },
   "after_45_min": {
-   "status": "rejected",
-   "reason": "scene",
-   "text": ""
+   "status": "ok",
+   "reason": null,
+   "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five ha"
   },
   "stage": "complete",
-  "scene_open": "confrontation"
+  "scene_open": null
  }
 }

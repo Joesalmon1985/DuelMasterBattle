@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts import hold, workers
-from wizard_rts.narrative import campaign, characters, duel_lease, events, graph, occupations, quests, residents
+from wizard_rts.narrative import campaign, characters, duel_lease, events, graph, occupations, party, quests, residents, wizard
 
 IDLE_MS = 120_000  # a conversation nobody has touched for this long (game time) ends by itself
 LEAVE_RANGE = characters.TALK_RANGE + 3  # walking this far (Manhattan) from the person ends the conversation
@@ -68,6 +68,34 @@ def _reply(world: Any, sp: dict[str, Any], lines: list[str], choices: list[dict[
     return out
 
 
+def common_facts(world: Any, pid: str | None = None) -> dict[str, Any]:
+    """What everybody may read about the apprentice acting now, beyond the ledger: their generation and predecessor, how long they have done nothing,
+    how long the world has been played, how often they have spoken to this person, the store's food, the world's magic."""
+    from wizard_rts.narrative import mortality, occupations, pests, progression
+
+    seat = mortality.me(world)
+    w = wizard.wiz(world)
+    now_ms = int(world.dmb.clock.get("game_ms", 0))
+    last = int(w.get("last_act_ms", party.seats(world).get(seat, {}).get("joined_ms", 0) or 0) or 0)
+    gen = int(party.seats(world).get(seat, {}).get("generation", party.generation(world) if not party.seats(world) else 1))
+    previous = ""
+    try:
+        from wizard_rts.narrative import mother
+
+        previous = mother._previous_name(world, str(seat))
+    except Exception:  # noqa: BLE001
+        previous = ""
+    since = now_ms - last
+    idle_ms = int(w.get("idle_gap_ms", 0) or 0) if since < 60000 else since  # an act a moment ago is the act that brought them here: count the gap before it
+    out = {"generation": gen, "previous": previous, "idle_minutes": max(0, idle_ms // 60000), "played_minutes": int(progression.state(world)["played_ms"] // 60000),
+           "colours_known": len(progression.colours(world)), "weave_now": progression.weave(world), "visits": occupations.talks(world, pid) if pid else 0}
+    try:
+        out["food_left"] = pests.food_left(world)
+    except Exception:  # noqa: BLE001
+        out["food_left"] = 0
+    return out
+
+
 def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any]]:
     """(the quest or lesson context if this person has a graph, the context for their everyday talk)."""
     name = world.dmb.people[sp["pid"]]["name"]
@@ -78,7 +106,7 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
         r = sp["res"]
         from wizard_rts.narrative import ledger, mortality, mother
 
-        facts = ledger.facts(world, mortality.me(world))
+        facts = {**ledger.facts(world, mortality.me(world)), **common_facts(world, sp["pid"])}
         from wizard_rts.narrative import party
 
         facts["mira_near"] = 1 if party.ai_near(world, 4) else 0  # the fellow apprentice within a few tiles: people may speak of her
@@ -94,7 +122,7 @@ def _ctx(world: Any, sp: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[st
                 "cast": {**campaign.names_for(world, sp["pid"]), **quests.cast_names(world, "forest_dispute")}, "facts": facts}, {}
     from wizard_rts.narrative import ledger, mortality
 
-    facts = {**ledger.facts(world, mortality.me(world)), **occupations.facts_for(world, sp)}  # the behaviour ledger is a fact for everybody
+    facts = {**ledger.facts(world, mortality.me(world)), **common_facts(world, sp["pid"]), **occupations.facts_for(world, sp)}  # the behaviour ledger is a fact for everybody
     octx = {"template": "occupation", "speaker": "occupation", "speaker_pid": sp["pid"], "name": name, "facts": facts, "cast": campaign.names_for(world, sp["pid"])}
     gctx = quests.ctx_for(world, sp)
     if gctx is not None:
@@ -134,6 +162,14 @@ def _pending_responses(world: Any, sp: dict[str, Any], octx: dict[str, Any], con
     return out
 
 
+def visits_noted(world: Any, sp: dict[str, Any]) -> None:
+    """Residents are counted like everybody else (occupations.note_talk counts the workers): how often this person has been accosted."""
+    from wizard_rts.narrative import occupations
+
+    if sp["kind"] == "resident":
+        occupations.note_talk(world, sp["pid"])
+
+
 def begin(world: Any, sp: dict[str, Any]) -> None:
     for other in [k for k in table(world) if k != sp["key"]]:
         end(world, other, "another")
@@ -157,7 +193,7 @@ def talk(world: Any, key: str) -> dict[str, Any]:
         return {"status": "rejected", "reason": "pest"}
     if campaign.over(world):
         return {"status": "rejected", "reason": "game_over"}
-    if campaign.active_scene(world) is not None:
+    if campaign.active_scene(world) is not None and not campaign.dismiss_if_idle(world):
         return {"status": "rejected", "reason": "scene"}
     if _distance(world, sp) > characters.TALK_RANGE:
         return {"status": "rejected", "reason": "too_far"}
@@ -171,6 +207,7 @@ def talk(world: Any, key: str) -> dict[str, Any]:
     from wizard_rts.narrative import ledger, mortality
 
     ledger.bump(world, "talks", seat=mortality.me(world))  # how often this apprentice accosts people: the villagers may notice
+    visits_noted(world, sp)
     lines, choices, extras = _compose(world, sp, set(), True)
     return _reply(world, sp, lines, choices, extras=extras)
 

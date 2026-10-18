@@ -1,11 +1,79 @@
 {
  "id": "trial_gate",
- "note": "Placeholder authored text (owner review pending). The Rollkeeper at the Trial's gate and the five contestants of the book, waiting to go in. Facts: the ledger's counts (my_pvp_duels, my_kills, my_deaths, lessons through conditions), trial_entries, trial_entered_unprepared.",
+ "note": "Placeholder authored text (owner review pending). The Rollkeeper at the Trial's gate and the five contestants of the book, waiting to go in. Facts: the ledger's counts (my_pvp_duels, my_kills, my_deaths, lessons through conditions), trial_entries, trial_entered_unprepared. Added 18 Oct 2026: o_arsonist, o_still_here, o_second_generation, a second-visit line per contestant (facts visits, generation, previous).",
  "speakers": {
   "official": {
    "nodes": {
     "hub": {
      "variants": [
+      {
+       "id": "o_arsonist",
+       "when": {
+        "facts": [
+         {
+          "name": "my_burned_people",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_o_arson"
+        ]
+       },
+       "sets": [
+        "said_o_arson"
+       ],
+       "lines": [
+        "Names for the roll. Yours I have already: the carriers brought it up the road with the smell. An apprentice who burns the help is not unusual at this gate; most of the people who go in have done something of the kind.",
+        "The Trial does not mind. I write it down because somebody should. Go in when you like."
+       ]
+      },
+      {
+       "id": "o_second_generation",
+       "when": {
+        "facts": [
+         {
+          "name": "generation",
+          "gte": 2
+         },
+         {
+          "name": "previous",
+          "truthy": true
+         }
+        ],
+        "forbids": [
+         "said_o_generation"
+        ]
+       },
+       "sets": [
+        "said_o_generation"
+       ],
+       "lines": [
+        "Names for the roll. Yours goes under {previous}'s. I remember them; I remember everyone. I do not remember many of them twice.",
+        "The Trial does not know you are new. That is the one kindness it has."
+       ]
+      },
+      {
+       "id": "o_killers",
+       "when": {
+        "facts": [
+         {
+          "name": "kills",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_killers"
+        ]
+       },
+       "sets": [
+        "said_killers"
+       ],
+       "lines": [
+        "Names for the roll. I heard about you two. The village is three fields that way and I heard about you two.",
+        "Killing each other in the road and fetching each other back. Baron Sukumvit would find that charming. He built this place for people who find such things charming.",
+        "The doors open for anyone. Go in if you are going."
+       ]
+      },
       {
        "id": "o_unprepared",
        "when": {
@@ -32,25 +100,27 @@
        ]
       },
       {
-       "id": "o_killers",
+       "id": "o_still_here",
        "when": {
         "facts": [
          {
-          "name": "kills",
-          "gte": 1
+          "name": "visits",
+          "gte": 3
+         },
+         {
+          "name": "my_trial_entries",
+          "lte": 0
          }
-        ],
-        "forbids": [
-         "said_killers"
         ]
        },
-       "sets": [
-        "said_killers"
-       ],
        "lines": [
-        "Names for the roll. I heard about you two. The village is three fields that way and I heard about you two.",
-        "Killing each other in the road and fetching each other back. Baron Sukumvit would find that charming. He built this place for people who find such things charming.",
-        "The doors open for anyone. Go in if you are going."
+        "Still here. The roll has your name on it three times now, which is a record, and the Trial has a door, which has not moved. Between the two of them is you, standing.",
+        "I do not mind. Standing is free. But I would like you to know that I have noticed, because noticing is the job."
+       ],
+       "lines_alt": [
+        [
+         "Four times. I have started a second column."
+        ]
        ]
       },
       {
@@ -179,6 +249,20 @@
     "hub": {
      "variants": [
       {
+       "id": "knight_again",
+       "when": {
+        "facts": [
+         {
+          "name": "visits",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "You again. The gate has not moved. Neither have I; a knight waits where she is told to wait, and I was told to wait here."
+       ]
+      },
+      {
        "lines": [
         "Serra of the White Road. I go in first; I always go in first. Count your steps from the door, apprentice. Everything in there is measured."
        ]
@@ -201,6 +285,20 @@
    "nodes": {
     "hub": {
      "variants": [
+      {
+       "id": "elf_again",
+       "when": {
+        "facts": [
+         {
+          "name": "visits",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "Back? The hills do not change between visits. I had hoped you would."
+       ]
+      },
       {
        "lines": [
         "You are very young for this. So am I, by my people's reckoning, and nobody told me that was a reason not to come."
@@ -225,6 +323,20 @@
     "hub": {
      "variants": [
       {
+       "id": "throm_again",
+       "when": {
+        "facts": [
+         {
+          "name": "visits",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "HA. The little one again. Throm counted the stones in the gate while you were gone. Forty. Throm is bored."
+       ]
+      },
+      {
        "lines": [
         "Throm. You walk loud, villager. Only one of us wins this; remember it if we meet below."
        ]
@@ -248,6 +360,20 @@
     "hub": {
      "variants": [
       {
+       "id": "barbarian_again",
+       "when": {
+        "facts": [
+         {
+          "name": "visits",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "You keep coming back. In my country we would say the gate has your scent."
+       ]
+      },
+      {
        "lines": [
         "The other barbarian says nothing at all. He is looking at the gate the way a man looks at a river he means to cross."
        ]
@@ -270,6 +396,20 @@
    "nodes": {
     "hub": {
      "variants": [
+      {
+       "id": "assassin_again",
+       "when": {
+        "facts": [
+         {
+          "name": "visits",
+          "gte": 2
+         }
+        ]
+       },
+       "lines": [
+        "..."
+       ]
+      },
       {
        "lines": [
         "The figure in black does not turn. 'Apprentice,' it says, to the gate rather than to you, and that is all it says."

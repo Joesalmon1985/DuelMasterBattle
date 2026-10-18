@@ -473,6 +473,73 @@
  },
  "shared_topics": [
   {
+   "id": "seen_burning",
+   "text": "You are looking at me strangely.",
+   "priority": true,
+   "once": true,
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_people",
+      "gte": 1
+     }
+    ]
+   },
+   "lines": [
+    {
+     "text": "Put that down. I mean the staff. I saw what you did on the road and so did half the settlement, and I would like to finish my work with my skin on.",
+     "when": {
+      "persona": {
+       "any": [
+        "M",
+        "G",
+        "R"
+       ]
+      }
+     }
+    },
+    "People say an apprentice set a carrier alight. People say it was you. I am not asking; I am telling you what people say, so you know what the silence is when you walk past."
+   ]
+  },
+  {
+   "id": "seen_trees",
+   "text": "What is the smell?",
+   "once": true,
+   "when": {
+    "facts": [
+     {
+      "name": "my_burned_trees",
+      "gte": 6
+     },
+     {
+      "name": "my_burned_people",
+      "lte": 0
+     }
+    ]
+   },
+   "lines": [
+    "Smoke. Trees. The lumberjack is not pleased; he says somebody has been doing his work for him, badly, and leaving nothing to carry."
+   ],
+   "priority": true
+  },
+  {
+   "id": "nothing_doing",
+   "text": "Quiet day.",
+   "once": true,
+   "when": {
+    "facts": [
+     {
+      "name": "idle_minutes",
+      "gte": 10
+     }
+    ]
+   },
+   "lines": [
+    "For you, maybe. I have walked this road eleven times since you last did anything that I could see. I am not judging. I am counting; it is a habit of the trade."
+   ],
+   "priority": true
+  },
+  {
    "id": "opinion_mentor",
    "text": "What do you think of {mentor}?",
    "when": {
@@ -780,5 +847,12 @@
    ],
    "priority": true
   }
+ ],
+ "often_after": 5,
+ "often": [
+  "You again. Yes?",
+  "I am beginning to think you have nowhere to be.",
+  "If you are counting us, I am the same one as before.",
+  "Yes. Still me. Still working. What is it this time?"
  ]
 }

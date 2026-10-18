@@ -210,7 +210,9 @@ def test_the_ladder_survives_death_a_new_apprentice_save_load_and_the_catch_up()
     assert r["status"] == "ok" and r["new_wizard"] and party.generation(t.world) == 2
     assert progression.state(t.world)["rung"] == 1 and progression.state(t.world)["duels"] == 3
     assert my_pool(t, joe) == ([0, 1, 6, 4], 3)
-    # death, the ending, the save, and a reopened host
+    # death (Mira's too, so nobody brings him back), the ending, the save, and a reopened host
+    for s in party.ai_seats(t.world):
+        mortality.die(t.world, s, "trap", terminal=False)
     mortality.die(t.world, joe.id, "trap", terminal=False)
     t.session.tick(t.now)
     assert t.session.ending is not None
