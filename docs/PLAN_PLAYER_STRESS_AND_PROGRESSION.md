@@ -122,41 +122,57 @@ line: the world has seen what you did and says so in character; nobody breaks th
 All of it is placeholder prose awaiting the owner, like every bank (`docs/DIALOGUE_REVIEW.md` gets the new rows). Each new variant gets a probe
 in the stress suite that proves it is reachable and that it is spoken at most as often as intended.
 
-## 4. Duel progression: from three-by-three to four slots and six colours
+## 4. Duel progression: from three-by-three to four slots and six colours (revised 18 Oct 2026, owner's instruction)
 
 Today: the first duels are three slots, three colours (Flame, Frost, Vine). PvP adds Light from each wizard's fourth PvP duel; story duels never
-grow; the Trial's Dwarf teaches Stone. The board, the Python rules and Mira's solver all already support up to eight colours and slots
-(`game_board.gd` lays out touch-sized slots up to four; `candidate_filter` handles 6^4 = 1296 candidates).
+grow; the Trial's Dwarf teaches Stone; and spells are private to a seat, so "A new apprentice" starts again from three. The board, the Python
+rules and Mira's solver already support up to eight colours and slots (`game_board.gd` lays out touch-sized slots up to four; `candidate_filter`
+handles 6^4 = 1296 candidates).
 
-**One ladder for every duel**, in `config.json` under `progression`, counted per wizard on `duels_fought` (every resolved duel: lessons, the
-stranger, rats, Trial creatures, PvP; a rat scrap is brief but it is a Ward duel on the real board and it counts):
+**The owner's rules.** (a) After three duels, whatever else has happened, the fourth colour is in the game. (b) The gain belongs to the world,
+not to the wizard: it survives the wizard's death, "A new apprentice", Continue, a restart of the host and the offline catch-up, exactly as the
+world does. (c) After an hour of play the players have four-slot weaves and six colours, whether or not they have duelled. (d) If the normal flow
+would not deliver a rung in time, the rung interrupts the flow: conversations, quests and scenes give way; only a duel already on the board is
+allowed to finish first.
 
-| After duel | Gain | Colour id | Spoken by |
-| ---: | --- | ---: | --- |
-| 3 | fourth colour **Light** | 4 | the mentor if alive, else Mira, else the inner voice |
-| 5 | **fourth slot** (weave of four) | | the same |
-| 7 | fifth colour **Stone** | 3 | the same; skipped if the Dwarf already taught it, in which case Shadow moves up |
-| 10 | sixth colour **Shadow** | 5 | the same |
+**The ladder** lives in the world's shared narrative state (`world.narrative["progression"]`, saved in the sidecar, migrated for 0.3.0 worlds),
+configured in `config.json` under `progression`. Each rung has two triggers and fires on whichever comes first:
 
-Mechanism:
+| Rung | Gain | Colour id | By duels (world total) | By play time |
+| ---: | --- | ---: | ---: | ---: |
+| 1 | fourth colour **Light** | 4 | 3 | 12 min |
+| 2 | **fourth slot** (weave of four) | | 5 | 25 min |
+| 3 | fifth colour **Stone** | 3 | 7 | 40 min |
+| 4 | sixth colour **Shadow** | 5 | 10 | 60 min |
 
-* `narrative/wizard.py`: `progress(world, seat)` called from every place a duel resolves (`duel_lease.resolve`, the PvP finish in `session.py`,
-  `autoduel.play_lease`, the Trial's `on_duel_resolved`): bumps `duels_fought`, applies the next rung with `wizard.learn`, logs `rung_reached`, and
-  queues the announcement. The ladder order is Flame, Frost, Vine, Light, Stone, Shadow, matching the Trial's colour names (`trial_mode.gd`
-  `COLOUR_NAMES`); `pvp.py`'s `DEFAULT_POOL` (which puts Arcane fifth) is replaced by the ladder.
-* `net/pvp.py` `make_format`: the adaptive format becomes "the smaller of the two wizards' colour counts and weave sizes", so neither player meets a
-  colour or a slot they have not earned; `FOURTH_COLOUR_AFTER` goes. Named formats (`three`, `classic`) stay for the dev menu.
-* `narrative/duel_lease.py` `_combatants` already builds the story opponent from the player's pool and size, so the mentor, the stranger and the Trial's
-  creatures grow with the apprentice automatically; the rats keep their two- and three-colour `ward_pool` subsets (a rat is a rat). The mentor's
-  told-Ward lesson keeps its fixed three-slot Ward.
-* Mira: her challenge acceptance and solver need no change; her `lines` get one entry for a rung ("Four slots. You are showing off.").
-* Client: a toast and the narrative card on each rung; the duel board's colour strip shows the new colour on its first duel; the challenge card
-  already prints slots, colours and casts.
-* Persistence: `duels_fought` and the rungs live in the wizard record that already crosses resets and saves (`narrative.carry_over`, the
-  `persist.py` sidecar gets a migration that back-fills `duels_fought` from the ledger for 0.3.0 worlds). GAME_VERSION becomes 0.4.0 (the APK
-  version check refuses mismatched presets, so client, host and presets move together); the protocol number does not change.
-* Tests: the ladder in isolation; story and PvP formats at every rung; the Dwarf's Stone and the ladder not double-counting; a 0.3.0 save loading
-  with the right rung; Mira winning and losing four-slot, six-colour duels on the Python core; a headed run of a four-slot duel on the board.
+* **Duels counted:** every resolved duel in the world by any wizard, human or Mira: lessons, the stranger, rats, Trial creatures, PvP. Three rat
+  scraps are three duels; the owner said "no matter what".
+* **Play time counted:** game time that passes while at least one human wizard is present in the world (`party.present_humans`), accumulated
+  by the narrative tick as `played_ms`. Catch-up minutes (the world running on its own while the host was closed, `clockdebt.py`) do not count,
+  nor does time in the lobby. Sixty minutes of real play therefore means sixty minutes on this clock, in one sitting or several.
+* **Persistence:** the ladder is world state. A dead wizard's successor, a late-joining second human, a world reopened a week later: all find the
+  rungs already reached. `wizard.combatant` and the PvP format read the world's rung as a floor over the wizard's own spells (the Dwarf's Stone
+  stays a personal extra until the ladder catches up, and never double-counts). `carry_over` keeps the ladder across a cycle reset.
+* **Interruption:** when a rung fires, the grant is applied at once; the announcement is a campaign scene for every present human
+  (`campaign.start_scene_for_all`), which closes any open conversation or quest page under it (their state is kept: a conversation can be
+  resumed from its hub, a quest page is re-entered). A wizard in a duel keeps that duel's format and gets the scene the moment the board closes.
+  The speaker is the mentor if alive and present, else Mira, else the apprentice's own strongest Aspect (the inner voice, section 3): "Four
+  slots. You did not learn this. It arrived." Nothing else in the story is reordered; the rung simply happens when it is due.
+* `net/pvp.py` `make_format`: the adaptive format is the world's rung (slots and colours), so both players always duel at the same format;
+  `FOURTH_COLOUR_AFTER` and the per-wizard minimum go. Named formats (`three`, `classic`) stay for the dev menu.
+* `narrative/duel_lease.py` `_combatants` already builds the story opponent from the player's pool and size, so the mentor, the stranger and the
+  Trial's creatures grow with the ladder automatically; the rats keep their two- and three-colour `ward_pool` subsets. The mentor's told-Ward
+  lesson keeps its fixed three-slot Ward.
+* The ladder order is Flame, Frost, Vine, Light, Stone, Shadow, matching the Trial's colour names (`trial_mode.gd` `COLOUR_NAMES`); `pvp.py`'s
+  `DEFAULT_POOL` (which puts Arcane fifth) is replaced by the ladder.
+* Mira: her solver needs no change; her `lines` get one entry per rung. The AI apprentice duels at the world's format like everyone else.
+* Client: the scene card, a toast, and the duel board's colour strip showing the new colour on its first duel; the challenge card already prints
+  slots, colours and casts. A line in the HUD's journal: "Magic in this world: 4 colours, weave of 3; next in 2 duels or 9 minutes".
+* Versions: GAME_VERSION 0.4.0 (the APK version check moves client, host and presets together); the protocol number does not change.
+* Tests: each rung by duels and by time, and by whichever is first; the hour guarantee with zero duels; the three-duel guarantee with zero
+  minutes; persistence across death, "A new apprentice", save and load, host restart with catch-up (catch-up minutes not counted); the
+  interruption closing a conversation and a quest page and waiting for an open duel; the Dwarf's Stone not double-counting; a 0.3.0 save migrated;
+  Mira winning and losing four-slot six-colour duels on the Python core; a headed run of a four-slot duel on the board.
 
 ## 5. The rats: polish, and burning them
 
@@ -197,6 +213,7 @@ Today a rat is a narrative resident fought by standing within two tiles and pres
 ## 7. Decisions wanted from the owner
 
 1. Delete the 23 local and 39 remote merged branches, the two worktree folders and the two stashes? And the four unmerged experiments in the table?
-2. The ladder: rungs at duels 3, 5, 7 and 10, rats included in the count. (Alternative: rats count half, or only wizard-versus-wizard duels count.)
+2. The ladder's numbers: duels 3 / 5 / 7 / 10 and minutes 12 / 25 / 40 / 60, whichever first, counted for the whole world (settled by the owner
+   on 18 Oct 2026 in principle; the exact intermediate numbers are mine).
 3. Burning a rat inside the warehouse costs one food ware and the big rat takes two burns. (Alternative: no cost, one burn for any rat.)
 4. The inner voice as a new channel (cards spoken by an Aspect). (Alternative: only the villagers notice; no inner voice.)
