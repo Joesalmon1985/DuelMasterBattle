@@ -102,7 +102,7 @@ func _run() -> void:
 	await _shot("sp_duel_setup")
 	for i in 3:
 		board.ui_action_select_locus(i)
-		board.ui_action_pick_spell([0, 1, 3][i])
+		board.ui_action_pick_spell([0, 1, 6][i])
 	board.ui_action_lock_ward()
 	for _f in 10:
 		await process_frame
@@ -111,7 +111,7 @@ func _run() -> void:
 		return _fail("ward not locked")
 	# the race: as soon as both Wards are set, cast twice at once, while Mira (who thinks for seconds) has cast at most once
 	deadline = Time.get_ticks_msec() + 120000
-	var pool := [0, 1, 3]
+	var pool := [0, 1, 6]
 	var best_lead := -99
 	var waiting_msg := false
 	var n := 0

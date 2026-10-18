@@ -18,6 +18,8 @@ from wizard_rts.narrative import characters, events, party
 
 BEAT_MS = 20_000
 ROUTINE_RADIUS = 2
+PEST_BEAT_MS = 4_000  # the rats scurry between tiles far more often than a villager shifts their feet
+PEST_RADIUS = 3
 FIGURES = {  # the Widelands worker sprite that stands for a role, by tribe (art in godot_project/client/hybrid/art/widelands/gen)
     "mentor": {"barbarians": "barbarians_trainer", "empire": "empire_trainer", "atlanteans": "atlanteans_trainer", "frisians": "frisians_trainer", "amazons": "amazons_trainer"},
     "stranger": {"barbarians": "barbarians_blacksmith_master", "empire": "empire_miner_master", "atlanteans": "atlanteans_smoker", "frisians": "empire_miner_master", "amazons": "empire_miner_master"},
@@ -102,13 +104,22 @@ def quantum(world: Any) -> None:
             continue
         if r.get("stay") or pid in conv or now < r["next_beat_ms"]:
             continue
-        beat = now // BEAT_MS
-        r["next_beat_ms"] = (beat + 1) * BEAT_MS
+        pest = r.get("role") == "pest"
+        beat_ms, radius = (PEST_BEAT_MS, PEST_RADIUS) if pest else (BEAT_MS, ROUTINE_RADIUS)
+        beat = now // beat_ms
+        r["next_beat_ms"] = (beat + 1) * beat_ms
+        if pest and any(abs(px - int(r["tile"][0])) + abs(py - int(r["tile"][1])) <= 1 for px, py in _wizard_tiles(world)):
+            continue  # a rat with a wizard beside it freezes (so the one you walked up to is the one you fight)
         rng = random.Random(zlib.crc32(f"{world.seed}|{pid}|{beat}".encode()))
-        t = free_tile(world, r["anchor"][0], r["anchor"][1], ROUTINE_RADIUS, rng, avoid={tuple(r["tile"])})
+        t = free_tile(world, r["anchor"][0], r["anchor"][1], radius, rng, avoid={tuple(r["tile"])})
         if t is not None:
             r["tile"] = [t[0], t[1]]
             world.dmb.people[pid]["position"] = [t[0], t[1]]
+
+
+def _wizard_tiles(world: Any) -> list[tuple[int, int]]:
+    rows = list(getattr(world, "players", {}).values()) or [world.player]
+    return [(int(p["tx"]), int(p["ty"])) for p in rows]
 
 
 def walk_to(world: Any, pid: str, goal: tuple[int, int], limit: int = 60) -> int:

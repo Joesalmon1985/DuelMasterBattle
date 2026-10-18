@@ -127,6 +127,15 @@ def objective(world: Any) -> str:
     return ""
 
 
+def _rats_journal(world: Any) -> list[dict[str, Any]]:
+    from wizard_rts.narrative import pests
+
+    try:
+        return pests.journal(world)
+    except Exception:  # noqa: BLE001 - the journal must never fail for the rats' sake
+        return []
+
+
 def snapshot(world: Any) -> dict[str, Any]:
     w = wizard.wiz(world)
     lease = duel_lease.active(world)
@@ -136,5 +145,5 @@ def snapshot(world: Any) -> dict[str, Any]:
             "lessons": [{"id": k, "title": v, "done": k in w["lessons"]} for k, v in LESSON_TITLES.items()],
             "next_lesson": next_lesson_hint(world), "objective": objective(world), "spells": [wizard.SPELL_NAMES.get(s, str(s)) for s in w["spells"]],
             "weave_size": int(w["weave_size"]), "magic_gated": world.profile == "campaign", "unlocked": graph.unlocked(world),
-            "duel": {"lease": lease["id"], "purpose": lease["purpose"]} if lease else {}, "quests": quests.snapshot(world),
+            "duel": {"lease": lease["id"], "purpose": lease["purpose"]} if lease else {}, "quests": _rats_journal(world) + quests.snapshot(world),
             "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world))}

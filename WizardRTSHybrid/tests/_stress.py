@@ -66,8 +66,8 @@ def ledger_counts(t: Table, seat: str | None = None) -> dict[str, int]:
 
 
 def keeper_facts(t: Table) -> dict:
-    inf = pests.live(t.world) or (pests.latest(t.world, pests.home(t.world)[0]) if pests.home(t.world) else None)
-    return pests.facts(t.world, inf["keeper"]) if inf else {}
+    keepers = pests.state(t.world)["keepers"]
+    return pests.facts(t.world, next(iter(keepers.values()))) if keepers else {}
 
 
 def food_left(t: Table) -> int:
@@ -121,8 +121,7 @@ def mum(t: Table, h) -> str | None:
 
 
 def keeper(t: Table) -> str:
-    inf = pests.live(t.world) or pests.latest(t.world, pests.home(t.world)[0])
-    return inf["keeper"]
+    return next(iter(pests.state(t.world)["keepers"].values()))
 
 
 def official(t: Table) -> str:

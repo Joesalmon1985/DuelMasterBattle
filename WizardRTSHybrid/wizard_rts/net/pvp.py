@@ -28,25 +28,30 @@ from typing import Any
 from wizard_rts.duel.ward import compute_result, random_pattern, score_attack
 from wizard_rts.puzzle.rng import GodotRng
 
-DEFAULT_POOL = [0, 1, 3, 4, 6, 9]  # sim/dmb/adventure/duels.py _DEFAULT_POOL (the G04 ward encounter spells)
-EXTENDED_POOL = [0, 1, 3, 4, 6, 9, 2, 5]
+DEFAULT_POOL = [0, 1, 6, 4, 3, 5, 9, 2]  # the ladder order of the colours (narrative/progression.py ORDER): Flame, Frost, Vine, Light, Stone, Shadow, Arcane, Storm
+EXTENDED_POOL = DEFAULT_POOL
 FORMATS = {  # name -> slots, colours; the first PvP format is the accessible three-by-three one
     "three": {"slots": 3, "colours": 3, "max_casts": 10, "allow_repeats": True},
     "classic": {"slots": 4, "colours": 6, "max_casts": 10, "allow_repeats": True},
 }
-FOURTH_COLOUR_AFTER = 3  # a duel between players has three colours until both wizards have played this many duels; from then on it has four (Light joins)
-ADAPTIVE = (None, "", "auto", "adaptive")  # the format the app asks for: the host picks the colours by how many duels the two wizards have played
+ADAPTIVE = (None, "", "auto", "adaptive")  # the format the app asks for: the host takes the world's magic ladder (progression.py): slots and colours grow with the world
 CAST_TIMEOUT_S = 60.0
 INVITE_TIMEOUT_S = 30.0
 CHALLENGE_RANGE = 2  # tiles (Manhattan): stand next to the other wizard
 
 
-def make_format(spec: dict[str, Any] | str | None, duels_played: int | None = None) -> dict[str, Any]:
-    """The rules of a duel. `duels_played` is the smaller of the two wizards' PvP duel counts (None: a world that does not count them): the adaptive format
-    (no name, or "auto") is three colours for the first duels and four once both wizards have played `FOURTH_COLOUR_AFTER` of them. A named format is as named."""
+def make_format(spec: dict[str, Any] | str | None, world: Any = None) -> dict[str, Any]:
+    """The rules of a duel. The adaptive format (no name, or "auto") is the world's magic ladder (`narrative/progression.py`): three colours and three
+    slots at first, then whatever rungs the world has reached, the same for both players. A world without the narrative layer stays at three. A named
+    format is as named (the dev menu); a dict is as given."""
     base = dict(FORMATS["three"])
-    if spec in ADAPTIVE and duels_played is not None and int(duels_played) >= FOURTH_COLOUR_AFTER:
-        base["colours"] = 4
+    ladder_pool = None
+    if spec in ADAPTIVE and world is not None and "narrative" in world.__dict__:
+        from wizard_rts.narrative import progression
+
+        ladder_pool = progression.pool_for(world)
+        base["colours"] = len(ladder_pool)
+        base["slots"] = progression.weave(world)
     if isinstance(spec, str) and spec not in ADAPTIVE:
         base = dict(FORMATS.get(spec, FORMATS["three"]))
     elif isinstance(spec, dict):
@@ -60,8 +65,7 @@ def make_format(spec: dict[str, Any] | str | None, duels_played: int | None = No
     base["max_casts"] = max(1, min(30, base["max_casts"]))
     if not base["allow_repeats"] and base["colours"] < base["slots"]:
         base["allow_repeats"] = True
-    pool = list(EXTENDED_POOL[: base["colours"]]) if base["colours"] > len(DEFAULT_POOL) else list(DEFAULT_POOL[: base["colours"]])
-    base["pool"] = pool
+    base["pool"] = list(ladder_pool) if ladder_pool is not None and len(ladder_pool) == base["colours"] else list(DEFAULT_POOL[: base["colours"]])
     return base
 
 

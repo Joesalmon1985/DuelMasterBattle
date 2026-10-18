@@ -207,6 +207,7 @@ class HostServer:
 
     def _catch_up_slice(self, max_quanta: int = 5) -> None:
         cu = self.catch_up
+        self.world.catching_up = bool(cu["active"])  # the magic ladder's play clock does not run while the world catches up on its own (progression.py)
         if cu["active"]:
             for _ in range(max_quanta):
                 if cu["paid_ms"] >= cu["owed_ms"] or cu["spent_s"] >= cu["budget_s"]:

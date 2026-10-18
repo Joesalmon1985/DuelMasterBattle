@@ -33,9 +33,9 @@ def clear_warehouse(t: Table, people, inf) -> None:
 
 
 def keeper_talk(t: Table, h) -> dict:
-    inf = pests.live(t.world) or pests.latest(t.world, pests.home(t.world)[0])
-    h.stand_by_resident(inf["keeper"])
-    reply = h.op("talk", npc=inf["keeper"])
+    keeper = next(iter(pests.state(t.world)["keepers"].values()))  # the keeper stays even when the warehouse is a ruin
+    h.stand_by_resident(keeper)
+    reply = h.op("talk", npc=keeper)
     assert reply["status"] == "ok", reply
     return reply
 
@@ -261,3 +261,172 @@ def test_the_mentor_asks_for_a_log_and_the_keeper_gives_one_from_the_real_store(
     joe.stand_by_resident(t.mentor)
     reply = joe.op("talk", npc=t.mentor)
     assert "You brought the log" in " ".join(reply["lines"])
+
+
+# ---------------------------------------------------------------- burning the rats, the ruin, the waves' end, the journal (18 Oct 2026, plan section 5)
+
+def burn_rat(t: Table, h, pid: str) -> dict:
+    r = residents.table(t.world)[pid]
+    h.pose["tx"], h.pose["ty"] = r["tile"][0] + 1, r["tile"][1]
+    if (h.pose["tx"], h.pose["ty"]) in t.world.blocked:
+        h.pose["tx"], h.pose["ty"] = r["tile"][0], r["tile"][1] + 1
+    return h.op("fire", target=pid)
+
+
+def test_a_small_rat_burns_like_anything_else_and_the_big_one_takes_two():
+    t = Table(humans=1)
+    joe = t.people[0]
+    inf = pests.live(t.world)
+    small = next(p for p in inf["pests"] if residents.table(t.world)[p]["pest"]["size"] == "small")
+    big = next(p for p in inf["pests"] if residents.table(t.world)[p]["pest"]["size"] == "big")
+    far = joe.op("fire", target=small)
+    assert far["reason"] == "too_far", far
+    r = burn_rat(t, joe, small)
+    assert r["status"] == "ok" and r["class"] == "pest" and r["killed"] and r["how"] == "burned", r
+    assert small not in residents.table(t.world) and t.world.dmb.people[small]["alive"] is False
+    assert ledger.count(t.world, "pests_killed", joe.id) == 1 and ledger.count(t.world, "pests_burned", joe.id) == 1
+    assert any(n["kind"] == "pest_killed" and n.get("how") == "burned" for n in joe.state()["notices"])
+    t.advance(1)
+    r = burn_rat(t, joe, big)
+    assert r["status"] == "ok" and not r["killed"] and r["scorched"], r
+    assert pests.is_pest(t.world, big) and residents.table(t.world)[big]["pest"]["scorched"]
+    t.advance(1)
+    r = burn_rat(t, joe, big)
+    assert r["status"] == "ok" and r["killed"], r
+    assert big not in residents.table(t.world)
+    assert inf["burned"][joe.id] == 2 and len(pests.pests_of(t.world, inf)) == len(inf["pests"]) - 2
+
+
+def test_a_rat_burned_beside_the_warehouse_takes_a_food_ware_with_it_and_the_keeper_minds():
+    t = Table(humans=1)
+    joe = t.people[0]
+    inf = pests.live(t.world)
+    sid, b = pests.home(t.world)
+    keeper_talk(t, joe)
+    joe.op("choose", npc=inf["keeper"], choice="what_matter")
+    joe.op("end_talk", npc=inf["keeper"])
+    food_before = pests.food_left(t.world)
+    small = next(p for p in inf["pests"] if residents.table(t.world)[p]["pest"]["size"] == "small")
+    row = residents.table(t.world)[small]
+    beside_tiles = [(b["tx"] + dx, b["ty"] + dy) for dx, dy in ((1, 0), (0, 1), (-1, 0), (0, -1), (1, 1)) if (b["tx"] + dx, b["ty"] + dy) not in t.world.blocked]
+    row["tile"] = [beside_tiles[0][0], beside_tiles[0][1]]
+    t.world.dmb.people[small]["position"] = list(row["tile"])
+    r = burn_rat(t, joe, small)
+    assert r["status"] == "ok" and r["killed"]
+    assert inf["food_burned"] == 1 and pests.food_left(t.world) <= food_before - 1
+    assert sum(int(v) for v in t.world.stocks[pests.BURNED_BIN].values()) >= 1, "the ware went to a bin, nothing vanished from the ledger"
+    reply = keeper_talk(t, joe)
+    text = " ".join(reply["lines"])
+    assert "Smoke in my grain store" in text and "1 loads" in text, text
+    joe.op("end_talk", npc=inf["keeper"])
+    for pid in list(pests.pests_of(t.world, inf)):
+        for _ in range(2):
+            if pests.is_pest(t.world, pid):
+                t.advance(1)
+                burn_rat(t, joe, pid)
+    assert inf["cleared_ms"] is not None
+    reply = keeper_talk(t, joe)
+    assert "cooked" in " ".join(reply["lines"]), reply["lines"]
+
+
+def test_a_burned_warehouse_scatters_the_rats_and_the_keeper_keeps_nothing():
+    t = Table(humans=1)
+    joe = t.people[0]
+    inf = pests.live(t.world)
+    sid, b = pests.home(t.world)
+    joe.pose["tx"], joe.pose["ty"] = b["tx"] + 1, b["ty"] + 1
+    assert joe.op("fire", target=b["id"])["status"] == "ok"
+    t.advance(3)
+    assert inf["ended"] == "burned" and pests.live(t.world) is None and not pests.pests_of(t.world, inf)
+    assert all(residents.table(t.world)[p]["status"] == "gone" for p in inf["pests"])
+    reply = keeper_talk(t, joe)
+    text = " ".join(reply["lines"])
+    assert "set fire to my warehouse" in text, text
+    joe.op("end_talk", npc=inf["keeper"])
+    reply = keeper_talk(t, joe)
+    assert "There is no warehouse" in " ".join(reply["lines"]), reply["lines"]
+    joe.op("end_talk", npc=inf["keeper"])
+    with joe.seat_state():
+        from wizard_rts.narrative import tutorial
+
+        j = tutorial.snapshot(t.world)["quests"]
+    assert j and j[0]["id"] == "rats" and j[0]["status"] == "done" and "burned" in j[0]["objective"]
+    t.advance(40)
+    assert pests.live(t.world) is None, "no wave comes to a ruin"
+
+
+def test_the_keeper_thanks_again_each_wave_and_says_when_it_is_over(monkeypatch):
+    monkeypatch.setitem(pests.config._file()["pests"], "return_ms", 20_000)
+    monkeypatch.setitem(pests.config._file()["pests"], "max_waves", 3)
+    t = Table(humans=1)
+    joe = t.people[0]
+    said = []
+    for wave in range(3):
+        inf = pests.live(t.world)
+        if inf is None:
+            t.advance(25)
+            inf = pests.live(t.world)
+        assert inf is not None and inf["wave"] == wave + 1
+        if wave:
+            reply = keeper_talk(t, joe)
+            assert f"Wave {wave + 1}" in " ".join(reply["lines"]), reply["lines"]
+            joe.op("end_talk", npc=inf["keeper"])
+        clear_warehouse(t, [joe], inf)
+        reply = keeper_talk(t, joe)
+        said.append(" ".join(reply["lines"]))
+        joe.op("end_talk", npc=inf["keeper"])
+    assert all("All of them" in s for s in said[:2]), said
+    assert "That was the last of them" in said[2], said[2]
+    t.advance(30)
+    assert pests.live(t.world) is None, "no fourth wave"
+    with joe.seat_state():
+        from wizard_rts.narrative import tutorial
+
+        j = tutorial.snapshot(t.world)["quests"]
+    assert j[0]["id"] == "rats" and j[0]["status"] == "done" and "for good" in j[0]["objective"]
+
+
+def test_the_journal_lists_the_rats_once_the_apprentice_has_seen_them_and_the_keeper_minds_a_run_of_losses():
+    t = Table(humans=1)
+    joe = t.people[0]
+    inf = pests.live(t.world)
+    sid, b = pests.home(t.world)
+    joe.pose["tx"], joe.pose["ty"] = b["tx"] + 30, b["ty"] + 30
+    t.advance(2)
+    with joe.seat_state():
+        from wizard_rts.narrative import tutorial
+
+        q = tutorial.snapshot(t.world)["quests"]
+        assert not q or q[0]["id"] != "rats", "not seen yet"
+    joe.pose["tx"], joe.pose["ty"] = b["tx"] + 6, b["ty"]
+    t.advance(2)
+    assert str(joe.id) in inf["noticed"]
+    assert any(n["kind"] == "pests_noticed" for n in joe.state()["notices"])
+    with joe.seat_state():
+        j = tutorial.snapshot(t.world)["quests"]
+        assert j[0]["id"] == "rats" and j[0]["status"] == "active" and "5 of 5" in j[0]["objective"]
+        assert any(n["source"] == "rats" for n in wizard.wiz(t.world)["journal_notes"])
+    for _ in range(3):
+        fight_pest(t, joe, pests.pests_of(t.world, inf)[0], win=False)
+        t.advance(1)
+    reply = keeper_talk(t, joe)
+    assert "not laughing" in " ".join(reply["lines"]), reply["lines"]
+
+
+def test_the_rats_scurry_and_freeze_beside_a_wizard():
+    t = Table(humans=1)
+    joe = t.people[0]
+    inf = pests.live(t.world)
+    pid = inf["pests"][2]
+    joe.pose["tx"], joe.pose["ty"] = 5, 5
+    seen = {tuple(residents.table(t.world)[pid]["tile"])}
+    for _ in range(12):
+        t.advance(2)
+        seen.add(tuple(residents.table(t.world)[pid]["tile"]))
+    assert len(seen) >= 2, "a rat moves about the store"
+    r = residents.table(t.world)[pid]
+    joe.pose["tx"], joe.pose["ty"] = r["tile"][0] + 1, r["tile"][1]
+    before = list(r["tile"])
+    for _ in range(6):
+        t.advance(2)
+    assert list(residents.table(t.world)[pid]["tile"]) == before, "it stands still with the wizard beside it"

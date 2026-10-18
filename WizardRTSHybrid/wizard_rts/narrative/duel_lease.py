@@ -68,6 +68,8 @@ def _combatants(world: Any, opp: dict[str, Any], fixed_ward: list[int] | None) -
              "think_min_seconds": float(opp["think_min_seconds"]), "think_max_seconds": float(opp["think_max_seconds"])}
     if fixed_ward:
         enemy["fixed_ward"] = [int(x) for x in fixed_ward]
+        n = len(enemy["fixed_ward"])  # an authored Ward is what it is (the lesson's three the mentor names aloud, a creature's): the duel is that size
+        enemy["weave_size"] = enemy["ward_size"] = player["weave_size"] = player["ward_size"] = n
     if opp.get("ward_pool"):  # an opponent that only weaves some colours (the rats): its Ward is drawn from them, and Python reproduces it from the same pool
         enemy["ward_pool"] = [int(c) for c in opp["ward_pool"] if int(c) in pool] or list(pool)
     w = wizard.wiz(world)
@@ -220,6 +222,9 @@ def resolve(world: Any, lease_id: str, report: dict[str, Any]) -> dict[str, Any]
     duels["attempts"].append({"purpose": rec["purpose"], "attempt": rec["attempt"], "outcome": result, "casts": int(report.get("player_casts", 0)),
                               "game_ms": int(world.dmb.clock.get("game_ms", 0))})
     events.log(world, "duel_resolved", lease=lease_id, purpose=rec["purpose"], outcome=result)
+    from wizard_rts.narrative import progression
+
+    progression.note_duel(world, kind=str(rec["purpose"]).split(":", 1)[0])  # every duel fought to a verdict moves the world's magic ladder
     return {"status": "resolved", "outcome": result, "verified": True, "purpose": rec["purpose"], "attempt": rec["attempt"],
             "broke": any(bool(h.get("broke")) for h in report.get("history", []))}  # a draw with the enemy's Ward broken is both broken in one round; without, both ran dry
 

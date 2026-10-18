@@ -51,6 +51,8 @@ def carry_over(old: Any, new: Any) -> dict[str, Any]:
             n.setdefault("guests", {})[seat] = fresh
         if "party" in old.narrative:
             n["party"] = copy.deepcopy(old.narrative["party"])
+        if "progression" in old.narrative:  # the world's magic ladder is the world's: it crosses the reset with it
+            n["progression"] = copy.deepcopy(old.narrative["progression"])
     return n
 
 
@@ -70,3 +72,6 @@ def tick(world: Any) -> None:
         from wizard_rts.trial import run as trial
 
         trial.tick(world)
+        from wizard_rts.narrative import progression
+
+        progression.tick(world)

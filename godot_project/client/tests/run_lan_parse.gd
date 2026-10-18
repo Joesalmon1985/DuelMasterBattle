@@ -26,9 +26,9 @@ func _run() -> void:
 	# the net duel sim mirrors a host view without a connection
 	var NetSim = load("res://client/duel/net_duel_sim.gd")
 	var view := {"duel_id": "pvp1", "state": "setup", "you": "p2", "rival": {"id": "p1", "name": "Alice"}, "your_ward": [], "your_history": [], "rival_history": [],
-		"format": {"slots": 3, "colours": 3, "max_casts": 10, "allow_repeats": true, "pool": [0, 1, 3]}, "cast_seq": 0,
-		"encounter": {"player_combatant": {"id": "player", "display_name": "You", "archetype": "player", "kind": "player", "weave_size": 3, "ward_size": 3, "attack_pool": [0, 1, 3], "ward_pool": [0, 1, 3], "allow_repeats": true, "max_casts": 10, "min_cast_seconds": 0.0, "max_cast_seconds": 60.0},
-			"enemy_combatant": {"id": "rival", "display_name": "Alice", "archetype": "wizard", "kind": "player", "weave_size": 3, "ward_size": 3, "attack_pool": [0, 1, 3], "ward_pool": [0, 1, 3], "allow_repeats": true, "max_casts": 10, "min_cast_seconds": 0.0, "max_cast_seconds": 60.0}}}
+		"format": {"slots": 3, "colours": 3, "max_casts": 10, "allow_repeats": true, "pool": [0, 1, 6]}, "cast_seq": 0,
+		"encounter": {"player_combatant": {"id": "player", "display_name": "You", "archetype": "player", "kind": "player", "weave_size": 3, "ward_size": 3, "attack_pool": [0, 1, 6], "ward_pool": [0, 1, 6], "allow_repeats": true, "max_casts": 10, "min_cast_seconds": 0.0, "max_cast_seconds": 60.0},
+			"enemy_combatant": {"id": "rival", "display_name": "Alice", "archetype": "wizard", "kind": "player", "weave_size": 3, "ward_size": 3, "attack_pool": [0, 1, 6], "ward_pool": [0, 1, 6], "allow_repeats": true, "max_casts": 10, "min_cast_seconds": 0.0, "max_cast_seconds": 60.0}}}
 	var sim = NetSim.new(null, view)
 	sim.attach(DmbCombatant.make(view["encounter"]["player_combatant"]), DmbCombatant.make(view["encounter"]["enemy_combatant"]))
 	sim.set_player_ward_locus(0, 0)
@@ -39,7 +39,7 @@ func _run() -> void:
 		quit(1)
 		return
 	view["state"] = "active"
-	view["your_ward"] = [0, 1, 3]
+	view["your_ward"] = [0, 1, 6]
 	view["your_cast_pending"] = true
 	view["rival_cast_pending"] = false
 	view["rival_history"] = [{"n": 1, "round": 1, "attack": [1, 1, 1], "fracture": 1, "echo": 0, "fade": 2, "broken": false, "auto": false}]
@@ -60,10 +60,10 @@ func _run() -> void:
 		return
 	view["rival_history"] = [{"n": 1, "attack": [1, 1, 1], "fracture": 1, "echo": 0, "fade": 2, "broken": false, "auto": false}]
 	view["state"] = "finished"
-	view["result"] = {"outcome": "victory", "reason": "solved", "your_casts": 2, "rival_casts": 2, "rival_ward": [1, 1, 3]}
-	view["rival_ward"] = [1, 1, 3]
+	view["result"] = {"outcome": "victory", "reason": "solved", "your_casts": 2, "rival_casts": 2, "rival_ward": [1, 1, 6]}
+	view["rival_ward"] = [1, 1, 6]
 	sim.apply_view(view)
-	if sim.result == null or sim.result.outcome != "victory" or sim.get_enemy_ward() != [1, 1, 3]:
+	if sim.result == null or sim.result.outcome != "victory" or sim.get_enemy_ward() != [1, 1, 6]:
 		print("HYBRID_LAN_PARSE_FAIL net sim result")
 		quit(1)
 		return

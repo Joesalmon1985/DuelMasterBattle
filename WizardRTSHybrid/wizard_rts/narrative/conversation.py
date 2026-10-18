@@ -168,6 +168,9 @@ def talk(world: Any, key: str) -> dict[str, Any]:
     if sp["kind"] == "unit" and sp["row"].get("target") is not None:  # fighting: no conversation, and nothing is held
         return _reply(world, sp, ["Not now. Can't you see I am busy?"], [], ends=True)
     begin(world, sp)
+    from wizard_rts.narrative import ledger, mortality
+
+    ledger.bump(world, "talks", seat=mortality.me(world))  # how often this apprentice accosts people: the villagers may notice
     lines, choices, extras = _compose(world, sp, set(), True)
     return _reply(world, sp, lines, choices, extras=extras)
 

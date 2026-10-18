@@ -1,6 +1,6 @@
 {
  "id": "warehouse",
- "note": "Placeholder authored text (owner review pending). The warehouse keeper of the home settlement. Facts from narrative/pests.py: pests_left, pests_total, killed_total, my_killed, others_killed, cooperated, eaten_total, complained, duels_since_complaint, burned, wave, cleared, minutes_since_complaint, escapes; the ledger's counts; the apprentice's facts (mentor_wants_log, log_for_mentor).",
+ "note": "Placeholder authored text (owner review pending). The warehouse keeper of the home settlement. Facts from narrative/pests.py: pests_left, pests_total, killed_total, my_killed, others_killed, cooperated, eaten_total, complained, duels_since_complaint, burned, wave, cleared, minutes_since_complaint, escapes; the ledger's counts; the apprentice's facts (mentor_wants_log, log_for_mentor). Added 18 Oct 2026: burned_rats, my_burned_rats, food_burned, food_left, warehouse_gone, waves_over, max_waves (narrative/pests.py facts).",
  "speakers": {
   "keeper": {
    "nodes": {
@@ -25,6 +25,59 @@
        "lines": [
         "You set fire to my warehouse. With the rats still in it. I want you to think about the order of those two things.",
         "Everything in that store belongs to everybody in this village. The rats were eating it. You were burning it. I do not see the improvement."
+       ]
+      },
+      {
+       "id": "ruin",
+       "when": {
+        "facts": [
+         {
+          "name": "warehouse_gone",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_ruin"
+        ]
+       },
+       "sets": [
+        "said_ruin"
+       ],
+       "lines": [
+        "There is no warehouse. You are standing in what was the warehouse. The rats have gone to wherever rats go when the grain is ash, and I am a keeper of nothing.",
+        "I will stand here anyway. Somebody should."
+       ],
+       "lines_alt": [
+        [
+         "Still nothing to keep. Still here. Do not ask me why; I have asked myself."
+        ]
+       ]
+      },
+      {
+       "id": "waves_over",
+       "when": {
+        "facts": [
+         {
+          "name": "waves_over",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_waves_over"
+        ]
+       },
+       "sets": [
+        "said_waves_over"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 4
+        }
+       ],
+       "lines": [
+        "That was the last of them. I know because I have kept this store eleven years and I know when a thing is over. Six waves. I counted every one.",
+        "You will want thanking. Consider it done. Now go and be somebody else's problem; the grain and I would like a quiet season."
        ]
       },
       {
@@ -54,6 +107,58 @@
        "lines": [
         "I have been standing here listening to the pair of you throw Wards at each other in the road for {minutes_since_complaint} minutes while {pests_left} rats eat the winter.",
         "If you want something to fight, it has six legs and it is in my grain. I am not asking twice."
+       ]
+      },
+      {
+       "id": "burned_rats_only",
+       "when": {
+        "facts": [
+         {
+          "name": "cleared",
+          "gte": 1
+         },
+         {
+          "name": "all_burned",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_cleared"
+        ]
+       },
+       "sets": [
+        "said_cleared"
+       ],
+       "effects": [
+        {
+         "kind": "relationship",
+         "delta": 1
+        }
+       ],
+       "lines": [
+        {
+         "text": "Gone, all of them, and every one of them cooked. I asked for rats gone, not for a kitchen. {food_burned} loads went up with them.",
+         "when": {
+          "facts": [
+           {
+            "name": "food_burned",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "Gone, all of them, and every one of them cooked. I asked for rats gone, not for a kitchen. You kept the fire off the grain, I will give you that.",
+         "when": {
+          "facts": [
+           {
+            "name": "food_burned",
+            "lte": 0
+           }
+          ]
+         }
+        },
+        "The store is open. Mind the scorch marks; they are new."
        ]
       },
       {
@@ -88,6 +193,17 @@
        ],
        "lines": [
         "Both of you, then. One on each side of the store, like you had planned it. I did not expect that, and I say so to your faces.",
+        {
+         "text": "And {burned_rats} of them burned. I will not ask which of you.",
+         "when": {
+          "facts": [
+           {
+            "name": "burned_rats",
+            "gte": 1
+           }
+          ]
+         }
+        },
         "The warehouse is open. Tell your mothers I said you did a day's work."
        ]
       },
@@ -127,6 +243,17 @@
        ],
        "lines": [
         "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think.",
+        {
+         "text": "{burned_rats} of them by fire, which I did not enjoy, and the rest the proper way, which I did.",
+         "when": {
+          "facts": [
+           {
+            "name": "burned_rats",
+            "gte": 1
+           }
+          ]
+         }
+        },
         "The store is yours to walk through whenever you like. Mind the loose boards."
        ]
       },
@@ -181,6 +308,107 @@
        ]
       },
       {
+       "id": "burned_rats_some",
+       "when": {
+        "facts": [
+         {
+          "name": "burned_rats",
+          "gte": 1
+         },
+         {
+          "name": "pests_left",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_burned_rats"
+        ]
+       },
+       "sets": [
+        "said_burned_rats"
+       ],
+       "lines": [
+        {
+         "text": "Smoke in my grain store. You burned one. It worked, I grant you, and it took {food_burned} loads with it, which the rat would have taken a week over.",
+         "when": {
+          "facts": [
+           {
+            "name": "food_burned",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "Smoke in my grain store. You burned one. It worked, I grant you, and nothing else caught, which is more luck than sense.",
+         "when": {
+          "facts": [
+           {
+            "name": "food_burned",
+            "lte": 0
+           }
+          ]
+         }
+        },
+        "{pests_left} to go. The big one does not burn so easily; I have seen people try."
+       ]
+      },
+      {
+       "id": "eaten_empty",
+       "when": {
+        "facts": [
+         {
+          "name": "food_left",
+          "lte": 0
+         },
+         {
+          "name": "pests_left",
+          "gte": 1
+         }
+        ],
+        "forbids": [
+         "said_empty"
+        ]
+       },
+       "sets": [
+        "said_empty"
+       ],
+       "lines": [
+        "There is nothing left. Not a ration, not a crust. {eaten_total} loads, and I counted every one of them go while the village's two wizards did whatever it is you do.",
+        "You may stop now. There is nothing left to defend. The rats will leave when they are hungry, which is more than I can say for anyone else."
+       ],
+       "lines_alt": [
+        [
+         "Empty store. Rats in it anyway, out of habit. I know how they feel."
+        ]
+       ]
+      },
+      {
+       "id": "losses",
+       "when": {
+        "facts": [
+         {
+          "name": "escapes",
+          "gte": 3
+         },
+         {
+          "name": "killed_total",
+          "lte": 0
+         }
+        ],
+        "forbids": [
+         "said_losses"
+        ]
+       },
+       "sets": [
+        "said_losses"
+       ],
+       "lines": [
+        "{escapes} times I have watched a rat get the better of a wizard. I am not laughing. I want you to know that I am not laughing, because it is taking some effort.",
+        "Stand closer. Read the Ward. They only have the two colours; they are rats."
+       ]
+      },
+      {
        "id": "returned",
        "when": {
         "facts": [
@@ -193,17 +421,20 @@
           "gte": 1
          },
          {
-          "name": "complained",
+          "name": "killed_total",
           "lte": 0
          }
         ]
        },
        "lines": [
-        "They are back. Fewer this time, and bolder. I told the elders we needed a cat; they said we needed a wizard. Well. Here you are."
+        "They are back. Wave {wave}, by my count. Fewer this time, and bolder. I told the elders we needed a cat; they said we needed a wizard. Well. Here you are."
        ],
        "lines_alt": [
         [
-         "They are back. They are always back. Rats are a kind of weather."
+         "They are back. They are always back. Rats are a kind of weather. Wave {wave}."
+        ],
+        [
+         "Wave {wave}. I have stopped being surprised and started being tired."
         ]
        ]
       },
@@ -254,6 +485,17 @@
           "facts": [
            {
             "name": "escapes",
+            "gte": 1
+           }
+          ]
+         }
+        },
+        {
+         "text": "{burned_rats} of those by fire. I can smell it from here.",
+         "when": {
+          "facts": [
+           {
+            "name": "burned_rats",
             "gte": 1
            }
           ]

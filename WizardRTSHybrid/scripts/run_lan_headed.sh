@@ -22,7 +22,7 @@ for _i in $(seq 1 90); do grep -q HYBRID_HOST_READY "$LOG" 2>/dev/null && break;
 grep -q HYBRID_HOST_READY "$LOG" || { echo "FAIL host did not start"; tail -5 "$LOG"; kill "$(cat /tmp/lan_host_$port.pid)" 2>/dev/null; exit 1; }
 SCRIPT=run_lan_two_clients.gd; MAXDUELS=1; OKTOKEN=HYBRID_LAN_OK; TOKENS="HYBRID_LAN"
 if [ "$WHICH" = mortality ]; then SCRIPT=run_hybrid_mortality.gd; MAXDUELS=3; OKTOKEN=HYBRID_MORTALITY_OK; TOKENS="HYBRID_MORTALITY"; fi
-BOTARGS="--accept --challenge-after 2 --ward 1,1,3 --max-duels $MAXDUELS"
+BOTARGS="--accept --challenge-after 2 --ward 1,1,6 --max-duels $MAXDUELS"
 if [ "$WHICH" = trial ]; then SCRIPT=run_hybrid_trial_a_d.gd; OKTOKEN=HYBRID_TRIAL_OK; TOKENS="HYBRID_TRIAL|TRIAL "; BOTARGS="--stay --max-duels 0"; fi
 if [ "$WHICH" = trial_full ]; then SCRIPT=run_hybrid_trial_full.gd; OKTOKEN=HYBRID_TRIAL_FULL_OK; TOKENS="HYBRID_TRIAL_FULL|TRIALFULL "; BOTARGS="--stay --max-duels 0"; fi
 SCRIPT="${HYBRID_LAN_SCRIPT:-$SCRIPT}"  # a probe script may stand in for the case's own

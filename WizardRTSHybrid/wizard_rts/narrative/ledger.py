@@ -13,7 +13,7 @@ from typing import Any
 
 RECENT_CAP = 60
 KNOWN = ("pvp_duels", "pvp_wins", "pvp_losses", "kills", "deaths", "resurrections", "draws", "protests", "provocations", "refused_steps", "accosted",
-         "fourth_wall")  # fourth_wall: the rare lines that notice they are lines (capped by the banks' own conditions)  # always present as facts (0 when nothing happened)
+         "fourth_wall", "talks", "pests_killed", "pests_burned", "pest_escapes", "burned_trees", "burned_rocks", "burned_buildings", "burned_people", "burned_soldiers")  # fourth_wall: the rare lines that notice they are lines (capped by the banks' own conditions)  # always present as facts (0 when nothing happened)
 
 
 def state(world: Any) -> dict[str, Any]:

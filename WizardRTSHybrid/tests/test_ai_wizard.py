@@ -56,7 +56,7 @@ def challenge(t: Table, human, ai) -> dict:
     return human.op("pvp_challenge", target=ai.link.id)
 
 
-def accept_and_lock(t: Table, human, ai, ward=(0, 1, 3)):
+def accept_and_lock(t: Table, human, ai, ward=(0, 1, 6)):
     """She declines the first challenges (`accept_after_challenges`); a human who keeps asking gets the duel."""
     for _ in range(1 + int(ai.c.get("accept_after_challenges", 0))):
         r = challenge(t, human, ai)
@@ -157,7 +157,7 @@ def test_the_ai_solves_a_ward_with_the_retained_heuristic_and_wins_a_slow_humans
     t = solo()
     joe, ai = t.people[0], ai_of(t)
     bring_together(t, joe, ai)
-    duel = accept_and_lock(t, joe, ai, ward=(3, 3, 0))
+    duel = accept_and_lock(t, joe, ai, ward=(6, 6, 0))
     t.advance(120)  # the human is thinking
     assert duel.state == "finished" and duel.result["winner"] == ai.link.id
     hist = duel.history[ai.link.id]

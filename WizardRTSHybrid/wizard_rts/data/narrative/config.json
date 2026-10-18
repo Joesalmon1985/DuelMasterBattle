@@ -1,5 +1,5 @@
 {
- "narrative_version": 2,
+ "narrative_version": 3,
  "narrative": {
   "unlock_after_ms": 1200000,
   "slots_per_settlement": 3,
@@ -77,5 +77,14 @@
  },
  "duel": {
   "min_cast_seconds": 2.0
+ },
+ "progression": {
+  "note": "The world's magic ladder (narrative/progression.py): each rung fires on whichever comes first, the world's duel count or minutes of play while a human is present.",
+  "rungs": [
+   {"id": "light", "colour": 4, "duels": 3, "minutes": 12},
+   {"id": "weave4", "weave": 4, "duels": 5, "minutes": 25},
+   {"id": "stone", "colour": 3, "duels": 7, "minutes": 40},
+   {"id": "shadow", "colour": 5, "duels": 10, "minutes": 60}
+  ]
  }
 }

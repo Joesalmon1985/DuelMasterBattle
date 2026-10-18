@@ -194,6 +194,10 @@ def _replacement(world: Any, qid: str, role: str) -> tuple[str, str] | None:
     old = r["bindings"][role]
     where = _centre(world, r["settlement"])
     taken = {(b["kind"], b["id"]) for rr, b in r["bindings"].items() if rr != role}
+    for other in TEMPLATES:  # one part per person, for replacements as for the first casting: the forester does not also become the patrol's ranger
+        orec = rec(world, other)
+        if other != qid and orec is not None and orec["status"] not in ("unavailable", "interrupted"):
+            taken |= {(b["kind"], b["id"]) for b in orec["bindings"].values()}
     found = candidates(world, graph.load(qid)["cast"][role]["pick"], where[0], where[1], taken) if where else []
     found = [c for c in found if c != (old["kind"], old["id"])]
     return found[0] if found else None
@@ -260,7 +264,7 @@ def objective(world: Any, qid: str) -> str:
     if s not in ("offered", "active"):
         return ""
     if qid != "forest_dispute":
-        people = ", ".join(f"{names.get(role, '?')} ({spec.get('label', role)})" for role, spec in graph.load(qid)["cast"].items())
+        people = ", ".join(f"{names[role]} ({spec.get('label', role)})" for role, spec in graph.load(qid)["cast"].items() if names.get(role))
         return f"{graph.load(qid)['title']}: {people}."
     if not ("heard_cutter" in f and "heard_planter" in f):
         todo = []

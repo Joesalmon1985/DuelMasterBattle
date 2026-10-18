@@ -296,20 +296,20 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert a.ward([0, 1, 9])["reason"] == "illegal_ward"
     assert a.ward([0, 1])["reason"] == "illegal_ward"
     assert a.cast([0, 0, 0])["reason"] == "not_active"
-    assert a.ward([0, 1, 3])["status"] == "ok"
-    assert a.ward([3, 3, 3])["idempotent"] is True  # a duplicate submission does not change the ward
+    assert a.ward([0, 1, 6])["status"] == "ok"
+    assert a.ward([6, 6, 6])["idempotent"] is True  # a duplicate submission does not change the ward
     vb = b.duel()["duel"]
     assert vb["rival_ward_locked"] is True and "rival_ward" not in vb and vb["your_ward"] == []
-    assert b.ward([3, 3, 0])["status"] == "ok"
+    assert b.ward([6, 6, 0])["status"] == "ok"
     va = a.duel()["duel"]
-    assert va["state"] == "active" and va["your_cast_pending"] and va["rival_cast_pending"] and "rival_ward" not in va and va["your_ward"] == [0, 1, 3]
+    assert va["state"] == "active" and va["your_cast_pending"] and va["rival_cast_pending"] and "rival_ward" not in va and va["your_ward"] == [0, 1, 6]
     # casts: authoritative feedback under the existing fracture/echo/fade rules
     assert a.cast([9, 9, 9])["reason"] == "illegal_attack"
     assert a.cast([0, 0])["reason"] == "illegal_attack"
     assert a.cast([0, 0, 0], cast_seq=7)["reason"] == "bad_cast_seq"
-    r = a.cast([3, 0, 0])  # against [3, 3, 0]: slots 0 and 2 fracture, the spare 0 fades (feedback.gd rules)
+    r = a.cast([6, 0, 0])  # against [6, 6, 0]: slots 0 and 2 fracture, the spare 0 fades (feedback.gd rules)
     assert (r["fracture"], r["echo"], r["fade"], r["broken"]) == (2, 0, 1, False)
-    dup = a.cast([3, 0, 0], cast_seq=1)
+    dup = a.cast([6, 0, 0], cast_seq=1)
     assert dup["idempotent"] is True and dup["fracture"] == 2
     # no rounds: A casts again at once, B has not cast at all, and A is never told to wait
     r = a.cast([1, 1, 1])
@@ -319,14 +319,14 @@ def test_full_pvp_duel_lifecycle_and_return_to_world(rig: Rig) -> None:
     assert (va["your_casts"], va["rival_casts"]) == (2, 0) and len(va["your_history"]) == 2 and va["rival_history"] == []
     r = b.cast([0, 1, 1])
     assert (r["fracture"], r["echo"], r["broken"]) == (2, 0, False)
-    r = b.cast([0, 1, 3])
+    r = b.cast([0, 1, 6])
     assert r["broken"] is True and r["done"] is True  # the first breaking cast ends the duel at once
     assert a.cast([3, 3, 1], cast_seq=3)["reason"] == "finished"  # A's late guess is refused
     va, vb = a.duel()["duel"], b.duel()["duel"]
     assert va["result"]["outcome"] == "defeat" and vb["result"]["outcome"] == "victory"
     assert va["result"]["reason"] == "solved"
-    assert va["rival_ward"] == [3, 3, 0] and vb["rival_ward"] == [0, 1, 3]  # disclosed only now
-    assert va["rival_history"][-1]["attack"] == [0, 1, 3] and vb["rival_history"][-1]["attack"] == [1, 1, 1]
+    assert va["rival_ward"] == [6, 6, 0] and vb["rival_ward"] == [0, 1, 6]  # disclosed only now
+    assert va["rival_history"][-1]["attack"] == [0, 1, 6] and vb["rival_history"][-1]["attack"] == [1, 1, 1]
     assert (va["result"]["your_casts"], va["result"]["rival_casts"]) == (2, 2)
     assert not rig.world.dmb.clock.get("pause_tokens")
     assert rig.world.dmb.clock["game_ms"] >= frozen
@@ -355,10 +355,10 @@ def test_pvp_casts_are_independent_and_a_simultaneous_win_has_one_winner(rig: Ri
     _walk_adjacent(a, b)
     d = a.challenge(b.player_id)["duel_id"]
     b.respond(d, True)
-    a.ward([0, 1, 3])
-    b.ward([3, 3, 0])
+    a.ward([0, 1, 6])
+    b.ward([6, 6, 0])
     # A races ahead: three guesses over the wire, B none; every reply carries both histories' counts
-    for attack in ([0, 0, 0], [1, 1, 1], [3, 0, 0]):
+    for attack in ([0, 0, 0], [1, 1, 1], [6, 0, 0]):
         r = a.cast(attack)
         assert r["status"] == "ok" and r["done"] is False
     assert (r["duel"]["your_casts"], r["duel"]["rival_casts"]) == (3, 0)
@@ -372,7 +372,7 @@ def test_pvp_casts_are_independent_and_a_simultaneous_win_has_one_winner(rig: Ri
         gate.wait()
         replies[name] = client.cast(attack)
 
-    ts = [threading.Thread(target=go, args=("a", a, [3, 3, 0])), threading.Thread(target=go, args=("b", b, [0, 1, 3]))]
+    ts = [threading.Thread(target=go, args=("a", a, [6, 6, 0])), threading.Thread(target=go, args=("b", b, [0, 1, 6]))]
     for t in ts:
         t.start()
     for t in ts:
@@ -415,14 +415,14 @@ def test_pvp_clash_stalemate_decline_and_forfeit(rig: Rig) -> None:
     # stalemate at exhaustion with equal progress
     d = a.challenge(b.player_id, fmt={"slots": 3, "colours": 3, "max_casts": 2})["duel_id"]
     b.respond(d, True)
-    va, vb = _play_duel(a, b, [0, 0, 0], [1, 1, 1], [([3, 3, 3], [3, 3, 3]), ([3, 3, 3], [3, 3, 3])])
+    va, vb = _play_duel(a, b, [0, 0, 0], [1, 1, 1], [([6, 6, 6], [6, 6, 6]), ([6, 6, 6], [6, 6, 6])])
     assert va["result"]["outcome"] == "stalemate" == vb["result"]["outcome"] and va["result"]["reason"] == "both_exhausted"
     a.op({"op": "pvp_leave"})
     b.op({"op": "pvp_leave"})
     # exhaustion with unequal progress is still a stalemate: game_logic.gd declares a draw when both sides are out of casts
     d = a.challenge(b.player_id, fmt={"slots": 3, "colours": 3, "max_casts": 1})["duel_id"]
     b.respond(d, True)
-    va, vb = _play_duel(a, b, [0, 0, 0], [1, 1, 1], [([1, 0, 0], [3, 3, 3])])
+    va, vb = _play_duel(a, b, [0, 0, 0], [1, 1, 1], [([1, 0, 0], [6, 6, 6])])
     assert va["result"]["outcome"] == "stalemate" == vb["result"]["outcome"]
     assert va["your_history"][0]["fracture"] == 1 and vb["your_history"][0]["fracture"] == 0
     a.op({"op": "pvp_leave"})
@@ -452,7 +452,7 @@ def test_pvp_timeouts_auto_cast_and_invite_expiry() -> None:
         b.respond(d, True)
         a.ward([0, 0, 0])
         b.ward([1, 1, 1])
-        a.cast([3, 3, 3])
+        a.cast([6, 6, 6])
         time.sleep(0.9)  # B never casts: after the per-player timeout the host casts a legal weave for him
         vb = b.duel()["duel"]
         assert vb["your_history"][0]["auto"] is True and len(vb["your_history"][0]["attack"]) == 3

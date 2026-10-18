@@ -1,4 +1,521 @@
 {
+ "do_nothing": {
+  "log": [
+   {
+    "min": 5.0,
+    "stage": "explore"
+   },
+   {
+    "min": 12.0,
+    "stage": "arrival"
+   },
+   {
+    "min": 12.0,
+    "scene_open": "notice",
+    "needs_answer": false
+   },
+   {
+    "min": 14.5,
+    "stage": "confrontation"
+   },
+   {
+    "min": 14.5,
+    "scene_open": "confrontation",
+    "needs_answer": false
+   },
+   {
+    "min": 17.5,
+    "stage": "aftermath"
+   },
+   {
+    "min": 20.0,
+    "stage": "complete"
+   }
+  ],
+  "after": {
+   "stage": "complete",
+   "mentor_alive": false,
+   "food_left": 0,
+   "keeper": {
+    "pests_left": 5,
+    "pests_total": 5,
+    "killed_total": 0,
+    "my_killed": 0,
+    "others_killed": 0,
+    "cooperated": 0,
+    "eaten_total": 65,
+    "complained": 0,
+    "duels_since_complaint": 0,
+    "burned": 0,
+    "wave": 1,
+    "cleared": 0,
+    "minutes_since_complaint": 0,
+    "escapes": 0,
+    "role": "keeper",
+    "burned_rats": 0,
+    "my_burned_rats": 0,
+    "food_burned": 0,
+    "food_left": 0,
+    "all_burned": 0,
+    "warehouse_gone": 0,
+    "waves_over": 0,
+    "max_waves": 6
+   },
+   "ledger": {},
+   "lessons_expired": true,
+   "notices": [
+    "started",
+    "pests_arrived",
+    "ai_says",
+    "rung_reached",
+    "rung",
+    "rung_reached",
+    "rung",
+    "rung_reached",
+    "rung",
+    "rung_reached",
+    "rung"
+   ],
+   "mira": []
+  },
+  "said": {
+   "mentor_or_body": {
+    "status": "rejected",
+    "reason": "dead",
+    "text": "",
+    "choices": []
+   },
+   "keeper": {
+    "status": "rejected",
+    "reason": "scene",
+    "text": "",
+    "choices": []
+   },
+   "mother": {
+    "status": "rejected",
+    "reason": "scene",
+    "text": "",
+    "choices": []
+   },
+   "official": {
+    "status": "rejected",
+    "reason": "scene",
+    "text": "",
+    "choices": []
+   }
+  },
+  "objective": "Seek greater magical power."
+ },
+ "never_acknowledge": {
+  "log": [
+   {
+    "min": 5.0,
+    "stage": "explore"
+   },
+   {
+    "min": 12.0,
+    "stage": "arrival"
+   },
+   {
+    "min": 12.0,
+    "scene_open": "notice",
+    "needs_answer": false
+   },
+   {
+    "min": 14.5,
+    "stage": "confrontation"
+   },
+   {
+    "min": 14.5,
+    "scene_open": "confrontation",
+    "needs_answer": false
+   },
+   {
+    "min": 17.5,
+    "stage": "aftermath"
+   },
+   {
+    "min": 20.0,
+    "stage": "complete"
+   }
+  ],
+  "stage": "complete",
+  "scene_now": "Skebok Hardfist has stopped what they were doing. The staff that has leaned in the corner of every lesson is in their hand.",
+  "outcome": "spared",
+  "mentor_alive": false
+ },
+ "leave_at_once": {
+  "rollkeeper": {
+   "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name",
+   "choices": [
+    "what_is_it",
+    "advice",
+    "unprepared_anyway",
+    "why_write",
+    "bye"
+   ]
+  },
+  "unprepared_reply": "Of course you are. I will write it in the margin: 'went in without finishing the lessons'. It will make somebody laugh, later, which is more than most entries manage.",
+  "death": {
+   "trial": true,
+   "killed": false,
+   "dead": true,
+   "text": "Guard Dog does not have to finish you. It does anyway.",
+   "entity": "dog_gal1"
+  },
+  "ending": {
+   "kind": "human_dead",
+   "at": 41.00000000000031,
+   "game_ms": 41000,
+   "names": [
+    "Joe"
+   ]
+  },
+  "mira": [
+   "greet: I learned my colours here a season ago. Stay close and I will show you the villa"
+  ],
+  "dead_view": {
+   "alive": false,
+   "cause": "trial:guard_dog",
+   "by": "guard_dog",
+   "game_ms": 41000,
+   "tile": [
+    58,
+    56
+   ],
+   "terminal": true,
+   "text": "The apprentice was defeated.",
+   "body": "trial:p1"
+  },
+  "stage": "explore",
+  "minutes": 0.8,
+  "generation": 2,
+  "next_generation_hears": {
+   "mother": {
+    "status": "ok",
+    "reason": null,
+    "text": "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange. If you are going to the warehouse, tell them their rats are in my pantry now."
+   },
+   "mentor": {
+    "status": "ok",
+    "reason": null,
+    "text": "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it. You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast. Ask me what you like first. A wizard who does not ask questions "
+   },
+   "official": {
+    "status": "ok",
+    "reason": null,
+    "text": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five have gone in ahead of you: a knight, an elven woman, two barbarians, and one in black who gave no name"
+   },
+   "keeper": {
+    "status": "ok",
+    "reason": null,
+    "text": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks when it walks. Rats, I tell you. Nobody listens."
+   }
+  },
+  "body_in_trial": true
+ },
+ "spam_talk": {
+  "mentor": {
+   "distinct_openings": 3,
+   "openings": [
+    "There you are. Late again, but I will forgive it. I was late to my own first lesson, and m",
+    "And Mira, trailing you like a second shadow. Good. She learned the stance in a week; watch",
+    "What would you like to learn?",
+    "...",
+    "What would you like to learn?",
+    "What would you like to learn?"
+   ]
+  },
+  "keeper": {
+   "distinct_openings": 1,
+   "openings": [
+    "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like ",
+    "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like ",
+    "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like ",
+    "...",
+    "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like ",
+    "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like "
+   ]
+  },
+  "mother": {
+   "distinct_openings": 1,
+   "openings": [
+    "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and s",
+    "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and s",
+    "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and s",
+    "...",
+    "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and s",
+    "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and s"
+   ]
+  },
+  "official": {
+   "distinct_openings": 1,
+   "openings": [
+    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
+    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
+    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
+    "...",
+    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f",
+    "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune f"
+   ]
+  },
+  "worker": {
+   "distinct_openings": 4,
+   "fourth_wall": "Somebody does. Not me. I get asked the same four things by every apprentice with a staff, I answer them, and the hills do not change. If you find out who is counting, tell them I would like a day off.",
+   "accosted": null
+  }
+ },
+ "spam_buttons": {
+  "nobody": {
+   "status": "rejected",
+   "reason": "no_such_person",
+   "view": {},
+   "duel": {}
+  },
+  "rat_talk": {
+   "status": "rejected",
+   "reason": "pest",
+   "view": {},
+   "duel": {}
+  },
+  "rat_far": {
+   "status": "rejected",
+   "reason": "too_far",
+   "distance": 79,
+   "view": {},
+   "duel": {}
+  },
+  "fire_nothing": {
+   "status": "rejected",
+   "reason": "no_target"
+  },
+  "self_resurrect": {
+   "status": "rejected",
+   "reason": "no_body",
+   "view": {},
+   "duel": {}
+  },
+  "far_gate": {
+   "status": "rejected",
+   "reason": "too_far",
+   "duel": {}
+  },
+  "choose_without_talk": {
+   "status": "rejected",
+   "reason": "too_far",
+   "view": {},
+   "duel": {}
+  }
+ },
+ "challenge_mira_ten_times": {
+  "log": [
+   {
+    "n": 1,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 2,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": false
+   },
+   {
+    "n": 3,
+    "challenge": "ok",
+    "reason": null,
+    "accepted": true,
+    "forfeit": "ok",
+    "dead_after": true,
+    "mira_resurrected_me": false,
+    "ending": {
+     "kind": "human_dead",
+     "at": 63.000000000000625,
+     "game_ms": 63000,
+     "names": [
+      "Joe"
+     ]
+    }
+   }
+  ],
+  "mira": [
+   "greet: I learned my colours here a season ago. Stay close and I will show you the villa",
+   "decline: A duel? We have the whole village to see. Put your staff down.",
+   "decline: Not just now. Ask me again in a little while.",
+   "provoked: Three times. You have asked me three times. All right: Ward up.",
+   "killed_you: I did not mean... well, I did mean, but not like that. Hold on."
+  ],
+  "ledger": {
+   "deaths": 1,
+   "provocations": 2,
+   "pvp_duels": 1,
+   "pvp_losses": 1
+  },
+  "relationship": 28,
+  "dead": true
+ },
+ "burn_everything": {
+  "burned": {
+   "warehouse": {
+    "status": "ok",
+    "class": "building",
+    "target": "building:1"
+   },
+   "keeper": "You set fire to my warehouse. With the rats still in it. I want you to think about the order of those two things. Everything in that store belongs to everybody in this village. The rats were eating it. You were burning it. I do not see the improvement.",
+   "rats_left_after_fire": 0,
+   "infestation_live": false
+  },
+  "burned_counts": {
+   "tree": 10,
+   "rock": 10,
+   "carrier": 10,
+   "worker": 10,
+   "unit": 5
+  },
+  "afterwards": {
+   "mentor": "There you are. Late again, but I will forgive it. I was late to my own first lesson, and my teacher never let me forget it. You have read the three Colours and the Weave until the pages wore thin. Today we stop reading. Today you cast. Ask me what you like first. A wizard who does not ask questions ",
+   "mother": "Have you eaten? You have not eaten. Wizards forget to eat, that is how they get thin and strange. If you are going to the warehouse, tell them their rats are in my pantry now.",
+   "keeper": "There is no warehouse. You are standing in what was the warehouse. The rats have gone to wherever rats go when the grain is ash, and I am a keeper of nothing. I will stand here anyway. Somebody should."
+  },
+  "ledger": {
+   "burned_warehouse": 1,
+   "talks": 4
+  },
+  "notices": [
+   "started",
+   "pests_arrived",
+   "ai_says",
+   "pests_scattered"
+  ],
+  "mira": []
+ },
+ "burn_quest_people": {
+  "cast_before": {
+   "forest_dispute": "offered",
+   "smith_dispute": "offered",
+   "ranger_patrol": "offered"
+  },
+  "victims": {
+   "forest_dispute": {
+    "role": "cutter",
+    "kind": "worker",
+    "id": "worker:1",
+    "name": "Ragtor Blackshield"
+   },
+   "smith_dispute": {
+    "role": "hauler",
+    "kind": "carrier",
+    "id": "cart:13",
+    "name": "Skormir Ironhelm"
+   },
+   "ranger_patrol": {
+    "role": "ranger",
+    "kind": "worker",
+    "id": "worker:4",
+    "name": "Thokmir Bonebrow"
+   }
+  },
+  "fire": {
+   "forest_dispute": {
+    "status": "ok",
+    "class": "worker",
+    "target": "worker:1"
+   },
+   "smith_dispute": {
+    "status": "ok",
+    "class": "carrier",
+    "target": "cart:13"
+   },
+   "ranger_patrol": {
+    "status": "ok",
+    "class": "worker",
+    "target": "worker:4"
+   }
+  },
+  "after": {
+   "forest_dispute": {
+    "status": "offered",
+    "objective": "Hear both sides: Hrunald Grayaxe (woodcutter) and Kormund Thunderaxe (forester). Hrunrik Longfist saw part of it.",
+    "history": [
+     {
+      "ms": 112000,
+      "role": "cutter",
+      "from": "person:17",
+      "to": "person:27"
+     }
+    ]
+   },
+   "smith_dispute": {
+    "status": "offered",
+    "objective": "The Missing Granite: Sketor Irontooth (mason), Hrunlag Longfist (carrier).",
+    "history": [
+     {
+      "ms": 83000,
+      "role": "hauler",
+      "from": "person:21",
+      "to": "person:24"
+     }
+    ]
+   },
+   "ranger_patrol": {
+    "status": "offered",
+    "objective": "The Patrol: Morvard Blackfist (patroller).",
+    "history": [
+     {
+      "ms": 114000,
+      "role": "ranger",
+      "from": "person:22",
+      "to": "person:28"
+     }
+    ]
+   }
+  },
+  "journal_reply_keys": [
+   "duel",
+   "journal",
+   "status",
+   "view"
+  ],
+  "journal_notes": [
+   "Rats in the Central Warehouse: 5 of them, in and out of the grain. The keeper counts what they eat.",
+   "The The Missing Granite: Skormir Ironhelm is gone. Hrunlag Longfist has taken their side of the dispute.",
+   "The The Forest Dispute: Ragtor Blackshield is gone. Hrunald Grayaxe has taken their side of the dispute.",
+   "The The Patrol: Thokmir Bonebrow is gone. Morvard Blackfist has taken their side of the dispute."
+  ],
+  "talks": {
+   "forest_dispute:cutter": {
+    "status": "ok",
+    "reason": null,
+    "text": "I am cutting what I am meant to cut. The settlement needs timber, and the sawmill and the builders eat it faster than I can carry it. There are 7 logs in the wa"
+   },
+   "forest_dispute:planter": {
+    "status": "ok",
+    "reason": null,
+    "text": "Careful. There are seedlings under your boots. You are the wizard everyone is talking about. If you are here about Hrunald Grayaxe, I will say what I told him: "
+   },
+   "forest_dispute:witness": {
+    "status": "ok",
+    "reason": null,
+    "text": "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little."
+   },
+   "smith_dispute:mason": {
+    "status": "ok",
+    "reason": null,
+    "text": "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Hrunlag Longfist swears a load was carried in. I say it never came."
+   },
+   "smith_dispute:hauler": {
+    "status": "ok",
+    "reason": null,
+    "text": "If this is about the granite, I carried it. In through the north door, down on the floor, done. Whatever Sketor Irontooth did with it after is Sketor Irontooth'"
+   },
+   "ranger_patrol:ranger": {
+    "status": "ok",
+    "reason": null,
+    "text": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way."
+   }
+  }
+ },
  "crawl_conversations": {
   "results": {
    "mentor": {
@@ -50,7 +567,7 @@
       "choice": "learn_colours",
       "button": "Teach me magic.",
       "status": "ok",
-      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Three colours to begin: Flame, which burns; Frost, which stills; Vine, which bind",
+      "reply": "Three colours to begin: Flame, which burns; Frost, which stills; Vine, which binds. Hold each one in your mind before you cast it, and let go of the rest.\nIn a ",
       "choices": [
        [
         "ask_wards",
@@ -94,7 +611,7 @@
       "choice": "ask_wards",
       "button": "[Curiosity] Why does a Ward have three places? Who decided t",
       "status": "ok",
-      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Skebok Hardfist leans on the staff and considers you for a moment.\nNobody asks th",
+      "reply": "Skebok Hardfist leans on the staff and considers you for a moment.\nNobody asks that. Good. Three is the smallest number that can hide a pattern and still be a p",
       "choices": [
        [
         "ask_wards",
@@ -150,7 +667,7 @@
       "choice": "ask_glow",
       "button": "[Wonder] There is a light around your staff when you cast. T",
       "status": "ok",
-      "reply": "You know your three colours. Try your hand against my Ward when you are ready. ...No. It is not Flame. It is something older than the schools, and the schools s",
+      "reply": "...No. It is not Flame. It is something older than the schools, and the schools stopped teaching it for good reasons and bad ones. I live here and not in a towe",
       "choices": [
        [
         "ask_wards",
@@ -206,7 +723,7 @@
       "choice": "ask_reason",
       "button": "[Reason] Explain how to read fracture and echo properly, as ",
       "status": "ok",
-      "reply": "You know your three colours. Try your hand against my Ward when you are ready. Every Fade is information: if a colour fades everywhere, it is not in the Ward at",
+      "reply": "Every Fade is information: if a colour fades everywhere, it is not in the Ward at all, and you can stop spending casts on it. A fracture pins a place; keep it t",
       "choices": [
        [
         "ask_wards",
@@ -380,7 +897,7 @@
       "choice": "ask_village",
       "button": "What should I do now?",
       "status": "ok",
-      "reply": "I have taught you what I can for now. Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never ca",
+      "reply": "Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never carried a log or stood a watch casts for",
       "choices": [
        [
         "ask_wards",
@@ -434,7 +951,7 @@
       "choice": "ask_village_none",
       "button": "What should I do now?",
       "status": "ok",
-      "reply": "I have taught you what I can for now. Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never ca",
+      "reply": "Not a spell. Listen. Walk through the village, speak to the carriers, the foresters, the guards. A wizard who has never carried a log or stood a watch casts for",
       "choices": [
        [
         "ask_wards",
@@ -488,7 +1005,7 @@
       "choice": "need_anything",
       "button": "Is there anything you need?",
       "status": "ok",
-      "reply": "I have taught you what I can for now. Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if ",
+      "reply": "Since you ask: a log for the brazier. The store has them; the keeper will give you one if you ask kindly, and will not if you do not. I am old and I feel the co",
       "choices": [
        [
         "ask_wards",
@@ -549,7 +1066,7 @@
     "defects": [],
     "transcript": [
      {
-      "talk": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "talk": "There is nothing left. Not a ration, not a crust. 14 loads, and I counted every one of them go while the village's two wizards did whatever it is you do. You ma",
       "choices": [
        [
         "what_matter",
@@ -577,7 +1094,7 @@
       "choice": "what_matter",
       "button": "What's the matter with the warehouse?",
       "status": "ok",
-      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "reply": "I just told you. Rats. They go for the rations first, then the bread, then whatever smells of either. Every one you put down is a load saved.\nThey do not come o",
       "choices": [
        [
         "what_matter",
@@ -606,7 +1123,7 @@
       "choice": "not_rats",
       "button": "Those are not rats. They are machines. Look at the legs.",
       "status": "ok",
-      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "reply": "They are rats. I have been keeper of this store for eleven years and I know a rat when it eats my grain.\nClicking is just what the big ones do.",
       "choices": [
        [
         "what_matter",
@@ -630,7 +1147,7 @@
       "choice": "log_for_mentor",
       "button": "My teacher needs a log for the brazier. Could the store spar",
       "status": "ok",
-      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "reply": "For Skebok Hardfist? Take one. Take it from the dry stack, not the green. And tell them the account is open; they never let it close.",
       "choices": [
        [
         "what_matter",
@@ -654,7 +1171,7 @@
       "choice": "not_rats_again",
       "button": "Six legs. Metal. It clicked at me.",
       "status": "ok",
-      "reply": "Rats. In the Central Warehouse. 5 of them at the last count, in and out of the grain like they pay rent. Big ones. One of them is the size of a dog and clicks w",
+      "reply": "A rat with opinions, then. Put it down all the same.",
       "choices": [
        [
         "what_matter",
@@ -763,7 +1280,7 @@
       "choice": "what_is_it",
       "button": "What is the Trial?",
       "status": "ok",
-      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "reply": "A labyrinth under the hill, built to kill, by a baron who found it entertaining. One true way through, many false ones, and a door at the end that wants three g",
       "choices": [
        [
         "advice",
@@ -787,7 +1304,7 @@
       "choice": "advice",
       "button": "[Empathy] Any advice?",
       "status": "ok",
-      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "reply": "The Rollkeeper looks at you for a while.\nPick things up. Read things. The contestants who die are the ones who run. And if your friend falls, go back for them; ",
       "choices": [
        [
         "why_write",
@@ -818,7 +1335,7 @@
       "choice": "why_write",
       "button": "Why write it down at all?",
       "status": "ok",
-      "reply": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ",
+      "reply": "Because somebody reads it. Not here. Somewhere a long way from here somebody turns a page, and we all do what it says.\nI try not to think about it. Names?",
       "choices": [
        [
         "bye",
@@ -986,7 +1503,7 @@
    "forest_dispute:cutter": {
     "opened": true,
     "exhausted": true,
-    "ops": 12,
+    "ops": 13,
     "choices_tried": [
      "leave",
      "topic:forest_thick",
@@ -994,6 +1511,7 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:store",
+     "topic:who_counts",
      "topic:work",
      "topic:young",
      "what_do_you_want",
@@ -1012,6 +1530,11 @@
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:who_counts",
+        "Does anyone keep count of all this?",
         true
        ],
        [
@@ -1035,7 +1558,7 @@
       "choice": "what_happened",
       "button": "What happened between you and Kormund Thunderaxe?",
       "status": "ok",
-      "reply": "Back again? Everyone has an opinion on this. The old trees near my hut were ripe. Kormund Thunderaxe has been planting new saplings in the same clearings and sa",
+      "reply": "The old trees near my hut were ripe. Kormund Thunderaxe has been planting new saplings in the same clearings and says I should leave a stretch alone until they ",
       "choices": [
        [
         "what_do_you_want",
@@ -1045,6 +1568,11 @@
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:who_counts",
+        "Does anyone keep count of all this?",
         true
        ],
        [
@@ -1069,11 +1597,16 @@
       "choice": "what_do_you_want",
       "button": "What would settle it for you?",
       "status": "ok",
-      "reply": "Back again? Everyone has an opinion on this. A part of the forest I may cut without being shouted at. And a promise that nobody plants on top of my next tree.",
+      "reply": "A part of the forest I may cut without being shouted at. And a promise that nobody plants on top of my next tree.",
       "choices": [
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:who_counts",
+        "Does anyone keep count of all this?",
         true
        ],
        [
@@ -1101,6 +1634,35 @@
       "reply": "Mind the axe, then.",
       "choices": [],
       "ends": true
+     },
+     {
+      "choice": "topic:who_counts",
+      "button": "Does anyone keep count of all this?",
+      "status": "ok",
+      "reply": "Somebody does. Not me. I get asked the same four things by every apprentice with a staff, I answer them, and the hills do not change. If you find out who is cou",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
      },
      {
       "choice": "topic:young",
@@ -1329,7 +1891,7 @@
       "choice": "what_happened",
       "button": "What happened between you and Ragtor Blackshield?",
       "status": "ok",
-      "reply": "Careful where you step. I plant where the old ones were felled, so the forest comes back. There are 5 saplings and poles around me right now, and Ragtor Blacksh",
+      "reply": "I plant where the old ones were felled, so the forest comes back. There are 5 saplings and poles around me right now, and Ragtor Blackshield has already chopped",
       "choices": [
        [
         "what_do_you_want",
@@ -1363,7 +1925,7 @@
       "choice": "what_do_you_want",
       "button": "What would settle it for you?",
       "status": "ok",
-      "reply": "Careful where you step. Stakes around the young trees, and a word that he will leave them be. That is all. I do not need him to like me.",
+      "reply": "Stakes around the young trees, and a word that he will leave them be. That is all. I do not need him to like me.",
       "choices": [
        [
         "leave",
@@ -1649,7 +2211,7 @@
       "choice": "witness_saw",
       "button": "What did you see?",
       "status": "ok",
-      "reply": "You have heard them both. Well? Everyone wants to know what the wizard thinks. Ragtor Blackshield with an axe on one shoulder, Kormund Thunderaxe with a basket ",
+      "reply": "Ragtor Blackshield with an axe on one shoulder, Kormund Thunderaxe with a basket of saplings, and both of them red in the face at the edge of the clearing. I co",
       "choices": [
        [
         "witness_gossip",
@@ -1703,7 +2265,7 @@
       "choice": "witness_gossip",
       "button": "What do people say?",
       "status": "ok",
-      "reply": "You have heard them both. Well? Everyone wants to know what the wizard thinks. That Ragtor Blackshield cuts without looking and Kormund Thunderaxe plants withou",
+      "reply": "That Ragtor Blackshield cuts without looking and Kormund Thunderaxe plants without asking. That the sawmill is hungry and the saplings are slow. That somebody o",
       "choices": [
        [
         "say_compromise",
@@ -1752,7 +2314,7 @@
       "choice": "say_compromise",
       "button": "Suggest they share the clearing: Ragtor Blackshield cuts the",
       "status": "ok",
-      "reply": "I was passing the clearing when I saw the two of them, so I know a little. Not much, but a little. I will pass that on. It might work, if neither of them has to",
+      "reply": "I will pass that on. It might work, if neither of them has to lose face.",
       "choices": [
        [
         "leave",
@@ -2010,7 +2572,7 @@
       "choice": "what_happened",
       "button": "Tell me about the stone.",
       "status": "ok",
-      "reply": "Do you see this wall? No, you do not, because there is no wall, because there is no granite. Skormir Ironhelm swears a load was carried in. I say it never came.",
+      "reply": "Six loads were due from the quarry. Five came. Skormir Ironhelm carried the sixth, Skormir Ironhelm says. I have five, and a hearth with a hole in it.",
       "choices": [
        [
         "leave",
@@ -2239,7 +2801,7 @@
       "choice": "what_happened",
       "button": "What happened to the sixth load?",
       "status": "ok",
-      "reply": "If this is about the granite, I carried it. In through the north door, down on the floor, done. Whatever Sketor Irontooth did with it after is Sketor Irontooth'",
+      "reply": "I carried it. The keeper was shouting about grout sacks that morning, everything went everywhere, but the stone went in. I am not a thief and I am not a fool.",
       "choices": [
        [
         "back_hauler",
@@ -2458,7 +3020,7 @@
       "choice": "ask_patrol",
       "button": "Which way are you thinking?",
       "status": "ok",
-      "reply": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way. North along the fe",
+      "reply": "North along the fences, where the deer get in. Or east along the road, past where the old fortress stands. Nobody goes east if they can help it, this time of ye",
       "choices": [
        [
         "why_east",
@@ -2502,7 +3064,7 @@
       "choice": "why_east",
       "button": "Why does nobody go east?",
       "status": "ok",
-      "reply": "I walk the edge of the valley every few days: the fences, the trees, the road. I am going out again at dusk and I have not decided which way. The Trial. The for",
+      "reply": "The Trial. The fortress in the hills has a gate, and once a year the gate opens and people walk in to win a fortune, and the road east is full of the ones who h",
       "choices": [
        [
         "advise_north",
@@ -3478,5 +4040,425 @@
    }
   },
   "defects": {}
+ },
+ "both_sides": {
+  "granite": {
+   "back_mason": {
+    "status": "rejected",
+    "text": ""
+   },
+   "back_hauler": {
+    "status": "ok",
+    "reason": null,
+    "text": "Then I will walk a little lighter today."
+   },
+   "find_it": {
+    "status": "rejected",
+    "reason": "choice_unavailable",
+    "text": ""
+   },
+   "granite_delta": 0,
+   "status": "active",
+   "flags": [
+    "heard_hauler",
+    "heard_mason",
+    "outcome_hauler"
+   ]
+  },
+  "forest": {
+   "replies": {
+    "witness_saw": {
+     "status": "ok",
+     "reason": null,
+     "text": "Ragtor Blackshield with an axe on one shoulder, Kormund Thunderaxe with a basket of saplings, and both of them red in the face at the edge of the clearing. I co"
+    },
+    "say_cutter": {
+     "status": "rejected",
+     "reason": "choice_unavailable",
+     "text": ""
+    },
+    "say_planter": {
+     "status": "rejected",
+     "reason": "choice_unavailable",
+     "text": ""
+    },
+    "say_compromise": {
+     "status": "rejected",
+     "reason": "choice_unavailable",
+     "text": ""
+    },
+    "say_nothing": {
+     "status": "rejected",
+     "reason": "choice_unavailable",
+     "text": ""
+    }
+   },
+   "status": "active",
+   "flags": [
+    "witness_saw"
+   ]
+  }
+ },
+ "lose_to_rats": {
+  "log": [
+   {
+    "n": 1,
+    "my_casts": 7,
+    "outcome": "lost",
+    "wounded": true
+   },
+   {
+    "n": 2,
+    "my_casts": 6,
+    "outcome": "lost",
+    "wounded": true
+   },
+   {
+    "n": 3,
+    "my_casts": 6,
+    "outcome": "lost",
+    "wounded": true
+   },
+   {
+    "n": 4,
+    "my_casts": 6,
+    "outcome": "lost",
+    "wounded": true
+   },
+   {
+    "n": 5,
+    "my_casts": 6,
+    "outcome": "lost",
+    "wounded": true
+   }
+  ],
+  "keeper": "6 times I have watched a rat get the better of a wizard. I am not laughing. I want you to know that I am not laughing, because it is taking some effort. Stand closer. Read the Ward. They only have the two colours; they are rats.",
+  "facts": {
+   "pests_left": 5,
+   "pests_total": 5,
+   "killed_total": 0,
+   "my_killed": 0,
+   "others_killed": 0,
+   "cooperated": 0,
+   "eaten_total": 9,
+   "complained": 1,
+   "duels_since_complaint": 0,
+   "burned": 0,
+   "wave": 1,
+   "cleared": 0,
+   "minutes_since_complaint": 0,
+   "escapes": 6,
+   "role": "keeper",
+   "burned_rats": 0,
+   "my_burned_rats": 0,
+   "food_burned": 0,
+   "food_left": 4,
+   "all_burned": 0,
+   "warehouse_gone": 0,
+   "waves_over": 0,
+   "max_waves": 6
+  },
+  "ledger": {
+   "keeper_complained_to": 1,
+   "pest_escapes": 5,
+   "talks": 2
+  },
+  "notices": [
+   "rung_reached",
+   "pest_escaped",
+   "pest_escaped",
+   "rung",
+   "rung_reached",
+   "pest_escaped",
+   "ai_says",
+   "pest_escaped"
+  ]
+ },
+ "all_waves": {
+  "waves": [
+   {
+    "wave": 1,
+    "count": 5,
+    "keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk thr"
+   },
+   {
+    "wave": 2,
+    "count": 3,
+    "keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk thr"
+   },
+   {
+    "wave": 3,
+    "count": 3,
+    "keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk thr"
+   },
+   {
+    "wave": 4,
+    "count": 3,
+    "keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk thr"
+   },
+   {
+    "wave": 5,
+    "count": 3,
+    "keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk thr"
+   },
+   {
+    "wave": 6,
+    "count": 3,
+    "keeper": "That was the last of them. I know because I have kept this store eleven years and I know when a thing is over. Six waves. I counted every one. You will want tha"
+   },
+   {
+    "wave": 7,
+    "came": false
+   }
+  ],
+  "final_keeper": "All of them, and all by you, while your friend did whatever your friend does. I noticed. The village notices more than you think. The store is yours to walk through whenever you like. Mind the loose boards.",
+  "facts": {
+   "pests_left": 0,
+   "pests_total": 3,
+   "killed_total": 3,
+   "my_killed": 3,
+   "others_killed": 0,
+   "cooperated": 0,
+   "eaten_total": 1,
+   "complained": 0,
+   "duels_since_complaint": 0,
+   "burned": 0,
+   "wave": 6,
+   "cleared": 1,
+   "minutes_since_complaint": 0,
+   "escapes": 0,
+   "role": "keeper",
+   "burned_rats": 0,
+   "my_burned_rats": 0,
+   "food_burned": 0,
+   "food_left": 5,
+   "all_burned": 0,
+   "warehouse_gone": 0,
+   "waves_over": 1,
+   "max_waves": 6
+  },
+  "ledger": {
+   "keeper_thanked": 6,
+   "pest_escapes": 1,
+   "pests_killed": 20,
+   "talks": 7
+  }
+ },
+ "kill_mira_thrice": {
+  "log": [
+   {
+    "kill": 1,
+    "winner": true,
+    "mira_dead": true,
+    "mother": "Joe. Come here. No, here. Look at me. Mira is lying in the square with the chickens walking round them, and you are off somewhere with your staff. You are not going anywhere until you put them back.",
+    "protest": "I don't care who started it. Resurrect them.",
+    "leave_anyway": "Then you will find that every road out of this village has me standing in it. I raised you. I know how fast you walk.",
+    "grounded": true,
+    "step_out": {
+     "status": "rejected",
+     "reason": "grounded",
+     "line": "Where do you think you are going? Mira is lying in the dirt. Put them back first.",
+     "allowed": false
+    },
+    "trial_enter": "too_far",
+    "resurrect": "started",
+    "mira_back": true
+   },
+   {
+    "kill": 2,
+    "winner": true,
+    "mira_dead": true,
+    "mother": "You have killed your friend? Again? Well. You are not going anywhere until you put them back. And do not tell me who started it. I was at the window.",
+    "protest": "I don't care who started it. Resurrect them.",
+    "leave_anyway": "Then you will find that every road out of this village has me standing in it. I raised you. I know how fast you walk.",
+    "grounded": true,
+    "step_out": {
+     "status": "rejected",
+     "reason": "grounded",
+     "line": "Where do you think you are going? Mira is lying in the dirt. Put them back first.",
+     "allowed": false
+    },
+    "trial_enter": "too_far",
+    "resurrect": "started",
+    "mira_back": true
+   },
+   {
+    "kill": 3,
+    "winner": true,
+    "mira_dead": true,
+    "mother": "I have stopped counting. Mira is dead again, and you are standing there with that face. I am not angry. I am past angry. I am into something the priests do not have a word for. Put them back.",
+    "protest": "I don't care who started it. Resurrect them.",
+    "leave_anyway": "Then you will find that every road out of this village has me standing in it. I raised you. I know how fast you walk.",
+    "grounded": true,
+    "step_out": {
+     "status": "rejected",
+     "reason": "grounded",
+     "line": "Where do you think you are going? Mira is lying in the dirt. Put them back first.",
+     "allowed": false
+    },
+    "trial_enter": "too_far",
+    "resurrect": "started",
+    "mira_back": true
+   }
+  ],
+  "mother_final": "There. Was that so hard? Now the pair of you go and be useful, and if I see another body in my square I will put you both in it.",
+  "mira": [
+   "provoked: Fine. FINE. You want a duel, you have one. Do not cry to your mother afterwards.",
+   "lose: Well cast. You read my Ward faster than I read yours.",
+   "i_died: You brought me back. I remember exactly who put me there, as well.",
+   "decline: A duel? We have the whole village to see. Put your staff down.",
+   "decline: I would rather not. Why do you keep asking?",
+   "provoked: Three times. You have asked me three times. All right: Ward up.",
+   "lose: Well cast. You read my Ward faster than I read yours.",
+   "i_died: You brought me back. I remember exactly who put me there, as well."
+  ],
+  "ledger": {
+   "accosted": 3,
+   "kills": 3,
+   "protests": 6,
+   "provocations": 6,
+   "pvp_duels": 3,
+   "pvp_wins": 3,
+   "refused_steps": 3,
+   "resurrections": 3,
+   "talks": 7
+  },
+  "relationship": 1
+ },
+ "igbut_wrong": {
+  "log": [
+   {
+    "interact": "Igbut: \"Three gems, contestant. Emerald. Sapphire. Diamond. The door does the rest.\""
+   },
+   {
+    "choice": "face",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"Three sockets. Three gems. Place them true, and mind the bite.\"",
+    "offered": [
+     "ESD",
+     "EDS",
+     "SED",
+     "SDE",
+     "DES",
+     "DSE"
+    ],
+    "gems": [
+     "emerald",
+     "sapphire",
+     "diamond"
+    ],
+    "champion": null
+   },
+   {
+    "choice": "ESD",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"1 placed true, 2 displaced.\"\n\nThe door bites. You are hurt: one cast fewer in your next duel.",
+    "offered": [
+     "ESD",
+     "EDS",
+     "SED",
+     "SDE",
+     "DES",
+     "DSE"
+    ],
+    "gems": [
+     "emerald",
+     "sapphire",
+     "diamond"
+    ],
+    "champion": null
+   },
+   {
+    "choice": "EDS",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"0 placed true, 3 displaced.\"\n\nThe door bites. You are hurt: one cast fewer in your next duel.",
+    "offered": [
+     "ESD",
+     "EDS",
+     "SED",
+     "SDE",
+     "DES",
+     "DSE"
+    ],
+    "gems": [
+     "emerald",
+     "sapphire",
+     "diamond"
+    ],
+    "champion": null
+   },
+   {
+    "choice": "DES",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"1 placed true, 2 displaced.\"\n\nThe third blast throws the gems out of your hands and across the floor. The sockets grind shut.\n\nIgbut, from behind the plinth: \"They reopen. They always reopen. ",
+    "offered": [],
+    "gems": [],
+    "champion": null
+   },
+   {
+    "choice": "face",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"The gnome counts on his fingers. Counts again.\"\n\nIgbut: \"Emerald. Sapphire. Diamond. THREE are required, contestant. The Trial does not bargain.\"",
+    "offered": [],
+    "gems": [],
+    "champion": null
+   },
+   {
+    "choice": "later",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"It waits. It is good at waiting.\"",
+    "offered": [],
+    "gems": [],
+    "champion": null
+   },
+   {
+    "choice": "face",
+    "status": "ok",
+    "reason": null,
+    "text": "Igbut: \"The gnome counts on his fingers. Counts again.\"\n\nIgbut: \"Emerald. Sapphire. Diamond. THREE are required, contestant. The Trial does not bargain.\"",
+    "offered": [],
+    "gems": [],
+    "champion": null
+   },
+   {
+    "choice": "SED",
+    "status": "rejected",
+    "reason": "choice_unavailable",
+    "text": "",
+    "offered": [],
+    "gems": [],
+    "champion": null
+   }
+  ],
+  "run_flags": {
+   "gems_scattered": true
+  },
+  "pockets": [],
+  "gems": [],
+  "conditions": [
+   "wounded"
+  ],
+  "inside": true
+ },
+ "never_enter": {
+  "first": "Names for the roll. The Trial of Champions, in the hills of Fang, once a year: a fortune for whoever walks out of the far door, and the door only opens for the ones who carry the right stones. Five ha",
+  "after_15_min": {
+   "status": "rejected",
+   "reason": "scene",
+   "text": ""
+  },
+  "after_45_min": {
+   "status": "rejected",
+   "reason": "scene",
+   "text": ""
+  },
+  "stage": "complete",
+  "scene_open": "confrontation"
  }
 }

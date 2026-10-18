@@ -11,8 +11,8 @@ from wizard_rts.duel.ward import score_attack
 from wizard_rts.net import pvp
 
 FMT = pvp.make_format({"slots": 3, "colours": 3, "max_casts": 5})
-WARD_A = [0, 1, 3]  # A's hidden ward (B is attacking it)
-WARD_B = [3, 3, 0]
+WARD_A = [0, 1, 6]  # A's hidden ward (B is attacking it)
+WARD_B = [6, 6, 0]
 
 
 def make(max_casts: int = 5, now: float = 0.0) -> pvp.PvpDuel:
@@ -29,7 +29,7 @@ def seq(d: pvp.PvpDuel, pid: str) -> int:
 
 def test_player_a_makes_three_successive_guesses_while_b_makes_none() -> None:
     d = make()
-    for attack in ([0, 0, 0], [1, 1, 1], [3, 0, 0]):
+    for attack in ([0, 0, 0], [1, 1, 1], [6, 0, 0]):
         r = d.cast("A", attack, seq(d, "A"), 1.0)
         assert r["status"] == "ok" and r["done"] is False
     va, vb = d.view("A", 2.0), d.view("B", 2.0)
@@ -46,7 +46,7 @@ def test_player_a_makes_three_successive_guesses_while_b_makes_none() -> None:
 
 def test_feedback_is_the_existing_ward_scoring() -> None:
     d = make()
-    for attack in ([3, 0, 0], [0, 1, 1], [1, 3, 3], [0, 0, 0]):
+    for attack in ([6, 0, 0], [0, 1, 1], [1, 6, 6], [0, 0, 0]):
         r = d.cast("A", attack, seq(d, "A"), 1.0)
         want = score_attack(WARD_B, attack)
         assert (r["fracture"], r["echo"], r["fade"], r["broken"]) == (want["fracture"], want["echo"], want["fade"], bool(want["broken"]))
@@ -109,7 +109,7 @@ def test_duplicates_and_bad_sequence_numbers_never_buy_a_guess() -> None:
     d = make()
     first = d.cast("A", [0, 0, 0], 1, 1.0)
     for _ in range(5):
-        dup = d.cast("A", [3, 3, 0], 1, 1.0)  # the replay carries a different pattern: it is ignored, the original answer returns
+        dup = d.cast("A", [6, 6, 0], 1, 1.0)  # the replay carries a different pattern: it is ignored, the original answer returns
         assert dup["status"] == "ok" and dup["idempotent"] is True and dup["fracture"] == first["fracture"]
     assert len(d.history["A"]) == 1
     assert d.cast("A", [0, 0, 0], 3, 1.0)["reason"] == "bad_cast_seq"   # skipping ahead

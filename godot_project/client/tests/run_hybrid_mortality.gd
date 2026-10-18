@@ -63,7 +63,7 @@ func _run() -> void:
 		await process_frame
 	for i in 3:
 		board.ui_action_select_locus(i)
-		board.ui_action_pick_spell([0, 1, 3][i])
+		board.ui_action_pick_spell([0, 1, 6][i])
 	board.ui_action_lock_ward()
 	for _f in 10:
 		await process_frame
@@ -81,7 +81,7 @@ func _run() -> void:
 			elif sim.is_player_window_open():
 				for i in 3:
 					board.ui_action_select_locus(i)
-					board.ui_action_pick_spell([1, 1, 3][i])
+					board.ui_action_pick_spell([1, 1, 6][i])
 		await process_frame
 	if sim.result == null:
 		return _die("duel did not finish")

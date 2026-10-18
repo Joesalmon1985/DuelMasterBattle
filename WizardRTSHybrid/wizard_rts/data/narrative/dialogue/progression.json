@@ -1,0 +1,74 @@
+{
+  "id": "progression",
+  "note": "Placeholder authored text (owner review pending). What is said when the world's magic ladder reaches a rung (narrative/progression.py). Keys per rung: mentor (alive, the lessons' voice), mentor_time (the rung came by the clock, not by duelling), mira (the fellow apprentice), voice (the apprentice's own strongest Aspect, spoken as that Aspect). Placeholders: {gain}, {name} (the speaker), {colours}, {weave}, {duels}, {minutes}.",
+  "rungs": {
+    "light": {
+      "mentor": [
+        "Stop. Hold your staff still. Do you feel that, under the Frost? That is Light. Nobody gave it to you; it came because you have been weaving. {duels} duels, and the fourth colour comes on its own. It always has. I did not tell you because you would have waited for it instead of working.",
+        "There. Light. You have it now, so stop pretending you do not. Four colours. The Wards get harder to read from here, for you and for whoever stands across from you."
+      ],
+      "mentor_time": [
+        "You have been in this valley long enough that the Light has found you without a single duel to invite it. That is not how I taught it. It is, apparently, how it happens. Four colours. Try not to look so surprised; I am surprised enough for both of us."
+      ],
+      "mira": [
+        "Did you feel that? Light. I have it too, just now, the same moment. It is in the Wards from here on, so stop guessing in threes.",
+        "Four colours. Mine as well. I did not ask for it either; it seems the valley decided."
+      ],
+      "voice": [
+        "Something has shifted in the weave. A fourth colour, Light, where there were three. You did not learn this. It arrived, the way weather arrives, and it is yours all the same.",
+        "Four colours now. You can feel the fourth one humming at the edge of the other three. Nobody taught it to you. Think about what that means, later; for now, count to four."
+      ]
+    },
+    "weave4": {
+      "mentor": [
+        "Your weave has grown a slot. Four. I would have had you earn it in another season; the world has shorter patience than I do. Wards of four, from now on, for everyone in this valley. Mind the fourth place; it is where people hide what they are afraid of.",
+        "Four slots. You are showing off, and you have not even noticed yet."
+      ],
+      "mentor_time": [
+        "I have been watching you not duel for the better part of half an hour, and the weave has grown a fourth slot anyway. Magic does not care how it is spent, only that time passes. Four slots. Use them."
+      ],
+      "mira": [
+        "Four slots! I can hold a fourth now; so can you. Do not think too long, the Wards are longer, not slower.",
+        "A fourth place in the weave. Mine grew at the same moment as yours. I am choosing not to find that strange."
+      ],
+      "voice": [
+        "The weave has a fourth place in it. You can feel the empty slot like a missing tooth. Everything you hide and everything you break from now on is one longer.",
+        "Four slots. Four. The number sits in your hand like a fourth finger you had forgotten you had."
+      ]
+    },
+    "stone": {
+      "mentor": [
+        "Stone. The fifth colour. You would have found it in the hills, or in a dwarf's dice, or in the ground under a dead man; the valley has given it to you here instead. Five colours in every Ward from now on. Count carefully.",
+        "Five colours. Stone is the heavy one. It sits at the bottom of a Ward like a stone sits at the bottom of a sack."
+      ],
+      "mentor_time": [
+        "Stone has come to you, and you have not lifted your staff to earn it. I used to think that was impossible. I am learning things in my old age, none of them welcome."
+      ],
+      "mira": [
+        "Stone. I felt the ground under it. Five colours now; the Wards will be heavier.",
+        "A fifth colour. Stone. I have it as well. My mother will say I am growing up too quickly, and for once she will mean the magic."
+      ],
+      "voice": [
+        "Stone. A fifth colour, heavy as a hand on your shoulder. Five, now, in every Ward you read and every Ward you hide.",
+        "The fifth colour is Stone. You know this the way you know your own weight."
+      ]
+    },
+    "shadow": {
+      "mentor": [
+        "And Shadow. Six. That is the full weave of a duellist, and it took me twenty years. It has taken you {minutes} minutes and {duels} duels. I am not going to pretend to be pleased about the arithmetic, but I am pleased about you.",
+        "Six colours. There is nothing more for the valley to give you. From here, whatever you become, you earn."
+      ],
+      "mentor_time": [
+        "Shadow. Six colours, and all of it by standing about. I will say this once: a wizard who has six colours and has done nothing with the first five is a very well-armed fool. Prove me wrong."
+      ],
+      "mira": [
+        "Shadow. That is six. I did not think the valley went that high. Six colours, four slots: a real duel, now, whenever you want one. I mean it this time.",
+        "Six. Shadow is the last one. I can feel the whole weave now, like a hand with all its fingers."
+      ],
+      "voice": [
+        "Shadow, the sixth. The weave is complete: six colours, four places. Whatever happens from here is not the valley's doing. It is yours.",
+        "Six colours. The last one is Shadow, and it was always going to be. You feel the full weave settle into your hands, and you understand that nothing more is coming for free."
+      ]
+    }
+  }
+}

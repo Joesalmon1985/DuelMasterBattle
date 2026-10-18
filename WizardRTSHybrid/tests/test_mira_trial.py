@@ -112,7 +112,7 @@ def test_the_fourth_wall_is_noticed_rarely_and_counted():
     joe = t.people[0]
     t.learn(joe)
     for _ in range(8):
-        ledger.bump(t.world, "accosted", seat=joe.id)
+        ledger.bump(t.world, "talks", seat=joe.id)
     seen = 0
     asked = 0
     for kind, table in (("worker", t.world.workers), ("carrier", t.world.carriers)):

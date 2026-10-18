@@ -17,7 +17,7 @@ from typing import Any
 from sim.dmb.people.registry import PeopleService
 
 from wizard_rts import economy
-from wizard_rts.narrative import config, duel_lease, events, ledger, party, residents
+from wizard_rts.narrative import config, duel_lease, events, ledger, party, residents, wizard
 
 ROLE = "pest"
 KEEPER = "keeper"
@@ -26,6 +26,8 @@ FOOD = ("ration", "bread", "meat", "fish", "grain", "flour", "fruit", "honey")
 EATEN_BIN = "narrative:eaten"
 FIGHT_RANGE = 2  # tiles (Manhattan); must equal wizard_labels.gd PEST_RANGE
 RADIUS = 3
+BURNED_BIN = "narrative:burned"  # a food ware that burned with a rat (the fire does not know the difference)
+NOTICE_RANGE = 10  # tiles (Chebyshev) from the warehouse: an apprentice this close has seen the rats, and the journal says so
 
 
 def settings() -> dict[str, Any]:
@@ -62,7 +64,7 @@ def home(world: Any) -> tuple[str, dict[str, Any]] | None:
 
 def live(world: Any, sid: str | None = None) -> dict[str, Any] | None:
     for iid, inf in sorted(state(world)["infestations"].items()):
-        if inf["cleared_ms"] is None and (sid is None or inf["settlement"] == sid):
+        if inf["cleared_ms"] is None and not inf.get("ended") and (sid is None or inf["settlement"] == sid):
             return inf
     return None
 
@@ -125,9 +127,15 @@ def cast(world: Any, sid: str, b: dict[str, Any], count: int) -> str | None:
     if not pests:
         return None
     inf = {"id": iid, "settlement": sid, "warehouse": b["id"], "pests": pests, "started_ms": _now(world), "cleared_ms": None, "eaten": {}, "eaten_total": 0,
-           "killed_by": {}, "wave": st["counter"], "complained_ms": None, "complained_to": [], "pvp_at_complaint": 0, "burned_by": [], "escapes": 0, "keeper": ""}
+           "killed_by": {}, "wave": st["counter"], "complained_ms": None, "complained_to": [], "pvp_at_complaint": 0, "burned_by": [], "escapes": 0, "keeper": "",
+           "burned": {}, "food_burned": 0, "ended": None, "noticed": []}
     st["infestations"][iid] = inf
     inf["keeper"] = ensure_keeper(world, sid, b) or ""
+    if st["counter"] > 1:  # a new wave: the keeper's thanks for the last one are spent, he may thank again
+        from wizard_rts.narrative import graph
+
+        for _seat in party.players(world):
+            graph.flags(world, GRAPH).pop("said_cleared", None)
     events.log(world, "pests_arrived", infestation=iid, settlement=sid, warehouse=b["id"], count=len(pests))
     _announce(world, "pests_arrived", settlement=sid, count=len(pests), tile=[int(b["tx"]), int(b["ty"])])
     return iid
@@ -146,7 +154,7 @@ def ensure(world: Any) -> None:
     if last is None:
         cast(world, sid, b, s["count"])
         return
-    if last["wave"] >= s["max_waves"] or last["cleared_ms"] is None:
+    if last["wave"] >= s["max_waves"] or last["cleared_ms"] is None or last.get("ended"):
         return
     if _now(world) - int(last["cleared_ms"]) >= s["return_ms"]:
         cast(world, sid, b, s["return_count"])
@@ -178,9 +186,100 @@ def tick(world: Any) -> None:
     inf = live(world)
     if inf is None:
         return
+    b = world.buildings.get(inf["warehouse"])
+    if b is None or b.get("destroyed") or int(b.get("hp", 1)) <= 0:  # the warehouse is a ruin: nothing to eat, nothing to keep; the rats scatter
+        _scatter(world, inf)
+        return
+    _notice(world, inf, b)
     if now >= int(st["next_eat_ms"]):
         st["next_eat_ms"] = now + settings()["eat_every_ms"] // max(1, len(pests_of(world, inf)))
         _eat(world, inf)
+
+
+def _scatter(world: Any, inf: dict[str, Any]) -> None:
+    for pid in pests_of(world, inf):
+        residents.remove(world, pid, "gone")
+    inf["ended"] = "burned"
+    events.log(world, "pests_scattered", infestation=inf["id"], why="warehouse_destroyed")
+    _announce(world, "pests_scattered", infestation=inf["id"], settlement=inf["settlement"])
+
+
+def _notice(world: Any, inf: dict[str, Any], b: dict[str, Any]) -> None:
+    """An apprentice who walks within sight of the warehouse has seen the rats: the journal gets the entry without anyone having to be asked."""
+    for seat in party.players(world, humans_only=True, present_only=True) if party.multi(world) else party.players(world):
+        key = str(seat)
+        if key in inf["noticed"]:
+            continue
+        px, py = party.pose(world, seat) if seat else (int(world.player["tx"]), int(world.player["ty"]))
+        if max(abs(px - int(b["tx"])), abs(py - int(b["ty"]))) <= NOTICE_RANGE:
+            inf["noticed"].append(key)
+            left = len(pests_of(world, inf))
+            wizard.wiz(world)["journal_notes"].append({"game_ms": _now(world), "source": "rats",
+                                                       "text": f"Rats in the Central Warehouse: {left} of them, in and out of the grain. The keeper counts what they eat."})
+            _announce(world, "pests_noticed", seat=key, count=left, tile=[int(b["tx"]), int(b["ty"])])
+
+
+def _kill(world: Any, pid: str, seat: str, how: str) -> dict[str, Any]:
+    """A rat is gone, by a broken Ward or by fire: the row goes, the Person is marked dead, the counts move, the wave may be over."""
+    r = residents.table(world).get(pid)
+    if r is None:
+        return {"pest": pid, "gone": True}
+    r.pop("stay", None)
+    inf = state(world)["infestations"].get(r["pest"]["inf"])
+    tile = list(r["tile"])
+    residents.table(world).pop(pid, None)  # a broken rat leaves no body to mourn: the row goes, the Person is marked dead
+    if pid in world.dmb.people:
+        world.dmb.people[pid]["alive"] = False
+        world.dmb.people[pid]["status"] = "dead"
+    if inf is not None:
+        inf["killed_by"][seat] = int(inf["killed_by"].get(seat, 0)) + 1
+        if how == "burned":
+            inf["burned"][seat] = int(inf["burned"].get(seat, 0)) + 1
+    ledger.bump(world, "pests_killed", seat=seat)
+    if how == "burned":
+        ledger.bump(world, "pests_burned", seat=seat)
+    events.log(world, "pest_killed", pest=pid, seat=seat, tile=tile, how=how)
+    _announce(world, "pest_killed", pest=pid, seat=seat, tile=tile, size=r["pest"]["size"], how=how)
+    left = len(pests_of(world, inf)) if inf else 0
+    if inf is not None and left == 0:
+        inf["cleared_ms"] = _now(world)
+        ledger.bump(world, "infestations_cleared")
+        events.log(world, "pests_cleared", infestation=inf["id"], by=sorted(inf["killed_by"]))
+        _announce(world, "pests_cleared", infestation=inf["id"], settlement=inf["settlement"])
+        if int(inf["wave"]) >= settings()["max_waves"]:
+            events.log(world, "pests_over", infestation=inf["id"])
+    return {"pest": pid, "killed": True, "left": left, "how": how}
+
+
+def burn(world: Any, pid: str) -> dict[str, Any]:
+    """The wizard acting now burns the rat `pid` (magic.fire has checked the range and the cooldown). A small rat burns outright; the big one is scorched
+    the first time and bolts to a new tile, the second burn finishes it. A rat burned beside the warehouse takes one food ware with it (the fire does
+    not know the difference); the keeper counts that too."""
+    from wizard_rts.narrative import mortality
+
+    seat = mortality.me(world)
+    r = residents.table(world).get(pid)
+    if r is None or not is_pest(world, pid):
+        return {"status": "rejected", "reason": "no_pest"}
+    inf = state(world)["infestations"].get(r["pest"]["inf"])
+    b = world.buildings.get(inf["warehouse"]) if inf else None
+    if inf is not None and b is not None and not b.get("destroyed") and max(abs(int(r["tile"][0]) - int(b["tx"])), abs(int(r["tile"][1]) - int(b["ty"]))) <= 1:
+        for good in FOOD:
+            if int(world.stocks.get(b["id"], {}).get(good, 0)) > 0 and economy.move_good(world, b["id"], BURNED_BIN, good, 1):
+                inf["food_burned"] += 1
+                events.log(world, "food_burned", infestation=inf["id"], good=good, seat=seat)
+                break
+    if r["pest"]["size"] == "big" and not r["pest"].get("scorched"):
+        r["pest"]["scorched"] = True
+        t = residents.free_tile(world, r["anchor"][0], r["anchor"][1], RADIUS + 1, avoid={tuple(r["tile"])})
+        if t is not None:
+            r["tile"] = [t[0], t[1]]
+            world.dmb.people[pid]["position"] = [t[0], t[1]]
+        events.log(world, "pest_scorched", pest=pid, seat=seat)
+        _announce(world, "pest_scorched", pest=pid, seat=seat, tile=list(r["tile"]))
+        return {"status": "ok", "pest": pid, "killed": False, "scorched": True, "tile": list(r["tile"])}
+    done = _kill(world, pid, seat, "burned")
+    return {"status": "ok", **done}
 
 
 def note_fire(world: Any, seat: str, target: str) -> None:
@@ -256,23 +355,7 @@ def on_duel_resolved(world: Any, lease: dict[str, Any], out: dict[str, Any]) -> 
     r.pop("stay", None)
     inf = state(world)["infestations"].get(r["pest"]["inf"])
     if out.get("outcome") == "won":
-        tile = list(r["tile"])
-        residents.table(world).pop(pid, None)  # a broken rat leaves no body to mourn: the row goes, the Person is marked dead
-        if pid in world.dmb.people:
-            world.dmb.people[pid]["alive"] = False
-            world.dmb.people[pid]["status"] = "dead"
-        if inf is not None:
-            inf["killed_by"][seat] = int(inf["killed_by"].get(seat, 0)) + 1
-        ledger.bump(world, "pests_killed", seat=seat)
-        events.log(world, "pest_killed", pest=pid, seat=seat, tile=tile)
-        _announce(world, "pest_killed", pest=pid, seat=seat, tile=tile, size=r["pest"]["size"])
-        left = len(pests_of(world, inf)) if inf else 0
-        if inf is not None and left == 0:
-            inf["cleared_ms"] = _now(world)
-            ledger.bump(world, "infestations_cleared")
-            events.log(world, "pests_cleared", infestation=inf["id"], by=sorted(inf["killed_by"]))
-            _announce(world, "pests_cleared", infestation=inf["id"], settlement=inf["settlement"])
-        return {"pest": pid, "killed": True, "left": left}
+        return _kill(world, pid, seat, "duel")
     wizard.wiz(world)["wounded"] = True
     if inf is not None:
         inf["escapes"] += 1
@@ -295,16 +378,63 @@ def facts(world: Any, keeper_pid: str) -> dict[str, Any]:
     inf = live(world, sid) or latest(world, sid)
     if inf is None:
         return {"pests_left": 0, "pests_total": 0, "killed_total": 0, "my_killed": 0, "others_killed": 0, "cooperated": 0, "eaten_total": 0, "complained": 0,
-                "duels_since_complaint": 0, "burned": 0, "wave": 0, "cleared": 0, "minutes_since_complaint": 0, "escapes": 0, "role": KEEPER}
+                "duels_since_complaint": 0, "burned": 0, "wave": 0, "cleared": 0, "minutes_since_complaint": 0, "escapes": 0, "role": KEEPER,
+                "burned_rats": 0, "my_burned_rats": 0, "food_burned": 0, "food_left": food_left(world), "all_burned": 0, "warehouse_gone": 0, "waves_over": 0, "max_waves": settings()["max_waves"]}
     killed = inf["killed_by"]
     my = int(killed.get(seat, 0))
     others = sum(int(v) for s, v in killed.items() if s != seat)
     since = (_now(world) - int(inf["complained_ms"])) // 60000 if inf["complained_ms"] is not None else 0
+    burned_rats = sum(int(v) for v in inf.get("burned", {}).values())
     return {"pests_left": len(pests_of(world, inf)), "pests_total": len(inf["pests"]), "killed_total": my + others, "my_killed": my, "others_killed": others,
             "cooperated": 1 if (my > 0 and others > 0) else 0, "eaten_total": int(inf["eaten_total"]), "complained": 1 if inf["complained_ms"] is not None else 0,
             "duels_since_complaint": max(0, ledger.count(world, "pvp_duels") - int(inf["pvp_at_complaint"])) if inf["complained_ms"] is not None else 0,
             "burned": 1 if inf["burned_by"] else 0, "wave": int(inf["wave"]), "cleared": 1 if inf["cleared_ms"] is not None else 0, "minutes_since_complaint": int(since),
-            "escapes": int(inf["escapes"]), "role": KEEPER}
+            "escapes": int(inf["escapes"]), "role": KEEPER,
+            "burned_rats": burned_rats, "my_burned_rats": int(inf.get("burned", {}).get(seat, 0)), "food_burned": int(inf.get("food_burned", 0)), "food_left": food_left(world),
+            "all_burned": 1 if (burned_rats > 0 and burned_rats == my + others) else 0,
+            "warehouse_gone": 1 if inf.get("ended") == "burned" else 0,
+            "waves_over": 1 if (inf["cleared_ms"] is not None and int(inf["wave"]) >= settings()["max_waves"]) else 0, "max_waves": settings()["max_waves"]}
+
+
+def food_left(world: Any) -> int:
+    found = home(world)
+    if found is None:
+        return 0
+    return sum(int(world.stocks.get(found[1]["id"], {}).get(g, 0)) for g in FOOD)
+
+
+def journal(world: Any) -> list[dict[str, Any]]:
+    """The rats as a journal entry beside the quests (the shape `quests.snapshot` uses), once the apprentice has seen them or been told."""
+    from wizard_rts.narrative import mortality
+
+    seat = str(mortality.me(world))
+    found = home(world)
+    sid = found[0] if found else None
+    inf = live(world, sid) if sid else live(world)
+    if inf is None:
+        infs = sorted(state(world)["infestations"].values(), key=lambda i: int(i["started_ms"]))
+        inf = infs[-1] if infs else None  # the most recent one, cleared or ended (a ruin has no home() any more)
+    if inf is None or (seat not in inf.get("noticed", []) and seat not in inf.get("complained_to", []) and inf["complained_ms"] is None and seat not in inf.get("burned_by", [])):
+        return []  # an apprentice who has neither seen the rats, nor been told, nor burned the store has nothing to write
+    left = len(pests_of(world, inf))
+    keeper_name = world.dmb.people.get(inf["keeper"], {}).get("name", "the keeper")
+    if inf.get("ended") == "burned":
+        status, objective = "done", "The warehouse burned with the rats in it. There is nothing left to keep."
+    elif inf["cleared_ms"] is not None:
+        if int(inf["wave"]) >= settings()["max_waves"]:
+            status, objective = "done", f"The rats are gone for good; {keeper_name} counts the store in peace."
+        else:
+            status, objective = "done", f"Wave {inf['wave']} of the rats is cleared. {keeper_name} expects them back."
+    else:
+        bits = [f"{left} of {len(inf['pests'])} left in the Central Warehouse"]
+        if inf["eaten_total"]:
+            bits.append(f"{inf['eaten_total']} loads eaten")
+        if inf.get("food_burned"):
+            bits.append(f"{inf['food_burned']} burned with the rats")
+        objective = "Rats: " + ", ".join(bits) + ". Stand beside one and drive it off, or burn it."
+        status = "active"
+    return [{"id": "rats", "title": "Rats in the Central Warehouse" + (f" (wave {inf['wave']})" if int(inf["wave"]) > 1 else ""), "status": status, "objective": objective,
+             "people": [{"role": "keeper", "name": keeper_name, "occupation": "warehouse keeper", "where": "at the warehouse door"}]}]
 
 
 def snapshot(world: Any) -> dict[str, Any]:

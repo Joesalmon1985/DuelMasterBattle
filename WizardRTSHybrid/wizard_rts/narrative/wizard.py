@@ -113,9 +113,11 @@ def learn_fact(world: Any, fact: str) -> bool:
 
 def combatant(world: Any, max_casts: int = 8) -> dict[str, Any]:
     """The player's duel combatant: ward and weave of the size the wizard has learned, drawn from the spells he knows."""
+    from wizard_rts.narrative import progression
+
     w = wiz(world)
-    size = max(1, int(w["weave_size"]) or 3)
-    pool = sorted(w["spells"]) or palette()
+    size = max(1, int(w["weave_size"]) or 3, progression.weave(world))  # the world's ladder is a floor under the wizard's own weave
+    pool = progression.pool_for(world, list(w["spells"]))  # and under their colours (their own extras, the Dwarf's Stone, stay theirs)
     return {"id": "player", "display_name": "You", "archetype": "player", "kind": "player", "weave_size": size, "ward_size": size,
             "attack_pool": list(pool), "ward_pool": list(pool), "allow_repeats": True, "max_casts": int(max_casts),
             "min_cast_seconds": float(config.get("duel", "min_cast_seconds", 2.0)), "max_cast_seconds": 60.0}

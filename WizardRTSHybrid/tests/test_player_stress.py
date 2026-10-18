@@ -412,7 +412,7 @@ def test_clear_every_wave_of_rats_and_keep_asking():
             r = S.talk_and_leave(t, joe, k)
             waves.append({"wave": inf["wave"], "count": len(inf["pests"]), "keeper": S.text_of(r)[:160]})
             t.advance(25)
-        final = S.talk_and_leave(t, joe, pests.latest(t.world, pests.home(t.world)[0])["keeper"])
+        final = S.talk_and_leave(t, joe, S.keeper(t))
         S.record("all_waves", waves=waves, final_keeper=S.text_of(final)[:300], facts=S.keeper_facts(t), ledger=S.ledger_counts(t, joe.id))
         assert any(not w.get("came", True) for w in waves), "the waves end"
     finally:

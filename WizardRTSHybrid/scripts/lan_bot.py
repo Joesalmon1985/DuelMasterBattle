@@ -3,7 +3,7 @@
 answers challenges, sets a ward and casts legal weaves until the duel ends. Prints LAN_BOT_* lines the test runner reads.
 
     python3 scripts/lan_bot.py --host 127.0.0.1 --port 8765 --code 1234 [--secret S (play as the host's own wizard and start the world)]
-                               [--accept] [--challenge-after N] [--decline-first] [--ward 0,1,3] [--max-duels 1] [--seconds 300]
+                               [--accept] [--challenge-after N] [--decline-first] [--ward 0,1,6] [--max-duels 1] [--seconds 300]
 """
 
 from __future__ import annotations

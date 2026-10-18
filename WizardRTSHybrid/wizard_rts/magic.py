@@ -55,8 +55,24 @@ def _release_reserver(world: Any, row: dict, reason: str) -> None:
         _fail_program(world, worker, reason)
 
 
+def _pest_target(world: Any, target_id: str) -> dict | None:
+    """The villagers' rats (narrative residents, not roster entities) burn like anything else the wizard stands near."""
+    if "narrative" not in world.__dict__:
+        return None
+    from wizard_rts.narrative import pests, residents
+
+    if not pests.is_pest(world, target_id):
+        return None
+    r = residents.table(world)[target_id]
+    return {"tx": int(r["tile"][0]), "ty": int(r["tile"][1])}
+
+
 def fire(world: Any, target_id: str) -> dict[str, Any]:
     found = find(world, str(target_id))
+    if found is None:
+        pest = _pest_target(world, str(target_id))
+        if pest is not None:
+            found = ("pest", pest)
     if found is None:
         return {"status": "rejected", "reason": "no_target"}
     cls, row = found
@@ -114,4 +130,10 @@ def fire(world: Any, target_id: str) -> dict[str, Any]:
         world.animals.pop(target_id, None)
         world.events.append({"kind": "animal_killed", "id": target_id, "by": "wizard"})
         world.effects.append({"t": "explosion", "x1": tx, "y1": ty, "x2": tx, "y2": ty, "ttl_ms": 800, "keep": 3, "p": ""})
+    elif cls == "pest":
+        from wizard_rts.narrative import pests
+
+        out = pests.burn(world, target_id)
+        world.effects.append({"t": "explosion", "x1": tx, "y1": ty, "x2": tx, "y2": ty, "ttl_ms": 800, "keep": 3, "p": ""})
+        return {"status": "ok", "class": cls, "target": target_id, **{k: v for k, v in out.items() if k != "status"}}
     return {"status": "ok", "class": cls, "target": target_id}

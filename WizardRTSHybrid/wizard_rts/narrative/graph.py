@@ -408,9 +408,12 @@ def choose(world: Any, ctx: dict[str, Any], choice_id: str) -> dict[str, Any] | 
     extras = ran["extras"]
     if choice.get("once"):
         set_flag(world, t, "done:" + choice_id)
+    was = state(world)["node"].get(f"{t}/{sp}", HUB)
     state(world)["node"][f"{t}/{sp}"] = choice.get("goto", HUB)
     ends = ran["ends"] or bool(extras.get("duel_lease"))  # the conversation's end is declared by the data (or by a duel starting), never guessed from a label
     out = view(world, ctx) if not ends else {"lines": [], "choices": [], "extras": {}}
+    if not ends and state(world)["node"][f"{t}/{sp}"] == was:
+        out["lines"] = []  # the same node: its opening speech was heard already; the answer stands alone under the buttons (a new node speaks its own lines)
     out["text"] = "\n".join(ran["lines"])
     out["extras"] = {**extras, **out["extras"]}
     out["ends"] = ends

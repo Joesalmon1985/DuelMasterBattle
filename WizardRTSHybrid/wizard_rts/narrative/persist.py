@@ -166,6 +166,7 @@ def read_sidecar(path: Path | str) -> dict[str, Any] | None:
 
 MIGRATIONS: dict[int, Any] = {  # narrative_version n -> function(payload) -> payload at n + 1
     1: lambda payload: payload,  # 2: mortality, the ledger, the mothers; all created lazily by their modules, nothing in the save changes shape
+    2: lambda payload: payload,  # 3: the world's magic ladder (progression.py), created lazily and back-filled from the ledger on first use
 }
 
 

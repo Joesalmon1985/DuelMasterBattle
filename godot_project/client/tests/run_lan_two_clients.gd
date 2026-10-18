@@ -142,7 +142,7 @@ func _run() -> void:
 	# ward setup through the board UI
 	for i in 3:
 		board.ui_action_select_locus(i)
-		board.ui_action_pick_spell([0, 1, 3][i])
+		board.ui_action_pick_spell([0, 1, 6][i])
 	board.ui_action_lock_ward()
 	for _f in 10:
 		await process_frame
@@ -153,7 +153,7 @@ func _run() -> void:
 	# 6. duel: cast through the board until the host reports a result; the rival's ward stays hidden until then
 	deadline = Time.get_ticks_msec() + 120000
 	var casts := 0
-	var pool := [0, 1, 3]
+	var pool := [0, 1, 6]
 	var revealed_early := false
 	var shot_mid := false
 	while Time.get_ticks_msec() < deadline:

@@ -390,6 +390,7 @@ class MultiplayerSession:
                     from wizard_rts.narrative import pests
 
                     pests.note_fire(self.world, link.id, str(message.get("target", "")))
+                self._deliver_rungs(now)  # a duel just resolved may have moved the world's ladder: the card rides on the very next poll
                 self._check_ending(now)  # a story duel lost to the death is a death like any other
             return reply
         return {"status": "rejected", "reason": "unknown_op", "op": op}
@@ -601,8 +602,11 @@ class MultiplayerSession:
             out["you_dead"] = {**fate, "body": mortality.body_of(self.world, link.id) or ""} if fate and not fate.get("alive", True) else {}
             out["resurrection"] = mortality.channel_view(self.world, link.id)
             out["grounded"] = mother.is_grounded(self.world, link.id)
+            from wizard_rts.narrative import progression
+
             with self.acting(link):
                 out["trial"] = trial.view(self.world, link.id)
+                out["progression"] = progression.view(self.world, link.id)
             for p in snap.get("players", []):
                 srec = trial.seat_rec(self.world, str(p["id"]))
                 if srec and srec["inside"]:
@@ -739,10 +743,7 @@ class MultiplayerSession:
             return {"status": "rejected", "reason": "busy_in_story"}
         self._duel_counter += 1
         duel_id = f"pvp{self._duel_counter}"
-        played = None
-        if "narrative" in self.world.__dict__:  # the colours grow with experience: the smaller of the two wizards' counts decides, so neither meets a colour they have not earned
-            played = min(ledger.count(self.world, "pvp_duels", link.id), ledger.count(self.world, "pvp_duels", target.id))
-        fmt = pvp.make_format(message.get("format"), played)
+        fmt = pvp.make_format(message.get("format"), self.world)  # the world's magic ladder decides the slots and colours, the same for both
         target.invite = {"duel_id": duel_id, "from": link.id, "from_name": link.name, "format": fmt, "expires_at": now + self.invite_timeout_s}
         link.outgoing = duel_id
         target.notice("challenged", duel_id=duel_id, by=link.id, by_name=link.name)
@@ -810,6 +811,11 @@ class MultiplayerSession:
         self.world.events.append({"kind": "pvp_duel_ended", "duel": duel.id, "winner": winner, "reason": duel.reason})
         self._notify_duelists(duel, "duel_finished", duel_id=duel.id)
         self._settle_duel(duel, winner, now)
+        if "narrative" in self.world.__dict__ and duel.result is not None and duel.reason != "disconnected":  # a duel fought to its end counts for the world's ladder, once
+            from wizard_rts.narrative import progression
+
+            progression.note_duel(self.world, duel.players[0], kind="pvp")
+            self._deliver_rungs(now)
 
     def _settle_duel(self, duel: pvp.PvpDuel, winner: str, now: float) -> None:
         """A duel between apprentices is to the death: the loser dies where they stand and their body stays (plan section 3.2). A draw kills nobody;
@@ -827,6 +833,27 @@ class MultiplayerSession:
         if loser in self.links and not self._dead(self.links[loser]):
             mortality.die(self.world, loser, "duel", by=winner, terminal=False)
             self._check_ending(now)
+
+    def _deliver_rungs(self, now: float) -> None:
+        """A rung of the world's magic ladder owed to a wizard is told the moment they are not on a duel board: it interrupts a conversation or a quest
+        page (the owner's rule), never a duel in progress."""
+        from wizard_rts.narrative import conversation, progression
+
+        st = progression.state(self.world)
+        if not st["pending"]:
+            return
+        for link in list(self.links.values()):
+            if link.ai or str(link.id) not in st["pending"]:
+                continue
+            if self._in_open_duel(link) or not progression.deliverable(self.world, link.id):
+                continue
+            card = progression.take_pending(self.world, link.id)
+            if card is None:
+                continue
+            with self.acting(link):
+                ended = conversation.end(self.world, None, "rung")
+            link.notice("rung", **card, interrupted=bool(ended))
+            self.command_log.append({"op": "rung_told", "player": link.id, "rung": card["rung"], "game_ms": self.game_ms()})
 
     def _check_ending(self, now: float) -> None:
         """The game ends for this session's humans when none of them is alive: a private session with its one human, a shared world with both.
@@ -850,6 +877,7 @@ class MultiplayerSession:
         now = self.clock() if now is None else now
         if "narrative" in self.world.__dict__:
             self._drain_announcements()
+            self._deliver_rungs(now)
             self._check_ending(now)
             if self.ending is not None and not self.ending_handled and now - float(self.ending["at"]) >= self.ending_grace_s:
                 self.ending_handled = True
