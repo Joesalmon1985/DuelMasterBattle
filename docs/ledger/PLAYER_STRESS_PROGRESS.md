@@ -60,7 +60,7 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 
 ## 7. Versions and build
 - [x] GAME_VERSION 0.4.0, Android version code 4, protocol 3 unchanged; `check_versions.py` VERSIONS_OK.
-- [ ] APK rebuilt (see the session log).
+- [x] APK 0.4.0 built on this PC: `build/android/DuelMasterBattle-debug.apk` (152 MB, signed, ART_PROBE_OK, ANDROID_APK_OK); no phone has run it.
 
 ## Session log (newest first)
 
@@ -71,4 +71,4 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 * Godot headless `run_lan_parse.gd`: HYBRID_LAN_PARSE_OK (every client script parses; the net duel mirror at three and four colours in the ladder's order).
 * Headed `warehouse`: PASS (see section 6).
 * Commits on the branch: the plan (two), the stress suite and report, the ladder and the rats, and this session's noticing dialogue, mechanics, client and docs.
-* APK: see the next entry.
+* APK 0.4.0: `build_apk.ps1` (no install) ANDROID_APK_OK, 152 MB, signed, the exported-pack art probe green. Install with `Install APK On Phones.bat`; the two-phone run is the owner's (`docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`, plus: three rat scraps bring the Light card, the Burn button on a rat, the journal's MAGIC line).
