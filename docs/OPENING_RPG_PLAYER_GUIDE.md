@@ -20,7 +20,8 @@ If every apprentice in the world is dead, that adventure is over: the session en
 Everything that happens is kept: bodies, the mentor's fate, the warehouse's eaten food, the Trial's dead. **Continue as
 <name>** takes you back; **A new apprentice** retires your dead or finished wizard and brings a new one into the same world, a
 generation later, where people remember the previous one. The host's world catches up on the time it was closed (ten simulated
-minutes per real hour, capped), and the lobby says so while it does. **Start a new world** is in Settings behind two confirmations.
+minutes per real hour, capped), and the lobby says so while it does. **Start a new world** is in Settings behind two confirmations (the old world is archived; the new one has a new map). Under it, **Developer: total
+reset** deletes every saved world on the device and starts from nothing.
 
 ## The magic grows with the world
 
@@ -33,7 +34,8 @@ board. The journal's MAGIC IN THIS WORLD line says what the next rung is and how
 
 ## The village
 
-Walk up to anyone and tap **✦** to talk. The villagers have jobs, opinions and a memory of what you did (the ledger: who you
+Walk up to anyone and tap **✦** to talk. Each village speaks in its tribe's own voice (the home village's barbarians, the empire's clerks, the Frisians,
+the Atlanteans, the Amazons), and the other villages know you as the apprentice from yours. The villagers have jobs, opinions and a memory of what you did (the ledger: who you
 killed, who you brought back, how often you protest to your mother). Three things are going on from the first minute: rats are
 eating the warehouse's food (walk within sight of the warehouse and the journal has it; the keeper complains to whoever asks; fight a rat by standing
 beside it and tapping **Drive it off**, a small Ward duel on the real board, or **Burn it with fire magic** like anything else, though the big one only
@@ -44,7 +46,9 @@ mentor. The stranger comes whether you listen or not. If nobody is there to face
 
 ## The Trial of Champions
 
-Eighteen to thirty tiles from the village stands the gate, with the Rollkeeper and five contestants waiting to go in. You may
+Eighteen to thirty tiles from the village stands the gate, with the Rollkeeper and five contestants waiting to go in (on the usual world it is
+due south of the village centre). The line under the top bar always says how far and which way ("Trial gate: 18 tiles south ↓"), the journal has
+THE TRIAL, and the ranger and the carriers on the road give the same direction. You may
 enter with no lesson taken; the Rollkeeper will write that down. Inside, the Trial is drawn as the old dungeon: cave tiles, signs,
 boxes, people and creatures. One shared run per world: what one of you takes is gone for the other, a creature one of you breaks
 is broken for both, and the first to cross Throm's pit decides what Throm thinks of you both. Creatures are Ward duels on the real

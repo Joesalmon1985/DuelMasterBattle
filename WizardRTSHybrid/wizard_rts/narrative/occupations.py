@@ -51,6 +51,16 @@ def label(sp: dict[str, Any]) -> str:
     return data()["roles"][role_key(sp)]["label"]
 
 
+def tribe_of(world: Any, sp: dict[str, Any]) -> str:
+    faction = str(sp["row"].get("faction_name", ""))
+    return str(world.faction_info.get(faction, {}).get("tribe", "")) if hasattr(world, "faction_info") else ""
+
+
+def tribe_entry(world: Any, sp: dict[str, Any]) -> dict[str, Any]:
+    """The tribe's own voice (`occupations.json` `tribes`): intro, hub and often pools and a few topics of its own. {} for a tribe without one."""
+    return data().get("tribes", {}).get(tribe_of(world, sp), {})
+
+
 def _near(world: Any, table: dict, tile: tuple[int, int], radius: int, pred=None) -> int:
     n = 0
     for r in table.values():
@@ -64,7 +74,26 @@ def facts_for(world: Any, sp: dict[str, Any]) -> dict[str, Any]:
     row = sp["row"]
     tile = (int(row["tx"]), int(row["ty"]))
     faction = str(row.get("faction_name", ""))
-    f: dict[str, Any] = {"faction": faction, "role": role_key(sp)}
+    f: dict[str, Any] = {"faction": faction, "role": role_key(sp), "trade": label(sp).lower(), "tribe": tribe_of(world, sp)}
+    # where this person belongs and where the apprentice comes from (the villages have names in the story, and the other villages know the wizard's)
+    from wizard_rts.narrative import campaign, tutorial
+
+    home_sid = tutorial.state(world).get("settlement", "")
+    home_rec = world.dmb.settlements.get(home_sid) if home_sid else None
+    their_sid = ""
+    for sid, rec in world.dmb.settlements.items():
+        if rec.get("faction") == faction and "home" in str(rec.get("name", "")):
+            their_sid = sid
+            break
+    f["this_village"] = campaign.settlement_name(world, their_sid) if their_sid else "this place"
+    f["home_village"] = campaign.village(world) if home_sid else "the wizard's village"
+    f["is_home"] = 1 if (home_rec is not None and home_rec.get("faction") == faction) else 0
+    f["home_distance"] = max(abs(tile[0] - int(home_rec["tile"][0])), abs(tile[1] - int(home_rec["tile"][1]))) if home_rec is not None else 0
+    from wizard_rts.trial import run as trial
+
+    gate = trial.gate_hint(world, tile)
+    f["gate_distance"] = int(gate.get("distance", 0))
+    f["gate_compass"] = str(gate.get("compass", "east"))
     building = world.buildings.get(row.get("building", "")) if sp["kind"] == "worker" else None
     if building is not None:
         f["workplace"] = "the " + HUT_NAMES.get(building["kind"], str(building.get("label", "workshop")).replace(faction + " ", "").lower())
@@ -104,12 +133,12 @@ def note_talk(world: Any, pid: str) -> None:
     world.narrative.setdefault("talks", {})[pid] = talks(world, pid) + 1
 
 
-def _entry_topics(entry: dict[str, Any]) -> list[dict[str, Any]]:
-    return list(entry["topics"]) + list(data().get("shared_topics", [])) + list(aftermath()["topics"])
+def _entry_topics(entry: dict[str, Any], tribe: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    return list(entry["topics"]) + list((tribe or {}).get("topics", [])) + list(data().get("shared_topics", [])) + list(aftermath()["topics"])
 
 
 def topic_def(world: Any, sp: dict[str, Any], topic_id: str) -> dict[str, Any] | None:
-    return next((x for x in _entry_topics(data()["roles"][role_key(sp)]) if x["id"] == topic_id), None)
+    return next((x for x in _entry_topics(data()["roles"][role_key(sp)], tribe_entry(world, sp)) if x["id"] == topic_id), None)
 
 
 def _reaction(world: Any, pid: str, ctx: dict[str, Any]) -> list[Any] | None:
@@ -135,17 +164,22 @@ def view(world: Any, sp: dict[str, Any], ctx: dict[str, Any], intro: bool = True
     """Opening lines (the introduction the first time, a short greeting afterwards, their reaction to the attack once it has happened) and the topics the
     person can be asked about: the ones their trade offers plus what everyone has to say about the attack, as their circumstances allow."""
     entry = data()["roles"][role_key(sp)]
+    tribe = tribe_entry(world, sp)
     count = max(0, talks(world, sp["pid"]) - 1)  # `note_talk` has already counted this conversation
-    pool = entry["intro"] if count == 0 else entry["hub"]
-    if count >= int(data().get("often_after", 5)) and data().get("often"):
-        pool = data()["often"]  # the fifth visit and after: they have noticed you keep coming back
+    if count == 0:  # the first words: the tribe's way of greeting a stranger (an outsider's village greets the wizard's apprentice as one), else the trade's
+        key = "intro_home" if ctx.get("facts", {}).get("is_home") else "intro_away"
+        pool = tribe.get(key) or tribe.get("intro") or entry["intro"]
+    else:
+        pool = tribe.get("hub") or entry["hub"]
+    if count >= int(data().get("often_after", 5)) and (tribe.get("often") or data().get("often")):
+        pool = tribe.get("often") or data()["often"]  # the fifth visit and after: they have noticed you keep coming back
     lines = [pool[_rng(world, sp["pid"], count, "open").randrange(len(pool))]] if intro else []
     lines = graph._fmt(lines, ctx)
     if intro:
         react = _reaction(world, sp["pid"], ctx)
         if react is not None:
             lines = graph._fmt(react, ctx, world, "occupation")
-    open_topics = [t for t in _entry_topics(entry) if t["id"] not in (asked or set()) and graph.holds(world, "occupation", t.get("when"), ctx)]
+    open_topics = [t for t in _entry_topics(entry, tribe) if t["id"] not in (asked or set()) and graph.holds(world, "occupation", t.get("when"), ctx)]
     seen_text: set[str] = set()
     unique = [t for t in open_topics if not (t["text"] in seen_text or seen_text.add(t["text"]))]  # alternates with one question show one of them
     first = [t for t in unique if t.get("priority")][:3]  # what everyone is talking about comes first

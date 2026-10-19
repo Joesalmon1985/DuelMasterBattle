@@ -1384,7 +1384,16 @@ func _mp_toast_show(text: String, seconds: float = 3.0) -> void:
 func _mp_status_text(reply: Dictionary) -> String:
 	var online := int(reply.get("players_online", 0))
 	var paused := bool(_snapshot.get("paused", false))
-	return "LAN %s · %d online · %d ms%s" % ["host" if LanSession.is_host else "joined", online, _sim.last_round_trip_ms, "  ·  PAUSED" if paused else ""]
+	var line := "LAN %s · %d online · %d ms%s" % ["host" if LanSession.is_host else "joined", online, _sim.last_round_trip_ms, "  ·  PAUSED" if paused else ""]
+	var gate = reply.get("trial_gate", {})
+	if typeof(gate) == TYPE_DICTIONARY and not (gate as Dictionary).is_empty():
+		var dist := int(gate.get("distance", 0))
+		line += "\nTrial gate: %s" % ("here" if dist <= 2 else "%d tiles %s %s" % [dist, str(gate.get("compass", "")), _compass_arrow(str(gate.get("compass", "")))])
+	return line
+
+
+func _compass_arrow(compass: String) -> String:
+	return {"north": "↑", "north-east": "↗", "east": "→", "south-east": "↘", "south": "↓", "south-west": "↙", "west": "←", "north-west": "↖"}.get(compass, "")
 
 
 func _mp_key(keycode: int) -> bool:

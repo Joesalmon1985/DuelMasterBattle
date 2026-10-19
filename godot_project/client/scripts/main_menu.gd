@@ -177,7 +177,7 @@ func _on_single_player() -> void:
 	_begin_single(false)
 
 
-func _begin_single(continue_game: bool, new_wizard: bool = false, new_world: bool = false) -> void:
+func _begin_single(continue_game: bool, new_wizard: bool = false, new_world: bool = false, fresh_world: bool = false) -> void:
 	LanSession.reset()
 	var sfx := get_node_or_null("/root/Sfx")
 	if sfx:
@@ -190,6 +190,7 @@ func _begin_single(continue_game: bool, new_wizard: bool = false, new_world: boo
 	LanSession.continue_game = continue_game
 	LanSession.new_wizard = new_wizard
 	LanSession.new_world = new_world
+	LanSession.fresh_world = fresh_world
 	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
 
 
@@ -310,6 +311,34 @@ func _confirm_new_world(second: bool = false) -> void:
 	_overlay.visible = true
 
 
+## The developer's total reset, confirmed once: every saved world on this device is deleted (not archived), and the next world is built from nothing
+## on a new map. "Start a new world" above keeps the old worlds aside; this does not.
+func _confirm_fresh_world() -> void:
+	_clear_overlay()
+	var t := Label.new()
+	t.text = "Total reset?"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_title(t)
+	_overlay_vbox.add_child(t)
+	var l := Label.new()
+	l.text = "Every saved world on this device is deleted, archived ones too, and a new world is built from nothing on a new map: a new village, new people, a new mentor, Mira with no memory of you. For developers; this cannot be undone."
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_VT.apply_label_secondary(l)
+	_overlay_vbox.add_child(l)
+	var yes := Button.new()
+	yes.name = "ConfirmFreshWorldButton"
+	yes.text = "Delete everything and start fresh"
+	yes.custom_minimum_size = Vector2(0, 64)
+	_VT.style_secondary_button(yes)
+	yes.pressed.connect(func():
+		_overlay.visible = false
+		_begin_single(false, false, false, true))
+	_overlay_vbox.add_child(yes)
+	_overlay_close_button("Keep my worlds")
+	_overlay.visible = true
+
+
 # ---------------------------------------------------------------- settings
 
 func _clear_overlay() -> void:
@@ -363,6 +392,14 @@ func _show_settings() -> void:
 		_VT.style_secondary_button(nw)
 		nw.pressed.connect(func(): _confirm_new_world(false))
 		_overlay_vbox.add_child(nw)
+	# the developer's total reset: nothing archived, nothing kept, a new map (a new seed) and a new story from nothing
+	var fresh := Button.new()
+	fresh.name = "FreshWorldButton"
+	fresh.text = "Developer: total reset…"
+	fresh.custom_minimum_size = Vector2(0, 56)
+	_VT.style_secondary_button(fresh)
+	fresh.pressed.connect(_confirm_fresh_world)
+	_overlay_vbox.add_child(fresh)
 	var about := Label.new()
 	about.text = "Duel Master Battle %s" % LanSession.GAME_VERSION
 	about.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

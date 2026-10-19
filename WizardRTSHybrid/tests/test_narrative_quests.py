@@ -346,7 +346,8 @@ def test_repeated_conversations_vary_and_do_not_repeat_the_introduction():
 def test_every_line_uses_only_placeholders_that_exist():
     known = {"name", "mentor", "attacker", "faction", "workplace", "settlement", "trees_big", "saplings", "rocks", "animals", "logs", "soldiers", "barracks", "carrying",
              "cutter", "planter", "witness", "cutter_where", "planter_where", "witness_where", "cutter_role", "planter_role", "witness_role",
-             "previous", "generation", "idle_minutes", "played_minutes", "visits", "food_left"}  # conversation.common_facts (18 Oct 2026)
+             "previous", "generation", "idle_minutes", "played_minutes", "visits", "food_left",  # conversation.common_facts (18 Oct 2026)
+             "trade", "tribe", "this_village", "home_village", "home_distance", "gate_distance", "gate_compass"}  # occupations.facts_for (tribes, the gate)
     def strings(o):
         if isinstance(o, str):
             yield o

@@ -628,6 +628,7 @@ class MultiplayerSession:
             with self.acting(link):
                 out["trial"] = trial.view(self.world, link.id)
                 out["progression"] = progression.view(self.world, link.id)
+                out["trial_gate"] = {} if out["trial"] else trial.gate_hint(self.world)  # where the gate is from here (the client's status line)
             for p in snap.get("players", []):
                 srec = trial.seat_rec(self.world, str(p["id"]))
                 if srec and srec["inside"]:

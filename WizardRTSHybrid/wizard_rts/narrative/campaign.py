@@ -160,20 +160,31 @@ def names(world: Any) -> dict[str, str]:
 SUFFIXES = ("Hold", "Wick", "Ford", "Rest", "Stead")
 
 
-def village(world: Any) -> str:
-    """The settlement's name in the story (the simulation calls it 'Red home 1'): generated once from the tribe's syllables and kept."""
-    from wizard_rts.narrative import tutorial
+def settlement_name(world: Any, sid: str) -> str:
+    """Any settlement's name in the story (the simulation calls it 'Blue home 2'): generated once per settlement from its tribe's syllables and kept."""
+    st = state(world)
+    names = st.setdefault("settlement_names", {})
+    if sid in names:
+        return names[sid]
+    rec = world.dmb.settlements.get(sid)
+    if rec is None:
+        return "the settlement"
+    tribe = world.faction_info.get(rec.get("faction", ""), {}).get("tribe", "barbarians")
+    ident = characters.identity_for(world, tribe, "settlement:" + str(sid))
+    rng = random.Random(zlib.crc32(f"{world.seed}|{sid}|village".encode()))
+    names[sid] = f"{ident['given']} {rng.choice(SUFFIXES)}"
+    return names[sid]
 
+
+def village(world: Any) -> str:
+    """The home settlement's name in the story: generated once from the tribe's syllables and kept."""
     st = state(world)
     if st.get("village"):
         return st["village"]
     mentor_rec = residents.table(world).get(mentor(world))
     if mentor_rec is None:
         return "the settlement"
-    tribe = mentor_rec["tribe"]
-    ident = characters.identity_for(world, tribe, "settlement:" + str(mentor_rec["settlement"]))
-    rng = random.Random(zlib.crc32(f"{world.seed}|{mentor_rec['settlement']}|village".encode()))
-    st["village"] = f"{ident['given']} {rng.choice(SUFFIXES)}"
+    st["village"] = settlement_name(world, str(mentor_rec["settlement"]))
     return st["village"]
 
 

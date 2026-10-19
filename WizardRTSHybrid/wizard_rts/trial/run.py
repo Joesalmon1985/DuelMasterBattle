@@ -112,6 +112,32 @@ def ensure_gate(world: Any) -> None:
     events.log(world, "trial_gate_placed", tile=list(best), official=st["official"])
 
 
+COMPASS = ("east", "south-east", "south", "south-west", "west", "north-west", "north", "north-east")
+
+
+def gate_hint(world: Any, origin: tuple[int, int] | None = None) -> dict[str, Any]:
+    """Where the Trial's gate is from `origin` (default: the wizard acting now): tiles and a compass heading. {} while there is no gate."""
+    import math
+
+    g = gate_tile(world)
+    if g is None:
+        return {}
+    ox, oy = origin if origin is not None else (int(world.player["tx"]), int(world.player["ty"]))
+    dx, dy = g[0] - ox, g[1] - oy
+    dist = max(abs(dx), abs(dy))
+    heading = COMPASS[int(round(math.atan2(dy, dx) / (math.pi / 4))) % 8] if dist else "here"
+    return {"tx": g[0], "ty": g[1], "distance": dist, "compass": heading}
+
+
+def gate_text(world: Any, origin: tuple[int, int] | None = None) -> str:
+    h = gate_hint(world, origin)
+    if not h:
+        return ""
+    if h["distance"] <= 2:
+        return "The Trial's gate is right here."
+    return f"The Trial of Champions: its gate is {h['distance']} tiles {h['compass']} of you."
+
+
 def gate_tile(world: Any) -> tuple[int, int] | None:
     g = state(world).get("gate")
     return (int(g["tile"][0]), int(g["tile"][1])) if g and g.get("tile") else None

@@ -167,7 +167,10 @@ def test_the_fifth_visit_gets_you_again_from_villagers_and_the_rollkeeper_counts
         r = S.ask(t, joe, w)
         openings.append(S.text_of(r)[:60])
         joe.op("end_talk", npc=w)
-    assert any(o.startswith(("You again", "I am beginning", "If you are counting", "Yes. Still me")) for o in openings[5:]), openings
+    from wizard_rts.narrative import occupations
+
+    often = set(occupations.data()["often"]) | {line for tribe in occupations.data()["tribes"].values() for line in tribe.get("often", [])}
+    assert any(any(o.startswith(x[:40]) for x in often) for o in openings[5:]), openings  # the generic pool, or the tribe's own
     o = S.official(t)
     texts = [S.text_of(S.talk_and_leave(t, joe, o)) for _ in range(4)]
     assert any("Still here" in x for x in texts) and any("second column" in x for x in texts[3:]), texts

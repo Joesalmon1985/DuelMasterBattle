@@ -62,7 +62,23 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] GAME_VERSION 0.4.0, Android version code 4, protocol 3 unchanged; `check_versions.py` VERSIONS_OK.
 - [x] APK 0.4.0 built on this PC: `build/android/DuelMasterBattle-debug.apk` (152 MB, signed, ART_PROBE_OK, ANDROID_APK_OK); no phone has run it.
 
+## 8. The owner's playthrough notes (19 Oct 2026)
+- [x] Developer total reset: Settings > "Developer: total reset…" (one confirmation) deletes every save on the device, archives too, and builds a world from nothing
+  on a new map (`LanSession.fresh_world`, host `--fresh`, `host.wipe_saves`); "Start a new world" (confirmed twice, archives kept) now also takes a new seed instead
+  of rebuilding the same map.
+- [x] Villagers speak by tribe (`occupations.json` `tribes`: barbarians, empire, frisians, atlanteans, amazons: intro_home, intro_away, hub, often, topics) and know
+  which village the apprentice is from (facts `this_village`, `home_village`, `is_home`, `home_distance`, `trade`, `tribe`; `campaign.settlement_name`); an outsider's
+  village greets "the apprentice from <home>" and has two topics about its own village and the wizard's.
+- [x] The Trial gate is findable: the status line under the top bar shows "Trial gate: N tiles south ↓" wherever you stand (`state_view["trial_gate"]`,
+  `trial.gate_hint`), the journal has a THE TRIAL line, the finished campaign's objective names it, and the ranger's and the carriers' lines give the real
+  direction and distance ({gate_compass}, {gate_distance}) instead of a fixed "east".
+- [x] `tests/test_village_voices.py` 4 passed; the placeholder validator knows the new facts; `run_lan_parse.gd` and `run_menu_routes.gd` green.
+
 ## Session log (newest first)
+### 19 Oct 2026
+* The owner's three notes from a playthrough: a developer total reset, villages that all sounded the same, and a Trial gate they could not find (on the
+  default world it stands 18 tiles due south of the home village's centre). All three answered above; committed and pushed for remote review.
+
 
 ### 18 Oct 2026, evening (Windows 11, Python 3.14, Godot 4.5.1 console build at `%USERPROFILE%\Downloads\Godot_v4.5.1-stable_win64.exe\`)
 * Regression over the narrative, duel, Trial, party, LAN and save suites plus the stress suite: 208 passed, 2 failed, both explained and gone: the placeholder

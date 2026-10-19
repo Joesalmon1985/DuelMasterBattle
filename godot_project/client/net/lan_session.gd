@@ -30,6 +30,7 @@ var private_session := false  # single player: the world is hosted on 127.0.0.1 
 var continue_game := false  # host the newest saved Wizard World instead of a new one (private sessions)
 var new_wizard := false  # retire the saved wizard (dead or alive) and seat a new apprentice in the same world
 var new_world := false  # the explicit "Start a new world": archive the saves and build afresh
+var fresh_world := false  # the developer's total reset: delete every save on this device (archives too) and build from nothing
 
 var _host_pid := -1
 var _ready_file := ""
@@ -55,6 +56,7 @@ func reset() -> void:
 	continue_game = false
 	new_wizard = false
 	new_world = false
+	fresh_world = false
 	if sim != null:
 		sim.disconnect_from_host()
 	sim = null
@@ -154,7 +156,7 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	var bind := "127.0.0.1" if private else "0.0.0.0"
 	var args := {"port": DEFAULT_PORT, "bind": bind, "name": name, "code": code, "secret": host_secret, "seed": seed_, "map": map_,
 		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
-		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world}
+		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world, "fresh": fresh_world}
 	if Engine.has_singleton("DmbPySim"):
 		var plugin = Engine.get_singleton("DmbPySim")
 		var raw: String = str(plugin.start(JSON.stringify(args)))
@@ -179,6 +181,8 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 		argv.append("--new-wizard")
 	if new_world:
 		argv.append("--new-world")
+	if fresh_world:
+		argv.append("--fresh")
 	_host_pid = OS.create_process(py, argv, false)
 	if _host_pid <= 0:
 		_host_status = {"state": "failed", "error": "could not start %s (set DMB_PYTHON to your Python 3 executable)" % py}

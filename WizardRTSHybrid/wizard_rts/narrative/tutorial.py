@@ -120,6 +120,12 @@ def objective(world: Any) -> str:
     if not hint and wizard.wiz(world).get("campaign_finished"):
         hint = "Seek greater magical power."  # the introduction was finished in an earlier cycle: the objective stands
     if hint:
+        if hint == "Seek greater magical power.":
+            from wizard_rts.trial import run as trial
+
+            gate = trial.gate_text(world)
+            if gate:
+                hint = hint + " " + gate  # the one place the valley offers it: the gate, and where it is from here
         return hint
     for q in quests.snapshot(world):
         if q["objective"]:
@@ -146,7 +152,16 @@ def snapshot(world: Any) -> dict[str, Any]:
             "next_lesson": next_lesson_hint(world), "objective": objective(world), "spells": [wizard.SPELL_NAMES.get(s, str(s)) for s in w["spells"]],
             "weave_size": int(w["weave_size"]), "magic_gated": world.profile == "campaign", "unlocked": graph.unlocked(world),
             "duel": {"lease": lease["id"], "purpose": lease["purpose"]} if lease else {}, "quests": _rats_journal(world) + quests.snapshot(world),
-            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world)), "magic": _magic(world)}
+            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world)), "magic": _magic(world), "trial_gate": _gate(world)}
+
+
+def _gate(world: Any) -> str:
+    from wizard_rts.trial import run as trial
+
+    try:
+        return trial.gate_text(world)
+    except Exception:  # noqa: BLE001
+        return ""
 
 
 def _magic(world: Any) -> dict[str, Any]:

@@ -93,6 +93,11 @@ def common_facts(world: Any, pid: str | None = None) -> dict[str, Any]:
         out["food_left"] = pests.food_left(world)
     except Exception:  # noqa: BLE001
         out["food_left"] = 0
+    from wizard_rts.trial import run as trial
+
+    gate = trial.gate_hint(world)
+    out["gate_distance"] = int(gate.get("distance", 0))
+    out["gate_compass"] = str(gate.get("compass", "east"))
     return out
 
 

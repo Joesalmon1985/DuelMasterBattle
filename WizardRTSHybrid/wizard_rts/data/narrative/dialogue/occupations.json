@@ -1,5 +1,5 @@
 {
- "note": "Reusable conversations by occupation (placeholder authored text, owner review pending). Facts are read from the simulation by narrative/occupations.py; a line only appears when its facts hold, so nothing claims what the world does not contain.",
+ "note": "Reusable conversations by occupation (placeholder authored text, owner review pending). Facts are read from the simulation by narrative/occupations.py; a line only appears when its facts hold, so nothing claims what the world does not contain. Added 18 Oct 2026: `tribes` (intro_home, intro_away, hub, often and topics per tribe: barbarians, empire, frisians, atlanteans, amazons; facts this_village, home_village, is_home, home_distance, trade, tribe, gate_distance, gate_compass).",
  "farewell": "Goodbye.",
  "roles": {
   "lumberjack": {
@@ -815,7 +815,7 @@
       }
      }
     },
-    "And the usual: the Trial gate east of here opens again this season, and the road is full of fools walking towards it."
+    "And the usual: the Trial gate, {gate_distance} tiles {gate_compass} of here, opens again this season, and the road is full of fools walking towards it."
    ]
   },
   {
@@ -854,5 +854,294 @@
   "I am beginning to think you have nowhere to be.",
   "If you are counting us, I am the same one as before.",
   "Yes. Still me. Still working. What is it this time?"
- ]
+ ],
+ "tribes": {
+  "barbarians": {
+   "note": "The home tribe on the default world: blunt, warm, axes and ale. Red and Orange.",
+   "intro_home": [
+    "{name}. {trade}, and a neighbour of your mother's, so mind your manners. What is it?",
+    "Ha, the apprentice. {name}, {trade}. Your mother said you would come round asking things. Ask."
+   ],
+   "intro_away": [
+    "{name}, {trade} of {this_village}. You are the one from {home_village} with the staff; the carriers said you were walking this way. Well. Here you are.",
+    "A stranger with a staff. {name}, {trade}. We do not get many from {home_village} out here. Speak up."
+   ],
+   "hub": [
+    "Again? Go on.",
+    "Make it quick, the axe does not swing itself.",
+    "Yes, yes. What now?"
+   ],
+   "often": [
+    "You again. The others have started a count.",
+    "If you have nothing to do, there is always wood."
+   ],
+   "topics": [
+    {
+     "id": "tribe_village",
+     "text": "Tell me about {this_village}.",
+     "lines": [
+      {
+       "text": "{this_village}? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+       "when": {
+        "facts": [
+         {
+          "name": "is_home",
+          "gte": 1
+         }
+        ]
+       }
+      },
+      {
+       "text": "{this_village} is a {trade}'s village like any other: we cut, we carry, we drink what is left. You will find no wizards here, which is why we are so calm.",
+       "when": {
+        "facts": [
+         {
+          "name": "is_home",
+          "lte": 0
+         }
+        ]
+       }
+      }
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_wizard_village",
+     "text": "What do you hear of {home_village}?",
+     "when": {
+      "facts": [
+       {
+        "name": "is_home",
+        "lte": 0
+       }
+      ]
+     },
+     "lines": [
+      "That a stranger walked into it and killed an old wizard in the square, and that the apprentice was somewhere else at the time. Nobody here holds it against you. Nobody here would say so if they did.",
+      "That it keeps wizards. We keep goats. Each to their own."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_ale",
+     "text": "Is there anything to drink in this village?",
+     "lines": [
+      "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it."
+     ]
+    }
+   ]
+  },
+  "empire": {
+   "note": "Imperial: measured, courteous, roads and ledgers. Blue.",
+   "intro_home": [
+    "{name}, {trade}, at the service of the settlement and, I suppose, of its apprentice. What may I tell you?"
+   ],
+   "intro_away": [
+    "{name}, {trade} of {this_village}. You will be the apprentice from {home_village}; your name arrived before you did, on a cart. State your business, and welcome.",
+    "Good day. {name}, {trade}. {this_village} does not often see a staff from {home_village} on its roads. We keep good roads; do use them."
+   ],
+   "hub": [
+    "Yes? I am at your disposal, briefly.",
+    "Again. Proceed.",
+    "What is it this time? I ask without rancour."
+   ],
+   "often": [
+    "You have spoken to me more often than my own foreman. I note it without complaint.",
+    "Once more, then. I have begun to look forward to it, against my judgement."
+   ],
+   "topics": [
+    {
+     "id": "tribe_village",
+     "text": "Tell me about {this_village}.",
+     "lines": [
+      "{this_village} is run properly: a ledger for every ware, a road for every ledger. We are {home_distance} tiles from your village and, in our own estimation, several centuries ahead of it."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_wizard_village",
+     "text": "What do you hear of {home_village}?",
+     "when": {
+      "facts": [
+       {
+        "name": "is_home",
+        "lte": 0
+       }
+      ]
+     },
+     "lines": [
+      "That it has a wizard problem, and that the problem is young. Forgive me. We read the carriers' reports here and the carriers are not kind.",
+      "A stranger, a death in the square, an apprentice. It was in the dispatches. The dispatches did not say whose fault it was, which is how one knows it was somebody's."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_roads",
+     "text": "Why are your roads so straight?",
+     "lines": [
+      "Because a crooked road is a slow road, and a slow road is a cold winter. We measured. Your village did not. One can tell from the air."
+     ]
+    }
+   ]
+  },
+  "frisians": {
+   "note": "Frisian: terse, weather-bound, peat and dykes. Green.",
+   "intro_home": [
+    "{name}. {trade}. The sky says rain. Ask."
+   ],
+   "intro_away": [
+    "{name}. {trade}, {this_village}. From {home_village}, are you. Long way for a staff to walk. Ask what you came to ask.",
+    "The apprentice. {name}, {trade}. News walks faster than you do; we had it yesterday. Well?"
+   ],
+   "hub": [
+    "Hm.",
+    "Yes.",
+    "Rain later. What?"
+   ],
+   "often": [
+    "Again. The peat does not cut itself, but go on.",
+    "You have more questions than the sea has water. Ask one."
+   ],
+   "topics": [
+    {
+     "id": "tribe_village",
+     "text": "Tell me about {this_village}.",
+     "lines": [
+      "{this_village}: peat, dyke, wind, repeat. We hold the ground the water wants. It is enough to be going on with."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_wizard_village",
+     "text": "What do you hear of {home_village}?",
+     "when": {
+      "facts": [
+       {
+        "name": "is_home",
+        "lte": 0
+       }
+      ]
+     },
+     "lines": [
+      "That a stranger came, and a wizard died, and the apprentice lived. Here we would have said: the water took one. It means the same.",
+      "Not much. Your village is dry country; dry country has dry troubles. Ours drown."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_weather",
+     "text": "What is the weather doing?",
+     "lines": [
+      "Coming. It is always coming. Ask me what it is doing when it arrives."
+     ]
+    }
+   ]
+  },
+  "atlanteans": {
+   "note": "Atlantean: formal, curious, the sea and the old craft. Yellow.",
+   "intro_home": [
+    "{name}, {trade}. The settlement greets its apprentice. What would you know?"
+   ],
+   "intro_away": [
+    "{name}, {trade} of {this_village}. An apprentice of {home_village}, so far from your own water. We have heard. Speak; we listen more carefully than the others.",
+    "Welcome, apprentice of {home_village}. I am {name}, {trade}. Our village remembers the old craft better than most; it will be interested in you."
+   ],
+   "hub": [
+    "Speak.",
+    "Yes, apprentice.",
+    "Another question. Good. Questions are how the craft survives."
+   ],
+   "often": [
+    "You return to the same well. The well does not mind.",
+    "Again. I have begun to think you are studying me. It is permitted."
+   ],
+   "topics": [
+    {
+     "id": "tribe_village",
+     "text": "Tell me about {this_village}.",
+     "lines": [
+      "{this_village} was built by people who remembered the sea and did not trust it. Every wall faces the water. Every ledger is kept twice. We are patient, and we are {home_distance} tiles from the nearest wizard, which is as patience likes it."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_wizard_village",
+     "text": "What do you hear of {home_village}?",
+     "when": {
+      "facts": [
+       {
+        "name": "is_home",
+        "lte": 0
+       }
+      ]
+     },
+     "lines": [
+      "That the old craft is alive there in one old teacher and one young apprentice, and that the teacher is now dead. We mourned him here, briefly, in the old way. You would not have known.",
+      "That the Trial gate stands near it, {gate_distance} tiles or so {gate_compass} of here as the road goes, and that the apprentice has not yet gone in. We notice such things."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_craft",
+     "text": "You say 'the old craft'. What do you mean?",
+     "lines": [
+      "The weave you carry in that staff. Our grandmothers wove it from six colours and four places, before the schools cut it down to three. The valley is remembering; have you not felt it?"
+     ]
+    }
+   ]
+  },
+  "amazons": {
+   "note": "Amazon: direct, forest-wise, hunters and trees. Purple.",
+   "intro_home": [
+    "{name}, {trade}. Walk quietly; the forest is listening. What do you want?"
+   ],
+   "intro_away": [
+    "{name}, {trade} of {this_village}. You walk like someone from {home_village}: loud. Say what you came to say.",
+    "The staff from {home_village}. {name}, {trade}. The trees told us before the carriers did. Ask."
+   ],
+   "hub": [
+    "Quickly.",
+    "You again. Quietly, this time.",
+    "Yes?"
+   ],
+   "often": [
+    "Five times. The forest has stopped falling silent when you come; take it as a compliment.",
+    "Again. Sit, then, if you are staying."
+   ],
+   "topics": [
+    {
+     "id": "tribe_village",
+     "text": "Tell me about {this_village}.",
+     "lines": [
+      "{this_village} does not clear the forest; it moves through it. Hunters, gatherers, a few who plant. You will not find a quarry here and you will not find a fool."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_wizard_village",
+     "text": "What do you hear of {home_village}?",
+     "when": {
+      "facts": [
+       {
+        "name": "is_home",
+        "lte": 0
+       }
+      ]
+     },
+     "lines": [
+      "That it burns its trees for lessons. The lumberjacks' tale, perhaps. Perhaps not.",
+      "That a stranger killed your teacher in the open, in daylight, and walked away. Here he would not have reached the square. Here nobody reaches the square."
+     ],
+     "priority": true
+    },
+    {
+     "id": "tribe_forest",
+     "text": "Why do you live under the trees?",
+     "lines": [
+      "Because the trees were here first and will be here last. Everything you build in the open, the open takes back. Ask your warehouse keeper about rats."
+     ]
+    }
+   ]
+  }
+ }
 }

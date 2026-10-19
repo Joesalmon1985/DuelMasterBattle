@@ -750,6 +750,11 @@ func journal_string() -> String:
 		out.append("")
 	var spells: Array = j.get("spells", [])
 	out.append("Spells: %s.  Weave: %d slots." % [", ".join(PackedStringArray(spells)) if not spells.is_empty() else "none yet", int(j.get("weave_size", 0))])
+	var gate := str(j.get("trial_gate", ""))
+	if gate != "":
+		out.append("")
+		out.append("THE TRIAL")
+		out.append("  " + gate)
 	var magic = j.get("magic", {})
 	if typeof(magic) == TYPE_DICTIONARY and not (magic as Dictionary).is_empty():
 		out.append("")

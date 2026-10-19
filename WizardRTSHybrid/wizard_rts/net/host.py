@@ -82,8 +82,24 @@ def archive_saves(profile: str, stamp: str | None = None) -> list[str]:
     return out
 
 
+def wipe_saves(profile: str) -> list[str]:
+    """The developer's total reset: every save of the profile, archived ones included, is deleted (not renamed), so the next host builds a world from nothing."""
+    from wizard_rts.narrative import persist
+
+    folder = persist.saves_dir(profile)
+    out = []
+    if folder.exists():
+        for p in sorted(folder.glob("*.pkl")) + sorted(folder.glob("*.json")) + sorted(folder.glob("*.prev")):
+            try:
+                p.unlink()
+                out.append(str(p))
+            except OSError:
+                pass
+    return out
+
+
 def prepare_world(profile: str, seed: int, map_size: str, *, new_world_flag: bool = False, new_wizard: bool = False, now: float | None = None,
-                  permanent: bool = True) -> tuple[HybridWorld, dict[str, Any]]:
+                  permanent: bool = True, fresh: bool = False) -> tuple[HybridWorld, dict[str, Any]]:
     """The world this installation hosts (plan section 3.3). With `permanent`, the newest save is the world: it is loaded, never regenerated, and a
     save the code cannot read is an error the caller shows (nothing silently starts over). `new_world_flag` archives the saves first (the explicit
     "Start a new world"). On a loaded world the human seats of the last session are retired (a new session seats whoever comes); the host seat is
@@ -91,10 +107,12 @@ def prepare_world(profile: str, seed: int, map_size: str, *, new_world_flag: boo
     offline catch-up the host pays before the world opens (`clockdebt`)."""
     from wizard_rts.narrative import mortality, party, persist
 
-    info: dict[str, Any] = {"loaded": False, "path": "", "owed_ms": 0, "retired": [], "archived": [], "host_was_dead": False}
-    if new_world_flag:
+    info: dict[str, Any] = {"loaded": False, "path": "", "owed_ms": 0, "retired": [], "archived": [], "host_was_dead": False, "wiped": []}
+    if fresh:
+        info["wiped"] = wipe_saves(profile)  # the developer's total reset: nothing of the old worlds is kept
+    elif new_world_flag:
         info["archived"] = archive_saves(profile)
-    path = latest_save(profile) if (permanent and not new_world_flag) else None
+    path = latest_save(profile) if (permanent and not new_world_flag and not fresh) else None
     if path is None:
         return new_world(seed, map_size, profile), info
     try:
@@ -477,7 +495,7 @@ def build(args: argparse.Namespace) -> HostServer:
         os.environ["DMB_RUNS"] = str(args.runs_dir)
     permanent = bool(getattr(args, "runs_dir", "")) or bool(getattr(args, "continue_game", False))
     world, info = prepare_world(args.profile, args.seed, args.map, new_world_flag=bool(getattr(args, "new_world", False)),
-                                new_wizard=bool(getattr(args, "new_wizard", False)), permanent=permanent)
+                                new_wizard=bool(getattr(args, "new_wizard", False)), permanent=permanent, fresh=bool(getattr(args, "fresh", False)))
     session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius,
                                  first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)),
                                  world_factory=lambda: new_world(args.seed, args.map, args.profile), ai_companions=1 if int(args.max_players) == 1 else 0)
@@ -509,6 +527,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--continue", dest="continue_game", action="store_true", help="host the newest Wizard World save of this device (always the case with --runs-dir)")
     ap.add_argument("--new-wizard", action="store_true", help="retire the host's wizard (alive or dead) and seat a new apprentice in the same world")
     ap.add_argument("--new-world", action="store_true", help="archive the saves and build a fresh world (the explicit 'Start a new world')")
+    ap.add_argument("--fresh", action="store_true", help="developer: delete every save of the profile (archives too) and build a world from nothing with --seed")
     ap.add_argument("--stats-every", type=float, default=0.0, help="print HYBRID_HOST_STATS every N seconds")
     ap.add_argument("--ready-file", default="", help="also write the ready line's JSON to this file (the Godot launcher polls it)")
     return ap.parse_args(argv)

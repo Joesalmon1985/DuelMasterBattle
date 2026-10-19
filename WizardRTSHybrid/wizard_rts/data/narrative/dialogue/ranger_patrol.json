@@ -107,7 +107,7 @@
         "heard_ranger"
        ],
        "lines": [
-        "North along the fences, where the deer get in. Or east along the road, past where the old fortress stands. Nobody goes east if they can help it, this time of year."
+        "North along the fences, where the deer get in. Or {gate_compass} along the road, past where the old fortress stands: the gate is {gate_distance} tiles from here. Nobody goes that way if they can help it, this time of year."
        ]
       },
       {
@@ -132,7 +132,7 @@
        ],
        "lines": [
         "The Trial. The fortress in the hills has a gate, and once a year the gate opens and people walk in to win a fortune, and the road east is full of the ones who have not thought it through.",
-        "You can see the gate from the road; it is not far. People walk down there every year and most of them do not walk back. I would not go. I would not stop you either; you are a wizard."
+        "You can see the gate from the road; it is {gate_distance} tiles {gate_compass} of here, no more. People walk down there every year and most of them do not walk back. I would not go. I would not stop you either; you are a wizard."
        ]
       },
       {
