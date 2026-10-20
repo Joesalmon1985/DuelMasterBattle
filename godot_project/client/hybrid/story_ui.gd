@@ -409,7 +409,7 @@ func _show_dialog(reply: Dictionary) -> void:
 	for c in reply.get("choices", []):
 		choices.append({"id": str(c["id"]), "text": str(c["text"]), "disabled": not bool(c.get("available", true))})
 	var footer: Array = []
-	if conv_ends:
+	if conv_ends or not conv_game.is_empty():  # a game laid: the conversation goes on under the table, so the reply does not end it
 		var ack := "Continue"
 		if not conv_duel.is_empty():
 			ack = "Begin the duel"

@@ -90,7 +90,7 @@ def test_lessons_are_offered_in_order_and_the_first_talk_completes_meet():
     w = nh.world()
     t = go_to_teacher(w)
     r = nh.talk(w, t)
-    assert wizard.lesson_done(w, "meet") and nh.ids(r) == ["learn_colours", "why_not_rule", "need_anything", "game:rps", "farewell"]  # the mentor also offers the game of three colours (minigames.json)
+    assert wizard.lesson_done(w, "meet") and nh.ids(r) == ["learn_colours", "why_not_rule", "need_anything", "game:rps", "game:hanabi", "farewell"]  # the mentor also offers the game of three colours (minigames.json)
     nh.end(w, t)
     assert nh.talk(w, t)["lines"] == ["What would you like to learn?"]  # the introduction is shown once
     nh.pick(w, t, "learn_colours")

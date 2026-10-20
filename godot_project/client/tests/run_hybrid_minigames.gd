@@ -102,7 +102,7 @@ func _play(game: String, idx: int) -> void:
 	await _shot("%02d_%s_offer" % [idx, game])
 	ui.dialog_card.activate_choice_id(offer)
 	await _frames(4)
-	_check(ui.conv_ends and not ui.conv_game.is_empty(), "%s: the intro card waits for 'Lay out the game'" % game)
+	_check(not ui.conv_game.is_empty() and not ui.conv_ends, "%s: the intro card waits for 'Lay out the game' (the conversation is not ended)" % game)
 	var btn: Button = ui.dialog_card.footer_button("ack")
 	_check(btn != null and btn.text == "Lay out the game", "%s: the acknowledge button says 'Lay out the game'" % game)
 	await _shot("%02d_%s_intro" % [idx, game])

@@ -102,7 +102,7 @@ def test_rps_with_the_mentor_through_the_story_ops(village):
     offer = next(c for c in rep["choices"] if c["id"] == "game:rps")
     assert offer["text"] == catalogue.entry("rps")["offer"] and offer["available"]
     rep = story.dispatch(w, {"op": "choose", "npc": mentor, "choice": "game:rps"})
-    assert rep["status"] == "ok" and rep["ends"] is True and rep["choices"] == []
+    assert rep["status"] == "ok" and rep["ends"] is False and rep["choices"] == []  # the table asks for the player's acknowledgement; the conversation is not ended
     assert rep["text"].startswith("Before a knot")
     mg = rep["minigame"]
     assert mg["status"] == "ok" and mg["game"] == "rps" and mg["npc"] == mentor and mg["view"]["actions"]

@@ -107,7 +107,12 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
   next developer); `docs/NEXT_AGENT_HANDOFF.md` entry; `CLAUDE.md` line.
 - [x] Versions: `GAME_VERSION` 0.5.0 and `PROTOCOL_VERSION` 4 on both sides, Android code 5 / 0.5.0 in `export_presets.cfg`. No APK built (the owner's
   default: not until asked). `run_menu_routes.gd`: `MENU_ROUTES_OK`.
-- [~] Full Python suite (`tests` minus `test_five_minutes` and `test_neuro_storage`, which needs `psutil`, absent from the venv): started; the result is in the session log below.
+- [x] Full Python suite (`tests` minus `test_five_minutes` and `test_neuro_storage`, which needs `psutil`, absent from the venv): 1608 passed, 20 skipped, 8 failed
+  in 32 minutes. Two were this work and are fixed: a `game:` choice replied `ends: true` (`test_narrative_quests` asks that nothing but an ending choice
+  ends a conversation; the reply now ends nothing and the client's "Lay out the game" footer comes from the `minigame` extra), and the mentor's exact
+  choice list in `test_wizard_tutorial` gained `game:hanabi`. The other six fail on the base branch too, checked in a worktree of
+  `feature/player-stress-and-progression`: `test_narrative_conversation` (four lumberjack topics), two in `test_wizard_aspects_worldviews`, three in
+  `test_wizard_campaign` (the gate's distance in the objective text, the `confrontation_missed` scene, the aftermath topics).
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games); M5 done.
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games); M5 done; full suite run and its two findings fixed.

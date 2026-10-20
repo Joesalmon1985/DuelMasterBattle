@@ -195,7 +195,7 @@ def begin_game(world: Any, sp: dict[str, Any], game_id: str) -> dict[str, Any]:
     if mg.get("status") != "ok":
         return {"status": "rejected", "reason": mg.get("reason", "no_such_game")}
     intro = graph._fmt(list(g.get("intro", [])), _game_ctx(world, sp))
-    return _reply(world, sp, [], [], ends=True, text="\n".join(intro), extras={"minigame": mg})
+    return _reply(world, sp, [], [], ends=False, text="\n".join(intro), extras={"minigame": mg})  # not an end: the `minigame` extra asks for the table
 
 
 def after_game(world: Any, out: dict[str, Any]) -> dict[str, Any] | None:
