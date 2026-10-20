@@ -1,29 +1,40 @@
-# Release notes — G10 functional placeholder-art baseline
+# Release Notes — Real-Time Wizard Ward Duel
 
-## What this build is
+## Current branch — real-time mobile duel
 
-Overnight G06→G12 redefinition: **G10 accepts a functionally complete game with
-semantic placeholder art**, not a production-art ship. Human PASS remains Joe's.
+### Gameplay
+- **Real-time duels** with independent cast windows (`DmbRealtimeDuelSim`)
+- Global **Easy / Medium / Hard** difficulty selection
+- Encounters: Blue Apprentice, Thorn Adept, Mirror Mage, Archmage Duel, Eightfold Warden (boss)
+- 1–8 locus support; PRD terminology (Essence, Locus, Fracture, Echo, Fade)
+- Result states: Victory, Defeat, Clash, Stalemate
+- Last Stand on boss encounter (Eightfold Warden)
+- Aggregate-only feedback (no positional leak in UI payload)
 
-## Included
+### UI
+- Portrait **3-zone duel layout** (rival ward / impact / player action)
+- Composite wizard + ward barrier visuals
+- Gem Cast button, cast timer ring, feedback chips
+- Collapsed history peek + slide-up history sheet
+- Modal help (`?`) — no persistent help text during play
+- `DmbVisualTheme` + `docs/ART_BIBLE.md` art direction
 
-- Integrated MVP through G06–G08 automation candidates (`AUTO_READY_FOR_OWNER_REVIEW`).
-- Save corruption/backup recovery hardening (T152).
-- Performance profile evidence (T153 / profile_world).
-- Accessibility / touch matrix (T154).
-- Linux desktop packaging + Windows scaffold / Actions workflow (T155–T156).
-- Release regression: recovery + three-cycle continuation (T157).
+### Visual QA
+- `tools/capture_visual_qa.sh` — 15 screenshot states at 720×1280
+- `tools/visual_qa_report.py` — metrics + montage grid
+- `docs/VISUAL_QA.md` — rubric and workflow
+- `qa/screenshots/`, `qa/reports/`, `qa/montages/`
 
-## Not claimed
+### Technical
+- `DmbDifficultyProfile` separate from encounters
+- Python + Godot rules parity updates
+- Real-time sim tests + updated UI smoke tests
+- Android export preset added (requires local Godot Android templates)
+- `tools/generate_composite_sprites.py` — 2× layered PNG generator
+- Draft sprite generator retained for legacy icons
 
-- Human gate PASS for G05–G12.
-- Windows certification without Windows execution.
-- Three trained/qualified leadership policies (G09 parallel).
-- Production art finish, mobile, Utopia, or full voice.
+### Legacy
+- `DmbSequentialDuelGame` retained for regression tests (alternating-turn prototype)
 
-## How to review
-
-1. Read `Pack/DuelMasterBattle_Build_Pack/tracking/gates/G10/MORNING_REVIEW.md`.
-2. Launch via `bash tools/play_g10_release.sh` on Linux.
-3. For Windows, follow `tracking/gates/G10/windows_status.md` — do not treat
-   Linux smoke as Windows PASS.
+### Manual QA
+See [MANUAL_PLAYTEST.md](MANUAL_PLAYTEST.md) and PRD §27.5.
