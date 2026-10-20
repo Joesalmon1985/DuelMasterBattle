@@ -18,7 +18,8 @@ A building's inspect card says which games are played there ("Played here: ...")
 
 ## The developer's village of games
 
-Every host in one village, no stranger, nothing to interrupt: the developer menu (`DMB_DEV_MENU=1`, or `--dmb-dev`) has **GAMES VILLAGE**. It starts a
+Every host in one village, no stranger, nothing to interrupt: the developer menu (`DMB_DEV_MENU=1`, or `--dmb-dev`) has **GAMES VILLAGE**, and on a phone
+(which cannot reach the developer menu) Settings has **Developer: the village of games**. Either starts a
 private single-player session on its own saves folder (`dmb_runs/games_village`, never the player's world), built fresh on seed 507 with the early
 buildings the start lacks (a farm, a tavern, a bakery, a fisher's hut), the mother, the warehouse keeper, a sawyer at the sawmill, a water-carrier at
 the well, and a Rollkeeper with two contestants at a fire on the green. The apprentice begins beside the warehouse; the status line counts the games

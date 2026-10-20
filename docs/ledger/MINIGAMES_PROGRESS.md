@@ -116,3 +116,8 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 
 ## Session log
 - 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games); M5 done; full suite run and its two findings fixed.
+- 20 Oct 2026 (later): the owner asked for the game on their phone. Settings gained "Developer: the village of games" (the developer menu is off on mobile);
+  `run_menu_routes.gd` `MENU_ROUTES_OK`; the 0.5.0 APK build started with `build_apk.ps1 -Install` (result below).
+- 20 Oct 2026 (later): `build_apk.ps1 -Install` built `build/android/DuelMasterBattle-debug.apk` (0.5.0, protocol 4, 145.7 MB; the packed Python's isolated
+  self-test and the exported-pack art probe both passed, `ANDROID_APK_OK`). No phone was attached (`adb devices` empty), so nothing was installed:
+  `Install APK On Phones.bat` with the phone on USB debugging is the next step. No phone has run 0.5.0.
