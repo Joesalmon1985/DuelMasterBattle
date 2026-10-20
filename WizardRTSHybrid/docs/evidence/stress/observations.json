@@ -291,7 +291,7 @@
    ]
   },
   "worker": {
-   "distinct_openings": 6,
+   "distinct_openings": 5,
    "fourth_wall": "Somebody does. Not me. I get asked the same four things by every apprentice with a staff, I answer them, and the hills do not change. If you find out who is counting, tell them I would like a day off.",
    "accosted": null
   }
@@ -1603,7 +1603,7 @@
    "forest_dispute:cutter": {
     "opened": true,
     "exhausted": true,
-    "ops": 13,
+    "ops": 15,
     "choices_tried": [
      "leave",
      "topic:forest_thick",
@@ -1611,6 +1611,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:store",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:who_counts",
      "topic:work",
      "topic:young",
@@ -1630,6 +1632,11 @@
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
         true
        ],
        [
@@ -1671,6 +1678,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:who_counts",
         "Does anyone keep count of all this?",
         true
@@ -1705,6 +1717,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:who_counts",
         "Does anyone keep count of all this?",
         true
@@ -1736,6 +1753,40 @@
       "ends": true
      },
      {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:who_counts",
+        "Does anyone keep count of all this?",
+        true
+       ],
+       [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
       "choice": "topic:who_counts",
       "button": "Does anyone keep count of all this?",
       "status": "ok",
@@ -1757,8 +1808,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -1781,6 +1832,35 @@
         true
        ],
        [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:store",
+      "button": "Is there timber in the store?",
+      "status": "ok",
+      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
         "topic:opinion_mentor",
         "What do you think of Skebok Hardfist?",
         true
@@ -1794,10 +1874,10 @@
       "ends": false
      },
      {
-      "choice": "topic:store",
-      "button": "Is there timber in the store?",
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
       "status": "ok",
-      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -1903,46 +1983,13 @@
        ]
       ],
       "ends": false
-     },
-     {
-      "choice": "topic:work",
-      "button": "What does a lumberjack do all day?",
-      "status": "ok",
-      "reply": "I walk out to a tree that has stood long enough, fell it, carry the log back and start again.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:forest_thick",
-        "How is the forest around here?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:forest_thick",
-      "button": "How is the forest around here?",
-      "status": "ok",
-      "reply": "Plenty of tall trees within a short walk: 116 of them near me right now.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ]
-      ],
-      "ends": false
      }
     ]
    },
    "forest_dispute:planter": {
     "opened": true,
     "exhausted": true,
-    "ops": 12,
+    "ops": 14,
     "choices_tried": [
      "leave",
      "topic:lumberjack",
@@ -1950,6 +1997,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:timber",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "topic:young",
      "what_do_you_want",
@@ -1968,6 +2017,11 @@
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
         true
        ],
        [
@@ -2004,6 +2058,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What does a forester do?",
         true
@@ -2033,6 +2092,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What does a forester do?",
         true
@@ -2059,6 +2123,35 @@
       "ends": true
      },
      {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
       "choice": "topic:timber",
       "button": "Does the settlement need more timber?",
       "status": "ok",
@@ -2075,6 +2168,35 @@
         true
        ],
        [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:lumberjack",
+      "button": "Do you work with the lumberjack?",
+      "status": "ok",
+      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
         "topic:opinion_mentor",
         "What do you think of Skebok Hardfist?",
         true
@@ -2088,10 +2210,10 @@
       "ends": false
      },
      {
-      "choice": "topic:lumberjack",
-      "button": "Do you work with the lumberjack?",
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
       "status": "ok",
-      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -2216,27 +2338,13 @@
        ]
       ],
       "ends": false
-     },
-     {
-      "choice": "topic:young",
-      "button": "How are the young trees?",
-      "status": "ok",
-      "reply": "5 saplings and poles within sight of me. Every one of them is a log in some future year.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ]
-      ],
-      "ends": false
      }
     ]
    },
    "forest_dispute:witness": {
     "opened": true,
     "exhausted": true,
-    "ops": 13,
+    "ops": 15,
     "choices_tried": [
      "leave",
      "say_compromise",
@@ -2247,6 +2355,8 @@
      "topic:opinion_wizards",
      "topic:quiet",
      "topic:settlement",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "witness_gossip",
      "witness_saw"
     ],
@@ -2288,6 +2398,11 @@
        [
         "leave",
         "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
         true
        ],
        [
@@ -2344,6 +2459,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:duty",
         "What are your duties?",
         true
@@ -2393,6 +2513,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:duty",
         "What are your duties?",
         true
@@ -2422,6 +2547,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:duty",
         "What are your duties?",
         true
@@ -2448,6 +2578,35 @@
       "ends": true
      },
      {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:no_barracks",
+        "Do you have a barracks?",
+        true
+       ],
+       [
+        "topic:quiet",
+        "Any trouble lately?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
       "choice": "topic:no_barracks",
       "button": "Do you have a barracks?",
       "status": "ok",
@@ -2464,6 +2623,35 @@
         true
        ],
        [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:quiet",
+      "button": "Any trouble lately?",
+      "status": "ok",
+      "reply": "Quiet, so far. I do not trust the quiet, but I will take it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
         "topic:opinion_mentor",
         "What do you think of Skebok Hardfist?",
         true
@@ -2477,10 +2665,10 @@
       "ends": false
      },
      {
-      "choice": "topic:quiet",
-      "button": "Any trouble lately?",
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
       "status": "ok",
-      "reply": "Quiet, so far. I do not trust the quiet, but I will take it.",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -2586,46 +2774,13 @@
        ]
       ],
       "ends": false
-     },
-     {
-      "choice": "topic:duty",
-      "button": "What are your duties?",
-      "status": "ok",
-      "reply": "I stand ready. If strangers come, I am the one who goes out to meet them.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:settlement",
-        "How secure is the settlement?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:settlement",
-      "button": "How secure is the settlement?",
-      "status": "ok",
-      "reply": "1 of us stand with the Red settlement. It is not many.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ]
-      ],
-      "ends": false
      }
     ]
    },
    "smith_dispute:mason": {
     "opened": true,
     "exhausted": true,
-    "ops": 10,
+    "ops": 12,
     "choices_tried": [
      "leave",
      "topic:building",
@@ -2633,6 +2788,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:rocks",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "what_happened"
     ],
@@ -2649,6 +2806,11 @@
        [
         "leave",
         "I will let you work.",
+        true
+       ],
+       [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
         true
        ],
        [
@@ -2680,6 +2842,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you do?",
         true
@@ -2706,10 +2873,68 @@
       "ends": true
      },
      {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:building",
+        "What is the stone for?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
       "choice": "topic:building",
       "button": "What is the stone for?",
       "status": "ok",
       "reply": "For building, mostly. Every wall and every foundation starts as somebody's rock.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
+      "status": "ok",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -2854,7 +3079,7 @@
    "smith_dispute:hauler": {
     "opened": true,
     "exhausted": true,
-    "ops": 11,
+    "ops": 13,
     "choices_tried": [
      "back_hauler",
      "leave",
@@ -2862,6 +3087,8 @@
      "topic:opinion_apprentice",
      "topic:opinion_mentor",
      "topic:opinion_wizards",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "what_happened"
     ],
@@ -2881,6 +3108,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you carry?",
         true
@@ -2891,8 +3123,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ]
@@ -2919,6 +3151,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you carry?",
         true
@@ -2929,8 +3166,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -2951,6 +3188,64 @@
       "reply": "Roads do not walk themselves.",
       "choices": [],
       "ends": true
+     },
+     {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you carry?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you carry?",
+        true
+       ],
+       [
+        "topic:empty",
+        "Are you carrying anything?",
+        true
+       ]
+      ],
+      "ends": false
      },
      {
       "choice": "topic:opinion_apprentice",
@@ -2974,8 +3269,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -2993,13 +3288,13 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ],
        [
@@ -3011,10 +3306,10 @@
       "ends": false
      },
      {
-      "choice": "topic:opinion_mentor",
-      "button": "What do you think of Skebok Hardfist?",
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
       "status": "ok",
-      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -3027,8 +3322,8 @@
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
@@ -3046,18 +3341,18 @@
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
       "ends": false
      },
      {
-      "choice": "topic:opinion_wizards",
-      "button": "What do you make of wizards, in general?",
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
       "status": "ok",
-      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
       "choices": [
        [
         "leave",
@@ -3072,7 +3367,7 @@
    "ranger_patrol:ranger": {
     "opened": true,
     "exhausted": true,
-    "ops": 12,
+    "ops": 14,
     "choices_tried": [
      "advise_north",
      "ask_patrol",
@@ -3081,6 +3376,8 @@
      "topic:opinion_apprentice",
      "topic:opinion_mentor",
      "topic:opinion_wizards",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "why_east"
     ],
@@ -3100,6 +3397,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you hunt?",
         true
@@ -3110,8 +3412,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ]
@@ -3120,7 +3422,7 @@
       "choice": "ask_patrol",
       "button": "Which way are you thinking?",
       "status": "ok",
-      "reply": "North along the fences, where the deer get in. Or east along the road, past where the old fortress stands. Nobody goes east if they can help it, this time of ye",
+      "reply": "North along the fences, where the deer get in. Or south-east along the road, past where the old fortress stands: the gate is 16 tiles from here. Nobody goes tha",
       "choices": [
        [
         "why_east",
@@ -3143,6 +3445,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you hunt?",
         true
@@ -3153,8 +3460,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -3182,6 +3489,11 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
         "topic:work",
         "What do you hunt?",
         true
@@ -3192,8 +3504,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -3216,6 +3528,64 @@
       "ends": true
      },
      {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
       "choice": "topic:opinion_apprentice",
       "button": "Does it bother you, having an apprentice wizard about the pl",
       "status": "ok",
@@ -3237,8 +3607,8 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ]
       ],
@@ -3256,13 +3626,13 @@
         true
        ],
        [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ],
        [
@@ -3274,10 +3644,10 @@
       "ends": false
      },
      {
-      "choice": "topic:opinion_mentor",
-      "button": "What do you think of Skebok Hardfist?",
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
       "status": "ok",
-      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -3290,8 +3660,8 @@
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
@@ -3309,18 +3679,18 @@
         true
        ],
        [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
       "ends": false
      },
      {
-      "choice": "topic:opinion_wizards",
-      "button": "What do you make of wizards, in general?",
+      "choice": "topic:opinion_mentor",
+      "button": "What do you think of Skebok Hardfist?",
       "status": "ok",
-      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
       "choices": [
        [
         "leave",
@@ -3335,7 +3705,7 @@
    "worker:lumberjack": {
     "opened": true,
     "exhausted": true,
-    "ops": 10,
+    "ops": 12,
     "choices_tried": [
      "leave",
      "topic:forest_thick",
@@ -3343,6 +3713,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:store",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "topic:young"
     ],
@@ -3357,6 +3729,16 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
         "topic:opinion_apprentice",
         "Does it bother you, having an apprentice wizard about the place?",
         true
@@ -3364,11 +3746,6 @@
        [
         "topic:work",
         "What does a lumberjack do all day?",
-        true
-       ],
-       [
-        "topic:forest_thick",
-        "How is the forest around here?",
         true
        ]
       ]
@@ -3382,68 +3759,10 @@
       "ends": true
      },
      {
-      "choice": "topic:forest_thick",
-      "button": "How is the forest around here?",
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
       "status": "ok",
-      "reply": "Plenty of tall trees within a short walk: 116 of them near me right now.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:store",
-        "Is there timber in the store?",
-        true
-       ],
-       [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
-        true
-       ],
-       [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:store",
-      "button": "Is there timber in the store?",
-      "status": "ok",
-      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
-        true
-       ],
-       [
-        "topic:opinion_apprentice",
-        "Does it bother you, having an apprentice wizard about the place?",
-        true
-       ],
-       [
-        "topic:work",
-        "What does a lumberjack do all day?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:opinion_wizards",
-      "button": "What do you make of wizards, in general?",
-      "status": "ok",
-      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
       "choices": [
        [
         "leave",
@@ -3453,16 +3772,16 @@
        [
         "topic:work",
         "What does a lumberjack do all day?",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
         true
        ],
        [
         "topic:young",
         "And the young trees?",
-        true
-       ],
-       [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
@@ -3480,13 +3799,129 @@
         true
        ],
        [
+        "topic:young",
+        "And the young trees?",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:young",
+      "button": "And the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles close by. I leave those alone, mostly.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
+      "status": "ok",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
         "topic:opinion_apprentice",
         "Does it bother you, having an apprentice wizard about the place?",
         true
        ],
        [
-        "topic:young",
-        "And the young trees?",
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:forest_thick",
+        "How is the forest around here?",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:forest_thick",
+      "button": "How is the forest around here?",
+      "status": "ok",
+      "reply": "Plenty of tall trees within a short walk: 116 of them near me right now.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:store",
+        "Is there timber in the store?",
         true
        ],
        [
@@ -3509,8 +3944,8 @@
         true
        ],
        [
-        "topic:young",
-        "And the young trees?",
+        "topic:store",
+        "Is there timber in the store?",
         true
        ],
        [
@@ -3522,10 +3957,10 @@
       "ends": false
      },
      {
-      "choice": "topic:young",
-      "button": "And the young trees?",
+      "choice": "topic:store",
+      "button": "Is there timber in the store?",
       "status": "ok",
-      "reply": "5 saplings and poles close by. I leave those alone, mostly.",
+      "reply": "11 logs in the warehouses of the Red settlement. The sawmill and the builders will want every one of them.",
       "choices": [
        [
         "leave",
@@ -3559,7 +3994,7 @@
    "worker:ranger": {
     "opened": true,
     "exhausted": true,
-    "ops": 10,
+    "ops": 12,
     "choices_tried": [
      "leave",
      "topic:lumberjack",
@@ -3567,6 +4002,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:timber",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work",
      "topic:young"
     ],
@@ -3581,6 +4018,16 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
         "topic:opinion_apprentice",
         "Does it bother you, having an apprentice wizard about the place?",
         true
@@ -3588,11 +4035,6 @@
        [
         "topic:work",
         "What does a forester do?",
-        true
-       ],
-       [
-        "topic:young",
-        "How are the young trees?",
         true
        ]
       ]
@@ -3606,68 +4048,10 @@
       "ends": true
      },
      {
-      "choice": "topic:young",
-      "button": "How are the young trees?",
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
       "status": "ok",
-      "reply": "5 saplings and poles within sight of me. Every one of them is a log in some future year.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:lumberjack",
-        "Do you work with the lumberjack?",
-        true
-       ],
-       [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
-        true
-       ],
-       [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:lumberjack",
-      "button": "Do you work with the lumberjack?",
-      "status": "ok",
-      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get on.",
-        true
-       ],
-       [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
-        true
-       ],
-       [
-        "topic:opinion_apprentice",
-        "Does it bother you, having an apprentice wizard about the place?",
-        true
-       ],
-       [
-        "topic:work",
-        "What does a forester do?",
-        true
-       ]
-      ],
-      "ends": false
-     },
-     {
-      "choice": "topic:opinion_wizards",
-      "button": "What do you make of wizards, in general?",
-      "status": "ok",
-      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
       "choices": [
        [
         "leave",
@@ -3677,16 +4061,16 @@
        [
         "topic:work",
         "What does a forester do?",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
         true
        ],
        [
         "topic:timber",
         "Does the settlement need more timber?",
-        true
-       ],
-       [
-        "topic:opinion_mentor",
-        "What do you think of Skebok Hardfist?",
         true
        ]
       ],
@@ -3704,13 +4088,129 @@
         true
        ],
        [
+        "topic:timber",
+        "Does the settlement need more timber?",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:timber",
+      "button": "Does the settlement need more timber?",
+      "status": "ok",
+      "reply": "It always does. But a forest cut faster than it grows is a forest that ends.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
+      "status": "ok",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ],
+       [
         "topic:opinion_apprentice",
         "Does it bother you, having an apprentice wizard about the place?",
         true
        ],
        [
-        "topic:timber",
-        "Does the settlement need more timber?",
+        "topic:young",
+        "How are the young trees?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:opinion_wizards",
+      "button": "What do you make of wizards, in general?",
+      "status": "ok",
+      "reply": "Wizards, kings, headmen. Same disease, different hats.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:young",
+        "How are the young trees?",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:young",
+      "button": "How are the young trees?",
+      "status": "ok",
+      "reply": "5 saplings and poles within sight of me. Every one of them is a log in some future year.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get on.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
         true
        ],
        [
@@ -3733,8 +4233,8 @@
         true
        ],
        [
-        "topic:timber",
-        "Does the settlement need more timber?",
+        "topic:lumberjack",
+        "Do you work with the lumberjack?",
         true
        ],
        [
@@ -3746,10 +4246,10 @@
       "ends": false
      },
      {
-      "choice": "topic:timber",
-      "button": "Does the settlement need more timber?",
+      "choice": "topic:lumberjack",
+      "button": "Do you work with the lumberjack?",
       "status": "ok",
-      "reply": "It always does. But a forest cut faster than it grows is a forest that ends.",
+      "reply": "We share the same trees, though not always the same idea of how fast they should become logs.",
       "choices": [
        [
         "leave",
@@ -3783,7 +4283,7 @@
    "worker:stonemason": {
     "opened": true,
     "exhausted": true,
-    "ops": 9,
+    "ops": 11,
     "choices_tried": [
      "leave",
      "topic:building",
@@ -3791,6 +4291,8 @@
      "topic:opinion_mentor",
      "topic:opinion_wizards",
      "topic:rocks",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work"
     ],
     "defects": [],
@@ -3804,6 +4306,16 @@
         true
        ],
        [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
         "topic:work",
         "What do you do?",
         true
@@ -3811,11 +4323,6 @@
        [
         "topic:rocks",
         "How much rock is left?",
-        true
-       ],
-       [
-        "topic:building",
-        "What is the stone for?",
         true
        ]
       ]
@@ -3829,10 +4336,68 @@
       "ends": true
      },
      {
-      "choice": "topic:building",
-      "button": "What is the stone for?",
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
       "status": "ok",
-      "reply": "For building, mostly. Every wall and every foundation starts as somebody's rock.",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:rocks",
+        "How much rock is left?",
+        true
+       ],
+       [
+        "topic:building",
+        "What is the stone for?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:rocks",
+      "button": "How much rock is left?",
+      "status": "ok",
+      "reply": "33 rock formations still stand around me. Plenty of work yet.",
+      "choices": [
+       [
+        "leave",
+        "I will let you work.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
+      "status": "ok",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
@@ -3874,8 +4439,8 @@
         true
        ],
        [
-        "topic:rocks",
-        "How much rock is left?",
+        "topic:building",
+        "What is the stone for?",
         true
        ],
        [
@@ -3903,8 +4468,8 @@
         true
        ],
        [
-        "topic:rocks",
-        "How much rock is left?",
+        "topic:building",
+        "What is the stone for?",
         true
        ],
        [
@@ -3927,8 +4492,8 @@
         true
        ],
        [
-        "topic:rocks",
-        "How much rock is left?",
+        "topic:building",
+        "What is the stone for?",
         true
        ],
        [
@@ -3940,10 +4505,10 @@
       "ends": false
      },
      {
-      "choice": "topic:rocks",
-      "button": "How much rock is left?",
+      "choice": "topic:building",
+      "button": "What is the stone for?",
       "status": "ok",
-      "reply": "33 rock formations still stand around me. Plenty of work yet.",
+      "reply": "For building, mostly. Every wall and every foundation starts as somebody's rock.",
       "choices": [
        [
         "leave",
@@ -3977,19 +4542,62 @@
    "worker:hunter": {
     "opened": true,
     "exhausted": true,
-    "ops": 8,
+    "ops": 10,
     "choices_tried": [
      "leave",
      "topic:game",
      "topic:opinion_apprentice",
      "topic:opinion_mentor",
      "topic:opinion_wizards",
+     "topic:tribe_ale",
+     "topic:tribe_village",
      "topic:work"
     ],
     "defects": [],
     "transcript": [
      {
       "talk": "Back from the edge. Nothing out there but trees and the road, which is how I like it.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:tribe_village",
+        "Tell me about Skorlag Hold.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_mentor",
+        "What do you think of Skebok Hardfist?",
+        true
+       ],
+       [
+        "topic:opinion_wizards",
+        "What do you make of wizards, in general?",
+        true
+       ]
+      ]
+     },
+     {
+      "choice": "leave",
+      "button": "I will let you get ready.",
+      "status": "ok",
+      "reply": "Dusk, then.",
+      "choices": [],
+      "ends": true
+     },
+     {
+      "choice": "topic:tribe_village",
+      "button": "Tell me about Skorlag Hold.",
+      "status": "ok",
+      "reply": "Skorlag Hold? Timber, stone, meat, and more opinions than houses. Everyone here would die for the next person along and tell them so to their face.",
       "choices": [
        [
         "leave",
@@ -4011,42 +4619,6 @@
         "What do you hunt?",
         true
        ]
-      ]
-     },
-     {
-      "choice": "leave",
-      "button": "I will let you get ready.",
-      "status": "ok",
-      "reply": "Dusk, then.",
-      "choices": [],
-      "ends": true
-     },
-     {
-      "choice": "topic:work",
-      "button": "What do you hunt?",
-      "status": "ok",
-      "reply": "Whatever the woods give: deer, mostly. I track it, shoot it and carry it back.",
-      "choices": [
-       [
-        "leave",
-        "I will let you get ready.",
-        true
-       ],
-       [
-        "topic:opinion_wizards",
-        "What do you make of wizards, in general?",
-        true
-       ],
-       [
-        "topic:opinion_apprentice",
-        "Does it bother you, having an apprentice wizard about the place?",
-        true
-       ],
-       [
-        "topic:game",
-        "Is there much game?",
-        true
-       ]
       ],
       "ends": false
      },
@@ -4055,6 +4627,35 @@
       "button": "What do you make of wizards, in general?",
       "status": "ok",
       "reply": "A gift is a trust. They answer to something above themselves, or they should.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:work",
+        "What do you hunt?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:work",
+      "button": "What do you hunt?",
+      "status": "ok",
+      "reply": "Whatever the woods give: deer, mostly. I track it, shoot it and carry it back.",
       "choices": [
        [
         "leave",
@@ -4084,6 +4685,35 @@
       "button": "What do you think of Skebok Hardfist?",
       "status": "ok",
       "reply": "Fair, and a little distant. I would not say a bad word of them.\nStubborn as a root. Which is not a complaint.",
+      "choices": [
+       [
+        "leave",
+        "I will let you get ready.",
+        true
+       ],
+       [
+        "topic:tribe_ale",
+        "Is there anything to drink in this village?",
+        true
+       ],
+       [
+        "topic:opinion_apprentice",
+        "Does it bother you, having an apprentice wizard about the place?",
+        true
+       ],
+       [
+        "topic:game",
+        "Is there much game?",
+        true
+       ]
+      ],
+      "ends": false
+     },
+     {
+      "choice": "topic:tribe_ale",
+      "button": "Is there anything to drink in this village?",
+      "status": "ok",
+      "reply": "The brewer's hut, when the wheat comes in. Until then there is water, and the water is good, and nobody here will admit it.",
       "choices": [
        [
         "leave",
