@@ -66,7 +66,10 @@ def begin(world: Any, sp: dict[str, Any], game_id: str) -> dict[str, Any]:
     seed = zlib.crc32(f"{world.seed}|{game_id}|{seat}|{n}".encode())
     host_name = world.dmb.people[sp["pid"]]["name"]
     opts = {**g.get("opts", {}), **catalogue.skin_for(g, sp), "host": host_name}
-    state = catalogue.engine(game_id).new(seed, opts)
+    eng = catalogue.engine(game_id)
+    if hasattr(eng, "prepare"):  # an engine that reads the world as the table is laid (Guess Who takes the village's people)
+        opts = eng.prepare(world, sp, opts)
+    state = eng.new(seed, opts)
     _run_bots(game_id, state)
     store["tables"][seat] = {"game": game_id, "npc": sp["key"], "pid": sp["pid"], "host": host_name, "state": state,
                             "started_ms": int(world.dmb.clock.get("game_ms", 0)), "title": g["title"]}

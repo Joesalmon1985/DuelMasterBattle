@@ -83,10 +83,20 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
   `HYBRID_MINIGAMES_OK`, shots in the evidence folder.
 
 ## M4 Hidden information and deduction (three)
-- [ ] Skull, Hanabi, Guess Who.
+- [x] `skull.py` (three carriers, three flowers and a rat skull each, laying and bidding, passing, the challenge uncovering the bidder's own carts first then
+  one of anybody's, a skull costs a cart and the round, a bid made is a point, two points win, no carts is out), `hanabi.py` (three players, the ladder's five
+  colours, eight clue tokens, three fractures, clues by colour or number mark every matching card, a five returns a token, the last card gives everyone one
+  more turn, eighteen built wins; the others play a card they know is playable, else mark one with a clue, else discard the oldest unclued card),
+  `guesswho.py` (the table's new `prepare` hook reads the world: the village's residents, workers and carriers within thirty tiles of the host, their
+  own figures, traits from the simulation plus seeded cosmetics; you pick your person, questions halve the board, a wrong name loses; the sawyer asks
+  the question that best halves his board and names the one left). All three in `catalogue.ENGINES`: the eighteen games are complete.
+- [x] Tests: 68 pass (`test_minigames_rules.py` 58: Skull's bidding, the challenge and losing a cart; Hanabi's clues, fractures, the token from a discard,
+  the last round; Guess Who's halving, the sawyer never eliminating your secret, the wrong and the right name, the sawyer naming the last one, and the
+  faces taken from the real games village; `test_minigames_village.py` 10). Headed `HYBRID_GAMES=skull,hanabi,guesswho`: `HYBRID_MINIGAMES_OK`.
+- [x] The face widget clips and shortens names and traits (two lines each) after the first shot showed them overlapping.
 
 ## M5 The village complete, evidence, documents
 - [ ] Every host; the Games page reachable in Wizard World; the headed run over three widgets; `docs/MINIGAMES_GUIDE.md`; handoff; versions.
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified.
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games).

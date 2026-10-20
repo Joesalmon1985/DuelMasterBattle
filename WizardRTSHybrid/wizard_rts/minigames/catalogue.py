@@ -30,6 +30,9 @@ ENGINES: dict[str, str] = {  # game id -> engine module (the plan's milestones a
     "ohhell": "wizard_rts.minigames.ohhell",
     "draw_poker": "wizard_rts.minigames.draw_poker",
     "holdem": "wizard_rts.minigames.holdem",
+    "skull": "wizard_rts.minigames.skull",
+    "hanabi": "wizard_rts.minigames.hanabi",
+    "guesswho": "wizard_rts.minigames.guesswho",
 }
 
 

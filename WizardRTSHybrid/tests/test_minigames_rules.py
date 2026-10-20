@@ -516,3 +516,132 @@ def test_draw_poker_and_holdem_play_out_and_settle_every_pebble():
     st = holdem.new(3, {"stake": 30, "hands": 2, "host": "carrier"})
     holdem.act(st, 0, {"id": "deal"})
     assert st["pot"] == 3 and st["phase"] == "bet" and len(st["hole"][0]) == 2 and st["board"] == []
+
+
+# ------------------------------------------------------------------ M4: hidden information and deduction
+
+def test_skull_bidding_challenge_and_losing_a_cart():
+    from wizard_rts.minigames import skull
+
+    st = skull.new(3, {"players": 3, "host": "carrier", "partners": ["another carrier"]})
+    assert [a["id"] for a in skull.actions(st, 0)] == ["place:flower", "place:skull"]
+    skull.act(st, 0, {"id": "place:flower", "disc": "flower"})
+    assert st["current"] == 1 and skull.actions(st, 0) == []
+    st["stacks"] = [["flower"], ["skull"], ["flower"]]
+    st["current"] = 0
+    bids = [a["bid"] for a in skull.actions(st, 0) if a["id"].startswith("bid:")]
+    assert bids == [1, 2, 3]
+    skull.act(st, 0, {"id": "bid:2", "bid": 2})
+    assert st["phase"] == "bid" and st["bidder"] == 0 and st["current"] == 1
+    skull.act(st, 1, {"id": "pass"})
+    skull.act(st, 2, {"id": "pass"})
+    # the challenge: the bidder's own flower first (1 of 2), then a choice of whose cart to uncover
+    assert st["phase"] == "reveal" and st["flipped"] == 1 and st["current"] == 0
+    assert sorted(a["who"] for a in skull.actions(st, 0)) == [1, 2]
+    skull.act(st, 0, {"id": "flip:1", "who": 1})  # the skull: a cart lost, a new round
+    assert st["phase"] == "place" and st["discs"][0]["flower"] + st["discs"][0]["skull"] == 3 and st["points"] == [0, 0, 0]
+    # a bid made is a point; two points win
+    st["stacks"] = [["flower", "flower"], ["flower"], ["flower"]]
+    st["phase"] = "place"
+    st["current"] = 0
+    skull.act(st, 0, {"id": "bid:3", "bid": 3})
+    skull.act(st, 1, {"id": "pass"})
+    skull.act(st, 2, {"id": "pass"})
+    assert st["flipped"] == 2 and st["phase"] == "reveal"
+    skull.act(st, 0, {"id": "flip:2", "who": 2})
+    assert st["points"][0] == 1 and st["phase"] == "place"
+    for seed in (1, 2, 3):
+        st = play_out("skull", seed)
+        assert st["result"] in ("win", "lose")
+
+
+def test_hanabi_clues_fuses_and_the_last_round():
+    from wizard_rts.minigames import hanabi
+
+    st = hanabi.new(2, {"players": 3, "host": "mentor", "partners": ["Mira"]})
+    assert len(st["deck"]) == 50 - 15 and st["clues"] == 8 and st["fuses"] == 3
+    assert all(len(h) == 5 for h in st["hands"])
+    # a clue marks every matching card and costs a token; a discard gives one back; a wrong play is a fracture
+    other = 1
+    card = st["hands"][other][0]
+    hanabi.act(st, 0, {"id": f"clue:{other}:colour:{card[0]}", "who": other, "colour": card[0]})
+    assert st["clues"] == 7 and all((k[0] == card[0]) == (c[0] == card[0]) for c, k in zip(st["hands"][other], st["known"][other]))
+    st["turn"] = 0
+    st["hands"][0][0] = [0, 5]  # a five on an empty firework: a fracture
+    hanabi.act(st, 0, {"id": "play:0", "slot": 0})
+    assert st["fuses"] == 2 and st["discards"][-1] == [0, 5] and len(st["hands"][0]) == 5
+    st["turn"] = 0
+    st["hands"][0][0] = [2, 1]
+    hanabi.act(st, 0, {"id": "play:0", "slot": 0})
+    assert st["fireworks"][2] == 1
+    st["turn"] = 0
+    n = st["clues"]
+    hanabi.act(st, 0, {"id": "discard:0", "slot": 0})
+    assert st["clues"] == n + 1
+    # the deck's last card gives everyone one more turn
+    st["deck"] = st["deck"][:1]
+    st["turn"] = 0
+    hanabi.act(st, 0, {"id": "discard:0", "slot": 0}) if st["clues"] < 8 else hanabi.act(st, 0, {"id": "play:0", "slot": 0})
+    assert st["last_round"] == 3 and not st["over"]
+    for seed in (1, 2, 3):
+        st = play_out("hanabi", seed)
+        assert st["result"] in ("win", "lose", "draw") and (st["fuses"] == 0 or st["last_round"] is not None or all(f == 5 for f in st["fireworks"]))
+
+
+def test_guesswho_questions_halve_the_board_and_a_wrong_name_loses():
+    from wizard_rts.minigames import guesswho as gw
+
+    st = gw.new(5, {"faces": 16, "host": "sawyer"})
+    assert len(st["people"]) == 16 and st["phase"] == "pick"
+    gw.act(st, 0, {"id": "pick:3", "face": 3})
+    assert st["secret"] == 3 and st["phase"] == "ask" and st["turn"] == 0
+    q = next(a for a in gw.actions(st, 0) if a["id"].startswith("ask:"))
+    before = sum(st["alive"])
+    gw.act(st, 0, {"id": q["id"], "trait": q["trait"], "value": q["value"]})
+    after = sum(st["alive"])
+    assert 0 < after < before and st["alive"][st["theirs"]]  # the one the sawyer has in mind is never eliminated by a true answer
+    assert st["turn"] == 1
+    # the sawyer's question is answered from your secret, and never removes it from his board
+    a = gw.bot(st, 1, None)
+    gw.act(st, 1, a)
+    assert st["their_alive"][st["secret"]] and st["turn"] == 0
+    # a wrong name loses, the right name wins
+    wrong = next(i for i in range(16) if i != st["theirs"] and st["alive"][i])
+    st2 = dict(st, alive=list(st["alive"]))
+    gw.act(st2, 0, {"id": f"guess:{wrong}", "face": wrong})
+    assert st2["over"] and st2["result"] == "lose"
+    gw.act(st, 0, {"id": f"guess:{st['theirs']}", "face": st["theirs"]})
+    assert st["over"] and st["result"] == "win"
+    # the sawyer names the person once one is left
+    st3 = gw.new(6, {"faces": 16, "host": "sawyer"})
+    gw.act(st3, 0, {"id": "pick:0", "face": 0})
+    st3["their_alive"] = [i == 0 for i in range(16)]
+    assert gw.bot(st3, 1, None)["id"] == "guess:0"
+    for seed in (1, 2):
+        st = play_out("guesswho", seed)
+        assert st["result"] in ("win", "lose")
+
+
+def test_guesswho_takes_the_villages_people_from_the_world():
+    import os, sys
+
+    sys.path.insert(0, os.path.dirname(__file__))
+    import _nh as nh
+    from wizard_rts.minigames import guesswho as gw
+    from wizard_rts.narrative import conversation, games_village, residents
+
+    w = nh.world()
+    games_village.ensure(w)
+    sawyer = next(pid for pid, r in residents.table(w).items() if r["role"] == "sawyer")
+    sp = conversation.resolve(w, sawyer)
+    opts = gw.prepare(w, sp, {"faces": 16})
+    people = opts["people"]
+    assert 6 <= len(people) <= 16
+    assert all(p["id"] != sawyer for p in people)
+    names = {p["name"] for p in people}
+    assert len(names) == len(people)
+    trades = {p["trade"] for p in people}
+    assert {"lumberjack", "stonemason"} & trades
+    for p in people:
+        for t in gw.TRAITS:
+            assert p[t], (p["name"], t)
