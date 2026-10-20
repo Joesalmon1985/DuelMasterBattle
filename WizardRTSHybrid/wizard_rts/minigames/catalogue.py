@@ -26,6 +26,10 @@ ENGINES: dict[str, str] = {  # game id -> engine module (the plan's milestones a
     "cantstop": "wizard_rts.minigames.cantstop",
     "rummikub": "wizard_rts.minigames.rummikub",
     "slide": "wizard_rts.minigames.slide",
+    "whist": "wizard_rts.minigames.whist",
+    "ohhell": "wizard_rts.minigames.ohhell",
+    "draw_poker": "wizard_rts.minigames.draw_poker",
+    "holdem": "wizard_rts.minigames.holdem",
 }
 
 

@@ -69,7 +69,18 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
   never legal; `test_minigames_village.py` 10). Headed `HYBRID_GAMES=cantstop,rummikub,slide`: `HYBRID_MINIGAMES_OK`, shots in the evidence folder.
 
 ## M3 Trick-taking and betting (four)
-- [ ] Knock-out Whist, Oh Hell, five-card draw, Texas Hold'em; the shared deck and hand-ranking module.
+- [x] `tricks.py` (dealing, following suit, the trick's winner with trumps, the villagers' play: cheapest winner when a trick is wanted, else the lowest card;
+  a bid from trumps above a nine and aces and kings), `betting.py` (a fixed-limit heads-up round: check, bet, call, raise with a cap, fold; an all-in for
+  less refunds the uncovered part; the pot settled or split), `whist.py` (three at the fire, seven cards down to one, trumps turned then chosen by the
+  taker of most tricks, no trick is out except once: the dog's life with one card to play on any trick; the apprentice knocked out ends it),
+  `ohhell.py` (five, four, three, two, one, two, three; the dealer's hook; exact bids score ten plus the bid), `draw_poker.py` (an ante, five cards, a
+  betting round, up to three thrown away by tapping, a second round at double stakes, the showdown by `cards.rank5`), `holdem.py` (blinds one and two,
+  the dealer posts the small blind and acts first before the flop, four streets, best of seven by `cards.best_of`, a board run out when a stack is
+  empty). All four in `catalogue.ENGINES`.
+- [x] Tests: 58 pass (`test_minigames_rules.py` 48: every poker category in order, the wheel, kickers, ties, the royal among seven; following suit and the
+  trick's winner; Whist's knock-out and the dog's life; Oh Hell's hook and exact scoring; the betting round's every action and the all-in refund; four
+  seeds of each poker settle every pebble; `test_minigames_village.py` 10). Headed `HYBRID_GAMES=whist,ohhell,draw_poker,holdem`:
+  `HYBRID_MINIGAMES_OK`, shots in the evidence folder.
 
 ## M4 Hidden information and deduction (three)
 - [ ] Skull, Hanabi, Guess Who.
@@ -78,4 +89,4 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] Every host; the Games page reachable in Wizard World; the headed run over three widgets; `docs/MINIGAMES_GUIDE.md`; handoff; versions.
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified.
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified.

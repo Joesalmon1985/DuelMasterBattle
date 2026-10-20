@@ -380,3 +380,139 @@ def test_slide_every_board_is_solvable_and_exits_need_the_right_gate():
     assert st["result"] in ("win", "lose")
 
 
+# ------------------------------------------------------------------ M3: trick-taking and betting
+
+def test_poker_ranking_every_category_kickers_and_ties():
+    from wizard_rts.minigames import cards as C
+
+    hands = {
+        "straight flush": ["9s", "8s", "7s", "6s", "5s"], "four of a kind": ["Ks", "Kh", "Kd", "Kc", "2s"], "full house": ["3s", "3h", "3d", "9c", "9s"],
+        "flush": ["As", "Ts", "7s", "4s", "2s"], "straight": ["As", "2h", "3d", "4c", "5s"], "three of a kind": ["7s", "7h", "7d", "Kc", "2s"],
+        "two pair": ["Js", "Jh", "4d", "4c", "As"], "pair": ["Qs", "Qh", "9d", "5c", "2s"], "high card": ["As", "Jh", "9d", "5c", "2s"],
+    }
+    order = ["straight flush", "four of a kind", "full house", "flush", "straight", "three of a kind", "two pair", "pair", "high card"]
+    ranks = [C.rank5(hands[k]) for k in order]
+    assert ranks == sorted(ranks, reverse=True) and len(set(r[0] for r in ranks)) == 9
+    assert C.rank5(["As", "2h", "3d", "4c", "5s"])[1] == 5  # the wheel is a five-high straight
+    assert C.rank5(["Ts", "Jh", "Qd", "Kc", "As"]) > C.rank5(["9s", "Th", "Jd", "Qc", "Ks"])
+    assert C.rank5(["Qs", "Qh", "9d", "5c", "2s"]) > C.rank5(["Qd", "Qc", "8d", "5h", "2h"])  # the kicker decides
+    assert C.rank5(["Qs", "Qh", "9d", "5c", "2s"]) == C.rank5(["Qd", "Qc", "9h", "5h", "2h"])  # a tie
+    assert C.rank5(["Ks", "Kh", "Kd", "2c", "2s"]) > C.rank5(["Qs", "Qh", "Qd", "Ac", "As"])  # the trips rank the full house
+    assert C.best_of(["As", "Ks", "Qs", "Js", "Ts", "2d", "3c"])[0] == 8  # the royal among seven
+    assert C.category_name(C.rank5(hands["two pair"])) == "two pair"
+
+
+def test_tricks_follow_suit_and_the_winner():
+    from wizard_rts.minigames import tricks
+
+    hand = ["2s", "9s", "Kh", "3d"]
+    assert tricks.legal(hand, [[1, "7s"]], "d") == ["2s", "9s"]
+    assert tricks.legal(hand, [[1, "7c"]], "d") == hand
+    assert tricks.winner([[0, "7s"], [1, "9s"], [2, "Ah"]], "d") == 1  # highest of the led suit
+    assert tricks.winner([[0, "7s"], [1, "9s"], [2, "2d"]], "d") == 2  # a trump
+    assert tricks.winner([[0, "7s"], [1, "3d"], [2, "2d"]], "d") == 1  # the higher trump
+    assert tricks.bot_trumps(["2s", "3s", "4s", "Ah", "Kd"]) == "s"
+
+
+def test_whist_knock_out_and_the_dogs_life():
+    from wizard_rts.minigames import whist
+
+    st = whist.new(5, {"players": 3, "start": 7, "host": "contestant", "partners": ["another contestant"]})
+    assert st["size"] == 7 and all(len(h) == 7 for h in st["hands"]) and st["phase"] == "play" and st["trump"] in "shdc"
+    # a hand where seat 2 takes nothing: the first time a dog's life, the second time out
+    st["taken"] = [4, 3, 0]
+    st["hands"] = [[], [], []]
+    whist._hand_over(st)
+    assert st["dog"][2] and st["dog_used"][2] and st["alive"][2] and st["size"] == 6 and st["chooser"] == 0 and st["phase"] == "choose"
+    assert len(st["hands"][2]) == 1 and len(st["hands"][0]) == 6
+    whist.act(st, 0, {"id": "trumps:h", "suit": "h"})
+    assert st["trump"] == "h" and st["phase"] == "play"
+    st["taken"] = [3, 3, 0]
+    st["hands"] = [[], [], []]
+    whist._hand_over(st)
+    assert not st["alive"][2] and st["size"] == 5
+    # the apprentice knocked out ends it
+    st["taken"] = [0, 5, 0]
+    st["hands"] = [[], [], []]
+    st["dog_used"][0] = True
+    whist._hand_over(st)
+    assert st["over"] and st["result"] == "lose"
+    for seed in (1, 2, 3):
+        st = play_out("whist", seed)
+        assert st["result"] in ("win", "lose")
+
+
+def test_ohhell_hook_and_exact_scoring():
+    from wizard_rts.minigames import ohhell
+
+    st = ohhell.new(2, {"players": 3, "hands": [3, 2, 1], "host": "rollkeeper", "partners": ["a contestant"]})
+    assert st["hand_no"] == 1 and all(len(h) == 3 for h in st["hands"]) and st["phase"] == "bid"
+    d = st["dealer"]
+    first = st["current"]
+    assert first == (d + 1) % 3
+    # the dealer may not make the bids come out even
+    st["bids"] = [None, None, None]
+    st["bids"][(d + 1) % 3] = 1
+    st["bids"][(d + 2) % 3] = 1
+    st["current"] = d
+    legal = [a["bid"] for a in ohhell.actions(st, d)]
+    assert 1 not in legal and set(legal) == {0, 2, 3}
+    # the score: exact bids score ten plus the bid, anything else nothing
+    st2 = ohhell.new(2, {"players": 3, "hands": [1], "host": "rollkeeper", "partners": ["a contestant"]})
+    st2["bids"] = [1, 0, 0]
+    st2["phase"] = "play"
+    st2["hands"] = [["As"], ["2s"], ["3s"]]
+    st2["trump"] = "h"
+    st2["leader"] = st2["current"] = 0
+    for seat, c in ((0, "As"), (1, "2s"), (2, "3s")):
+        ohhell.act(st2, seat, {"id": f"play:{c}", "card": c})
+    assert st2["over"] and st2["score"] == [11, 10, 10] and st2["result"] == "win"
+    st = play_out("ohhell", 4)
+    assert st["hand_no"] == 7 and st["result"] in ("win", "lose", "draw")
+
+
+def test_betting_round_check_bet_call_raise_fold():
+    from wizard_rts.minigames import betting
+
+    st = {"stacks": [20, 20], "pot": 0, "chips": "pebbles"}
+    betting.start(st, 0, 2, max_raises=2)
+    assert [o["id"] for o in betting.options(st, 0)] == ["check", "bet"] and betting.options(st, 1) == []
+    betting.apply(st, 0, "bet")
+    assert st["pot"] == 2 and st["stacks"][0] == 18 and st["bet"]["to_call"][1] == 2 and st["bet"]["current"] == 1
+    assert [o["id"] for o in betting.options(st, 1)] == ["call", "raise", "fold"]
+    betting.apply(st, 1, "raise")
+    assert st["pot"] == 6 and st["stacks"][1] == 16 and st["bet"]["to_call"][0] == 2 and st["bet"]["raises"] == 1
+    betting.apply(st, 0, "call")
+    assert st["bet"]["done"] and st["pot"] == 8 and st["bet"]["folded"] is None
+    betting.settle(st, 1)
+    assert st["stacks"] == [16, 24] and st["pot"] == 0
+    betting.start(st, 1, 2)
+    betting.apply(st, 1, "check")
+    betting.apply(st, 0, "check")
+    assert st["bet"]["done"]
+    betting.start(st, 0, 2)
+    betting.apply(st, 0, "bet")
+    betting.apply(st, 1, "fold")
+    assert st["bet"]["done"] and st["bet"]["folded"] == 1
+    # an all-in short of the bet: the extra comes back
+    st = {"stacks": [10, 1], "pot": 0, "chips": "pebbles"}
+    betting.start(st, 0, 4)
+    betting.apply(st, 0, "bet")
+    betting.apply(st, 1, "call")
+    assert st["bet"]["done"] and st["pot"] == 2 and st["stacks"] == [9, 0]
+
+
+def test_draw_poker_and_holdem_play_out_and_settle_every_pebble():
+    from wizard_rts.minigames import draw_poker, holdem
+
+    for game, mod in (("draw_poker", draw_poker), ("holdem", holdem)):
+        for seed in (1, 2, 3, 4):
+            st = play_out(game, seed)
+            assert st["pot"] == 0 and sum(st["stacks"]) == 2 * st["stake"], (game, seed, st["stacks"], st["pot"])
+            assert st["hand_no"] <= st["hands"]
+    st = draw_poker.new(3, {"stake": 20, "hands": 2, "host": "hunter"})
+    draw_poker.act(st, 0, {"id": "deal"})
+    assert st["pot"] == 2 and st["phase"] == "bet1" and len(st["cards"][0]) == 5
+    st = holdem.new(3, {"stake": 30, "hands": 2, "host": "carrier"})
+    holdem.act(st, 0, {"id": "deal"})
+    assert st["pot"] == 3 and st["phase"] == "bet" and len(st["hole"][0]) == 2 and st["board"] == []
