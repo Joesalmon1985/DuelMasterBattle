@@ -194,6 +194,20 @@ func _begin_single(continue_game: bool, new_wizard: bool = false, new_world: boo
 	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
 
 
+## The village of games: a private session built fresh on seed 507 with every game's host present and the stranger off, on its own saves folder
+## (the phone cannot reach the developer menu, so Settings carries this entry).
+func _start_games_village() -> void:
+	LanSession.reset()
+	var sfx := get_node_or_null("/root/Sfx")
+	if sfx:
+		sfx.cast()
+	LanSession.mode = "host"
+	LanSession.private_session = true
+	LanSession.fresh_world = true
+	LanSession.games_village = true
+	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+
+
 ## Local Wi-Fi play (docs/MOBILE_LAN_MULTIPLAYER.md): the host runs the authoritative world on its own device; a friend joins it.
 func _open_lan(mode: String) -> void:
 	LanSession.reset()
@@ -400,6 +414,14 @@ func _show_settings() -> void:
 	_VT.style_secondary_button(fresh)
 	fresh.pressed.connect(_confirm_fresh_world)
 	_overlay_vbox.add_child(fresh)
+	# the developer's village of games (docs/PLAN_VILLAGE_MINIGAMES.md): every game's host in one village, on its own saves folder, never the player's world
+	var games := Button.new()
+	games.name = "GamesVillageButton"
+	games.text = "Developer: the village of games"
+	games.custom_minimum_size = Vector2(0, 56)
+	_VT.style_secondary_button(games)
+	games.pressed.connect(_start_games_village)
+	_overlay_vbox.add_child(games)
 	var about := Label.new()
 	about.text = "Duel Master Battle %s" % LanSession.GAME_VERSION
 	about.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
