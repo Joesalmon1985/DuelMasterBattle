@@ -159,6 +159,14 @@ func _build() -> void:
 	world_btn.pressed.connect(_on_wizard_world)
 	mv.add_child(world_btn)
 
+	var games_btn := Button.new()
+	games_btn.name = "GamesVillageButton"
+	games_btn.text = "GAMES VILLAGE  (developer: every village game, no stranger)"
+	games_btn.custom_minimum_size = Vector2(0, 60)
+	_VT.style_secondary_button(games_btn)
+	games_btn.pressed.connect(_on_games_village)
+	mv.add_child(games_btn)
+
 	var lan_row := HBoxContainer.new()
 	lan_row.add_theme_constant_override("separation", 12)
 	mv.add_child(lan_row)
@@ -519,6 +527,17 @@ func _open_lan(mode: String) -> void:
 
 ## The wizard's single-player world. On a phone the world runs inside this app as a private hosted session;
 ## on a desktop the classic 127.0.0.1 simulator is expected (scripts/launch_hybrid.sh).
+## The village of games (docs/PLAN_VILLAGE_MINIGAMES.md section 2.5): a private hosted session on its own saves folder, built fresh on seed 507 with
+## every game's host present and the stranger switched off. The player's own world is never touched.
+func _on_games_village() -> void:
+	LanSession.reset()
+	LanSession.mode = "host"
+	LanSession.private_session = true
+	LanSession.fresh_world = true
+	LanSession.games_village = true
+	get_tree().change_scene_to_file("res://client/scenes/lan_menu.tscn")
+
+
 func _on_wizard_world() -> void:
 	LanSession.reset()
 	if Engine.has_singleton("DmbPySim") or OS.has_feature("mobile"):

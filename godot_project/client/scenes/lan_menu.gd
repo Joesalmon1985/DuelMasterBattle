@@ -225,7 +225,10 @@ func _build_host() -> void:
 func _build_private() -> void:
 	var title := "Preparing your world"
 	var body := "The world is being built on this device…"
-	if LanSession.fresh_world:
+	if LanSession.games_village:
+		title = "The village of games"
+		body = "A village is being built where every game has its player: the mentor, the mother, the keeper, the sawyer at the sawmill, the water-carrier at the well, the lumberjack, the forester, the mason, the hunter, the carriers, and a fire on the green. Nobody is coming. Walk up to anyone."
+	elif LanSession.fresh_world:
 		title = "Total reset"
 		body = "Every saved world is being deleted and a new one built from nothing…"
 	elif LanSession.new_world:
@@ -285,7 +288,7 @@ func _start_private() -> void:
 	LanSession.mode = "host"
 	LanSession.player_name = LanSession.default_player_name()
 	# a world built afresh ("Start a new world", the total reset) gets a new map: a new seed; a continued world ignores the seed (its save is the world)
-	var seed_ := 507 if not (LanSession.new_world or LanSession.fresh_world) else 1000 + (randi() % 9000)
+	var seed_ := 507 if (LanSession.games_village or not (LanSession.new_world or LanSession.fresh_world)) else 1000 + (randi() % 9000)
 	var r: Dictionary = LanSession.start_local_host("Solo", LanSession.random_code(), seed_, "small", true)
 	if str(r.get("state", "")) == "failed":
 		_status(str(r.get("error", "could not start")), true)

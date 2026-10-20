@@ -496,6 +496,10 @@ def build(args: argparse.Namespace) -> HostServer:
     permanent = bool(getattr(args, "runs_dir", "")) or bool(getattr(args, "continue_game", False))
     world, info = prepare_world(args.profile, args.seed, args.map, new_world_flag=bool(getattr(args, "new_world", False)),
                                 new_wizard=bool(getattr(args, "new_wizard", False)), permanent=permanent, fresh=bool(getattr(args, "fresh", False)))
+    if bool(getattr(args, "games_village", False)) or os.environ.get("HYBRID_GAMES_VILLAGE") == "1":
+        from wizard_rts.narrative import games_village
+
+        games_village.ensure(world)  # the developer's village of games: every host present, the stranger off (idempotent on a loaded world)
     session = MultiplayerSession(world, name=args.name, join_code=args.code, host_secret=args.secret, max_players=args.max_players, view_radius=args.view_radius,
                                  first_joiner_hosts=bool(getattr(args, "first_joiner_hosts", False)),
                                  world_factory=lambda: new_world(args.seed, args.map, args.profile), ai_companions=1 if int(args.max_players) == 1 else 0)
@@ -528,6 +532,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--new-wizard", action="store_true", help="retire the host's wizard (alive or dead) and seat a new apprentice in the same world")
     ap.add_argument("--new-world", action="store_true", help="archive the saves and build a fresh world (the explicit 'Start a new world')")
     ap.add_argument("--fresh", action="store_true", help="developer: delete every save of the profile (archives too) and build a world from nothing with --seed")
+    ap.add_argument("--games-village", action="store_true", help="developer: the village of games (docs/PLAN_VILLAGE_MINIGAMES.md): the early buildings, every game's host, the stranger off")
     ap.add_argument("--stats-every", type=float, default=0.0, help="print HYBRID_HOST_STATS every N seconds")
     ap.add_argument("--ready-file", default="", help="also write the ready line's JSON to this file (the Godot launcher polls it)")
     return ap.parse_args(argv)

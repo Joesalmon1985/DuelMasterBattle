@@ -7,7 +7,7 @@ from typing import Any
 from wizard_rts.narrative import campaign, conversation, duel_lease, tutorial, wizard
 
 OPS = ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect", "pest_fight",
-       "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view")
+       "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view", "minigame_act", "minigame_leave", "minigame_view")
 FOUGHT = ("victory", "defeat", "clash", "stalemate")
 
 
@@ -47,6 +47,21 @@ def handle(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         from wizard_rts.narrative import pests
 
         return pests.fight(world, str(message.get("target", "")))
+    if op.startswith("minigame_"):
+        from wizard_rts.minigames import table as game_table
+
+        if op == "minigame_view":
+            return game_table.view(world)
+        if op == "minigame_act":
+            t = game_table.active(world)
+            if t is not None and t["npc"] in conversation.table(world):
+                conversation.table(world)[t["npc"]]["last_ms"] = conversation.now(world)  # a move is attention: the host is not left idle
+            return game_table.act(world, dict(message.get("action", {})))
+        if op == "minigame_leave":
+            out = game_table.leave(world)
+            if out["status"] == "ok":
+                out["follow_up"] = conversation.after_game(world, out)
+            return out
     if op.startswith("trial_"):
         from wizard_rts.trial import run as trial
 

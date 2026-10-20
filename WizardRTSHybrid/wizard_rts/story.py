@@ -822,7 +822,8 @@ def _story_snapshot(world: Any) -> dict[str, Any]:
 
 WIZARD_OPS = ("treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
               "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose",
-              "resurrect", "pest_fight", "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view")
+              "resurrect", "pest_fight", "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view",
+              "minigame_act", "minigame_leave", "minigame_view")
 
 
 def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
@@ -848,13 +849,13 @@ def dispatch(world: Any, message: dict[str, Any]) -> dict[str, Any]:
         out = duel_guess(world, list(message.get("guess", [])))
     elif op == "duel_abandon":
         out = duel_abandon(world)
-    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect", "pest_fight") or op.startswith("trial_"):
+    elif op in ("duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person", "scene_next", "scene_choose", "resurrect", "pest_fight") or op.startswith("trial_") or op.startswith("minigame_"):
         from wizard_rts.narrative import ops
 
         out = ops.handle(world, message)
     else:
         out = {"status": "ok"}
-    if not op.startswith("trial_"):  # the Trial's ops carry their own `view` (the zone)
+    if not op.startswith("trial_") and not op.startswith("minigame_"):  # the Trial's ops carry their own `view` (the zone); a table's, its game
         out["view"] = dungeon_view(world) if state(world)["in_dungeon"] else {}
     out["duel"] = duel_view(world)
     return out

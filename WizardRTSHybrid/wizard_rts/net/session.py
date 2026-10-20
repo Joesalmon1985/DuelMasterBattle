@@ -653,7 +653,7 @@ class MultiplayerSession:
         from wizard_rts import server  # the single-player op table: the same validated world operations
 
         if op in ("interact", "resolve", "fire", "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon",
-                  "trial_move", "trial_interact", "trial_choose", "trial_enter", "trial_leave"):
+                  "trial_move", "trial_interact", "trial_choose", "trial_enter", "trial_leave", "minigame_act"):
             duel = self.duels.get(link.duel_id)
             if duel is not None and duel.state != "finished":
                 return {"status": "rejected", "reason": "in_duel", "op": op}

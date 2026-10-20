@@ -33,6 +33,7 @@ var journal_text: RichTextLabel
 var npc_id := ""
 var conv_ends := false
 var conv_duel: Dictionary = {}  # a duel lease waiting for the acknowledge button
+var conv_game: Dictionary = {}  # a village game laid on the table, waiting for the acknowledge button (the conversation stays open under it)
 var _conv_ms := 0
 var _conv_managed := false  # the server owns this conversation's lifecycle (narrative/conversation.py): its replies carry a `subtitle`; the legacy story people's do not
 var dungeon: Control
@@ -402,12 +403,19 @@ func _show_dialog(reply: Dictionary) -> void:
 	conv_ends = bool(reply.get("ends", false))
 	var lease = reply.get("duel_lease", {})
 	conv_duel = lease if typeof(lease) == TYPE_DICTIONARY else {}
+	var game = reply.get("minigame", {})
+	conv_game = game if typeof(game) == TYPE_DICTIONARY and not (game as Dictionary).is_empty() else {}
 	var choices: Array = []
 	for c in reply.get("choices", []):
 		choices.append({"id": str(c["id"]), "text": str(c["text"]), "disabled": not bool(c.get("available", true))})
 	var footer: Array = []
 	if conv_ends:
-		footer.append({"id": "ack", "text": "Begin the duel" if not conv_duel.is_empty() else "Continue", "kind": "primary"})
+		var ack := "Continue"
+		if not conv_duel.is_empty():
+			ack = "Begin the duel"
+		elif not conv_game.is_empty():
+			ack = "Lay out the game"
+		footer.append({"id": "ack", "text": ack, "kind": "primary"})
 	else:
 		footer.append({"id": "leave", "text": "Leave (Esc)"})
 	dialog_card.show_card(str(reply.get("name", "")), str(reply.get("subtitle", "")), reply_text(reply), choices, footer)
@@ -429,12 +437,36 @@ func _on_footer(id: String) -> void:
 		close_dialog()
 
 
-## The final response has been read: end the conversation, then (if one was waiting) open the duel board.
+## The final response has been read: end the conversation, then (if one was waiting) open the duel board. A village game is different: the
+## conversation stays open on the server (the host is held while you play) and the card only steps aside for the table.
 func acknowledge() -> void:
+	if not conv_game.is_empty():
+		var game := conv_game
+		conv_game = {}
+		conv_ends = false
+		dialog_card.hide_card()
+		world._input_locked = true
+		world.open_minigame(game)
+		return
 	var lease := conv_duel
 	close_dialog(false)
 	if not lease.is_empty():
 		world.open_story_duel(lease)
+
+
+## The table closed (hybrid_world.gd): the host's closing line is the conversation's next card; with no follow-up (they walked off, it went idle)
+## the conversation is simply over on this side too.
+func game_closed(reply: Dictionary) -> void:
+	var follow = reply.get("follow_up", null)
+	if typeof(follow) == TYPE_DICTIONARY and str(follow.get("status", "")) == "ok":
+		show_follow_up(follow)
+		return
+	npc_id = ""
+	conv_ends = false
+	conv_duel = {}
+	conv_game = {}
+	dialog_card.hide_card()
+	world._input_locked = dungeon.visible or opening_card.visible
 
 
 ## The one way a conversation closes on the client: the server is told (the person is released), a duel that was waiting for its acknowledgement is
@@ -443,10 +475,13 @@ func close_dialog(abandon_duel := true) -> void:
 	if npc_id != "" and dialog.visible:
 		if abandon_duel and not conv_duel.is_empty():
 			world._sim.op({"op": "duel_abandon"})
+		if abandon_duel and not conv_game.is_empty():
+			world._sim.op({"op": "minigame_leave"})  # a table laid but never sat at
 		world._sim.op({"op": "end_talk", "npc": npc_id, "reason": "closed"})
 	npc_id = ""
 	conv_ends = false
 	conv_duel = {}
+	conv_game = {}
 	dialog_card.hide_card()
 	world._input_locked = dungeon.visible or opening_card.visible
 

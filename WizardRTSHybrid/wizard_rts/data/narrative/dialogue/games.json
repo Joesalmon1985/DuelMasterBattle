@@ -1,0 +1,50 @@
+{
+  "id": "games",
+  "note": "The hosts the games village adds (narrative/games_village.py): the sawyer at the sawmill, the water-carrier at the well, the Rollkeeper and the contestants on the green. They say a line or two and offer their games (the game choices come from minigames.json, not from here).",
+  "speakers": {
+    "sawyer": {
+      "nodes": {
+        "hub": {
+          "variants": [
+            {"id": "first", "when": {"forbids": ["met_sawyer"]}, "sets": ["met_sawyer"], "lines": ["What? Speak up. The saw. Twenty years of it.", "Planks. I cut planks. Somebody ordered these and I cannot for the life of me remember who."]},
+            {"id": "again", "lines": ["You again. Still cannot remember who the planks were for.", "Stand on the left, I hear better on the left."]}
+          ],
+          "choices": []
+        }
+      }
+    },
+    "water_carrier": {
+      "nodes": {
+        "hub": {
+          "variants": [
+            {"id": "first", "when": {"forbids": ["met_carrier"]}, "sets": ["met_carrier"], "lines": ["Mind the rope. Everybody minds the rope and everybody trips on it.", "Forty buckets a day up this drum. You get to know every notch on it."]},
+            {"id": "again", "lines": ["Back for the drum? It took three of my pebbles this morning. It always does."]}
+          ],
+          "choices": []
+        }
+      }
+    },
+    "official": {
+      "nodes": {
+        "hub": {
+          "variants": [
+            {"id": "first", "when": {"forbids": ["met_fair"]}, "sets": ["met_fair"], "lines": ["The roll is open. Not the Trial's roll; this is the fire by the warehouse, and the only thing anybody loses here is pebbles.", "Sit if you like. The contestants are passing the time until somebody calls them."]},
+            {"id": "again", "lines": ["The fire is still lit and the roll is still open."]}
+          ],
+          "choices": []
+        }
+      }
+    },
+    "contestant": {
+      "nodes": {
+        "hub": {
+          "variants": [
+            {"id": "first", "when": {"forbids": ["met_contestant"]}, "sets": ["met_contestant"], "lines": ["Waiting. That is most of a contest, in my experience: the waiting.", "We play cards so we do not think about the gate."]},
+            {"id": "again", "lines": ["Still waiting. Still playing."]}
+          ],
+          "choices": []
+        }
+      }
+    }
+  }
+}

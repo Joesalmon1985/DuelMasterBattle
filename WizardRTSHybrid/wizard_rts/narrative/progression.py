@@ -217,5 +217,7 @@ def deliverable(world: Any, seat: str) -> bool:
 
     if mortality.is_dead(world, seat) and False:  # the dead are told too: the gain is theirs when they come back
         return False
+    from wizard_rts.minigames import table as game_table
+
     with party.as_player(world, seat):
-        return duel_lease.active(world) is None
+        return duel_lease.active(world) is None and not game_table.is_open(world)  # a game on the table is a board too: the rung waits for it to close

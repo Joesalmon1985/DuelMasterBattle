@@ -238,6 +238,8 @@ def explore_due(world: Any) -> dict[str, Any]:
     need = int(config.get("campaign", "explore_min_contacts", 3))
     by_play = elapsed >= int(config.get("campaign", "explore_min_ms", 180000)) and contact >= need
     by_fallback = elapsed >= int(config.get("campaign", "explore_fallback_ms", 420000))
+    if world.narrative.get("games_village"):  # the developer's games village: nobody is coming, the village only plays
+        by_play = by_fallback = False
     return {"elapsed_ms": elapsed, "contacts": contact, "needed": need, "due": by_play or by_fallback, "by": "play" if by_play else ("fallback" if by_fallback else "")}
 
 

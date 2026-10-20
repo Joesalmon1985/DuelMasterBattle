@@ -17,6 +17,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts import hold, workers
+from wizard_rts.minigames import catalogue as games, table as game_table
 from wizard_rts.narrative import campaign, characters, duel_lease, events, graph, occupations, party, quests, residents, wizard
 
 IDLE_MS = 120_000  # a conversation nobody has touched for this long (game time) ends by itself
@@ -152,9 +153,68 @@ def _compose(world: Any, sp: dict[str, Any], asked: set[str], fresh: bool) -> tu
         ov = occupations.view(world, sp, octx, intro=fresh and not lines, asked=asked)
         lines += ov["lines"]
         choices += ov["choices"]
-        if not any(c["id"] in ("leave", "farewell") for c in choices):
-            choices.append(dict(FAREWELL))
+    choices = with_games(world, sp, choices)
+    if sp["kind"] != "resident" and not any(c["id"] in ("leave", "farewell") for c in choices):
+        choices.append(dict(FAREWELL))
     return lines, choices, extras
+
+
+def with_games(world: Any, sp: dict[str, Any], choices: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The person's game offers slotted in before their goodbye (a farewell or leave choice stays last)."""
+    games = game_choices(world, sp)
+    if not games:
+        return choices
+    tail = [c for c in choices if c["id"] in ("leave", "farewell")]
+    head = [c for c in choices if c["id"] not in ("leave", "farewell")]
+    return head + games + tail
+
+
+def game_choices(world: Any, sp: dict[str, Any]) -> list[dict[str, Any]]:
+    """The games this person hosts (`minigames.json`), offered as `game:<id>` choices after what they have to say; the one on the table is not re-offered."""
+    open_game = (game_table.active(world) or {}).get("game")
+    return [{"id": "game:" + g["id"], "text": g["lines"]["again"] if played_before(world, g["id"]) else g["offer"], "available": g["id"] != open_game}
+            for g in games.games_for(sp)]
+
+
+def played_before(world: Any, game_id: str) -> bool:
+    return any(r["game"] == game_id for r in world.narrative.get("minigames", {}).get("played", []))
+
+
+def _game_ctx(world: Any, sp: dict[str, Any]) -> dict[str, Any]:
+    name = world.dmb.people[sp["pid"]]["name"]
+    return {"template": "minigames", "speaker": "host", "speaker_pid": sp["pid"], "name": name, "cast": campaign.names_for(world, sp["pid"]), "facts": {"host": name}}
+
+
+def begin_game(world: Any, sp: dict[str, Any], game_id: str) -> dict[str, Any]:
+    """The `game:<id>` choice: the host says the intro and the table is laid (the reply's `minigame` extra carries the first view). The conversation
+    stays open underneath the table; the person is held until it closes."""
+    g = games.entry(game_id)
+    if g is None or g not in games.games_for(sp):
+        return {"status": "rejected", "reason": "choice_unavailable"}
+    mg = game_table.begin(world, sp, game_id)
+    if mg.get("status") != "ok":
+        return {"status": "rejected", "reason": mg.get("reason", "no_such_game")}
+    intro = graph._fmt(list(g.get("intro", [])), _game_ctx(world, sp))
+    return _reply(world, sp, [], [], ends=True, text="\n".join(intro), extras={"minigame": mg})
+
+
+def after_game(world: Any, out: dict[str, Any]) -> dict[str, Any] | None:
+    """The table closed (`table.leave`): the host's closing line for the result (`quit` when the game was left unfinished) and the conversation's
+    choices again. None when the conversation is no longer open (they walked away or it went idle)."""
+    key = str(out.get("npc", ""))
+    sp = resolve(world, key) if key else None
+    if sp is None or key not in table(world):
+        return None
+    g = games.entry(str(out.get("game", ""))) or {}
+    conv = table(world)[key]
+    conv["last_ms"] = now(world)
+    result = str(out.get("result") or "quit")
+    lines = graph._fmt(list(g.get("lines", {}).get(result, [])), _game_ctx(world, sp))
+    _l, choices, extras = _compose(world, sp, set(conv.get("asked", [])), False)
+    if sp["kind"] != "resident":
+        _g, octx = _ctx(world, sp)
+        choices = _pending_responses(world, sp, octx, conv) + choices
+    return _reply(world, sp, [], choices, text="\n".join(lines), extras=extras)
 
 
 def _pending_responses(world: Any, sp: dict[str, Any], octx: dict[str, Any], conv: dict[str, Any]) -> list[dict[str, Any]]:
@@ -230,6 +290,8 @@ def choose(world: Any, key: str, choice: str) -> dict[str, Any]:
     if sp["row"] is not None:
         hold.hold(world, sp["row"])
     asked = set(conv["asked"])
+    if choice.startswith("game:"):
+        return begin_game(world, sp, choice[len("game:"):])
     gctx, octx = _ctx(world, sp)
     if choice.startswith("topic:") and sp["kind"] != "resident":
         res = occupations.topic(world, sp, octx, choice[len("topic:"):])
@@ -264,7 +326,9 @@ def choose(world: Any, key: str, choice: str) -> dict[str, Any]:
     if sp["kind"] != "resident" and not ends:
         ov = occupations.view(world, sp, octx, intro=False, asked=asked)
         choices += ov["choices"]
-        if not any(c["id"] in ("leave", "farewell") for c in choices):
+    if not ends:
+        choices = with_games(world, sp, choices)
+        if sp["kind"] != "resident" and not any(c["id"] in ("leave", "farewell") for c in choices):
             choices.append(dict(FAREWELL))
     extras = dict(out["extras"])
     if out.get("check"):
@@ -279,6 +343,7 @@ def end(world: Any, key: str | None = None, reason: str = "closed") -> int:
         conv = table(world).pop(k, None)
         if conv is None:
             continue
+        game_table.on_conversation_end(world, k)
         found = characters.locate(world, k)
         if found is not None:
             hold.release(found[1])
@@ -290,6 +355,7 @@ def end(world: Any, key: str | None = None, reason: str = "closed") -> int:
 
 def close_all(world: Any, reason: str) -> None:
     end(world, None, reason)
+    game_table.drop_all(world)
     for coll in (world.workers, world.carriers, world.units):  # a save can carry a hold: nobody stays held after a load
         for row in coll.values():
             hold.release(row)
@@ -322,7 +388,12 @@ def inspect_building(world: Any, building_id: str) -> dict[str, Any]:
             continue
         pid = characters.person_for(world, "worker", wid)
         people.append({"id": wid, "person": pid, "name": world.dmb.people[pid]["name"], "role": role, "inside": characters.lifecycle(world, pid) == "inside"})
-    return {"status": "ok", "building": building_id, "people": people}
+    roles = [str(p["role"]) for p in people]
+    for r in residents.table(world).values():  # a resident posted at this building (the sawyer at the sawmill, the water-carrier at the well)
+        if r.get("status") == "present" and r.get("building") == building_id:
+            roles.append("resident:" + str(r.get("role", "")))
+    played = [{"id": g["id"], "title": g["title"], "game": g.get("game", g["id"]), "where": g.get("where", "")} for g in games.games_at_building(str(b.get("kind", "")), roles)]
+    return {"status": "ok", "building": building_id, "people": people, "games": played}
 
 
 def _door(world: Any, b: dict[str, Any]) -> tuple[int, int] | None:
@@ -387,7 +458,7 @@ def tick(world: Any) -> None:
             end(world, key, "gone")
         elif _distance(world, sp) > LEAVE_RANGE and key not in world.narrative.get("callouts", {}):
             end(world, key, "walked_away")
-        elif now(world) - int(conv["last_ms"]) > IDLE_MS:
+        elif now(world) - int(conv["last_ms"]) > IDLE_MS and (game_table.active(world) or {}).get("npc") != key:
             end(world, key, "idle")
         elif sp["row"] is not None:
             hold.hold(world, sp["row"])

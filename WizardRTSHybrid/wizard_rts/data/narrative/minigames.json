@@ -1,0 +1,350 @@
+{
+  "note": "The village minigames (docs/PLAN_VILLAGE_MINIGAMES.md). `host` is who offers the game (a resident role, a worker role, a carrier); `building` the kind whose inspect panel says the game is played there; `game` the game's common name; `title` the villagers' name for it; `offer` the choice in the conversation; `intro` what the host says as the table is laid; `lines` what they say when it ends (win, lose, draw are the apprentice's result; quit is a table left before the end; again is offered after any of them). `opts` and `skin` go to the engine. Placeholders: {name} is the host, the rest are the conversation's facts.",
+  "games": [
+    {
+      "id": "rps",
+      "game": "Rock Paper Scissors",
+      "title": "Three colours, no knots",
+      "host": {"resident": "mentor"},
+      "building": "",
+      "where": "the mentor",
+      "offer": "Teach me the game of three colours.",
+      "intro": ["Before a knot, before a Ward, there is this. Flame burns Vine. Vine drinks Frost. Frost kills Flame.", "Show me one on the count of three. Best of five, and no magic."],
+      "lines": {
+        "win": ["Good. You saw me lean on a colour and you punished it. That is the whole of duelling, in small."],
+        "lose": ["You threw what you threw last time. A Ward would have eaten you for that. Again, when you like."],
+        "draw": ["Nobody. That happens with three colours more than you would think."],
+        "quit": ["We can leave it there. It is only three colours."],
+        "again": "Once more?"
+      },
+      "opts": {"target": 3},
+      "skin": {"signs": ["Flame", "Vine", "Frost"]}
+    },
+    {
+      "id": "hanabi",
+      "game": "Hanabi",
+      "title": "The Ward you cannot see",
+      "host": {"resident": "mentor"},
+      "building": "",
+      "where": "the mentor, with Mira",
+      "offer": "Show me the game where you hold your cards facing out.",
+      "intro": ["Every card you hold faces away from you. The others see it; you do not. That is a hidden Ward from the inside.", "We build five colours in order, one to five, and we may only tell each other a colour or a number. Three fractures and the Ward breaks."],
+      "lines": {
+        "win": ["We built the whole Ward without breaking it. Remember that feeling: it is trust with a count on it."],
+        "lose": ["Three fractures. We talked past each other. A Ward is lost the same way, one wrong assumption at a time."],
+        "draw": ["Not bad. Not the whole Ward either."],
+        "quit": ["Leave the cards. They keep."],
+        "again": "Shall we lay them out again?"
+      },
+      "opts": {"players": 3},
+      "skin": {"colours": ["Flame", "Frost", "Vine", "Light", "Stone"], "fuse": "fracture", "partners": ["Mira"]}
+    },
+    {
+      "id": "cantstop",
+      "game": "Can't Stop",
+      "title": "Felling the big one",
+      "host": {"role": "lumberjack"},
+      "building": "producer",
+      "where": "the lumberjack",
+      "offer": "What is the game you play with the dice?",
+      "intro": ["Four dice, three trunks. Every throw is axe strokes; pair the dice and the strokes go on a trunk of that girth.", "Bank your cuts when you like. Press on and the trunk may split under you, and the day's work is gone."],
+      "lines": {
+        "win": ["Three trunks down before mine. You know when to put the axe down. Most do not."],
+        "lose": ["Split, split, split. You kept swinging. The forest does not care how brave you are."],
+        "draw": ["Even. The trees won."],
+        "quit": ["Fair enough. The trunks will keep till tomorrow."],
+        "again": "Another three trunks?"
+      },
+      "opts": {"columns_to_win": 3},
+      "skin": {"column": "trunk", "marker": "cut", "bust": "the trunk splits"}
+    },
+    {
+      "id": "memory",
+      "game": "Memory game",
+      "title": "Which sapling is new?",
+      "host": {"role": "ranger"},
+      "building": "ranger",
+      "where": "the forester",
+      "offer": "Test my eye for the plantings.",
+      "intro": ["I plant all day and I know every one. Let us see if you would.", "I show you the saplings I have put in. Each time there is one more. Point at the new one. Point at an old one and we stop."],
+      "lines": {
+        "win": ["You kept every one in your head. There is a forester in you, if the magic falls through."],
+        "lose": ["That one was there from the start. The forest is patient with mistakes; the forester is not."],
+        "draw": ["Enough for today."],
+        "quit": ["The saplings will still be there."],
+        "again": "Again from three?"
+      },
+      "opts": {"start": 3, "max": 14},
+      "skin": {"object": "sapling", "objects": ["alder", "aspen", "birch", "larch", "oak", "rowan", "spruce", "beech", "maple", "elm", "pine", "willow", "ash", "hazel"]}
+    },
+    {
+      "id": "yahtzee",
+      "game": "Yahtzee",
+      "title": "Knucklebones",
+      "host": {"role": "stonemason"},
+      "building": "quarry",
+      "where": "the stonemason",
+      "offer": "What are the carved stones for?",
+      "intro": ["Five stones with a face cut on each side. Throw them, keep what you like, throw again, twice.", "Thirteen orders on the slate: a run of ashlar, a full course, five of a face. Fill every order; the better hand of the two wins."],
+      "lines": {
+        "win": ["A better slate than mine. I have thrown these stones for twenty years and you walk in and do that."],
+        "lose": ["My slate. The stones know the hand that cut them."],
+        "draw": ["Stone for stone. Even."],
+        "quit": ["Put them back in the cup, then."],
+        "again": "Throw again?"
+      },
+      "opts": {},
+      "skin": {"die": "stone", "categories": {"ones": "singles", "twos": "pairs of blocks", "threes": "threes", "fours": "fours", "fives": "fives", "sixes": "sixes", "three_kind": "three of a face", "four_kind": "four of a face", "full_house": "a full course", "small_straight": "a short run of ashlar", "large_straight": "a long run of ashlar", "yahtzee": "five of a face", "chance": "rubble"}}
+    },
+    {
+      "id": "slide",
+      "game": "Sliding blocks",
+      "title": "Clearing the face",
+      "host": {"role": "stonemason"},
+      "building": "quarry",
+      "where": "the stonemason (the farm has sheep)",
+      "offer": "Can I help clear the pit?",
+      "intro": ["The blocks in the pit are promised to three carts, and each cart takes its own chalk colour.", "Slide them. They only move straight, and they do not climb over each other. Every block out through the gate of its colour."],
+      "lines": {
+        "win": ["Every block through its own gate. The carters will think I did it."],
+        "lose": ["Stuck. Happens to the best of us."],
+        "draw": ["Leave it."],
+        "quit": ["Leave the pit as it is. Nothing is going anywhere."],
+        "again": "Another face?"
+      },
+      "opts": {"size": 6},
+      "skin": {"block": "block", "gate": "cart", "colours": ["red", "blue", "yellow"], "colour_names": ["the red cart", "the blue cart", "the yellow cart"], "board": "the pit"},
+      "variants": [
+        {"host": {"role": "farmer"}, "skin": {"block": "sheep", "gate": "pen", "colours": ["red", "blue", "yellow"], "colour_names": ["the red pen", "the blue pen", "the yellow pen"], "board": "the field"}}
+      ]
+    },
+    {
+      "id": "reaction",
+      "game": "Reaction game",
+      "title": "Tracks",
+      "host": {"role": "hunter"},
+      "building": "hunter",
+      "where": "the hunter",
+      "offer": "Teach me to read tracks.",
+      "intro": ["I show you a sign. A print, a scat, a broken twig. Then another.", "Same beast as the last one, or a different one? Say it fast. A slow hunter eats nothing."],
+      "lines": {
+        "win": ["Quick and right. You would eat, out there."],
+        "lose": ["Slow, or wrong, or both. The beast is two valleys away by now."],
+        "draw": ["Fair. Not a hunter's eye, not a town eye either."],
+        "quit": ["The tracks will be there tomorrow. Colder, though."],
+        "again": "Another trail?"
+      },
+      "opts": {"rounds": 12},
+      "skin": {"signs": ["boar print", "deer print", "scat", "broken twig", "fur on bark", "a rub", "a bed in the grass"]}
+    },
+    {
+      "id": "draw_poker",
+      "game": "Five-card draw",
+      "title": "Skins",
+      "host": {"role": "hunter"},
+      "building": "hunter",
+      "where": "the hunter",
+      "offer": "What is the game you play for pelts?",
+      "intro": ["Five cards each. Bet pebbles, we each throw away what we do not want and take fresh, bet again, show.", "The pebbles stand for pelts. Nobody is losing a pelt to an apprentice."],
+      "lines": {
+        "win": ["You took my pebbles. Had they been pelts I would be cold this winter."],
+        "lose": ["Mine. You bet on a pair like it was a boar."],
+        "draw": ["Even. Nobody's pelts moved."],
+        "quit": ["Leave the pebbles. They were never pelts."],
+        "again": "Another hand?"
+      },
+      "opts": {"stake": 20, "ante": 1},
+      "skin": {"chip": "pebble", "chips": "pebbles"}
+    },
+    {
+      "id": "guesswho",
+      "game": "Guess Who",
+      "title": "Who ordered the planks?",
+      "host": {"resident": "sawyer"},
+      "building": "processor",
+      "where": "the sawyer",
+      "offer": "Who were those planks for?",
+      "intro": ["Somebody ordered them. I know I saw their face. The saw takes your hearing and then it comes for the rest.", "You think of somebody in the village and I will ask you about them; I think of the one who ordered, and you ask me. Whoever names theirs first."],
+      "lines": {
+        "win": ["Yes! That was them. I would have got there. Eventually."],
+        "lose": ["Got yours. Knew it was them from the hat. Mine I still cannot place."],
+        "draw": ["Nobody knows anybody, it seems."],
+        "quit": ["Go on. I will stare at the planks until it comes to me."],
+        "again": "Another face?"
+      },
+      "opts": {"faces": 16},
+      "skin": {}
+    },
+    {
+      "id": "blackjack",
+      "game": "Blackjack",
+      "title": "Twenty-one feet",
+      "host": {"resident": "sawyer"},
+      "building": "processor",
+      "where": "the sawyer",
+      "offer": "Show me the plank game.",
+      "intro": ["Every card is a length of plank. Cut to twenty-one feet and not an inch over.", "I deal, I cut last, I stop at seventeen. You bet pebbles. Nobody is paid in planks."],
+      "lines": {
+        "win": ["Twenty-one feet and not an inch over, more than once. You should be sawing, not spelling."],
+        "lose": ["Over the mark, or under mine. The saw does not forgive either."],
+        "draw": ["Length for length."],
+        "quit": ["Leave the offcuts."],
+        "again": "Another plank?"
+      },
+      "opts": {"hands": 5, "stake": 10},
+      "skin": {"chip": "pebble", "chips": "pebbles", "card": "plank"}
+    },
+    {
+      "id": "roulette",
+      "game": "Roulette",
+      "title": "The windlass",
+      "host": {"resident": "water_carrier"},
+      "building": "well",
+      "where": "the water-carrier",
+      "offer": "What are the marks on the windlass?",
+      "intro": ["Thirty-seven notches on the drum, a green one for the knot. Red rope and black rope, odd and even, high and low.", "Put a pebble on a notch, a colour, anything on the rim. I spin, the handle stops where it stops."],
+      "lines": {
+        "win": ["More pebbles than you came with. The drum liked you today. It will not tomorrow."],
+        "lose": ["The drum keeps them. It always keeps them, over a day."],
+        "draw": ["What you came with."],
+        "quit": ["Take your pebbles. The drum has had enough of you."],
+        "again": "Spin again?"
+      },
+      "opts": {"stake": 20, "spins": 8},
+      "skin": {"chip": "pebble", "chips": "pebbles", "wheel": "windlass"}
+    },
+    {
+      "id": "rummikub",
+      "game": "Rummikub",
+      "title": "The tally board",
+      "host": {"resident": "keeper"},
+      "building": "warehouse",
+      "where": "the warehouse keeper",
+      "offer": "What is the tally board for?",
+      "intro": ["Tallies in four colours, one to thirteen. Lay runs of a colour or sets of a number, three or more, on the board.", "You open the ledger with thirty points from your own rack. After that, lay on anything. First rack empty wins."],
+      "lines": {
+        "win": ["Empty rack. You could keep my stock, if you ever want work that does not catch fire."],
+        "lose": ["Mine. The board was mine the moment you opened on thirty-one."],
+        "draw": ["The pool ran dry. Nobody's board."],
+        "quit": ["Leave the tallies. I will sort them."],
+        "again": "Another rack?"
+      },
+      "opts": {},
+      "skin": {"tile": "tally", "colours": ["log", "granite", "meat", "water"], "colour_names": ["timber", "granite", "meat", "water"]}
+    },
+    {
+      "id": "skull",
+      "game": "Skull",
+      "title": "Under the cloth",
+      "host": {"carrier": true},
+      "building": "warehouse",
+      "where": "a carrier",
+      "offer": "What is under the cloth?",
+      "intro": ["Every cart has a cloth on it. Under mine there is a flower, or a rat's skull. Same for yours.", "We lay a covered cart each, then we bid: how many carts you dare to uncover without finding a skull. Yours first, always."],
+      "lines": {
+        "win": ["Two flowers. You read me like a road."],
+        "lose": ["Skull. Every time. You uncover like a man who has never met a rat."],
+        "draw": ["Nobody."],
+        "quit": ["Keep the cloths down, then."],
+        "again": "Another round of carts?"
+      },
+      "opts": {"players": 3},
+      "skin": {"flower": "flower", "skull": "rat skull", "disc": "cart"}
+    },
+    {
+      "id": "holdem",
+      "game": "Texas Hold'em",
+      "title": "The carriers' pot",
+      "host": {"carrier": true},
+      "building": "warehouse",
+      "where": "a carrier",
+      "offer": "What are you betting on?",
+      "intro": ["Two cards each, five on the road between us: the flop, the turn, the river. Best five of seven.", "Pebbles for the next light load. Lose them all and you carry granite for a week."],
+      "lines": {
+        "win": ["Took the pot. Light loads for you. In the game, I mean."],
+        "lose": ["Granite for a week. In the game. Mostly."],
+        "draw": ["Split pot. Nobody carries anything."],
+        "quit": ["Leave the pebbles."],
+        "again": "Another pot?"
+      },
+      "opts": {"stake": 30, "blind": 1, "hands": 6},
+      "skin": {"chip": "pebble", "chips": "pebbles"}
+    },
+    {
+      "id": "ohhell",
+      "game": "Oh Hell",
+      "title": "Bid your bouts",
+      "host": {"resident": "official"},
+      "building": "",
+      "where": "the Rollkeeper",
+      "offer": "What is the game at the fire?",
+      "intro": ["We deal, we bid how many tricks we will take, and we take exactly that many or nothing. The last to bid may not make the bids come out even.", "Seven hands, the deal shrinking. Trumps turned. I keep the roll, so I keep the score."],
+      "lines": {
+        "win": ["Exactly your bid, hand after hand. You know what you can do. Rarer than it sounds."],
+        "lose": ["Over or under. Never exact. The roll shows it."],
+        "draw": ["Level on the roll."],
+        "quit": ["The roll stays open."],
+        "again": "Another seven hands?"
+      },
+      "opts": {"players": 3, "hands": [5, 4, 3, 2, 1, 2, 3]},
+      "skin": {"partners": ["a contestant", "another contestant"]}
+    },
+    {
+      "id": "whist",
+      "game": "Knock-out Whist",
+      "title": "Knocked out",
+      "host": {"resident": "contestant"},
+      "building": "",
+      "where": "a contestant",
+      "offer": "What are you playing to pass the time?",
+      "intro": ["Seven cards, then six, then five. Take no trick in a hand and you are out, like the Trial.", "Whoever took most tricks picks the next trumps. Last one standing."],
+      "lines": {
+        "win": ["Last standing. Keep that for the gate."],
+        "lose": ["Knocked out. The gate does it quicker."],
+        "draw": ["Nobody stood. Odd."],
+        "quit": ["Fine. The cards are not going anywhere; nor are we."],
+        "again": "Another knock-out?"
+      },
+      "opts": {"players": 3, "start": 7},
+      "skin": {"partners": ["another contestant"]}
+    },
+    {
+      "id": "nim",
+      "game": "Take the Last Carrot",
+      "title": "The stew carrots",
+      "host": {"resident": "mother"},
+      "building": "",
+      "where": "the mother",
+      "offer": "Play the carrot game with me.",
+      "intro": ["Three rows of carrots on the table, like when you were small. Take as many as you like from one row.", "Whoever takes the last carrot peels the lot. You always took the last carrot."],
+      "lines": {
+        "win": ["I peel. You have been practising, or somebody taught you, and I would like to know who."],
+        "lose": ["You peel. Same as when you were six. Some things magic does not fix."],
+        "draw": ["Nobody peels. The stew waits."],
+        "quit": ["Leave them. I will do them myself, as usual."],
+        "again": "Again?"
+      },
+      "opts": {"rows": [3, 5, 7], "take_max": 3},
+      "skin": {"item": "carrot", "items": "carrots"}
+    },
+    {
+      "id": "pairs",
+      "game": "Pairs",
+      "title": "The same bolt",
+      "host": {"resident": "mother"},
+      "building": "",
+      "where": "the mother",
+      "offer": "Help me sort the swatches.",
+      "intro": ["Every swatch in the basket has a twin cut from the same bolt. Turn two. If they match, keep them; if not, back they go.", "I take a turn too. Whoever has more pairs when the basket is empty."],
+      "lines": {
+        "win": ["More pairs than me, and I cut them. You always did notice cloth."],
+        "lose": ["Mine. I know my own bolts."],
+        "draw": ["Even. We will both sew."],
+        "quit": ["Leave the basket. I know where everything is."],
+        "again": "Another basket?"
+      },
+      "opts": {"pairs": 8},
+      "skin": {"item": "swatch", "patterns": ["check", "stripe", "dot", "herringbone", "plain", "twill", "chevron", "paisley", "diamond", "wave"]}
+    }
+  ]
+}

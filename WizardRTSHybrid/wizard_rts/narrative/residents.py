@@ -26,6 +26,8 @@ FIGURES = {  # the Widelands worker sprite that stands for a role, by tribe (art
     "weaver": {"barbarians": "barbarians_weaver", "empire": "empire_weaver", "atlanteans": "atlanteans_weaver", "frisians": "frisians_seamstress", "amazons": "amazons_dressmaker"},
     "farmer": {"barbarians": "barbarians_farmer", "empire": "empire_farmer", "atlanteans": "atlanteans_farmer", "frisians": "frisians_farmer", "amazons": "amazons_cassava_farmer"},
     "baker": {"barbarians": "barbarians_baker", "empire": "empire_baker", "atlanteans": "atlanteans_baker", "frisians": "frisians_baker", "amazons": "amazons_cook"},
+    "sawyer": {"barbarians": "barbarians_lumberjack", "empire": "empire_lumberjack", "atlanteans": "atlanteans_woodcutter", "frisians": "frisians_woodcutter", "amazons": "amazons_woodcutter"},
+    "water_carrier": {"barbarians": "barbarians_carrier", "empire": "empire_carrier", "atlanteans": "atlanteans_carrier", "frisians": "frisians_carrier", "amazons": "amazons_carrier"},
 }
 
 

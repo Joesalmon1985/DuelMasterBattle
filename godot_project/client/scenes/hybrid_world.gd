@@ -10,6 +10,7 @@ const WizardLabels = preload("res://client/hybrid/wizard_labels.gd")
 const StoryUi = preload("res://client/hybrid/story_ui.gd")
 const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
 const TrialMode = preload("res://client/hybrid/trial_mode.gd")
+const MinigameTable = preload("res://client/minigames/minigame_table.gd")
 const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
@@ -50,6 +51,7 @@ var menu_card: Control  # the pause menu (a DmbNarrativeCard)
 var campaign_ui: Node  # the opening campaign's scenes and the Game Over screen (campaign_ui.gd)
 var story_ui: Node  # the wizard's story: people, dialogue, dungeon, duel (placeholders over the Python ops)
 var trial_mode: Node  # the Trial of Champions: zone mode (trial_mode.gd); `trial_mode.active` is "inside"
+var minigame_table: Control  # the village games' table (client/minigames/minigame_table.gd); `minigame_table.visible` is "a game is on the table"
 var terrain = null  # TerrainView once the sim has sent its terrain
 ## Camera zoom is stored as PHYSICAL pixels per map tile (so "how close" means the same on a phone and a monitor) and converted with the stretch scale.
 const ZOOM_DEFAULT_PX := 52.0
@@ -181,6 +183,14 @@ func _ready() -> void:
 	trial_mode.name = "TrialMode"
 	add_child(trial_mode)
 	trial_mode.setup(self)
+	var games_layer := CanvasLayer.new()
+	games_layer.name = "MinigameLayer"
+	games_layer.layer = 15  # over the conversation card (14), under the pause menu (16) and the duel board (20)
+	add_child(games_layer)
+	minigame_table = MinigameTable.new()
+	games_layer.add_child(minigame_table)
+	minigame_table.setup(self)
+	minigame_table.closed.connect(_on_minigame_closed)
 	campaign_ui = CampaignUi.new()  # after the story panels: it sees the keyboard first while a scene or the Game Over screen is up
 	campaign_ui.name = "CampaignUi"
 	add_child(campaign_ui)
@@ -234,7 +244,7 @@ func _era_text(snap: Dictionary) -> String:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if hud != null and story_ui != null:
-		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
+		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or minigame_open() or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if _camera_nudge != Vector2.ZERO:
@@ -341,7 +351,27 @@ func zoom_by(factor: float) -> void:
 
 ## Zoom keys and the mouse wheel only act when nothing else owns the screen (no conversation, menu, journal, duel or God Mode).
 func _zoom_input_ok() -> bool:
-	return not _duel_open and not _menu_open and (story_ui == null or not story_ui.covering()) and (god == null or not god.active)
+	return not _duel_open and not _menu_open and not minigame_open() and (story_ui == null or not story_ui.covering()) and (god == null or not god.active)
+
+
+## A village game is on the table (client/minigames): the table owns the screen the way the duel board does.
+func minigame_open() -> bool:
+	return minigame_table != null and minigame_table.visible
+
+
+## Lay a game on the table: `game` is the host's reply to the `game:` choice ({game, npc, host, catalogue_title, view}), handed over by story_ui.
+func open_minigame(game: Dictionary) -> void:
+	if minigame_table == null:
+		return
+	_input_locked = true
+	minigame_table.open(game)
+
+
+func _on_minigame_closed(reply: Dictionary) -> void:
+	_input_locked = false
+	if story_ui != null:
+		story_ui.game_closed(reply)
+	refresh_snapshot()
 
 
 func _click_target(pos: Vector2) -> String:
@@ -384,7 +414,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if trial_mode.tap(event.position):
 			get_viewport().set_input_as_handled()
 			return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not _duel_open and story_ui != null and not story_ui.covering():
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not _duel_open and not minigame_open() and story_ui != null and not story_ui.covering():
 		if event.pressed:
 			_pinch_seen = false
 			var target := _click_target(event.position)

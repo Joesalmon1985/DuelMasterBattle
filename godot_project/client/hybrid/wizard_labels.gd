@@ -28,6 +28,7 @@ var current_id := ""
 var last_cast: Dictionary = {}
 var last_reply: Dictionary = {}
 var _workers: Array = []  # people at the open building, from the server: [{id, person, name, role, inside}]
+var _games: Array = []  # the village games played at the open building, from the server: [{id, title, game, where}]
 var _who: Dictionary = {}  # the open person, from the server: {name, subtitle}
 var _note := ""
 var _sig := ""  # what the card shows now: it is only rebuilt when this changes (a rebuild would swallow a click in progress)
@@ -237,6 +238,7 @@ func open(id: String) -> void:
 		return
 	current_id = id
 	_workers = []
+	_games = []
 	_who = {}
 	_note = ""
 	if person_row(e) and world._sim != null:
@@ -247,6 +249,7 @@ func open(id: String) -> void:
 		var reply: Dictionary = world._sim.op({"op": "inspect_building", "building": id})
 		if str(reply.get("status", "")) == "ok":
 			_workers = reply.get("people", [])
+			_games = reply.get("games", [])
 	_render()
 
 
@@ -254,6 +257,7 @@ func close() -> void:
 	_sig = ""
 	current_id = ""
 	_workers = []
+	_games = []
 	_who = {}
 	if panel != null:
 		panel.hide_card()
@@ -310,6 +314,11 @@ func _render() -> void:
 			if bool(w["inside"]):
 				var can := maxi(absi(world._john_pos.x - int(e["tx"])), absi(world._john_pos.y - int(e["ty"]))) <= CALL_RANGE
 				actions.append({"id": "call:" + str(w["id"]), "text": "Ask %s to come out" % str(w["name"]) + ("" if can else " (walk closer)"), "disabled": not can})
+		if not _games.is_empty():  # the village games played here (talk to the person who plays them)
+			var names: PackedStringArray = []
+			for g in _games:
+				names.append("%s (%s, with %s)" % [str(g.get("title", "")), str(g.get("game", "")), str(g.get("where", "someone here"))])
+			body += "\nPlayed here: " + "; ".join(names) + "."
 	else:
 		subtitle = cls.capitalize()
 	if _note != "":

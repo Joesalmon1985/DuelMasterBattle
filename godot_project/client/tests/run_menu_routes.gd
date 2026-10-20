@@ -103,6 +103,18 @@ func _run() -> void:
 	_texts(dev, dev_texts)
 	if not (dev_texts.has("NEW GAME") and dev_texts.has("Quick Duel  (4-slot wizard match)")):
 		_fail("the developer menu lost the legacy entries")
+	# the village of games (docs/PLAN_VILLAGE_MINIGAMES.md) is a developer entry: a private, fresh session on its own saves folder, never the player's
+	if dev.find_child("GamesVillageButton", true, false) == null:
+		_fail("the developer menu has no games village entry")
+	var runs_before: String = lan.runs_dir()
+	dev._on_games_village()
+	if lan.mode != "host" or not lan.private_session or not lan.fresh_world or not lan.games_village:
+		_fail("games village flags: mode=%s private=%s fresh=%s games=%s" % [lan.mode, str(lan.private_session), str(lan.fresh_world), str(lan.games_village)])
+	if lan.runs_dir() == runs_before or not lan.runs_dir().ends_with("games_village"):
+		_fail("the games village must keep its saves apart from the player's world (runs_dir=%s)" % lan.runs_dir())
+	lan.reset()
+	if lan.games_village or lan.runs_dir() != runs_before:
+		_fail("reset did not clear the games village flag")
 	# nothing that a normal run can reach names the old adventure scenes from the player menu script
 	var src := FileAccess.get_file_as_string("res://client/scripts/main_menu.gd")
 	for needle in ["overworld.tscn", "game_board.tscn", "g01_shell", "Adventure"]:

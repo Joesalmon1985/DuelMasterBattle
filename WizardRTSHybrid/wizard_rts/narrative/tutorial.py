@@ -152,7 +152,17 @@ def snapshot(world: Any) -> dict[str, Any]:
             "next_lesson": next_lesson_hint(world), "objective": objective(world), "spells": [wizard.SPELL_NAMES.get(s, str(s)) for s in w["spells"]],
             "weave_size": int(w["weave_size"]), "magic_gated": world.profile == "campaign", "unlocked": graph.unlocked(world),
             "duel": {"lease": lease["id"], "purpose": lease["purpose"]} if lease else {}, "quests": _rats_journal(world) + quests.snapshot(world),
-            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world)), "magic": _magic(world), "trial_gate": _gate(world)}
+            "notes": [dict(n) for n in w["journal_notes"]], "talking": sorted(conversation.table(world)), "magic": _magic(world), "trial_gate": _gate(world),
+            "games": _games(world)}
+
+
+def _games(world: Any) -> dict[str, Any]:
+    from wizard_rts.minigames import table as game_table
+
+    try:
+        return game_table.journal(world)
+    except Exception:  # noqa: BLE001
+        return {}
 
 
 def _gate(world: Any) -> str:

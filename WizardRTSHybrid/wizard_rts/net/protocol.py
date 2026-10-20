@@ -27,6 +27,7 @@ PLAYER_OPS = frozenset({
     "resurrect",  # bring a dead wizard back: a channel beside the body (narrative/mortality.py)
     "pest_fight",  # fight a warehouse rat standing beside it (narrative/pests.py)
     "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view",  # the Trial of Champions (wizard_rts/trial)
+    "minigame_act", "minigame_leave", "minigame_view",  # a game at a conversation (wizard_rts/minigames): nothing in the world moves because of it
     "teleport", "trial_teleport",  # headed tests only: the host must run with HYBRID_DEV_OPS=1 (session.py refuses them otherwise)
     "save", "new_game",  # a single-player session only (session._solo_op); a shared world has no save slot of its own
     "pvp_challenge", "pvp_respond", "pvp_ward", "pvp_cast", "pvp_forfeit", "pvp_leave", "pvp_view",
@@ -35,7 +36,8 @@ PRE_HELLO_OPS = frozenset({"hello", "info", "ping"})
 PASSTHROUGH_OPS = frozenset({"terrain", "tile", "resources", "profile", "tech", "cards", "menu", "interact", "resolve", "fire",
                              "treat", "talk", "choose", "enter", "dungeon_move", "dungeon_interact", "duel_begin", "duel_guess", "duel_abandon", "story_view",
                              "duel_resolve", "duel_checkpoint", "end_talk", "opening_done", "journal", "call_out", "inspect_building", "inspect_person",
-                             "scene_next", "scene_choose", "resurrect", "pest_fight", "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view"})
+                             "scene_next", "scene_choose", "resurrect", "pest_fight", "trial_enter", "trial_move", "trial_interact", "trial_choose", "trial_leave", "trial_view",
+                             "minigame_act", "minigame_leave", "minigame_view"})
 HOST_ONLY_OPS = frozenset({"start", "save", "new_game"})
 SOLO_OPS = frozenset({"save", "new_game"})  # allowed only while the session is a one-human private game (max_players == 1)
 

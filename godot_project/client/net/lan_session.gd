@@ -31,6 +31,7 @@ var continue_game := false  # host the newest saved Wizard World instead of a ne
 var new_wizard := false  # retire the saved wizard (dead or alive) and seat a new apprentice in the same world
 var new_world := false  # the explicit "Start a new world": archive the saves and build afresh
 var fresh_world := false  # the developer's total reset: delete every save on this device (archives too) and build from nothing
+var games_village := false  # the developer's village of games (docs/PLAN_VILLAGE_MINIGAMES.md): its own saves folder, every game's host present
 
 var _host_pid := -1
 var _ready_file := ""
@@ -57,6 +58,7 @@ func reset() -> void:
 	new_wizard = false
 	new_world = false
 	fresh_world = false
+	games_village = false
 	if sim != null:
 		sim.disconnect_from_host()
 	sim = null
@@ -65,7 +67,8 @@ func reset() -> void:
 ## Where this device keeps Wizard World saves: the app's own storage, the same folder the Python host is told to use.
 func runs_dir() -> String:
 	var override := OS.get_environment("DMB_RUNS_DIR")  # tests keep their saves away from a real campaign
-	return override if override != "" else OS.get_user_data_dir().path_join("dmb_runs")
+	var base := override if override != "" else OS.get_user_data_dir().path_join("dmb_runs")
+	return base.path_join("games_village") if games_village else base  # the games village never touches the player's own world
 
 
 ## Is there a saved Wizard World campaign on this device to continue? (Only these: the old adventure's save is a different file and is never looked at.)
@@ -156,7 +159,8 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	var bind := "127.0.0.1" if private else "0.0.0.0"
 	var args := {"port": DEFAULT_PORT, "bind": bind, "name": name, "code": code, "secret": host_secret, "seed": seed_, "map": map_,
 		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
-		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world, "fresh": fresh_world}
+		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world, "fresh": fresh_world,
+		"games_village": games_village}
 	if Engine.has_singleton("DmbPySim"):
 		var plugin = Engine.get_singleton("DmbPySim")
 		var raw: String = str(plugin.start(JSON.stringify(args)))
@@ -183,6 +187,8 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 		argv.append("--new-world")
 	if fresh_world:
 		argv.append("--fresh")
+	if games_village:
+		argv.append("--games-village")
 	_host_pid = OS.create_process(py, argv, false)
 	if _host_pid <= 0:
 		_host_status = {"state": "failed", "error": "could not start %s (set DMB_PYTHON to your Python 3 executable)" % py}

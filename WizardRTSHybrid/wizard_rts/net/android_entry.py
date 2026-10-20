@@ -39,6 +39,10 @@ def _run(args: dict[str, Any]) -> None:
         seed, map_size, profile = int(args.get("seed", 507)), str(args.get("map", "small")), str(args.get("profile", "campaign"))
         permanent = bool(args.get("runs_dir")) or bool(args.get("continue"))
         world, prepared = prepare_world(profile, seed, map_size, new_world_flag=bool(args.get("new_world")), new_wizard=bool(args.get("new_wizard")), permanent=permanent)
+        if bool(args.get("games_village")):
+            from wizard_rts.narrative import games_village
+
+            games_village.ensure(world)
         session = MultiplayerSession(world, name=str(args.get("name", "Phone")), join_code=args.get("code"), host_secret=args.get("secret"),
                                      max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)),
                                      world_factory=lambda: new_world(seed, map_size, profile), ai_companions=1 if int(args.get("max_players", 2)) == 1 else 0)
