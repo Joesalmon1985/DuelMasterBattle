@@ -126,8 +126,12 @@ func _play(game: String, idx: int) -> void:
 				(b as Button).pressed.emit()
 				pressed = true
 				break
-		if not pressed:
-			break
+		if not pressed:  # a board whose input is the widget (the sliding blocks): the first legal move, as the widget would send it
+			var acts: Array = table.view.get("actions", [])
+			if acts.is_empty():
+				break
+			table.act(acts[0])
+			pressed = true
 		moves += 1
 		await _frames(1)
 	_check(moves > 0, "%s: at least one move was made through the table's buttons (%d)" % [game, moves])

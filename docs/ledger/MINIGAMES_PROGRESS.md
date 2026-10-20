@@ -55,7 +55,18 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] Table fixes seen in the shots: whole numbers from JSON shown as integers; a long slate laid in two columns without wrapping.
 
 ## M2 Push-your-luck and tiles (three)
-- [ ] Can't Stop, Rummikub, the sliding blocks (with the farm's sheep skin).
+- [x] `cantstop.py` (four dice, the three pairings, a pairing that fits both of its trunks must take both, three runners a turn, the bust clears the
+  runners, banking claims a topped trunk; the lumberjack banks after two good throws or a topped runner), `rummikub.py` (no jokers; runs and sets;
+  thirty from the rack to open and a short opening comes back; add a tally to a meld; a turn that lays nothing draws; an empty rack wins, a dry pool with
+  two passes ends on the lighter rack; the human selects tallies on the rack and lays or adds, the keeper lays every meld she finds and adds what fits),
+  `slide.py` (a 6x6 board, dominoes, trominoes, elbows, singles and a square, three gates of two cells; built backwards so every board is solvable
+  and the construction's reverse is kept as the solution and the par; an exit needs the gate of the block's colour; a move cap of four times par plus
+  twenty ends a stuck attempt; the farm's skin says sheep, pen and field). All three in `catalogue.ENGINES`.
+- [x] The grid widget is the board's input (tap a block, then a free cell in line with it or the rim; the arrow keys too); the board's moves are
+  hidden actions, which the headed driver uses when no button is visible.
+- [x] Tests: 44 pass (`test_minigames_rules.py` 34: Can't Stop's pairings, the runner limit, the bust and the bank; Rummikub's melds, the thirty, a
+  short opening coming back, two full games with a keeper-like human; every sliding board's solution replayed in exactly par moves, wrong-gate exits
+  never legal; `test_minigames_village.py` 10). Headed `HYBRID_GAMES=cantstop,rummikub,slide`: `HYBRID_MINIGAMES_OK`, shots in the evidence folder.
 
 ## M3 Trick-taking and betting (four)
 - [ ] Knock-out Whist, Oh Hell, five-card draw, Texas Hold'em; the shared deck and hand-ranking module.
@@ -67,4 +78,4 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] Every host; the Games page reachable in Wizard World; the headed run over three widgets; `docs/MINIGAMES_GUIDE.md`; handoff; versions.
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified.
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified.

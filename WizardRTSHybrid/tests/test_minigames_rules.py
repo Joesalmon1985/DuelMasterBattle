@@ -10,8 +10,12 @@ import pytest
 from wizard_rts.minigames import base, catalogue
 
 
+CAPS = {"rummikub": 8000}  # a random human at the tally board ends turns rarely: the game is long but it ends
+
+
 def play_out(game: str, seed: int, policy=None, cap: int = 2000) -> dict:
     """Self-play: the human seat takes `policy(state, actions, rng)` (default: a random legal action), the bots their own moves."""
+    cap = max(cap, CAPS.get(game, 0))
     eng = catalogue.engine(game)
     st = eng.new(seed, {**(catalogue.entry(game) or {}).get("opts", {}), **catalogue.skin_for(catalogue.entry(game) or {}), "host": "them"})
     rng = random.Random(seed)
@@ -250,3 +254,129 @@ def test_yahtzee_categories_and_the_upper_bonus():
     kept = st["dice"][0]
     y.act(st, 0, {"id": "roll"})
     assert st["dice"][0] == kept and st["rolls"] == 2
+
+
+# ------------------------------------------------------------------ M2: push-your-luck and tiles
+
+def test_cantstop_three_runners_and_the_bust():
+    from wizard_rts.minigames import cantstop as cs
+
+    st = cs.new(1, {"host": "lumberjack"})
+    st["dice"] = [1, 2, 3, 4]
+    st["phase"] = "choose"
+    opts = cs._options(st, 0)
+    sums = sorted(tuple(o["cols"]) for o in opts)
+    assert (3, 7) in sums and (4, 6) in sums and (5, 5) in sums  # 1+2/3+4, 1+3/2+4, 1+4/2+3
+    # three runners placed: a pairing that fits none of them is no option, and a throw with none busts
+    st["runners"] = {"2": 1, "3": 1, "12": 1}
+    st["dice"] = [4, 4, 4, 4]  # 8 and 8 only
+    assert cs._options(st, 0) == []
+    # a bust clears the runners and gives the turn away (forced through act by rigging the throw)
+    st2 = cs.new(2, {"host": "lumberjack"})
+    st2["runners"] = {"2": 1, "3": 1, "12": 1}
+    st2["phase"] = "roll"
+    orig = base.rng
+    try:
+        base.rng = lambda s, p="": _Fixed([4, 4, 4, 4])
+        cs.act(st2, 0, {"id": "roll"})
+    finally:
+        base.rng = orig
+    assert st2["runners"] == {} and st2["turn"] == 1 and st2["phase"] == "roll"
+    # banking writes the runners and claims a topped column
+    st3 = cs.new(3, {"host": "lumberjack"})
+    st3["runners"] = {"2": 3, "7": 4}
+    st3["phase"] = "decide"
+    cs.act(st3, 0, {"id": "stop"})
+    assert st3["positions"][0]["2"] == 3 and st3["claimed"]["2"] == 0 and st3["positions"][0]["7"] == 4 and st3["turn"] == 1
+    st = play_out("cantstop", 5)
+    assert sum(1 for s in st["claimed"].values() if s == (0 if st["result"] == "win" else 1)) >= 3
+
+
+class _Fixed:
+    def __init__(self, values):
+        self.values = list(values)
+
+    def randint(self, a, b):
+        return self.values.pop(0)
+
+    def random(self):
+        return 0.0
+
+    def choice(self, seq):
+        return seq[0]
+
+
+def test_rummikub_melds_opening_and_the_end():
+    from wizard_rts.minigames import rummikub as rk
+
+    run = [rk.tile_id(0, 3, 0), rk.tile_id(0, 4, 0), rk.tile_id(0, 5, 1)]
+    assert rk.is_meld(run) and rk.points(run) == 12
+    assert not rk.is_meld([rk.tile_id(0, 3, 0), rk.tile_id(0, 5, 0), rk.tile_id(0, 6, 0)])  # a gap
+    assert not rk.is_meld([rk.tile_id(0, 3, 0), rk.tile_id(0, 3, 1), rk.tile_id(0, 4, 0)])  # a doubled number
+    group = [rk.tile_id(0, 9, 0), rk.tile_id(1, 9, 0), rk.tile_id(2, 9, 0)]
+    assert rk.is_meld(group) and rk.is_meld(group + [rk.tile_id(3, 9, 1)])
+    assert not rk.is_meld(group + [rk.tile_id(0, 9, 1)])  # two of a colour in a set
+    assert not rk.is_meld(group[:2])
+    st = rk.new(4, {"host": "keeper"})
+    assert len(st["racks"][0]) == 14 and len(st["racks"][1]) == 14 and len(st["pool"]) == 104 - 28
+    # a short opening comes back: lay 12 points, end the turn, the tallies are on the rack again and one more was drawn
+    st["racks"][0] = run + [rk.tile_id(2, 1, 0)]
+    for t in run:
+        rk.act(st, 0, {"id": f"select:{t}", "tile": t})
+    assert [a["id"] for a in rk.actions(st, 0) if a["id"] == "lay"]
+    rk.act(st, 0, {"id": "lay"})
+    assert st["board"] == [sorted(run, key=rk.parse)] and st["laid_points"] == 12
+    rk.act(st, 0, {"id": "end"})
+    assert st["board"] == [] and set(run) <= set(st["racks"][0]) and len(st["racks"][0]) == 5 and not st["opened"][0] and st["turn"] == 1
+    # the full game ends with an empty rack or a dry pool
+    for seed in (1, 2):
+        st = play_out("rummikub", seed, policy=_rummikub_policy)
+        assert st["over"] and (not st["racks"][0] or not st["racks"][1] or st["passes"] >= 2)
+
+
+def _rummikub_policy(state, acts, rng):
+    """A human who plays like the keeper: pick a meld worth laying, select it tile by tile, lay it; else end the turn."""
+    from wizard_rts.minigames import rummikub as rk
+
+    ids = {a["id"] for a in acts}
+    opened = state["opened"][0] or state["laid_points"] >= rk.OPENING
+    melds = sorted(rk._melds_in(state["racks"][0]), key=lambda m: (-len(m), -rk.points(m)))
+    total = sum(rk.points(m) for m in melds)
+    want = next((m for m in melds if opened or total >= rk.OPENING), None)
+    if want is None:
+        if state["selected"]:
+            t = state["selected"][0]
+            return {"id": f"select:{t}", "tile": t}
+        return {"id": "end"}
+    stray = [t for t in state["selected"] if t not in want]
+    if stray:
+        return {"id": f"select:{stray[0]}", "tile": stray[0]}
+    missing = [t for t in want if t not in state["selected"]]
+    if missing:
+        return {"id": f"select:{missing[0]}", "tile": missing[0]}
+    assert "lay" in ids
+    return {"id": "lay"}
+
+
+def test_slide_every_board_is_solvable_and_exits_need_the_right_gate():
+    from wizard_rts.minigames import slide
+
+    for seed in range(1, 13):
+        st = slide.new(seed, {"size": 6, "blocks": 6, "host": "mason"})
+        assert st["total"] >= 3 and st["par"] >= st["total"] and len(st["solution"]) == st["par"]
+        # an exit through the wrong colour's gate is never legal
+        for b in st["blocks"]:
+            for d in slide.DIRS:
+                if slide.legal_move(st, b, d) == "exit":
+                    outside = [(x + slide.DIRS[d][0], y + slide.DIRS[d][1]) for x, y in slide._cells(b)]
+                    outside = [c for c in outside if not slide._inside(st, c)]
+                    assert outside and all(c in slide._exit_cells(st, int(b["colour"])) for c in outside)
+        # the recorded solution (the construction undone) clears the board in exactly par moves
+        for block, d in st["solution"]:
+            assert not st["over"]
+            slide.act(st, 0, {"id": "move", "block": block, "dir": d})
+        assert st["over"] and st["result"] == "win" and st["moves"] == st["par"], seed
+    st = play_out("slide", 3)
+    assert st["result"] in ("win", "lose")
+
+
