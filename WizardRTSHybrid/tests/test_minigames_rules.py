@@ -92,3 +92,161 @@ def test_rps_ring_and_best_of_five():
         them = sum(1 for m, t in st["rounds"] if rps.beats(t, m))
         assert st["score"] == [you, them]
         assert st["result"] == ("win" if you == 3 else "lose")
+
+
+# ------------------------------------------------------------------ M1: the quick games
+
+def test_nim_misere_strategy_never_loses_from_a_winning_position():
+    from wizard_rts.minigames import nim
+
+    assert not nim._losing((1, 1, 0), 3)  # whatever the mover takes, the other takes the last carrot and loses
+    assert nim._losing((1, 0, 0), 3)  # forced to take the last carrot
+    # the mother, moving second, wins every game against a player who always takes one from the first non-empty row
+    for seed in range(6):
+        st = play_out("nim", seed, policy=lambda s, acts, r: next(a for a in acts if a["n"] == 1))
+        assert st["result"] == "lose", seed
+
+    def best(s, acts, r):
+        for a in acts:
+            nxt = list(s["rows"])
+            nxt[a["row"]] -= a["n"]
+            if nim._losing(tuple(nxt), s["take_max"]):
+                return a
+        return acts[0]
+
+    st = play_out("nim", 1, policy=best)
+    assert st["result"] == ("win" if not nim._losing((3, 5, 7), 3) else "lose")
+
+
+def test_pairs_matching_and_the_turn_rules():
+    from wizard_rts.minigames import pairs
+
+    st = pairs.new(4, {"pairs": 8, "host": "mother"})
+    assert len(st["tiles"]) == 16 and all(st["tiles"].count(t) == 2 for t in st["tiles"])
+    twin = next(j for j in range(1, 16) if st["tiles"][j] == st["tiles"][0])
+    other = next(j for j in range(1, 16) if st["tiles"][j] != st["tiles"][0])
+    pairs.act(st, 0, {"id": "flip:0"})
+    assert st["pending"] == 0 and st["turn"] == 0
+    pairs.act(st, 0, {"id": "flip:%d" % twin})
+    assert st["score"] == [1, 0] and st["turn"] == 0 and st["taken"][0] == 0 and st["taken"][twin] == 0  # a pair keeps the turn
+    pairs.act(st, 0, {"id": "flip:%d" % other})
+    other2 = next(j for j in range(16) if st["taken"][j] < 0 and j != other and st["tiles"][j] != st["tiles"][other])
+    pairs.act(st, 0, {"id": "flip:%d" % other2})
+    assert st["turn"] == 1 and st["score"] == [1, 0] and st["taken"][other] < 0  # a miss gives the turn away
+    with pytest.raises(base.Illegal):
+        pairs.act(st, 1, {"id": "flip:0"})  # a taken swatch cannot be turned again
+    st = play_out("pairs", 2)
+    assert sum(st["score"]) == 8 and all(t >= 0 for t in st["taken"])
+
+
+def test_memory_always_one_new_object_and_a_repeat_ends_it():
+    from wizard_rts.minigames import memory
+
+    st = memory.new(9, {"start": 3, "max": 8, "host": "forester"})
+    assert len(st["shown"]) == 3
+    memory.act(st, 0, {"id": "next"})
+    for n in range(4, 9):
+        assert len(st["shown"]) == n and len(set(st["shown"])) == n
+        newest = st["order"][n - 1]
+        assert newest in st["shown"] and set(st["shown"]) - {newest} == set(st["order"][: n - 1])
+        memory.act(st, 0, {"id": "pick:%d" % newest, "pick": newest})
+        if st["over"]:
+            break
+    assert st["over"] and st["result"] == "win" and st["passed"] == 5
+    st = memory.new(9, {"start": 3, "max": 8, "host": "forester"})
+    memory.act(st, 0, {"id": "next"})
+    old = st["order"][0]
+    memory.act(st, 0, {"id": "pick:%d" % old, "pick": old})
+    assert st["over"] and st["result"] == "lose" and st["passed"] == 0
+
+
+def test_reaction_scores_from_the_answer_and_the_time():
+    from wizard_rts.minigames import reaction
+
+    st = reaction.new(3, {"rounds": 4, "host": "hunter"})
+    reaction.act(st, 0, {"id": "next"})
+    for _ in range(4):
+        same = st["current"] == st["previous"]
+        reaction.act(st, 0, {"id": "same" if same else "different", "ms": 400})
+        if st["over"]:
+            break
+    assert st["over"] and st["score"] == 8 and st["result"] == "win"
+    st = reaction.new(3, {"rounds": 4, "host": "hunter"})
+    reaction.act(st, 0, {"id": "next"})
+    same = st["current"] == st["previous"]
+    reaction.act(st, 0, {"id": "same" if same else "different", "ms": 4000})
+    assert st["score"] == 1  # right but slow
+    same = st["current"] == st["previous"]
+    reaction.act(st, 0, {"id": "different" if same else "same", "ms": 100})
+    assert st["score"] == 1  # wrong: nothing
+
+
+def test_roulette_bets_and_payouts():
+    from wizard_rts.minigames import roulette
+
+    assert roulette.colour_of(0) == "green" and roulette.colour_of(1) == "red" and roulette.colour_of(2) == "black"
+    assert roulette.wins("red", 1) and not roulette.wins("red", 2) and not roulette.wins("red", 0)
+    assert roulette.wins("odd", 3) and roulette.wins("even", 4) and not roulette.wins("even", 0)
+    assert roulette.wins("low", 18) and roulette.wins("high", 19) and roulette.wins("dozen2", 13) and roulette.wins("dozen3", 36)
+    assert roulette.wins("num:17", 17) and not roulette.wins("num:17", 18)
+    assert roulette.payout("red") == 1 and roulette.payout("dozen1") == 2 and roulette.payout("num:0") == 35
+    st = roulette.new(5, {"stake": 20, "spins": 3, "host": "carrier"})
+    roulette.act(st, 0, {"id": "bet:red", "bet": "red"})
+    assert st["pebbles"] == (21 if roulette.wins("red", st["last"]) else 19)
+    st = play_out("roulette", 4)
+    assert st["spun"] <= st["spins"] and st["pebbles"] >= 0
+
+
+def test_blackjack_totals_dealer_rule_and_payouts():
+    from wizard_rts.minigames import blackjack
+
+    assert blackjack.total(["As", "Kd"]) == (21, True)
+    assert blackjack.total(["As", "9d", "5c"]) == (15, False)
+    assert blackjack.total(["Th", "Jd", "2c"]) == (22, False)
+    assert blackjack.total(["As", "Ad", "9c"]) == (21, True)
+    st = blackjack.new(2, {"stake": 10, "hands": 3, "host": "sawyer"})
+    blackjack.act(st, 0, {"id": "deal"})
+    assert st["pebbles"] == 8 and len(st["player"][0]) == 2 and len(st["dealer"]) == 2
+    # rigged settlements: the dealer stands on a soft seventeen and draws on sixteen
+    st["phase"] = "play"
+    st["player"] = [["Ts", "9d"]]
+    st["bets"] = [2]
+    st["dealer"] = ["As", "6d"]
+    st["deck"] = ["2c"] * 20
+    st["pebbles"] = 8
+    blackjack._settle(st)
+    assert blackjack.total(st["dealer"])[0] == 17 and st["pebbles"] == 12  # 19 beats 17: the bet back and as much again
+    st["phase"] = "play"
+    st["player"] = [["Ts", "9d"]]
+    st["bets"] = [2]
+    st["dealer"] = ["7s", "9d"]
+    st["deck"] = ["5c"] * 20
+    st["pebbles"] = 8
+    blackjack._settle(st)
+    assert blackjack.total(st["dealer"])[0] == 21 and st["pebbles"] == 8  # 21 beats 19: nothing back
+    st = play_out("blackjack", 7)
+    assert st["hand_no"] <= st["hands"]
+
+
+def test_yahtzee_categories_and_the_upper_bonus():
+    from wizard_rts.minigames import yahtzee as y
+
+    assert y.score_of("ones", [1, 1, 2, 3, 1]) == 3 and y.score_of("sixes", [6, 6, 6, 6, 6]) == 30
+    assert y.score_of("three_kind", [2, 2, 2, 5, 6]) == 17 and y.score_of("three_kind", [2, 2, 3, 5, 6]) == 0
+    assert y.score_of("four_kind", [4, 4, 4, 4, 1]) == 17 and y.score_of("full_house", [3, 3, 5, 5, 5]) == 25 and y.score_of("full_house", [3, 3, 3, 3, 5]) == 0
+    assert y.score_of("small_straight", [1, 2, 3, 4, 6]) == 30 and y.score_of("small_straight", [2, 3, 4, 5, 5]) == 30 and y.score_of("small_straight", [1, 2, 3, 5, 6]) == 0
+    assert y.score_of("large_straight", [2, 3, 4, 5, 6]) == 40 and y.score_of("large_straight", [1, 2, 3, 4, 6]) == 0
+    assert y.score_of("yahtzee", [5, 5, 5, 5, 5]) == 50 and y.score_of("yahtzee", [5, 5, 5, 5, 4]) == 0
+    assert y.score_of("chance", [1, 2, 3, 4, 5]) == 15
+    assert y.totals({"ones": 3, "twos": 6, "threes": 9, "fours": 12, "fives": 15, "sixes": 18})["bonus"] == 35
+    assert y.totals({"ones": 3, "twos": 6, "threes": 9, "fours": 12, "fives": 15, "sixes": 17})["bonus"] == 0
+    st = play_out("yahtzee", 3)
+    assert all(len(s) == 13 for s in st["sheets"])
+    st = y.new(1, {"host": "mason"})
+    assert [a["id"] for a in y.actions(st, 0)] == ["roll"]
+    y.act(st, 0, {"id": "roll"})
+    assert st["rolls"] == 1 and all(1 <= d <= 6 for d in st["dice"])
+    y.act(st, 0, {"id": "hold:0", "die": 0})
+    kept = st["dice"][0]
+    y.act(st, 0, {"id": "roll"})
+    assert st["dice"][0] == kept and st["rolls"] == 2

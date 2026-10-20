@@ -16,6 +16,13 @@ from typing import Any
 DATA = Path(__file__).resolve().parents[1] / "data" / "narrative" / "minigames.json"
 ENGINES: dict[str, str] = {  # game id -> engine module (the plan's milestones add to this list)
     "rps": "wizard_rts.minigames.rps",
+    "nim": "wizard_rts.minigames.nim",
+    "pairs": "wizard_rts.minigames.pairs",
+    "memory": "wizard_rts.minigames.memory",
+    "reaction": "wizard_rts.minigames.reaction",
+    "roulette": "wizard_rts.minigames.roulette",
+    "blackjack": "wizard_rts.minigames.blackjack",
+    "yahtzee": "wizard_rts.minigames.yahtzee",
 }
 
 

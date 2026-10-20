@@ -41,7 +41,18 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
   fails on the base branch too (four lumberjack topics since the tribe topics; not this work).
 
 ## M1 The quick games (seven)
-- [ ] Take the Last Carrot, Pairs, the memory game, the reaction game, Roulette, Blackjack, Yahtzee; the sawyer's and water-carrier's games live.
+- [x] `minigames/cards.py` (the deck, card items, the five-card poker ranking and best-of-seven for M3), `nim.py` (misere with a take cap; the mother
+  plays the full search of the small game), `pairs.py` (the twin is kept and the turn goes on; a miss turns back on the next move; the mother remembers
+  every swatch turned), `memory.py` (one new sapling each round, a repeat ends it; win at the cap, draw at three or more named), `reaction.py` (same or
+  different, scored two quick / one slow / nothing wrong from the client's `ms`; the view's `timed` flag makes the table send it), `roulette.py`
+  (European wheel, the outside bets as buttons and the 37 notches as tiles, 35 to 1), `blackjack.py` (stands on 17 soft or hard, 3 to 2 on a natural,
+  double, one split, a fixed number of hands), `yahtzee.py` (thirteen orders, the upper bonus, hold by tapping a stone, the mason holds the commonest
+  face and fills the best-paying order). All eight registered in `catalogue.ENGINES`.
+- [x] Tests: `test_minigames_rules.py` 25 pass (self-play, determinism and refusals for every engine; the misere strategy, pairs' turn rules, the memory
+  rounds, reaction scoring, roulette bets and payouts, blackjack totals and the dealer's rule, yahtzee's categories and bonus); `test_minigames_village.py`
+  10 pass (every engine has a host). Headed `run_hybrid_minigames.gd` with `HYBRID_GAMES=rps,nim,pairs,memory,reaction,roulette,blackjack,yahtzee`:
+  all eight played on the real table to a result, `HYBRID_MINIGAMES_OK`, shots in `docs/evidence/minigames/`.
+- [x] Table fixes seen in the shots: whole numbers from JSON shown as integers; a long slate laid in two columns without wrapping.
 
 ## M2 Push-your-luck and tiles (three)
 - [ ] Can't Stop, Rummikub, the sliding blocks (with the farm's sheep skin).
@@ -56,4 +67,4 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [ ] Every host; the Games page reachable in Wizard World; the headed run over three widgets; `docs/MINIGAMES_GUIDE.md`; handoff; versions.
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified.
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified.

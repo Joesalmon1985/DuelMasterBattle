@@ -250,6 +250,13 @@ func _on_action(a: Dictionary) -> void:
 	act(a, extra)
 
 
+## A value from the host's JSON: whole numbers come as floats and are shown as integers.
+static func _val(v: Variant) -> String:
+	if typeof(v) == TYPE_FLOAT and is_equal_approx(v, round(v)):
+		return str(int(v))
+	return str(v)
+
+
 func _label(text: String, small := false) -> Label:
 	var l := Label.new()
 	l.text = text
@@ -269,17 +276,34 @@ func _build_area(a: Dictionary) -> Control:
 		"text":
 			box.add_child(_label(str(a.get("text", ""))))
 		"score":
-			var names: Array = a.get("names", ["You", "Them"])
-			var t := "%s %d  -  %s %d" % [str(names[0]) if names.size() > 0 else "You", int(a.get("you", 0)), str(names[1]) if names.size() > 1 else "Them", int(a.get("them", 0))]
-			if a.has("target"):
-				t += "   (first to %d)" % int(a["target"])
 			if a.has("rows"):
 				var rows: Array = a["rows"]
-				var parts: PackedStringArray = []
-				for r in rows:
-					parts.append("%s %s" % [str(r.get("name", "")), str(r.get("value", ""))])
-				t = "   ".join(parts)
-			box.add_child(_label(t))
+				if rows.size() <= 3:
+					var parts: PackedStringArray = []
+					for r in rows:
+						parts.append("%s %s" % [str(r.get("name", "")), _val(r.get("value", ""))])
+					box.add_child(_label("   ".join(parts)))
+				else:  # a slate: name and value in two columns
+					var grid := GridContainer.new()
+					grid.columns = 2
+					grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+					for r in rows:
+						var nl := _label(str(r.get("name", "")), true)
+						nl.autowrap_mode = TextServer.AUTOWRAP_OFF
+						nl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						grid.add_child(nl)
+						var vl := _label(_val(r.get("value", "")))
+						vl.autowrap_mode = TextServer.AUTOWRAP_OFF
+						vl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+						vl.size_flags_horizontal = Control.SIZE_SHRINK_END
+						grid.add_child(vl)
+					box.add_child(grid)
+			else:
+				var names: Array = a.get("names", ["You", "Them"])
+				var t := "%s %d  -  %s %d" % [str(names[0]) if names.size() > 0 else "You", int(a.get("you", 0)), str(names[1]) if names.size() > 1 else "Them", int(a.get("them", 0))]
+				if a.has("target"):
+					t += "   (first to %d)" % int(a["target"])
+				box.add_child(_label(t))
 		"signs":
 			var row := HBoxContainer.new()
 			row.alignment = BoxContainer.ALIGNMENT_CENTER
