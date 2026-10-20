@@ -7,8 +7,8 @@ when a message changes shape; bump GAME_VERSION with every release of the app.
 
 from __future__ import annotations
 
-PROTOCOL_VERSION = 3  # 3: mortal apprentices (dead/body/resurrection/ending in the state view), the Trial ops and view, the catch-up page; 2: real-time PvP casts, the narrative ops, single-player save/continue
-GAME_VERSION = "0.4.0"  # the app version the APK is built from (also in godot_project/export_presets.cfg version/name)
+PROTOCOL_VERSION = 4  # 4: the village minigames (minigame_act/leave/view, the `minigame` extra on a choice, the journal's games); 3: mortal apprentices (dead/body/resurrection/ending in the state view), the Trial ops and view, the catch-up page; 2: real-time PvP casts, the narrative ops, single-player save/continue
+GAME_VERSION = "0.5.0"  # the app version the APK is built from (also in godot_project/export_presets.cfg version/name)
 
 DEFAULT_PORT = 8765
 DISCOVERY_PORT = 8767

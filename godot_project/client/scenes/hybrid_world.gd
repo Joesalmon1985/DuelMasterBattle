@@ -866,6 +866,8 @@ func _on_menu() -> void:
 
 func _show_menu_root(note: String) -> void:
 	var items: Array = [{"id": "continue", "text": "Continue", "kind": "primary"}, {"id": "save", "text": "Save game"}]
+	if mp and story_ui != null and not (story_ui.journal_data().get("games", {}) as Dictionary).is_empty():
+		items.append({"id": "games", "text": "The village's games"})  # Wizard World has no journal: the Games page lives here
 	if not mp:
 		items.append({"id": "load", "text": "Load game"})  # loading swaps the world: only the classic server does that (a hosted game continues from the main menu)
 		items.append({"id": "quit", "text": "Save and quit"})
@@ -888,6 +890,10 @@ func _on_menu_choice(id: String) -> void:
 			return
 		"continue":
 			_close_menu()
+		"games":
+			menu_card.show_card("The village's games", "No prize for winning, none for losing: a thing the village does.", games_page_text(), [{"id": "menu", "text": "Back"}], [])
+		"menu":
+			_show_menu_root("")
 		"save":
 			var r := save_slot("manual")
 			_show_menu_root("Game saved." if str(r.get("status", "")) == "ok" else "The game could not be saved (%s)." % str(r.get("reason", "")))
@@ -1419,7 +1425,43 @@ func _mp_status_text(reply: Dictionary) -> String:
 	if typeof(gate) == TYPE_DICTIONARY and not (gate as Dictionary).is_empty():
 		var dist := int(gate.get("distance", 0))
 		line += "\nTrial gate: %s" % ("here" if dist <= 2 else "%d tiles %s %s" % [dist, str(gate.get("compass", "")), _compass_arrow(str(gate.get("compass", "")))])
+	if LanSession.games_village and story_ui != null:  # the village of games: how many of its games have been found (the menu's Games page lists them)
+		var g: Dictionary = story_ui.journal_data().get("games", {})
+		if not g.is_empty():
+			line += "\nGames found: %d of %d (menu: The village's games)" % [(g.get("found", []) as Array).size(), (g.get("all", []) as Array).size()]
 	return line
+
+
+## The Games page (docs/PLAN_VILLAGE_MINIGAMES.md): what has been found and played, and where every game is played, from the journal's `games`.
+func games_page_text() -> String:
+	var g: Dictionary = story_ui.journal_data().get("games", {}) if story_ui != null else {}
+	if g.is_empty():
+		return "Nothing yet."
+	var out: PackedStringArray = []
+	var found: Array = g.get("found", [])
+	var all_games: Array = g.get("all", [])
+	out.append("Found %d of %d." % [found.size(), all_games.size()])
+	var played: Array = g.get("played", [])
+	if not played.is_empty():
+		out.append("")
+		out.append("LAST PLAYED")
+		for r in played:
+			out.append("  %s with %s: %s" % [_game_title(all_games, str(r.get("game", ""))), str(r.get("host", "")), str(r.get("result", ""))])
+	out.append("")
+	out.append("WHERE THE GAMES ARE")
+	var found_ids := {}
+	for f in found:
+		found_ids[str(f.get("id", ""))] = true
+	for a in all_games:
+		out.append("  [%s] %s (%s): %s" % ["x" if found_ids.has(str(a.get("id", ""))) else " ", str(a.get("title", "")), str(a.get("game", "")), str(a.get("where", ""))])
+	return "\n".join(out)
+
+
+static func _game_title(all_games: Array, id: String) -> String:
+	for a in all_games:
+		if str(a.get("id", "")) == id:
+			return str(a.get("title", id))
+	return id
 
 
 func _compass_arrow(compass: String) -> String:

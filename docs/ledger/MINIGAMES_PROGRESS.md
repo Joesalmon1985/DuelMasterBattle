@@ -96,7 +96,18 @@ Legend: `[ ]` not started, `[~]` in progress, `[x]` done.
 - [x] The face widget clips and shortens names and traits (two lines each) after the first shot showed them overlapping.
 
 ## M5 The village complete, evidence, documents
-- [ ] Every host; the Games page reachable in Wizard World; the headed run over three widgets; `docs/MINIGAMES_GUIDE.md`; handoff; versions.
+- [x] Every host stands in the games village with every game (`test_minigames_village.py` checks each engine has a host there).
+- [x] The Games page: Wizard World has no journal, so the pause menu carries "The village's games" (found and played, where every game is, the found ones
+  ticked); the LAN status line of the games village counts the games found. Both checked by the headed run (`99_games_page.png`, `00_village.png`).
+- [x] Headed `run_hybrid_minigames.gd` default list is one game per widget (signs, dice, the grid, cards, faces): `HYBRID_MINIGAMES_OK`, no script
+  errors; the Games page step added. Shots in `WizardRTSHybrid/docs/evidence/minigames/`.
+- [x] `tests/test_minigames_rules.py`: every engine played to the end in two processes under different `PYTHONHASHSEED`s reaches the same state (69 tests
+  in the two minigame suites).
+- [x] `docs/MINIGAMES_GUIDE.md` (how to play, the developer's village, the eighteen games with their hosts and rules in the villagers' words, notes for the
+  next developer); `docs/NEXT_AGENT_HANDOFF.md` entry; `CLAUDE.md` line.
+- [x] Versions: `GAME_VERSION` 0.5.0 and `PROTOCOL_VERSION` 4 on both sides, Android code 5 / 0.5.0 in `export_presets.cfg`. No APK built (the owner's
+  default: not until asked). `run_menu_routes.gd`: `MENU_ROUTES_OK`.
+- [~] Full Python suite (`tests` minus `test_five_minutes` and `test_neuro_storage`, which needs `psutil`, absent from the venv): started; the result is in the session log below.
 
 ## Session log
-- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games).
+- 20 Oct 2026: plan approved ("go", defaults); M0 built and verified; M1 built and verified; M2 built and verified; M3 built and verified; M4 built and verified (all eighteen games); M5 done.

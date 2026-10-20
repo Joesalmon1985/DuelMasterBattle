@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import json
 import random
+from pathlib import Path
 
 import pytest
+
+HYB_ROOT = Path(__file__).resolve().parents[1]
 
 from wizard_rts.minigames import base, catalogue
 
@@ -645,3 +648,48 @@ def test_guesswho_takes_the_villages_people_from_the_world():
     for p in people:
         for t in gw.TRAITS:
             assert p[t], (p["name"], t)
+
+
+# ------------------------------------------------------------------ M5: determinism across hash seeds
+
+def test_every_engine_is_deterministic_across_pythonhashseed():
+    """Two processes with different PYTHONHASHSEEDs play every engine to the end from the same seed and reach the same state (no decision by the
+    iteration order of a set of strings, no wall-clock time)."""
+    import json
+    import os
+    import subprocess
+    import sys
+
+    code = (
+        "import json, random, sys\n"
+        "from wizard_rts.minigames import base, catalogue\n"
+        "out = {}\n"
+        "for game in sorted(catalogue.ENGINES):\n"
+        "    eng = catalogue.engine(game)\n"
+        "    g = catalogue.entry(game) or {}\n"
+        "    st = eng.new(21, {**g.get('opts', {}), **catalogue.skin_for(g), 'host': 'them'})\n"
+        "    rng = random.Random(21)\n"
+        "    for _ in range(9000):\n"
+        "        if st['over']:\n"
+        "            break\n"
+        "        acts = eng.actions(st, 0)\n"
+        "        if acts:\n"
+        "            eng.act(st, 0, rng.choice(acts))\n"
+        "            continue\n"
+        "        for seat in range(1, len(st['seats'])):\n"
+        "            if eng.actions(st, seat):\n"
+        "                eng.act(st, seat, eng.bot(st, seat, base.rng(st, 'bot:%d' % seat)))\n"
+        "                break\n"
+        "        else:\n"
+        "            break\n"
+        "    out[game] = st\n"
+        "print(json.dumps(out, sort_keys=True))\n"
+    )
+    results = []
+    for hs in ("0", "12345"):
+        env = {**os.environ, "PYTHONHASHSEED": hs, "DMB_NO_NATIVE": "1"}
+        r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, cwd=str(HYB_ROOT), timeout=600)
+        assert r.returncode == 0, r.stderr[-2000:]
+        results.append(json.loads(r.stdout.strip().splitlines()[-1]))
+    assert results[0] == results[1]
+    assert all(st["over"] for st in results[0].values()), [g for g, st in results[0].items() if not st["over"]]

@@ -1,5 +1,25 @@
 # Next agent handoff
 
+## 20 Oct 2026: the village minigames, 0.5.0 (branch `feature/village-minigames`, from `feature/player-stress-and-progression` at `336d3dec`)
+
+The owner approved `docs/PLAN_VILLAGE_MINIGAMES.md` ("go", with the defaults: five-card draw, a due rung waits for a table, 0.5.0 / protocol 4 / Android
+code 5, no APK until asked, solo tables). Ledger: `docs/ledger/MINIGAMES_PROGRESS.md`; player and developer guide: `docs/MINIGAMES_GUIDE.md`. In one
+paragraph: eighteen games are played at a conversation with the people of the early village, their rules in Python (`WizardRTSHybrid/wizard_rts/minigames/`,
+one pure engine per game under the contract in `base.py`, the villagers' seats played by bots, `table.py` runs one table per apprentice seat, `catalogue.py`
+plus `data/narrative/minigames.json` say who plays what and what they say), offered as `game:<id>` choices by `narrative/conversation.py` (the host is held
+under the table, the closing line comes back, nothing in the world changes: one `minigame_played` log entry and the journal's `games` page), driven by three
+ops (`minigame_act`, `minigame_leave`, `minigame_view`; protocol 4), drawn by one Godot table (`client/minigames/minigame_table.gd` and five drawn widgets,
+no PNG). The developer's village of games (`narrative/games_village.py`, host `--games-village`, the developer menu's GAMES VILLAGE on its own saves folder)
+has every host: the mentor (Rock Paper Scissors, Hanabi), the lumberjack (Can't Stop), the forester (the memory game), the stonemason (Yahtzee, the sliding
+blocks; the farm has the sheep skin), the hunter (the reaction game, five-card draw), a sawyer at the sawmill (Guess Who over the village's real people,
+Blackjack), a water-carrier at the well (Roulette), the keeper (Rummikub), the carriers (Skull, Hold'em), a Rollkeeper and two contestants on the green
+(Oh Hell, Knock-out Whist), the mother (Take the Last Carrot, Pairs). Tests: `py -3 -m pytest WizardRTSHybrid/tests/test_minigames_rules.py
+WizardRTSHybrid/tests/test_minigames_village.py -q`; headed `client/tests/run_hybrid_minigames.gd` (starts the village itself; `HYBRID_GAMES=a,b,c`
+picks the games; shots in `WizardRTSHybrid/docs/evidence/minigames/`); `run_menu_routes.gd` covers the developer entry. Known on the base branch, not this
+work: `test_narrative_conversation::test_a_conversation_has_a_beginning_responses_and_a_declared_end` (four lumberjack topics). Not done: no phone has run
+0.5.0 (no APK built); two humans at one table; rewards of any kind (none by the brief). Rules kept: content frozen (residents and dialogue only), never
+`git add -A`, `docs/release_notes.md` never committed, merging into `main` is the owner's call.
+
 ## 18 Oct 2026: stress testing, the magic ladder, the rats, the noticing dialogue, 0.4.0 (branch `feature/player-stress-and-progression`, from `main` at `1b9513dd`)
 
 The owner approved `docs/PLAN_PLAYER_STRESS_AND_PROGRESSION.md` (plan first, then the ladder revised to the owner's three rules: after three duels the

@@ -2,7 +2,7 @@ extends SceneTree
 
 ## Headed acceptance for the village minigames (docs/PLAN_VILLAGE_MINIGAMES.md): the developer's village of games is started the way the developer
 ## menu starts it (a private hosted session on its own saves folder, built fresh on seed 507 with every host present), the client is put beside
-## each host named in HYBRID_GAMES (default: the mentor's Rock Paper Scissors), talks, takes the game's offer, acknowledges "Lay out the game",
+## each host named in HYBRID_GAMES (default: one game per widget), talks, takes the game's offer, acknowledges "Lay out the game",
 ## plays on the REAL table (the buttons and widgets, one `minigame_act` each) until the result or a move cap, leaves, and sees the host's closing
 ## line on the conversation card. Screenshots go to HYBRID_SHOT_DIR. Needs HYBRID_DEV_OPS=1 for the host's teleport (set here before the host
 ## starts). Prints HYBRID_MINIGAMES_OK or HYBRID_MINIGAMES_FAIL <reasons>.
@@ -183,9 +183,24 @@ func _run() -> void:
 	_check(not games.is_empty() and games.has("all"), "the journal carries the Games page")
 	await _shot("00_village")
 	var which := OS.get_environment("HYBRID_GAMES")
-	var list: Array = ["rps"] if which == "" else Array(which.split(","))
+	var list: Array = ["rps", "yahtzee", "slide", "whist", "guesswho"] if which == "" else Array(which.split(","))  # one game per widget: signs, dice, the grid, cards, faces
 	var idx := 1
 	for game in list:
 		await _play(str(game), idx)
 		idx += 1
+	# the pause menu's Games page: what was found and played, and where every game is
+	_world._on_menu()
+	await _frames(3)
+	_check(_world._menu_open and _world.menu_card.has_choice("games"), "the pause menu offers the village's games")
+	if _world.menu_card.has_choice("games"):
+		_world.menu_card.activate_choice_id("games")
+		await _frames(3)
+		var body: String = _world.menu_card.body_label.text
+		_check(body.begins_with("Found %d of" % list.size()) or body.find("Found") == 0, "the Games page counts the games found (%s)" % body.substr(0, 40))
+		_check(body.find("WHERE THE GAMES ARE") >= 0 and body.find("[x]") >= 0, "the Games page lists where the games are, with the found ones ticked")
+		await _shot("99_games_page")
+		_world.menu_card.activate_choice_id("menu")
+		await _frames(2)
+	_world._close_menu()
+	await _frames(8)  # the card's deferred fit must finish while the world still exists
 	await _finish()

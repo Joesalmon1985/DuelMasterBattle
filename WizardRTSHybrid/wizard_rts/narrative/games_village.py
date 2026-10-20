@@ -13,7 +13,7 @@ from __future__ import annotations
 from typing import Any
 
 from wizard_rts import construction as con
-from wizard_rts.narrative import config, events, mother, mortality, party, pests, residents, tutorial, wizard
+from wizard_rts.narrative import config, events, mother, mortality, pests, residents, tutorial, wizard
 
 GRAPH = "games"
 EXTRA_BUILDINGS = (  # kind, definition, label, size, offset from the warehouse (the showcase's own offsets)
