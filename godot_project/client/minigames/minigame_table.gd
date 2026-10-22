@@ -17,6 +17,7 @@ const TileWidget = preload("res://client/minigames/tile_widget.gd")
 const GridWidget = preload("res://client/minigames/grid_widget.gd")
 const FaceWidget = preload("res://client/minigames/face_widget.gd")
 const TableFx = preload("res://client/minigames/table_fx.gd")
+const ScrollCue = preload("res://client/ui/scroll_cue.gd")
 
 const SIGN_COLOURS := [Color(0.95, 0.45, 0.2), Color(0.35, 0.75, 0.35), Color(0.4, 0.65, 0.95), Color(0.95, 0.9, 0.55), Color(0.6, 0.6, 0.62), Color(0.5, 0.35, 0.6)]
 
@@ -36,7 +37,8 @@ var _scroll: ScrollContainer
 var _areas: VBoxContainer
 var _message: Label
 var _log: Label
-var _actions: GridContainer
+var _actions: GridContainer  # the loose actions
+var _action_groups: VBoxContainer  # actions that share a prefix ("Tell Skebok Hardfist their …", "Bid …"): a label and a grid of short buttons
 var _footer: HBoxContainer
 var _leave: Button
 var _action_buttons: Array = []
@@ -47,6 +49,8 @@ var _sub_row: HBoxContainer
 var _host_pic: TextureRect  # the host's own standing picture beside "with X" (the sprite the world draws for them)
 var _was_over := false  # the result is celebrated once
 var _dice_prev: Dictionary = {}  # die name -> value at the last render, so a thrown die tumbles
+var _mobile := OS.has_feature("mobile")  # no key hints on a phone ("(Esc)", "1.")
+var _cue: Control  # "more below" on the scrolling body (client/ui/scroll_cue.gd)
 
 
 func setup(p_world: Node) -> void:
@@ -106,6 +110,10 @@ func setup(p_world: Node) -> void:
 	_log.name = "Log"
 	_log.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_inner.add_child(_log)
+	_action_groups = VBoxContainer.new()
+	_action_groups.name = "ActionGroups"
+	_action_groups.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_inner.add_child(_action_groups)
 	_actions = GridContainer.new()
 	_actions.name = "Actions"
 	_actions.columns = 1
@@ -117,9 +125,12 @@ func setup(p_world: Node) -> void:
 	_inner.add_child(_footer)
 	_leave = Button.new()
 	_leave.name = "Leave"
-	_leave.text = "Leave the table (Esc)"
+	_leave.text = "Leave the table" + ("" if _mobile else " (Esc)")
 	_leave.pressed.connect(leave)
 	_footer.add_child(_leave)
+	_cue = ScrollCue.new()
+	add_child(_cue)
+	_cue.target = _scroll
 	_fx = TableFx.new()
 	add_child(_fx)
 	get_viewport().size_changed.connect(relayout)
@@ -260,6 +271,9 @@ func _render() -> void:
 	for c in _actions.get_children():
 		_actions.remove_child(c)
 		c.queue_free()
+	for c in _action_groups.get_children():
+		_action_groups.remove_child(c)
+		c.queue_free()
 	_action_buttons = []
 	if view.is_empty():
 		_title.text = meta.get("catalogue_title", "")
@@ -286,20 +300,30 @@ func _render() -> void:
 	for a in view.get("actions", []):
 		if typeof(a) == TYPE_DICTIONARY and not bool(a.get("hidden", false)):
 			shown.append(a)
-	_actions.columns = 1 if shown.size() <= 4 else (2 if shown.size() <= 10 else 3)
+	var split := _group_actions(shown)
+	var groups: Array = split[0]
+	var loose: Array = split[1]
 	var i := 0
-	for a in shown:
-		var b := Button.new()
-		b.name = "Action_%d" % i
-		b.text = ("%d. " % (i + 1) if i < 9 else "") + str(a.get("text", a.get("id", "")))
-		b.set_meta("action", a)
-		b.disabled = bool(a.get("disabled", false))
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.pressed.connect(_on_action.bind(a))
-		_actions.add_child(b)
-		_action_buttons.append(b)
+	for g in groups:  # a wall of "Tell X their Flames / Frosts / 1s …" becomes one label and a row of short buttons (red team round 2)
+		var gl := _label(str(g["prefix"]) + " …", true)
+		_action_groups.add_child(gl)
+		var items: Array = g["items"]
+		var longest := 0
+		for a in items:
+			longest = maxi(longest, str(_split_prefix(str(a.get("text", a.get("id", ""))))[1]).length())
+		var grid := GridContainer.new()
+		grid.columns = 4 if longest <= 7 else (3 if longest <= 12 else 2)
+		grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_action_groups.add_child(grid)
+		for a in items:
+			var b := _action_button(a, i, str(_split_prefix(str(a.get("text", a.get("id", ""))))[1]), false)
+			grid.add_child(b)
+			i += 1
+	_actions.columns = 1 if loose.size() <= 4 else (2 if loose.size() <= 10 else 3)
+	for a in loose:
+		_actions.add_child(_action_button(a, i, str(a.get("text", a.get("id", "")))))
 		i += 1
-	_leave.text = "Back to %s (Esc)" % meta.get("host", "them") if over else "Leave the table (Esc)"
+	_leave.text = ("Back to %s" % meta.get("host", "them") if over else "Leave the table") + ("" if _mobile else " (Esc)")
 	relayout()
 	_animate_widgets(dice_before)
 
@@ -339,6 +363,11 @@ func _host_picture() -> Texture2D:
 		if typeof(e) != TYPE_DICTIONARY or str(e.get("id", "")) != npc:
 			continue
 		var ent: Dictionary = e.duplicate()
+		var fig := str(ent.get("figure", ""))
+		if str(ent.get("definition", "")).begins_with("story.") and fig != "" and not fig.begins_with("pest:"):
+			ent["definition"] = fig  # a resident is drawn as the worker figure the world gave them
+			ent["kind"] = "worker"
+			ent["class"] = "worker"
 		ent["anim"] = "idle"
 		ent["facing"] = "s"
 		ent["_static"] = true
@@ -361,6 +390,64 @@ func _on_action(a: Dictionary) -> void:
 	if str(view.get("timed", "")) != "":
 		extra["ms"] = int(round(_pending_timer * 1000.0))
 	act(a, extra)
+
+
+func _action_button(a: Dictionary, i: int, text: String, numbered := true) -> Button:
+	var b := Button.new()
+	b.name = "Action_%d" % i
+	b.text = ("%d. " % (i + 1) if i < 9 and not _mobile and numbered else "") + text
+	b.set_meta("action", a)
+	b.disabled = bool(a.get("disabled", false))
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.pressed.connect(_on_action.bind(a))
+	_action_buttons.append(b)
+	return b
+
+
+## [prefix, last word] of an action's text ("Tell Mira their 1s" -> ["Tell Mira their", "1s"]).
+static func _split_prefix(t: String) -> Array:
+	var i := t.rfind(" ")
+	return [t.substr(0, i), t.substr(i + 1)] if i > 0 else ["", t]
+
+
+## Actions that share a prefix of at least three characters, three or more of them, are grouped; the rest stay loose. Returns [groups, loose].
+static func _group_actions(shown: Array) -> Array:
+	var by: Dictionary = {}
+	var order: Array = []
+	for a in shown:
+		var p: String = str(_split_prefix(str(a.get("text", a.get("id", ""))))[0])
+		if not by.has(p):
+			by[p] = []
+			order.append(p)
+		by[p].append(a)
+	var groups: Array = []
+	var loose: Array = []
+	for p in order:
+		if p.length() >= 3 and (by[p] as Array).size() >= 3:
+			groups.append({"prefix": p, "items": by[p]})
+		else:
+			loose += by[p]
+	return [groups, loose]
+
+
+## The seat the host calls "you" reads "You" on the table.
+static func _who(name: String) -> String:
+	return "You" if name == "you" else name
+
+
+## The room the areas have across, from the same rule as relayout (an area built before the first layout can size its pieces to the panel).
+func _inner_width() -> float:
+	var info := _RM.window_info(world if world != null else self)
+	var m := _RM.metrics(info, "modal")
+	var k: float = info["k"]
+	var vis: Vector2 = info["vis"]
+	var w: float = minf(float(m["width"]) * k * 1.12, vis.x - 2.0 * float(m["margin"]) * k)
+	return w - float(_VT.narr_card_style(k).get_minimum_size().x)
+
+
+func _gap() -> int:
+	var info := _RM.window_info(world if world != null else self)
+	return int(round(float(_RM.metrics(info, "modal")["gap"]) * float(info["k"])))
 
 
 ## A value from the host's JSON: whole numbers come as floats and are shown as integers.
@@ -391,17 +478,18 @@ func _build_area(a: Dictionary) -> Control:
 		"score":
 			if a.has("rows"):
 				var rows: Array = a["rows"]
-				if rows.size() <= 3:
-					var parts: PackedStringArray = []
-					for r in rows:
-						parts.append("%s %s" % [str(r.get("name", "")), _val(r.get("value", ""))])
-					box.add_child(_label("   ".join(parts)))
-				else:  # a slate: name and value in two columns
+				var parts: PackedStringArray = []
+				for r in rows:
+					parts.append("%s %s" % [_who(str(r.get("name", ""))), _val(r.get("value", ""))])
+				var inline := "   ".join(parts)
+				if rows.size() <= 3 and inline.length() <= 34:
+					box.add_child(_label(inline))
+				else:  # a slate: name and value in two columns (long names would wrap mid-score on a phone)
 					var grid := GridContainer.new()
 					grid.columns = 2
 					grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 					for r in rows:
-						var nl := _label(str(r.get("name", "")), true)
+						var nl := _label(_who(str(r.get("name", ""))), true)
 						nl.autowrap_mode = TextServer.AUTOWRAP_OFF
 						nl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 						grid.add_child(nl)
@@ -413,7 +501,7 @@ func _build_area(a: Dictionary) -> Control:
 					box.add_child(grid)
 			else:
 				var names: Array = a.get("names", ["You", "Them"])
-				var t := "%s %d  -  %s %d" % [str(names[0]) if names.size() > 0 else "You", int(a.get("you", 0)), str(names[1]) if names.size() > 1 else "Them", int(a.get("them", 0))]
+				var t := "%s %d  -  %s %d" % [_who(str(names[0])) if names.size() > 0 else "You", int(a.get("you", 0)), _who(str(names[1])) if names.size() > 1 else "Them", int(a.get("them", 0))]
 				if a.has("target"):
 					t += "   (first to %d)" % int(a["target"])
 				box.add_child(_label(t))
@@ -441,7 +529,10 @@ func _build_area(a: Dictionary) -> Control:
 			box.add_child(_tiles_row(a))
 		"grid":
 			var g: Control = GridWidget.new()
-			g.configure(a, self)
+			var ga := a.duplicate()
+			var cols := int(ga.get("w", ga.get("cols", 6)))
+			ga["size"] = clampf(floorf((_inner_width() - 48.0) / float(maxi(cols, 1))), 36.0, 72.0)
+			g.configure(ga, self)
 			box.add_child(g)
 		"faces":
 			box.add_child(_faces_row(a))
@@ -470,6 +561,13 @@ func _cards_row(a: Dictionary) -> Control:
 	var flow := HFlowContainer.new()
 	flow.name = "Cards"
 	var w := float(a.get("size", 56))
+	var n := maxi((a.get("items", []) as Array).size(), int(a.get("count", 0)))
+	if n > 0:
+		w = clampf(floorf((_inner_width() - 8.0 * float(n - 1)) / float(n)), w, 88.0)  # as wide as the row allows, never smaller than the host asked
+	if n == 0:
+		var empty := _label("(nothing yet)", true)
+		empty.name = "Empty"
+		flow.add_child(empty)
 	for item in a.get("items", []):
 		if typeof(item) != TYPE_DICTIONARY:
 			continue
@@ -517,17 +615,24 @@ func _tiles_row(a: Dictionary) -> Control:
 
 
 func _faces_row(a: Dictionary) -> Control:
-	var flow := HFlowContainer.new()
-	flow.name = "Faces"
-	var px := float(a.get("size", 96))
+	var items: Array = []
 	for it in a.get("items", []):
-		if typeof(it) != TYPE_DICTIONARY:
-			continue
+		if typeof(it) == TYPE_DICTIONARY:
+			items.append(it)
+	var cols := 3 if items.size() <= 12 else 4
+	var gap := _gap()
+	var grid := GridContainer.new()
+	grid.name = "Faces"
+	grid.columns = cols
+	grid.add_theme_constant_override("h_separation", gap)
+	grid.add_theme_constant_override("v_separation", gap)
+	var px := maxf(floorf((_inner_width() - float(gap * (cols - 1))) / float(cols)), float(a.get("size", 96)))
+	for it in items:
 		var f: Control = FaceWidget.new()
 		f.configure(it, px, self)
 		f.set_meta("widget", true)
-		flow.add_child(f)
-	return flow
+		grid.add_child(f)
+	return grid
 
 
 func relayout() -> void:
@@ -570,6 +675,18 @@ func relayout() -> void:
 		_VT.style_narr_button(b, k, "choice", float(m["body"]))
 		(b as Button).custom_minimum_size = Vector2(col_w, float(m["button_h"]) * k)
 		(b as Button).alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_action_groups.add_theme_constant_override("separation", int(gap * 0.5))
+	for c in _action_groups.get_children():
+		if c is GridContainer:
+			var gc := c as GridContainer
+			gc.add_theme_constant_override("h_separation", gap)
+			gc.add_theme_constant_override("v_separation", gap)
+			var gw: float = (inner_w - gap * (gc.columns - 1)) / float(gc.columns)
+			for b in gc.get_children():
+				(b as Button).custom_minimum_size = Vector2(gw, float(m["button_h"]) * k)
+		elif c is Label:
+			(c as Label).add_theme_font_size_override("font_size", int(round(float(m["small"]) * k)))
+			(c as Label).add_theme_color_override("font_color", _VT.COLOR_PARCHMENT_DIM)
 	for b in _all_buttons(_areas):
 		_VT.style_narr_button(b, k, "choice", float(m["small"]))
 		(b as Button).custom_minimum_size = Vector2(0, float(m["button_h"]) * k * 0.9)

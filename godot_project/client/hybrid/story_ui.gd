@@ -417,7 +417,7 @@ func _show_dialog(reply: Dictionary) -> void:
 			ack = "Lay out the game"
 		footer.append({"id": "ack", "text": ack, "kind": "primary"})
 	else:
-		footer.append({"id": "leave", "text": "Leave (Esc)"})
+		footer.append({"id": "leave", "text": "Leave" if OS.has_feature("mobile") else "Leave (Esc)"})
 	dialog_card.show_card(str(reply.get("name", "")), str(reply.get("subtitle", "")), reply_text(reply), choices, footer)
 	world._input_locked = true
 

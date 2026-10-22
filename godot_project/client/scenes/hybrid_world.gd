@@ -226,6 +226,7 @@ func _ready() -> void:
 	menu_layer.add_child(menu_card)
 	menu_card.setup(self, "modal", "PauseMenu")
 	menu_card.choice_pressed.connect(_on_menu_choice)
+	menu_card.footer_pressed.connect(_on_menu_choice)
 	if mp:
 		_mp_build_ui()
 		_mp_apply(reply)
@@ -256,7 +257,14 @@ func _era_text(snap: Dictionary) -> String:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if hud != null and story_ui != null:
-		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or minigame_open() or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
+		var covered: bool = story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or minigame_open() or (god != null and god.active) or (trial_mode != null and trial_mode.covering())
+		hud.set_covered(covered)
+		if _mp_status != null:
+			_mp_status.visible = not covered  # the status lines step aside with the HUD (a card or a table has the screen)
+		if _mp_toast != null:
+			_mp_toast.visible = not covered and _mp_toast_t > 0.0
+		if _hud != null:
+			_hud.visible = not covered  # the top strip (menu, title, Magic) too: a modal has the whole screen
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
 	if not paused and not _duel_open:
@@ -910,7 +918,7 @@ func _on_menu_choice(id: String) -> void:
 		"continue":
 			_close_menu()
 		"games":
-			menu_card.show_card("The village's games", "No prize for winning, none for losing: a thing the village does.", games_page_text(), [{"id": "menu", "text": "Back"}], [])
+			menu_card.show_card("The village's games", "No prize for winning, none for losing: a thing the village does.", games_page_text(), [], [{"id": "menu", "text": "Back", "kind": "primary"}])  # Back stays under the scrolling list
 		"menu":
 			_show_menu_root("")
 		"save":
@@ -1492,7 +1500,7 @@ func _mp_status_text(reply: Dictionary) -> String:
 	if LanSession.games_village and story_ui != null:  # the village of games: how many of its games have been found (the menu's Games page lists them)
 		var g: Dictionary = story_ui.journal_data().get("games", {})
 		if not g.is_empty():
-			line += "\nGames found: %d of %d (menu: The village's games)" % [(g.get("found", []) as Array).size(), (g.get("all", []) as Array).size()]
+			line += "\nGames found: %d of %d" % [(g.get("found", []) as Array).size(), (g.get("all", []) as Array).size()]
 	return line
 
 

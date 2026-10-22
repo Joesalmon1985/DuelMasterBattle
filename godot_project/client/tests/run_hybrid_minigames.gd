@@ -32,7 +32,7 @@ func _frames(n: int) -> void:
 func _shot(name: String) -> void:
 	if _dir == "":
 		return
-	await _frames(3)
+	await _frames(16)  # the pop-ins and the staggered deal settle before the picture is taken
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(_dir)
 	root.get_viewport().get_texture().get_image().save_png(_dir.path_join("%s.png" % name))
@@ -200,6 +200,7 @@ func _run() -> void:
 	_world._on_menu()
 	await _frames(3)
 	_check(_world._menu_open and _world.menu_card.has_choice("games"), "the pause menu offers the village's games")
+	await _shot("98_pause_menu")
 	if _world.menu_card.has_choice("games"):
 		_world.menu_card.activate_choice_id("games")
 		await _frames(3)
@@ -207,7 +208,10 @@ func _run() -> void:
 		_check(body.begins_with("Found %d of" % list.size()) or body.find("Found") == 0, "the Games page counts the games found (%s)" % body.substr(0, 40))
 		_check(body.find("WHERE THE GAMES ARE") >= 0 and body.find("[x]") >= 0, "the Games page lists where the games are, with the found ones ticked")
 		await _shot("99_games_page")
-		_world.menu_card.activate_choice_id("menu")
+		var back: Button = _world.menu_card.footer_button("menu")
+		_check(back != null, "the Games page's Back is a footer button (always visible under the list)")
+		if back != null:
+			back.pressed.emit()
 		await _frames(2)
 	_world._close_menu()
 	await _frames(8)  # the card's deferred fit must finish while the world still exists

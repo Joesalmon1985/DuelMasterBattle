@@ -14,7 +14,7 @@ func configure(it: Dictionary, px: float, p_table: Node) -> void:
 	table = p_table
 	_px = px
 	name = "Face_%s" % str(it.get("id", "")).replace(":", "_")
-	custom_minimum_size = Vector2(px, px * 1.5)
+	custom_minimum_size = Vector2(px, px + float(_ns() * 2 + _ts() * 2) + 14.0)
 	clip_contents = true
 	var act: Dictionary = it.get("action", {}) if typeof(it.get("action", {})) == TYPE_DICTIONARY else {}
 	mouse_filter = Control.MOUSE_FILTER_STOP if (not act.is_empty() and not bool(it.get("disabled", false))) else Control.MOUSE_FILTER_IGNORE
@@ -42,6 +42,27 @@ func _figure_frame() -> Array:
 	if tex == null:
 		return []
 	return [tex, art._source_rect(it, tex, e)]
+
+
+## Readable on a phone: the name at 11 to 17 px on up to two lines, the traits at 10 to 15 px (red team round 1).
+func _ns() -> int:
+	return int(clampf(_px * 0.1, 11.0, 17.0))
+
+
+func _ts() -> int:
+	return int(clampf(_px * 0.085, 10.0, 15.0))
+
+
+## Two lines at most: broken at the space nearest the middle when the name does not fit, each line cut with an ellipsis if it still does not.
+static func _two_lines(font: Font, text: String, size_px: int, width: float) -> Array:
+	if font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size_px).x <= width or text.find(" ") < 0:
+		return [_fit(font, text, size_px, width), ""]
+	var mid := text.length() / 2
+	var best := -1
+	for i in text.length():
+		if text[i] == " " and (best < 0 or absi(i - mid) < absi(best - mid)):
+			best = i
+	return [_fit(font, text.substr(0, best), size_px, width), _fit(font, text.substr(best + 1), size_px, width)]
 
 
 func _draw() -> void:
@@ -78,16 +99,21 @@ func _draw() -> void:
 		var xw := font.get_string_size(x, HORIZONTAL_ALIGNMENT_CENTER, -1, fs2).x
 		draw_string(font, r.get_center() + Vector2(-xw * 0.5, fs2 * 0.35), x, HORIZONTAL_ALIGNMENT_LEFT, -1, fs2, Color(0.5, 0.45, 0.55))
 	var nm := str(item.get("name", ""))
-	var ns := int(clampf(_px * 0.12, 9.0, 13.0))
+	var ns := _ns()
 	var ink := Color(0.9, 0.86, 0.75) if not down else Color(0.5, 0.47, 0.55)
-	draw_string(font, Vector2(3, _px + ns + 1), _fit(font, nm, ns, _px - 6.0), HORIZONTAL_ALIGNMENT_LEFT, -1, ns, ink)
+	var lines := _two_lines(font, nm, ns, _px - 6.0)
+	draw_string(font, Vector2(3, _px + ns + 1), str(lines[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, ns, ink)
+	var y := _px + ns + 1
+	if str(lines[1]) != "":
+		y += ns + 2
+		draw_string(font, Vector2(3, y), str(lines[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, ns, ink)
 	var traits: Array = item.get("traits", [])
 	if not traits.is_empty() and not down:
-		var ts := int(ns * 0.85)
+		var ts := _ts()
 		var line1 := ", ".join(PackedStringArray(traits.slice(0, 2)))
 		var line2 := ", ".join(PackedStringArray(traits.slice(2, 4)))
-		draw_string(font, Vector2(3, _px + ns + ts + 4), _fit(font, line1, ts, _px - 6.0), HORIZONTAL_ALIGNMENT_LEFT, -1, ts, Color(0.75, 0.7, 0.6))
-		draw_string(font, Vector2(3, _px + ns + ts * 2 + 7), _fit(font, line2, ts, _px - 6.0), HORIZONTAL_ALIGNMENT_LEFT, -1, ts, Color(0.75, 0.7, 0.6))
+		draw_string(font, Vector2(3, y + ts + 4), _fit(font, line1, ts, _px - 6.0), HORIZONTAL_ALIGNMENT_LEFT, -1, ts, Color(0.78, 0.73, 0.62))
+		draw_string(font, Vector2(3, y + ts * 2 + 7), _fit(font, line2, ts, _px - 6.0), HORIZONTAL_ALIGNMENT_LEFT, -1, ts, Color(0.78, 0.73, 0.62))
 
 
 ## The longest prefix of `text` that fits `width` at this size, with an ellipsis when it was cut.

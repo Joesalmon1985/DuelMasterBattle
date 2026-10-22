@@ -12,6 +12,7 @@ class_name DmbNarrativeCard
 
 const _VT = preload("res://client/scripts/visual_theme.gd")
 const _RM = preload("res://client/ui/responsive_modal.gd")
+const _ScrollCue = preload("res://client/ui/scroll_cue.gd")
 
 signal choice_pressed(id: String)
 signal footer_pressed(id: String)
@@ -90,6 +91,9 @@ func setup(p_world: Node, p_kind: String, p_name: String) -> void:
 	footer_box.name = "Footer"
 	footer_box.alignment = BoxContainer.ALIGNMENT_END
 	_inner.add_child(footer_box)
+	var cue := _ScrollCue.new()
+	add_child(cue)
+	cue.target = scroll  # "more below" when choices or text are hidden under the fold
 	get_viewport().size_changed.connect(relayout)
 	relayout()
 

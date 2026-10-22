@@ -60,6 +60,13 @@ func _run() -> void:
 		DirAccess.make_dir_recursive_absolute(shot_dir)
 		await process_frame
 		root.get_viewport().get_texture().get_image().save_png(shot_dir.path_join("main_menu_wizard_world.png"))
+		menu._show_settings()  # the Settings overlay, for the readability review (docs/POLISH_RED_BLUE.md)
+		for _i in 20:
+			await process_frame
+		await RenderingServer.frame_post_draw
+		root.get_viewport().get_texture().get_image().save_png(shot_dir.path_join("main_menu_settings.png"))
+		menu._overlay.visible = false
+		await process_frame
 	if wrote_legacy:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(adv.SAVE_PATH))
 	# single player: a private session of the one Wizard World (a new campaign here; continue when a save exists)
