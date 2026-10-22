@@ -138,6 +138,8 @@ func _play(game: String, idx: int) -> void:
 	await _shot("%02d_%s_played" % [idx, game])
 	var over := bool(table.view.get("over", false))
 	print("MINIGAMES_RESULT %s" % JSON.stringify({"game": game, "moves": moves, "over": over, "result": str(table.view.get("result", ""))}))
+	if over:
+		_check(table.result_banner_visible(), "%s: the result's banner is up over the table" % game)
 	table.leave()
 	await _frames(4)
 	_check(not _world.minigame_open(), "%s: the table closed" % game)
@@ -181,6 +183,12 @@ func _run() -> void:
 	var j: Dictionary = _world.story_ui.journal_data()
 	var games: Dictionary = j.get("games", {}) if typeof(j.get("games", {})) == TYPE_DICTIONARY else {}
 	_check(not games.is_empty() and games.has("all"), "the journal carries the Games page")
+	# the watching layer (client/hybrid/ambience.gd): a working village shows smoke over its buildings and raises a delivery or two while we wait
+	for _i in 240:
+		await process_frame
+	var amb = _world.ambience
+	print("MINIGAMES_AMBIENCE %s particles=%d" % [JSON.stringify(amb.stats), amb.particle_count()])
+	_check(amb.particle_count() > 0 or int(amb.stats["delivered"]) > 0, "the village shows signs of life (smoke, dust or a ware set down)")
 	await _shot("00_village")
 	var which := OS.get_environment("HYBRID_GAMES")
 	var list: Array = ["rps", "yahtzee", "slide", "whist", "guesswho"] if which == "" else Array(which.split(","))  # one game per widget: signs, dice, the grid, cards, faces

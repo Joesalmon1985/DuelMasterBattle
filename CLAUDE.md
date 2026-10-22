@@ -15,3 +15,9 @@ Approved programme (owner authorised an autonomous implementation run on 12 Oct 
 **Opening RPG and the Trial (16 Oct 2026, 0.3.0, branch `feature/opening-rpg-and-trial`):** mortal apprentices, the permanent world, the free opening, the village situations, the Trial of Champions (zones A to K on the legacy tile builder) and Mira in the Trial. Plan `docs/PLAN_OPENING_RPG_AND_DEATHTRAP.md`, ledger `docs/ledger/OPENING_RPG_PROGRESS.md`, player guide `docs/OPENING_RPG_PLAYER_GUIDE.md`, phone checklist `docs/OPENING_RPG_TWO_PHONE_CHECKLIST.md`, canon `docs/TRIAL_CANON_STATUS.md`, dialogue review `docs/DIALOGUE_REVIEW.md`. Merging into `main` is the owner's call.
 
 **Village minigames (20 Oct 2026, 0.5.0, branch `feature/village-minigames`):** eighteen games played at a conversation with the early village's people (plan `docs/PLAN_VILLAGE_MINIGAMES.md`, ledger `docs/ledger/MINIGAMES_PROGRESS.md`, guide `docs/MINIGAMES_GUIDE.md`); rules in `WizardRTSHybrid/wizard_rts/minigames/`, the developer's village of games behind the developer menu (`DMB_DEV_MENU=1`) or the host flag `--games-village`. No reward for winning or losing. Merging into `main` is the owner's call.
+
+**Polish for watching (22 Oct 2026, 0.5.1, branch `feature/polish-watching-feel`):** presentation only, on top of the minigames branch. The world's
+watching layer `godot_project/client/hybrid/ambience.gd` (deliveries, chimney smoke, construction arcs, completions, felled trees, the waiting crate,
+rationed procedural sounds), the table's effects (`client/minigames/table_fx.gd`), press feel and pop-ins for every themed button and card. Design
+and the per-event checklist `docs/POLISH_WATCHING_FEEL.md`, ledger `docs/ledger/POLISH_PROGRESS.md`. Nothing feeds back to the simulation. Merging
+into `main` is the owner's call.

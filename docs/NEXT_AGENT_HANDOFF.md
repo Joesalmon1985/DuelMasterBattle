@@ -1,5 +1,19 @@
 # Next agent handoff
 
+## 22 Oct 2026: polish for watching, 0.5.1 (branch `feature/polish-watching-feel`, from `feature/village-minigames` at `69165b95`)
+
+The owner asked (22 Oct 2026, three and a half hours) for the minigame interfaces and the world to be polished along the lines of a "satisfying to
+watch" brief: cause and effect visible, a productive rhythm, tiny celebrations, state changes animated, anticipation, a sound mix that can run for ten
+minutes. Design and the per-event checklist: `docs/POLISH_WATCHING_FEEL.md`; ledger and the session log: `docs/ledger/POLISH_PROGRESS.md`. In one
+paragraph: `godot_project/client/hybrid/ambience.gd` watches the snapshots (`cargo`/`carrying`, `working`, `constructing`, a tree's `stage`, `status_text`)
+and draws dust, the ware's Widelands icon drifting into the building, chimney smoke, a construction arc, a gold ring and sparks at completion, wood
+chips at a felling, a pulsing crate over a building that has waited six seconds; four new procedural sounds in `client/scripts/sfx.gd`, rationed to what
+is on screen. The table got `client/minigames/table_fx.gd` (tap rings, a result banner, sparks), a pop-in, a message flash, a staggered deal, tumbling
+dice and a shake on a refused move; `visual_theme.gd` got `press_feel`, `pop_in`, `fade_in`, `shake`, applied to every themed button, the narrative card
+and the main menu's overlays. Nothing feeds back to the Python simulation; the Python suite is untouched except `GAME_VERSION = "0.5.1"`. Not done:
+sway on fields, road wear and traffic density, camera drift, day and night, an ambient bed (all listed in the design note). The headed
+`run_hybrid_minigames.gd` checks the signs of life and the result banner. Merging into `main` is the owner's call.
+
 ## 20 Oct 2026: the village minigames, 0.5.0 (branch `feature/village-minigames`, from `feature/player-stress-and-progression` at `336d3dec`)
 
 The owner approved `docs/PLAN_VILLAGE_MINIGAMES.md` ("go", with the defaults: five-card draw, a due rung waits for a table, 0.5.0 / protocol 4 / Android

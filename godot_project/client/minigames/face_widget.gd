@@ -26,7 +26,7 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or (event is InputEventScreenTouch and event.pressed):
 		accept_event()
-		table.widget_act(act)
+		table.widget_act(act, self)
 
 
 func _figure_frame() -> Array:

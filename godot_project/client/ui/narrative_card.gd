@@ -136,8 +136,13 @@ func show_card(title: String, subtitle: String, body: String, choices: Array, fo
 		_footer_ids.append(str(c["id"]))
 		if str(c.get("kind", "choice")) == "primary" and _primary_id == "":
 			_primary_id = "footer:" + str(c["id"])
+	var was := visible
 	visible = true
 	relayout()
+	if was:
+		_VT.fade_in(body_box)  # the next page of a card that is already up
+	else:
+		_VT.pop_in(panel)
 
 
 func hide_card() -> void:
@@ -244,6 +249,7 @@ func _place(m: Dictionary, k: float) -> void:
 	sz.x = minf(sz.x, vis.x)
 	sz.y = minf(sz.y, vis.y)
 	panel.size = sz
+	panel.pivot_offset = sz * 0.5
 	var x := (vis.x - sz.x) * 0.5
 	var y := (vis.y - sz.y) * 0.5
 	if kind == "sheet":

@@ -68,6 +68,28 @@ func denied() -> void:
 	_play("denied", 0.5)
 
 
+# ---- the economy's small sounds (client/hybrid/ambience.gd): quiet, short, rationed by the caller
+
+## A ware set down: a soft wooden knock.
+func clack() -> void:
+	_play("clack", 0.22)
+
+
+## An axe meeting a trunk.
+func chop() -> void:
+	_play("chop", 0.26)
+
+
+## A building finished: a soft rising chime, quieter than the duel's ready chime.
+func complete() -> void:
+	_play("complete", 0.4)
+
+
+## A page or a table laid: a short soft swish for menus and cards.
+func swish() -> void:
+	_play("swish", 0.3)
+
+
 func _play(kind: String, volume: float) -> void:
 	if not enabled():
 		return
@@ -119,6 +141,14 @@ func _build(kind: String) -> AudioStreamWAV:
 			notes = [[392.0, 0.16, "saw"], [330.0, 0.16, "saw"], [262.0, 0.4, "saw"]]
 		"denied":
 			notes = [[220.0, 0.06, "square"], [200.0, 0.08, "square"]]
+		"clack":
+			notes = [[190.0, 0.025, "square"], [140.0, 0.045, "sine"]]
+		"chop":
+			notes = [[110.0, 0.03, "saw"], [90.0, 0.06, "square"]]
+		"complete":
+			notes = [[659.0, 0.07, "sine"], [880.0, 0.08, "sine"], [1174.0, 0.2, "sine"]]
+		"swish":
+			notes = [[520.0, 0.03, "sine"], [700.0, 0.05, "sine"]]
 		_:
 			notes = [[440.0, 0.05, "sine"]]
 	return _synth(notes)

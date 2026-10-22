@@ -16,6 +16,7 @@ const DieWidget = preload("res://client/minigames/die_widget.gd")
 const TileWidget = preload("res://client/minigames/tile_widget.gd")
 const GridWidget = preload("res://client/minigames/grid_widget.gd")
 const FaceWidget = preload("res://client/minigames/face_widget.gd")
+const TableFx = preload("res://client/minigames/table_fx.gd")
 
 const SIGN_COLOURS := [Color(0.95, 0.45, 0.2), Color(0.35, 0.75, 0.35), Color(0.4, 0.65, 0.95), Color(0.95, 0.9, 0.55), Color(0.6, 0.6, 0.62), Color(0.5, 0.35, 0.6)]
 
@@ -41,6 +42,9 @@ var _leave: Button
 var _action_buttons: Array = []
 var _grid_selection := ""  # a grid cell picked, waiting for a direction
 var _pending_timer := 0.0  # the reaction and memory games: time from the last view to the answer, sent with the action
+var _fx: Control  # the tap rings, the result's sparks and banner (table_fx.gd), over the panel
+var _was_over := false  # the result is celebrated once
+var _dice_prev: Dictionary = {}  # die name -> value at the last render, so a thrown die tumbles
 
 
 func setup(p_world: Node) -> void:
@@ -101,6 +105,8 @@ func setup(p_world: Node) -> void:
 	_leave.text = "Leave the table (Esc)"
 	_leave.pressed.connect(leave)
 	_footer.add_child(_leave)
+	_fx = TableFx.new()
+	add_child(_fx)
 	get_viewport().size_changed.connect(relayout)
 
 
@@ -113,8 +119,11 @@ func open(reply: Dictionary) -> void:
 	meta = {"game": str(reply.get("game", "")), "npc": str(reply.get("npc", "")), "host": str(reply.get("host", "")), "catalogue_title": str(reply.get("catalogue_title", ""))}
 	_grid_selection = ""
 	busy = false
+	_was_over = false
+	_dice_prev = {}
 	visible = true
 	apply(reply.get("view", {}))
+	_VT.pop_in(_panel)
 	var sfx := get_node_or_null("/root/Sfx")
 	if sfx:
 		sfx.place()
@@ -130,6 +139,8 @@ func close() -> void:
 	visible = false
 	view = {}
 	_action_buttons = []
+	if _fx != null:
+		_fx.clear()
 
 
 ## One action to the host; the reply's view replaces the picture. `extra` adds fields the widgets collected (a grid move, a reaction time).
@@ -151,18 +162,45 @@ func act(action: Dictionary, extra: Dictionary = {}) -> void:
 			sfx.tap()
 		_grid_selection = ""
 		apply(reply.get("view", {}))
+		_flash_message()
 		var vv: Dictionary = view
-		if bool(vv.get("over", false)) and sfx:
-			match str(vv.get("result", "")):
-				"win": sfx.victory()
-				"lose": sfx.defeat()
+		if bool(vv.get("over", false)) and not _was_over:
+			_was_over = true
+			_celebrate(str(vv.get("result", "")))
+			if sfx:
+				match str(vv.get("result", "")):
+					"win": sfx.victory()
+					"lose": sfx.defeat()
 	else:
 		if sfx:
 			sfx.denied()
 		if reply.has("view"):
 			apply(reply.get("view", {}))
 		_message.text = "That is not a move now (%s)." % str(reply.get("reason", ""))
+		_message.add_theme_color_override("font_color", _VT.COLOR_DANGER)
+		_VT.shake(_panel)
 	acted.emit(reply)
+
+
+## The host's words brighten for a moment when a move lands, so the eye goes to what changed.
+func _flash_message() -> void:
+	_message.modulate = Color(1.35, 1.25, 0.95)
+	var tw := _message.create_tween()
+	tw.tween_property(_message, "modulate", Color.WHITE, 0.4)
+
+
+## The result on the table: a banner over the panel, gold sparks for a win, a grey settle for a loss (table_fx.gd). The table stays to look at.
+func _celebrate(result: String) -> void:
+	if _fx == null:
+		return
+	var info := _RM.window_info(world if world != null else self)
+	var m := _RM.metrics(info, "modal")
+	var words: String = {"win": "You win!", "lose": "Not this time", "draw": "A draw"}.get(result, "Finished")
+	_fx.result(result, words, Rect2(_panel.position, _panel.size), int(round(float(m["title"]) * float(info["k"]) * 1.35)))
+
+
+func result_banner_visible() -> bool:
+	return _fx != null and _fx.banner_visible()
 
 
 func leave() -> void:
@@ -196,6 +234,8 @@ func _process(delta: float) -> void:
 # ---------------------------------------------------------------- drawing
 
 func _render() -> void:
+	var dice_before := _dice_prev
+	_dice_prev = {}
 	for c in _areas.get_children():
 		_areas.remove_child(c)
 		c.queue_free()
@@ -241,6 +281,33 @@ func _render() -> void:
 		i += 1
 	_leave.text = "Back to %s (Esc)" % meta.get("host", "them") if over else "Leave the table (Esc)"
 	relayout()
+	_animate_widgets(dice_before)
+
+
+## The pieces arrive one after another (a deal, not a blink), and a die whose value changed tumbles before it settles.
+func _animate_widgets(dice_before: Dictionary) -> void:
+	var widgets := _all_widgets(_areas)
+	var i := 0
+	for w in widgets:
+		var c := w as Control
+		if c.has_method("start_roll"):
+			_dice_prev[c.name] = int(c.get("value"))
+			if dice_before.has(c.name) and int(dice_before[c.name]) != int(c.get("value")) and int(c.get("value")) > 0 and not bool(c.get("held")):
+				c.start_roll()
+		c.modulate = Color(1, 1, 1, 0)
+		var tw := c.create_tween()
+		tw.tween_interval(minf(0.025 * float(i), 0.35))
+		tw.tween_property(c, "modulate:a", 1.0, 0.16)
+		i += 1
+
+
+func _all_widgets(node: Node) -> Array:
+	var out: Array = []
+	if node.has_meta("widget"):
+		out.append(node)
+	for c in node.get_children():
+		out += _all_widgets(c)
+	return out
 
 
 func _on_action(a: Dictionary) -> void:
@@ -346,8 +413,10 @@ func _build_area(a: Dictionary) -> Control:
 	return box
 
 
-## Widgets call this with an action they composed (a card picked, a die held, a grid move).
-func widget_act(action: Dictionary) -> void:
+## Widgets call this with an action they composed (a card picked, a die held, a grid move). `from` is the widget, so a ring can spread from it.
+func widget_act(action: Dictionary, from: Control = null) -> void:
+	if from != null and _fx != null:
+		_fx.tap_ring(from.get_global_rect().get_center())
 	_on_action(action)
 
 
@@ -361,11 +430,13 @@ func _cards_row(a: Dictionary) -> Control:
 		var c: Control = CardWidget.new()
 		c.setup(item, w, self)
 		c.name = "Card_%s" % str(item.get("id", "%s%s" % [item.get("rank", ""), item.get("suit", "")])).replace(":", "_")
+		c.set_meta("widget", true)
 		flow.add_child(c)
 	if int(a.get("count", 0)) > 0 and flow.get_child_count() == 0:  # a hidden hand: so many face-down cards
 		for i in int(a["count"]):
 			var c: Control = CardWidget.new()
 			c.setup({"down": true}, w, self)
+			c.set_meta("widget", true)
 			flow.add_child(c)
 	return flow
 
@@ -379,7 +450,8 @@ func _dice_row(a: Dictionary) -> Control:
 			continue
 		var d: Control = DieWidget.new()
 		d.setup(item, px, self)
-		d.name = "Die_%s" % str(item.get("id", item.get("value", "")))
+		d.name = "Die_%s" % str(item.get("id", flow.get_child_count()))  # by its place in the row when the host gives no id: the same die tumbles when its value changes
+		d.set_meta("widget", true)
 		flow.add_child(d)
 	return flow
 
@@ -393,6 +465,7 @@ func _tiles_row(a: Dictionary) -> Control:
 			continue
 		var t: Control = TileWidget.new()
 		t.from_item(item, px, self)
+		t.set_meta("widget", true)
 		flow.add_child(t)
 	return flow
 
@@ -406,6 +479,7 @@ func _faces_row(a: Dictionary) -> Control:
 			continue
 		var f: Control = FaceWidget.new()
 		f.configure(it, px, self)
+		f.set_meta("widget", true)
 		flow.add_child(f)
 	return flow
 
@@ -479,6 +553,7 @@ func _fit(m: Dictionary, k: float, w: float, h: float, gap: int) -> void:
 	sz.x = w
 	sz.y = minf(sz.y, h)
 	_panel.size = sz
+	_panel.pivot_offset = sz * 0.5
 	_panel.position = Vector2((vis.x - sz.x) * 0.5, maxf((vis.y - sz.y) * 0.5, float(m["margin"]) * k))
 
 

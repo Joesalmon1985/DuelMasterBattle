@@ -220,9 +220,24 @@ func draw_entity(canvas: CanvasItem, entity: Dictionary, tpx: int) -> void:
 			_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 			_draw_health(canvas, entity, anchor)
 			return
+	var sway := _sway(entity, anchor)
+	if sway != Transform2D.IDENTITY:
+		canvas.draw_set_transform_matrix(sway)
 	canvas.draw_texture_rect_region(tex, Rect2(top_left, frame_size * scale), src)
+	if sway != Transform2D.IDENTITY:
+		canvas.draw_set_transform_matrix(Transform2D.IDENTITY)
 	_draw_cargo(canvas, entity, anchor, float(hotspot[1]) * scale)
 	_draw_health(canvas, entity, anchor)
+
+
+## The forest breathes (docs/POLISH_WATCHING_FEEL.md): a standing tree is sheared a little about its base, each on its own phase, so its crown sways
+## while its roots stay put. Presentation only; a felled tree and a stump do not move.
+func _sway(entity: Dictionary, anchor: Vector2) -> Transform2D:
+	if str(entity.get("kind", "")) != "tree" or str(entity.get("stage", "")) in ["felled", "stump", ""]:
+		return Transform2D.IDENTITY
+	var phase := float(hash(str(entity.get("id", ""))) % 628) / 100.0
+	var sh := 0.022 * sin(Time.get_ticks_msec() / 1000.0 * 0.8 + phase)
+	return Transform2D(Vector2(1, 0), Vector2(sh, 1), Vector2(-sh * anchor.y, 0))
 
 
 ## An OpenRA building sits on its real footprint: one source cell (24 px) per tile, top-left at the footprint's corner, so the

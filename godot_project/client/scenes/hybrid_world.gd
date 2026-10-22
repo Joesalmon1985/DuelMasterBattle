@@ -11,6 +11,7 @@ const StoryUi = preload("res://client/hybrid/story_ui.gd")
 const CampaignUi = preload("res://client/hybrid/campaign_ui.gd")
 const TrialMode = preload("res://client/hybrid/trial_mode.gd")
 const MinigameTable = preload("res://client/minigames/minigame_table.gd")
+const Ambience = preload("res://client/hybrid/ambience.gd")
 const CampaignHud = preload("res://client/ui/campaign_hud.gd")
 const NarrativeCard = preload("res://client/ui/narrative_card.gd")
 const ResponsiveModal = preload("res://client/ui/responsive_modal.gd")
@@ -41,6 +42,7 @@ var _duel_layer: CanvasLayer
 var _duel_host: Control
 var _font: Font
 var _art = HybridArt.new()
+var ambience = Ambience.new()  # the watching layer: deliveries, smoke, completions, felled trees (client/hybrid/ambience.gd; presentation only)
 var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
@@ -130,6 +132,7 @@ func _ready() -> void:
 	apply_zoom()
 	get_viewport().size_changed.connect(apply_zoom)
 	_art.load_catalogue()
+	ambience.setup(self, _art)
 	_camera.position_smoothing_enabled = false
 	# Overworld leaves the scene fader opaque until an area fade. This scene
 	# does not load an area, so hide it or the world is covered.
@@ -247,6 +250,8 @@ func _process(delta: float) -> void:
 		hud.set_covered(story_ui.covering() or (campaign_ui != null and campaign_ui.covering()) or _duel_open or _menu_open or minigame_open() or (god != null and god.active) or (trial_mode != null and trial_mode.covering()))
 	_autosave_tick(delta)
 	_art.industry.begin_frame(delta)
+	if not paused and not _duel_open:
+		ambience.step(delta, float(_snapshot.get("time_scale", 1)))
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
 	if camera_focus != Vector2.INF:
@@ -678,6 +683,7 @@ func _apply_snapshot(snap: Dictionary) -> void:
 				_note_solid(e)
 	_snapshot = snap
 	_update_hud(snap)
+	ambience.observe(snap)
 	_blocked.clear()
 	for item in snap.get("blocked", []):
 		if item is Array and item.size() >= 2:
@@ -720,6 +726,7 @@ func _draw() -> void:
 	var vy0 := int(floor(tl.y / TPX)) - margin
 	var vx1 := int(ceil(br.x / TPX)) + margin
 	var vy1 := int(ceil(br.y / TPX)) + margin
+	ambience.view_bounds = Rect2i(vx0, vy0, vx1 - vx0 + 1, vy1 - vy0 + 1)
 	for road in _snapshot.get("roads", {}).values():
 		for tile in road:
 			if tile is Array and int(tile[0]) >= vx0 and int(tile[0]) <= vx1 and int(tile[1]) >= vy0 and int(tile[1]) <= vy1:
@@ -750,6 +757,7 @@ func _draw() -> void:
 	for entity in rows:
 		_art.draw_entity(self, entity, TPX)
 	_art.draw_effects(self, _snapshot.get("effects", []), TPX)
+	ambience.draw(self, TPX)
 	_draw_resurrection()
 	_draw_pest_fx()
 	if god != null:

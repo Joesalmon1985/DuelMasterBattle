@@ -133,7 +133,50 @@ static func disabled_button_style() -> StyleBoxFlat:
 	return s
 
 
+## Press feel (docs/POLISH_WATCHING_FEEL.md): the button dips to 96% while held and springs back. Connected once; safe to call on every restyle.
+static func press_feel(b: Button) -> void:
+	if b.has_meta("press_feel"):
+		return
+	b.set_meta("press_feel", true)
+	b.button_down.connect(func() -> void:
+		b.pivot_offset = b.size * 0.5
+		var tw := b.create_tween()
+		tw.tween_property(b, "scale", Vector2(0.96, 0.96), 0.06).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT))
+	b.button_up.connect(func() -> void:
+		var tw := b.create_tween()
+		tw.tween_property(b, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT))
+
+
+## A card or panel arriving: it fades up and settles from 96% about its centre. The pivot is read from the size now; a panel sized later is only
+## a hair off-centre at 96%, which the eye cannot see.
+static func pop_in(c: Control, seconds: float = 0.22) -> void:
+	c.pivot_offset = c.size * 0.5
+	c.modulate = Color(1, 1, 1, 0)
+	c.scale = Vector2(0.96, 0.96)
+	var tw := c.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(c, "modulate:a", 1.0, seconds)
+	tw.tween_property(c, "scale", Vector2.ONE, seconds * 1.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## New words on a card that is already up: a short fade, not a second arrival.
+static func fade_in(c: Control, seconds: float = 0.14) -> void:
+	c.modulate = Color(1, 1, 1, 0.25)
+	var tw := c.create_tween()
+	tw.tween_property(c, "modulate:a", 1.0, seconds)
+
+
+## A refused move: the panel shivers sideways and comes back to where it was.
+static func shake(c: Control, px: float = 8.0) -> void:
+	var origin := c.position
+	var tw := c.create_tween()
+	for i in 4:
+		tw.tween_property(c, "position:x", origin.x + (px if i % 2 == 0 else -px) * (1.0 - float(i) * 0.2), 0.045)
+	tw.tween_property(c, "position:x", origin.x, 0.05)
+
+
 static func style_primary_button(b: Button) -> void:
+	press_feel(b)
 	b.add_theme_stylebox_override("normal", gem_button_style(false))
 	b.add_theme_stylebox_override("hover", gem_button_style(false))
 	b.add_theme_stylebox_override("pressed", gem_button_style(true))
@@ -146,6 +189,7 @@ static func style_primary_button(b: Button) -> void:
 
 
 static func style_secondary_button(b: Button) -> void:
+	press_feel(b)
 	b.add_theme_stylebox_override("normal", secondary_button_style())
 	b.add_theme_stylebox_override("hover", secondary_button_style())
 	var p := secondary_button_style()
@@ -256,6 +300,7 @@ static func narr_button_style(k: float, kind: String, state: String) -> StyleBox
 
 
 static func style_narr_button(b: Button, k: float, kind: String, font_px: float) -> void:
+	press_feel(b)
 	for st in ["normal", "hover", "pressed", "disabled"]:
 		b.add_theme_stylebox_override(st, narr_button_style(k, kind, st))
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())

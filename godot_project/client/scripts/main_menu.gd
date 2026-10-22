@@ -19,6 +19,7 @@ const _Art = preload("res://client/scripts/art.gd")
 var _panel_vbox: VBoxContainer
 var _overlay: ColorRect
 var _overlay_vbox: VBoxContainer
+var _overlay_panel: PanelContainer
 var single_btn: Button
 var host_btn: Button
 var join_btn: Button
@@ -147,6 +148,7 @@ func _build() -> void:
 	panel.add_theme_stylebox_override("panel", _VT.panel_style(20))
 	panel.custom_minimum_size = Vector2(560, 0)
 	center.add_child(panel)
+	_overlay_panel = panel
 	_overlay_vbox = VBoxContainer.new()
 	_overlay_vbox.add_theme_constant_override("separation", 14)
 	panel.add_child(_overlay_vbox)
@@ -264,7 +266,7 @@ func _show_continue_choice() -> void:
 		fresh.pressed.connect(_confirm_new_campaign)
 	_overlay_vbox.add_child(fresh)
 	_overlay_close_button("Back")
-	_overlay.visible = true
+	_show_overlay()
 
 
 func _confirm_new_campaign() -> void:
@@ -291,7 +293,7 @@ func _confirm_new_campaign() -> void:
 		_begin_single(true, true))
 	_overlay_vbox.add_child(yes)
 	_overlay_close_button("Keep %s" % who)
-	_overlay.visible = true
+	_show_overlay()
 
 
 ## Settings: the one way to start a whole new world, confirmed twice; the old saves are archived by the host, never deleted.
@@ -322,7 +324,7 @@ func _confirm_new_world(second: bool = false) -> void:
 		yes.pressed.connect(func(): _confirm_new_world(true))
 	_overlay_vbox.add_child(yes)
 	_overlay_close_button("Keep my world")
-	_overlay.visible = true
+	_show_overlay()
 
 
 ## The developer's total reset, confirmed once: every saved world on this device is deleted (not archived), and the next world is built from nothing
@@ -350,10 +352,21 @@ func _confirm_fresh_world() -> void:
 		_begin_single(false, false, false, true))
 	_overlay_vbox.add_child(yes)
 	_overlay_close_button("Keep my worlds")
-	_overlay.visible = true
+	_show_overlay()
 
 
 # ---------------------------------------------------------------- settings
+
+## An overlay arriving: the panel pops in with a short swish (docs/POLISH_WATCHING_FEEL.md).
+func _show_overlay() -> void:
+	var was := _overlay.visible
+	_overlay.visible = true
+	if not was and _overlay_panel != null:
+		_VT.pop_in(_overlay_panel)
+		var sfx := get_node_or_null("/root/Sfx")
+		if sfx:
+			sfx.swish()
+
 
 func _clear_overlay() -> void:
 	for c in _overlay_vbox.get_children():
@@ -428,7 +441,7 @@ func _show_settings() -> void:
 	_VT.apply_label_secondary(about)
 	_overlay_vbox.add_child(about)
 	_overlay_close_button("Back")
-	_overlay.visible = true
+	_show_overlay()
 
 
 class _Vignette:

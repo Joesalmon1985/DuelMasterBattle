@@ -17,6 +17,32 @@ var face := Color(0.93, 0.9, 0.82)
 var action: Dictionary = {}
 var table: Node = null
 var _px := 64.0
+var _roll_left := 0.0  # seconds of tumbling left (start_roll)
+var _roll_tick := 0.0
+var _shown := 0
+
+
+## A thrown die tumbles: random pips for a moment, then the value the host sent.
+func start_roll() -> void:
+	_roll_left = 0.38
+	_roll_tick = 0.0
+	_shown = value
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if _roll_left <= 0.0:
+		set_process(false)
+		return
+	_roll_left -= delta
+	_roll_tick -= delta
+	if _roll_tick <= 0.0:
+		_roll_tick = 0.05
+		_shown = 1 + (randi() % 6)
+		queue_redraw()
+	if _roll_left <= 0.0:
+		_shown = value
+		queue_redraw()
 
 
 func setup(item: Dictionary, px: float, p_table: Node) -> void:
@@ -39,7 +65,7 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT) or (event is InputEventScreenTouch and event.pressed):
 		accept_event()
-		table.widget_act(action)
+		table.widget_act(action, self)
 
 
 func _draw() -> void:
@@ -56,8 +82,9 @@ func _draw() -> void:
 	draw_style_box(style, r)
 	if value <= 0:
 		return
+	var shown := _shown if _roll_left > 0.0 else value
 	var pr := size.x * 0.075
-	for p in PIPS.get(value, []):
+	for p in PIPS.get(shown, []):
 		draw_circle(r.position + Vector2(p.x * r.size.x, p.y * r.size.y), pr, Color(0.12, 0.1, 0.14))
 	if held:
 		var font := get_theme_default_font()

@@ -50,7 +50,7 @@ func _move(dir: String) -> void:
 	for m in area.get("moves", []):
 		if str(m.get("block", "")) == selected and str(m.get("dir", "")) == dir:
 			table._grid_selection = selected
-			table.widget_act({"id": "move", "block": selected, "dir": dir})
+			table.widget_act({"id": "move", "block": selected, "dir": dir}, self)
 			return
 	var sfx := get_node_or_null("/root/Sfx")
 	if sfx:
