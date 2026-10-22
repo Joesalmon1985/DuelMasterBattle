@@ -75,6 +75,16 @@ func clack() -> void:
 	_play("clack", 0.22)
 
 
+## Stone or metal set down: a harder knock.
+func tock() -> void:
+	_play("tock", 0.2)
+
+
+## Food or drink set down: a soft pat.
+func pat() -> void:
+	_play("pat", 0.18)
+
+
 ## An axe meeting a trunk.
 func chop() -> void:
 	_play("chop", 0.26)
@@ -145,6 +155,10 @@ func _build(kind: String) -> AudioStreamWAV:
 			notes = [[190.0, 0.025, "square"], [140.0, 0.045, "sine"]]
 		"chop":
 			notes = [[110.0, 0.03, "saw"], [90.0, 0.06, "square"]]
+		"tock":
+			notes = [[330.0, 0.02, "square"], [250.0, 0.04, "sine"]]
+		"pat":
+			notes = [[150.0, 0.03, "sine"], [110.0, 0.05, "sine"]]
 		"complete":
 			notes = [[659.0, 0.07, "sine"], [880.0, 0.08, "sine"], [1174.0, 0.2, "sine"]]
 		"swish":

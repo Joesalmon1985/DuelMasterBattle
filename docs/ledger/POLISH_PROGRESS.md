@@ -19,11 +19,31 @@ commits add only the polish files. The APK built from this tree carries them.
 - [x] P4 Version 0.5.1 (Android code 6; protocol 4 unchanged, the messages did not change shape), docs, the headed test's two new checks.
 - [ ] P5 Headed evidence, the APK, the phone install (see the session log).
 
-## Session log
+## Session log (real clock)
 
-- 22 Oct 2026 19:14 Start. Branch cut from `feature/village-minigames`. Read `hybrid_world.gd`, `hybrid_art.gd`, `industry_view.gd`, the table and
-  widgets, `visual_theme.gd`, `narrative_card.gd`, `sfx.gd`, the snapshot's entity rows (`working`, `constructing`, `cargo`, `carrying`, `stage`,
-  `status_text`).
-- 19:30 to 19:55 Wrote `ambience.gd`, `table_fx.gd`, the sounds, the theme helpers, the table and widget changes, the card and menu pops.
-  Godot `--check-only` on every changed script: clean (the `LanSession` autoload errors are the checker's, as before).
-- 19:56 Headed `run_hybrid_minigames.gd` (rps, yahtzee, slide, whist, guesswho) started with `HYBRID_SHOT_DIR=WizardRTSHybrid/docs/evidence/polish`.
+- 22 Oct 2026 19:14 Start. Branch cut from `feature/village-minigames` at `69165b95`. Read `hybrid_world.gd`, `hybrid_art.gd`, `industry_view.gd`, the
+  table and widgets, `visual_theme.gd`, `narrative_card.gd`, `sfx.gd`, the snapshot's entity rows (`working`, `constructing`, `cargo`, `carrying`,
+  `stage`, `status_text`).
+- 19:20 to 19:30 First wave: `ambience.gd`, `table_fx.gd`, the sounds, the theme helpers, the table and widget changes, the card and menu pops.
+  Godot `--check-only` on every changed script: clean (the `LanSession` autoload errors are the checker's, as before). Headed
+  `run_hybrid_minigames.gd` (rps, yahtzee, slide, whist, guesswho): `HYBRID_MINIGAMES_OK`, `MINIGAMES_AMBIENCE` delivered 2, picked 3, one sound.
+  Python `test_minigames_village.py` + `test_lan_multiplayer.py`: 29 pass. Committed `0b141084`.
+- 19:31 to 19:45 Second wave: the forest sways, the HUD's gains line, the day's light, the host's figure on the table, the banner on a band placed
+  from the screen, material-specific delivery sounds, the HUD names a finished building, the main menu's living backdrop. Checker clean;
+  `MENU_ROUTES_OK`.
+- 21:22 A rerun of the headed minigames test failed to open the village: two Godot instances and their Python hosts from earlier runs were still
+  holding port 8765 (the client reached a stale host). Killed by pid; rerun on a clean port, chained to the APK build.
+
+## Testing on the phone
+
+1. Build (done by the session when the headed test passed): `Build Android APK.bat` at the repository root, or
+   `powershell -NoProfile -ExecutionPolicy Bypass -File WizardRTSHybrid\scriptsndroiduild_apk.ps1`. The APK lands at
+   `buildndroid\DuelMasterBattle-debug.apk` (0.5.1, Android version code 6).
+2. Plug the phone in by USB with USB debugging on; accept the "allow USB debugging" prompt on the phone.
+3. Install: `Install APK On Phones.bat` (or `WizardRTSHybrid\scriptsndroid\install_apk.ps1`). It upgrades the 0.5.0 build in place (same
+   package, higher version code); saves are kept.
+4. On the phone: Settings > "Developer: the village of games" for the village with every host; or Play Single Player for the real world.
+   What to look for: smoke over working buildings, dust and a drifting ware icon when a carrier sets a load down, the quiet "+n log" line under the
+   HUD title every few seconds, the gold arc over a site under construction and the ring, sparks and HUD line when it finishes, the forest swaying,
+   the light shifting over eight minutes; at a table: the host's figure by their name, rings where you tap, tumbling dice, the banner and sparks at
+   the end; every button dips when pressed; the main menu's motes.

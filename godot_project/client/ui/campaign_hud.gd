@@ -19,6 +19,8 @@ var stats_label: Label  # the developer-style read-out ("Cycle 0 | Era: prehisto
 var journal_button: Button
 var notice_label: Label  # a short message ("Walk closer to talk to X.") that fades after a few seconds
 var _notice_until := 0
+var stock_label: Label  # what the world gained in the last few seconds ("+3 log · +1 granite"), a quiet line that fades (docs/POLISH_WATCHING_FEEL.md)
+var _stock_until := 0
 var _box: VBoxContainer
 var _stats_open := false
 var objective := ""
@@ -54,6 +56,11 @@ func setup(p_world: Node) -> void:
 	notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	notice_label.visible = false
 	_box.add_child(notice_label)
+	stock_label = Label.new()
+	stock_label.name = "Stock"
+	stock_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	stock_label.visible = false
+	_box.add_child(stock_label)
 	journal_button = Button.new()
 	journal_button.name = "JournalButton"
 	journal_button.text = "Journal (J)"
@@ -101,6 +108,8 @@ func relayout() -> void:
 	objective_label.add_theme_color_override("font_color", _VT.COLOR_PARCHMENT)
 	notice_label.add_theme_font_size_override("font_size", int(round(float(m["small"]) * k * 1.05)))
 	notice_label.add_theme_color_override("font_color", _VT.COLOR_GOLD)
+	stock_label.add_theme_font_size_override("font_size", int(round(float(m["small"]) * k * 0.95)))
+	stock_label.add_theme_color_override("font_color", _VT.COLOR_PARCHMENT_DIM)
 	stats_label.add_theme_font_size_override("font_size", int(round(float(m["small"]) * k * 0.95)))
 	stats_label.add_theme_color_override("font_color", _VT.COLOR_PARCHMENT_DIM)
 	_VT.style_narr_button(journal_button, k, "choice", float(m["small"]))
@@ -124,7 +133,22 @@ func flash(text: String, seconds := 4.0) -> void:
 		panel.reset_size()
 
 
+## The economy's gains since the last tick, as one quiet line that fades after `seconds`.
+func stock_tick(text: String, seconds := 2.8) -> void:
+	stock_label.text = text
+	stock_label.visible = true
+	stock_label.modulate = Color(1.25, 1.2, 1.0)
+	var tw := stock_label.create_tween()
+	tw.tween_property(stock_label, "modulate", Color.WHITE, 0.5)
+	_stock_until = Time.get_ticks_msec() + int(seconds * 1000.0)
+	if panel != null:
+		panel.reset_size()
+
+
 func _process(_delta: float) -> void:
 	if notice_label != null and notice_label.visible and Time.get_ticks_msec() > _notice_until:
 		notice_label.visible = false
+		panel.reset_size()
+	if stock_label != null and stock_label.visible and Time.get_ticks_msec() > _stock_until:
+		stock_label.visible = false
 		panel.reset_size()

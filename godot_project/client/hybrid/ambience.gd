@@ -94,6 +94,7 @@ func observe(snap: Dictionary) -> void:
 				rec["hp"] = float(e.get("hp", 1))
 				rec["max_hp"] = float(e.get("max_hp", 1))
 				rec["faction"] = str(e.get("faction_name", ""))
+				rec["label"] = str(e.get("label", ""))
 			"tree":
 				rec["stage"] = str(e.get("stage", ""))
 			"unit":
@@ -140,6 +141,8 @@ func _watch_building(id: String, was: Dictionary, rec: Dictionary) -> void:
 	if not was.is_empty() and bool(was.get("constructing", false)) and not bool(rec["constructing"]) and not bool(rec["destroyed"]):
 		stats["completed"] += 1
 		_completed(tile)
+		if world != null and "hud" in world and world.hud != null and str(rec.get("label", "")) != "":
+			world.hud.flash("%s is finished." % str(rec["label"]).capitalize(), 3.5)
 	if bool(rec["working"]) and not _smoke_acc.has(id):
 		_smoke_acc[id] = _rng.randf_range(0.0, SMOKE_EVERY)
 	if not was.is_empty() and not bool(was.get("working", false)) and bool(rec["working"]):
@@ -206,7 +209,19 @@ func _delivered(pos: Vector2, ware: String) -> void:
 		if not icon.is_empty():
 			tex = art._tex(str(icon.get("id", "")))
 	_add({"kind": "ware", "pos": pos + Vector2(0.5, 0.1), "vel": Vector2(0.0, -0.55), "t": 0.0, "life": 0.9, "size": 0.42, "col": Color(1, 1, 1, 1), "tex": tex})
-	_sound("clack")
+	_sound(_sound_of(ware))
+
+
+## Each material has its own voice (section 5 of the brief): stone and metal knock, food lands softly, wood clacks.
+static func _sound_of(ware: String) -> String:
+	var w := ware.to_lower()
+	for s in ["granite", "marble", "stone", "iron", "coal", "gold", "ore", "quartz", "diamond", "brick", "clay"]:
+		if w.find(s) >= 0:
+			return "tock"
+	for s in ["fish", "meat", "bread", "water", "beer", "wine", "ration", "snack", "meal", "honey", "fruit", "grain", "wheat", "flour", "corn", "milk", "cassava", "chocolate", "mead"]:
+		if w.find(s) >= 0:
+			return "pat"
+	return "clack"
 
 
 func _picked(pos: Vector2) -> void:

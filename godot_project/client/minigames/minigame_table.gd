@@ -43,6 +43,8 @@ var _action_buttons: Array = []
 var _grid_selection := ""  # a grid cell picked, waiting for a direction
 var _pending_timer := 0.0  # the reaction and memory games: time from the last view to the answer, sent with the action
 var _fx: Control  # the tap rings, the result's sparks and banner (table_fx.gd), over the panel
+var _sub_row: HBoxContainer
+var _host_pic: TextureRect  # the host's own standing picture beside "with X" (the sprite the world draws for them)
 var _was_over := false  # the result is celebrated once
 var _dice_prev: Dictionary = {}  # die name -> value at the last render, so a thrown die tumbles
 
@@ -69,10 +71,23 @@ func setup(p_world: Node) -> void:
 	_title.name = "Title"
 	_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_inner.add_child(_title)
+	_sub_row = HBoxContainer.new()
+	_sub_row.name = "SubRow"
+	_inner.add_child(_sub_row)
+	_host_pic = TextureRect.new()
+	_host_pic.name = "HostPic"
+	_host_pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_host_pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_host_pic.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_host_pic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_host_pic.visible = false
+	_sub_row.add_child(_host_pic)
 	_subtitle = Label.new()
 	_subtitle.name = "Subtitle"
 	_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_inner.add_child(_subtitle)
+	_subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_subtitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_sub_row.add_child(_subtitle)
 	_scroll = ScrollContainer.new()
 	_scroll.name = "Scroll"
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -195,8 +210,11 @@ func _celebrate(result: String) -> void:
 		return
 	var info := _RM.window_info(world if world != null else self)
 	var m := _RM.metrics(info, "modal")
+	var k: float = info["k"]
+	var vis: Vector2 = info["vis"]
 	var words: String = {"win": "You win!", "lose": "Not this time", "draw": "A draw"}.get(result, "Finished")
-	_fx.result(result, words, Rect2(_panel.position, _panel.size), int(round(float(m["title"]) * float(info["k"]) * 1.35)))
+	var margin := float(m["margin"]) * k
+	_fx.result(result, words, Rect2(Vector2(margin, vis.y * 0.12), Vector2(vis.x - 2.0 * margin, vis.y * 0.76)), int(round(float(m["title"]) * k * 1.35)))
 
 
 func result_banner_visible() -> bool:
@@ -251,6 +269,8 @@ func _render() -> void:
 	_title.text = str(view.get("title", meta.get("catalogue_title", "")))
 	_subtitle.text = "with %s" % meta.get("host", "") if str(meta.get("host", "")) != "" else ""
 	_subtitle.visible = _subtitle.text != ""
+	_host_pic.texture = _host_picture()
+	_host_pic.visible = _host_pic.texture != null and _subtitle.visible
 	for a in view.get("areas", []):
 		if typeof(a) == TYPE_DICTIONARY:
 			var node := _build_area(a)
@@ -308,6 +328,32 @@ func _all_widgets(node: Node) -> Array:
 	for c in node.get_children():
 		out += _all_widgets(c)
 	return out
+
+
+## The host's standing picture: the entity the conversation holds, drawn through the world's art catalogue (no PNG of its own).
+func _host_picture() -> Texture2D:
+	if world == null or not ("_art" in world) or world._art == null or not ("_snapshot" in world):
+		return null
+	var npc := str(meta.get("npc", ""))
+	for e in world._snapshot.get("entities", []):
+		if typeof(e) != TYPE_DICTIONARY or str(e.get("id", "")) != npc:
+			continue
+		var ent: Dictionary = e.duplicate()
+		ent["anim"] = "idle"
+		ent["facing"] = "s"
+		ent["_static"] = true
+		var art = world._art
+		var it: Dictionary = art._item_for(ent)
+		if it.is_empty():
+			return null
+		var tex: Texture2D = art._frame_texture(it, ent)
+		if tex == null:
+			return null
+		var at := AtlasTexture.new()
+		at.atlas = tex
+		at.region = art._source_rect(it, tex, ent)
+		return at
+	return null
 
 
 func _on_action(a: Dictionary) -> void:
@@ -510,6 +556,8 @@ func relayout() -> void:
 	_title.add_theme_color_override("font_color", _VT.COLOR_GOLD)
 	_subtitle.add_theme_font_size_override("font_size", int(round(float(m["small"]) * k)))
 	_subtitle.add_theme_color_override("font_color", _VT.COLOR_PARCHMENT_DIM)
+	_sub_row.add_theme_constant_override("separation", gap)
+	_host_pic.custom_minimum_size = Vector2(44.0 * k, 44.0 * k)
 	_message.add_theme_font_size_override("font_size", int(round(float(m["body"]) * k)))
 	_message.add_theme_color_override("font_color", _VT.COLOR_PARCHMENT)
 	_log.add_theme_font_size_override("font_size", int(round(float(m["small"]) * k)))

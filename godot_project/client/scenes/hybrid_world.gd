@@ -43,6 +43,12 @@ var _duel_host: Control
 var _font: Font
 var _art = HybridArt.new()
 var ambience = Ambience.new()  # the watching layer: deliveries, smoke, completions, felled trees (client/hybrid/ambience.gd; presentation only)
+var _stock_prev: Dictionary = {}  # economy_totals at the last snapshot, for the HUD's gains line
+var _stock_gain: Dictionary = {}  # ware -> gained since the last tick
+var _stock_acc := 0.0
+const STOCK_TICK_SECONDS := 3.0
+var _daylight: CanvasModulate  # the day's light over the world (presentation only; the UI layers are not tinted)
+const DAY_MS := 480000.0  # eight minutes of game time from dawn to dawn
 var _camera_nudge := Vector2.ZERO
 var camera_focus := Vector2.INF
 var god: Node
@@ -133,6 +139,9 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(apply_zoom)
 	_art.load_catalogue()
 	ambience.setup(self, _art)
+	_daylight = CanvasModulate.new()
+	_daylight.name = "Daylight"
+	add_child(_daylight)
 	_camera.position_smoothing_enabled = false
 	# Overworld leaves the scene fader opaque until an area fade. This scene
 	# does not load an area, so hide it or the world is covered.
@@ -252,6 +261,8 @@ func _process(delta: float) -> void:
 	_art.industry.begin_frame(delta)
 	if not paused and not _duel_open:
 		ambience.step(delta, float(_snapshot.get("time_scale", 1)))
+	_stock_tick(delta)
+	_daylight_tick()
 	if _camera_nudge != Vector2.ZERO:
 		_camera.position += _camera_nudge
 	if camera_focus != Vector2.INF:
@@ -965,10 +976,55 @@ func reset_progress_notice() -> void:
 	_progress = {}
 
 
+## The world's gains (docs/POLISH_WATCHING_FEEL.md, "progress accumulates visibly"): the totals that rose since the last snapshot are gathered and
+## shown as one quiet HUD line every few seconds ("+3 log · +1 granite"); what was spent shows at the building that used it.
+func _note_stock(snap: Dictionary) -> void:
+	var totals: Dictionary = snap.get("economy_totals", {}) if typeof(snap.get("economy_totals", {})) == TYPE_DICTIONARY else {}
+	if not _stock_prev.is_empty():
+		for ware in totals:
+			var d := int(totals[ware]) - int(_stock_prev.get(ware, 0))
+			if d > 0:
+				_stock_gain[ware] = int(_stock_gain.get(ware, 0)) + d
+	_stock_prev = totals.duplicate()
+
+
+func _stock_tick(delta: float) -> void:
+	_stock_acc += delta
+	if _stock_acc < STOCK_TICK_SECONDS:
+		return
+	_stock_acc = 0.0
+	if _stock_gain.is_empty() or hud == null:
+		return
+	var parts: PackedStringArray = []
+	var wares: Array = _stock_gain.keys()
+	wares.sort_custom(func(a, b) -> bool: return int(_stock_gain[a]) > int(_stock_gain[b]))
+	for ware in wares.slice(0, 4):
+		parts.append("+%d %s" % [int(_stock_gain[ware]), str(ware).replace("_", " ")])
+	if wares.size() > 4:
+		parts.append("…")
+	_stock_gain = {}
+	hud.stock_tick(" · ".join(parts))
+
+
+## Gentle light over the day (section 10 of the brief): a world begins in the morning, dims towards a blue dusk and comes back; never dark enough
+## to hide anything. Only the world's canvas is tinted; every UI layer keeps its colours. The Trial's zones are not tinted.
+func _daylight_tick() -> void:
+	if _daylight == null:
+		return
+	if _snapshot.is_empty() or (trial_mode != null and trial_mode.active):
+		_daylight.color = Color.WHITE
+		return
+	var phase := fmod(float(_snapshot.get("game_ms", 0)) / DAY_MS + 0.3, 1.0)
+	var n := 0.5 - 0.5 * cos(phase * TAU)  # 0 at midnight, 1 at noon
+	var day := smoothstep(0.0, 1.0, n)
+	_daylight.color = Color(0.74, 0.76, 0.92).lerp(Color.WHITE, day)
+
+
 func _update_hud(snap: Dictionary) -> void:
 	if hud == null:
 		return
 	_notice_progress()
+	_note_stock(snap)
 	var era: Dictionary = snap.get("era", {})
 	var hist: Dictionary = snap.get("history", {})
 	var title := "%s - Cycle %d" % [str(era.get("era", "")).capitalize(), int(hist.get("cycle", 0))] if not era.is_empty() else "Wizard RTS"

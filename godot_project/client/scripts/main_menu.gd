@@ -11,6 +11,7 @@ extends Control
 ## The older adventure (Ashwell, Trial Day), Quick Duel and the G01 testing entry are developer tools: they live in dev_menu.tscn and are reachable
 ## only through dev_mode.gd's switches. This menu never reads the old adventure's save, so old save data cannot send a player anywhere.
 
+const _Backdrop = preload("res://client/ui/menu_backdrop.gd")
 const _VT = preload("res://client/scripts/visual_theme.gd")
 const _SaveData = preload("res://client/scripts/save_data.gd")
 const _DevMode = preload("res://client/scripts/dev_mode.gd")
@@ -53,6 +54,7 @@ func _build() -> void:
 	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(glow)
+	add_child(_Backdrop.new())  # motes rising behind the title (client/ui/menu_backdrop.gd)
 
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
