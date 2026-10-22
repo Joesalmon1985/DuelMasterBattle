@@ -139,6 +139,7 @@ func _play(game: String, idx: int) -> void:
 	var over := bool(table.view.get("over", false))
 	print("MINIGAMES_RESULT %s" % JSON.stringify({"game": game, "moves": moves, "over": over, "result": str(table.view.get("result", ""))}))
 	if over:
+		await _frames(5)  # the banner waits for the panel to settle
 		_check(table.result_banner_visible(), "%s: the result's banner is up over the table" % game)
 	table.leave()
 	await _frames(4)

@@ -219,6 +219,10 @@ func _flash_message() -> void:
 func _celebrate(result: String) -> void:
 	if _fx == null:
 		return
+	for _i in 3:  # the panel settles over the deferred fit passes: the band is placed from the settled title row, not the last view's
+		await get_tree().process_frame
+	if not visible or _fx == null:
+		return
 	var info := _RM.window_info(world if world != null else self)
 	var m := _RM.metrics(info, "modal")
 	var k: float = info["k"]
