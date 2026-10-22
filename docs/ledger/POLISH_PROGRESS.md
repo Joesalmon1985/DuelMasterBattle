@@ -41,6 +41,10 @@ commits add only the polish files. The APK built from this tree carries them.
   the Settings rows and the LAN launcher's home. Each round verified by a headed run with screenshots. Found on the way: `run_menu_routes.gd`
   left its single-player host on port 8765, which made the next minigames run fail to open the village; the test now stops its host.
 
+- 22:45 to 22:55 Red/blue round 5 verified (`HYBRID_MINIGAMES_OK`, `MENU_ROUTES_OK`), the result's band placed from the settled layout, the
+  branch pushed to `origin/feature/polish-watching-feel` (eight commits after `69165b95`), the final APK built from `4ecc3282`.
+  Not this branch's and left uncommitted in the checkout: another session's rival-name and name-prompt work (see the note at the top).
+
 ## Testing on the phone
 
 1. Build (done by the session when the headed test passed): `Build Android APK.bat` at the repository root, or
