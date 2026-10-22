@@ -96,6 +96,48 @@ Headed run `HYBRID_MINIGAMES_OK` over Hanabi, Guess Who, Oh Hell and RPS.
 | B15 (R21) | A cards row with nothing in it shows "(nothing yet)" in the small face. |
 | B16 (R22) | Cards grow to the width the row has (up to 88 px, never below what the host asked), so a hand of five is five 88 px cards and a hand of thirteen wraps at the host's size. |
 
-## Round 4
+## Round 4: the menus
 
-(after the round 3 evidence: the Settings overlay and the pause menu are the next screens on the list)
+Screens: `main_menu_settings.png` (the Settings overlay, taken by `run_menu_routes.gd`), the LAN launcher's home from the LAN evidence.
+
+### Red team
+
+| # | Screen | Finding |
+|---|---|---|
+| R24 | Settings | Each setting is a label with a 30 px toggle at the far right: the thumb lands on the words and nothing happens. |
+| R25 | Settings | Two "Developer:" buttons sit among the player's settings; acceptable for a development build, noted for the release. |
+| R26 | LAN launcher home | Three buttons at the top of an otherwise empty screen; the panorama's pixels at screen scale are noise behind the text. |
+| R27 | Main menu | The player's figure beside the wizard is still the boxy one (R13, parked: art). |
+
+### Blue team
+
+| # | Fix |
+|---|---|
+| B17 (R24) | The whole row is the switch: the text is the CheckButton's own, 56 px tall, full width, with press feel. |
+| B18 (R26) | The home page centres itself between two spacers; a quiet veil over the panorama, as the main menu has. Forms (host, join) stay at the top for the keyboard. |
+| Parked R25, R27 | Release packaging and art. |
+
+## Round 5
+
+Round 3 and 4 verified on screen (`01_ohhell_table.png`: five 88 px cards, "Bid …" with unnumbered buttons; `04_blackjack_played.png`;
+`98_pause_menu.png`; `main_menu_settings.png`: whole-row switches; `lan_home.png`: centred under a veil). Headed runs `HYBRID_MINIGAMES_OK`,
+`MENU_ROUTES_OK`.
+
+### Red team
+
+| # | Screen | Finding |
+|---|---|---|
+| R28 | Oh Hell, Whist | The new "(nothing yet)" printed one letter per line: a wrapping label inside a flow container has no width (a blue-team bug from round 3). |
+| R29 | Blackjack, any finished game | The result's band sat a third of the way down the screen, over the dealer's cards and a heading the player still reads. |
+| R30 | Pause menu | Nothing to report: four clear choices, the primary one gold. |
+
+### Blue team
+
+| # | Fix |
+|---|---|
+| B19 (R28) | The placeholder's autowrap is off. |
+| B20 (R29) | The band sits on the table's title row, the one place it covers nothing the player is reading; the sparks fall from there. |
+
+### Parked across rounds
+
+R10 (tick glyphs), R12/R23 (sprite-less faces), R13/R27 (the player's figure on the main menu), R18 (Rummikub tile size), R19 (hanging indents), R25 (developer entries in Settings).

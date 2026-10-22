@@ -17,7 +17,8 @@ commits add only the polish files. The APK built from this tree carries them.
   the shake and red message on a refused move; widgets pass themselves to `widget_act`.
 - [x] P3 Menus and cards: `press_feel` on every themed button, `pop_in` on cards and main-menu overlays, `fade_in` for a card's next page, `swish`.
 - [x] P4 Version 0.5.1 (Android code 6; protocol 4 unchanged, the messages did not change shape), docs, the headed test's two new checks.
-- [ ] P5 Headed evidence, the APK, the phone install (see the session log).
+- [x] P5 Headed evidence and the APK (`build/android/DuelMasterBattle-debug.apk`); the phone install is the owner's step (below).
+- [x] P6 Red team / blue team rounds 1 to 4 (`docs/POLISH_RED_BLUE.md`).
 
 ## Session log (real clock)
 
@@ -34,13 +35,19 @@ commits add only the polish files. The APK built from this tree carries them.
 - 21:22 A rerun of the headed minigames test failed to open the village: two Godot instances and their Python hosts from earlier runs were still
   holding port 8765 (the client reached a stale host). Killed by pid; rerun on a clean port, chained to the APK build.
 
+- 21:25 The chained run passed and the 0.5.1 APK built (`ANDROID_APK_OK`, second wave).
+- 21:30 onwards The owner asked for red team / blue team rounds over every screen (`docs/POLISH_RED_BLUE.md`): rounds 1 to 4 fixed the faces,
+  grouped actions, scroll cues, key hints, the status block and top strip under modals, the Games page's Back, the host's figure for residents,
+  the Settings rows and the LAN launcher's home. Each round verified by a headed run with screenshots. Found on the way: `run_menu_routes.gd`
+  left its single-player host on port 8765, which made the next minigames run fail to open the village; the test now stops its host.
+
 ## Testing on the phone
 
 1. Build (done by the session when the headed test passed): `Build Android APK.bat` at the repository root, or
-   `powershell -NoProfile -ExecutionPolicy Bypass -File WizardRTSHybrid\scriptsndroiduild_apk.ps1`. The APK lands at
-   `buildndroid\DuelMasterBattle-debug.apk` (0.5.1, Android version code 6).
+   `powershell -NoProfile -ExecutionPolicy Bypass -File WizardRTSHybrid/scripts/android/build_apk.ps1`. The APK lands at
+   `build/android/DuelMasterBattle-debug.apk` (0.5.1, Android version code 6).
 2. Plug the phone in by USB with USB debugging on; accept the "allow USB debugging" prompt on the phone.
-3. Install: `Install APK On Phones.bat` (or `WizardRTSHybrid\scriptsndroid\install_apk.ps1`). It upgrades the 0.5.0 build in place (same
+3. Install: `Install APK On Phones.bat` (or `WizardRTSHybrid/scripts/android/install_apk.ps1`). It upgrades the 0.5.0 build in place (same
    package, higher version code); saves are kept.
 4. On the phone: Settings > "Developer: the village of games" for the village with every host; or Play Single Player for the real world.
    What to look for: smoke over working buildings, dust and a drifting ware icon when a carrier sets a load down, the quiet "+n log" line under the

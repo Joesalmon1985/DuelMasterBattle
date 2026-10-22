@@ -54,7 +54,7 @@ func result(kind: String, text: String, rect: Rect2, font_px: int) -> void:
 		"win":
 			for i in 42:
 				var x := rect.position.x + _rng.randf_range(0.1, 0.9) * rect.size.x
-				_parts.append({"pos": Vector2(x, rect.position.y + 10.0), "vel": Vector2(_rng.randf_range(-60, 60), _rng.randf_range(-40, 80)), "t": 0.0,
+				_parts.append({"pos": Vector2(x, rect.position.y + rect.size.y * 0.5), "vel": Vector2(_rng.randf_range(-60, 60), _rng.randf_range(-40, 80)), "t": 0.0,
 					"life": _rng.randf_range(0.9, 1.6), "size": _rng.randf_range(4.0, 9.0), "col": [Color(1.0, 0.85, 0.35), Color(0.95, 0.6, 0.3), Color(1.0, 0.95, 0.7)][i % 3], "kind": "spark"})
 		"lose":
 			col = _VT.COLOR_PARCHMENT
@@ -62,14 +62,15 @@ func result(kind: String, text: String, rect: Rect2, font_px: int) -> void:
 		_:
 			col = _VT.COLOR_PARCHMENT
 			_parts.append({"pos": rect.get_center(), "vel": Vector2.ZERO, "t": 0.0, "life": 0.7, "size": rect.size.x * 0.25, "col": Color(0.9, 0.85, 0.7, 0.6), "kind": "ring"})
+	_banner.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_banner.text = text
 	_banner.add_theme_font_size_override("font_size", font_px)
 	_banner.add_theme_color_override("font_color", col)
 	_banner.add_theme_color_override("font_outline_color", Color(0.05, 0.03, 0.08, 0.9))
 	_banner.add_theme_constant_override("outline_size", maxi(4, int(font_px * 0.18)))
 	var w := rect.size.x
-	_banner.size = Vector2(w, font_px * 1.6)
-	_banner.position = Vector2(rect.position.x, rect.position.y + rect.size.y * 0.3)
+	_banner.size = Vector2(w, maxf(rect.size.y, font_px * 1.4))
+	_banner.position = rect.position
 	_banner.pivot_offset = _banner.size * 0.5
 	_banner.visible = true
 	_banner.modulate = Color(1, 1, 1, 0)

@@ -50,6 +50,8 @@ func _ready() -> void:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	margin.add_child(scroll)
 	_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_root.size_flags_vertical = Control.SIZE_EXPAND_FILL  # so a short page (home) can centre itself with spacers; forms stay at the top
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_root)
 	match LanSession.mode:
 		"host":
@@ -75,6 +77,11 @@ func _build_background() -> void:
 	pano.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pano.modulate = Color(0.6, 0.6, 0.7)
 	add_child(pano)
+	var shade := ColorRect.new()  # the panorama's pixels at screen scale are noise behind text: a quiet veil, as the main menu has
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.color = Color(0.03, 0.02, 0.07, 0.45)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(shade)
 
 
 # ---------------------------------------------------------------- page building
@@ -187,11 +194,20 @@ func show_page(name: String) -> void:
 
 
 func _build_home() -> void:
+	_spacer()  # three buttons sit in the middle of the screen, not at the top of an empty one (red team round 4)
 	_title("Local Wi-Fi Play")
 	_text("Two phones, one Wi-Fi, one living world. No internet needed.")
 	_button("HOST LOCAL GAME", true, func(): LanSession.mode = "host"; show_page("host"))
 	_button("JOIN LOCAL GAME", true, func(): LanSession.mode = "join"; show_page("join"))
 	_button("Back", false, _back_to_main)
+	_spacer()
+
+
+func _spacer() -> void:
+	var c := Control.new()
+	c.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(c)
 
 
 func _build_host() -> void:

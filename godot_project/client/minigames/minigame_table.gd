@@ -225,7 +225,10 @@ func _celebrate(result: String) -> void:
 	var vis: Vector2 = info["vis"]
 	var words: String = {"win": "You win!", "lose": "Not this time", "draw": "A draw"}.get(result, "Finished")
 	var margin := float(m["margin"]) * k
-	_fx.result(result, words, Rect2(Vector2(margin, vis.y * 0.12), Vector2(vis.x - 2.0 * margin, vis.y * 0.76)), int(round(float(m["title"]) * k * 1.35)))
+	# the banner sits on the title row (the one place it covers nothing the player is still reading); the sparks fall from the top of the screen
+	var tr := _title.get_global_rect()
+	var band := Rect2(Vector2(margin, tr.position.y - 6.0 * k), Vector2(vis.x - 2.0 * margin, maxf(tr.size.y, float(m["title"]) * k) + 12.0 * k))
+	_fx.result(result, words, band, int(round(float(m["title"]) * k * 1.2)))
 
 
 func result_banner_visible() -> bool:
@@ -567,6 +570,7 @@ func _cards_row(a: Dictionary) -> Control:
 	if n == 0:
 		var empty := _label("(nothing yet)", true)
 		empty.name = "Empty"
+		empty.autowrap_mode = TextServer.AUTOWRAP_OFF  # a flow container gives a wrapping label no width: it would print one letter per line
 		flow.add_child(empty)
 	for item in a.get("items", []):
 		if typeof(item) != TYPE_DICTIONARY:

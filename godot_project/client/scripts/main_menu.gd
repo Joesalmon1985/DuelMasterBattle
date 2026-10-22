@@ -398,21 +398,23 @@ func _show_settings() -> void:
 	]
 	for r in rows:
 		var key: String = r[0]
-		var h := HBoxContainer.new()
-		h.add_theme_constant_override("separation", 12)
-		var lbl := Label.new()
-		lbl.text = r[1]
-		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		_VT.apply_label_secondary(lbl)
-		h.add_child(lbl)
+		# the whole row is the switch (a phone's thumb lands on the words, not on a 30 px toggle): the text is the CheckButton's own
 		var check := CheckButton.new()
+		check.name = "Setting_" + key
+		check.text = r[1]
 		check.focus_mode = Control.FOCUS_NONE
-		check.custom_minimum_size = Vector2(0, 48)
+		check.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		check.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		check.custom_minimum_size = Vector2(0, 56)
+		check.add_theme_font_size_override("font_size", _VT.FONT_SECONDARY)
+		check.add_theme_color_override("font_color", _VT.COLOR_TEXT_SECONDARY)
+		check.add_theme_color_override("font_hover_color", _VT.COLOR_TEXT_PRIMARY)
+		check.add_theme_color_override("font_pressed_color", _VT.COLOR_TEXT_PRIMARY)
+		check.add_theme_color_override("font_hover_pressed_color", _VT.COLOR_TEXT_PRIMARY)
 		check.button_pressed = bool(_SaveData.get_setting(key, r[2]))
 		check.toggled.connect(func(on): _SaveData.set_setting(key, on))
-		h.add_child(check)
-		_overlay_vbox.add_child(h)
+		_VT.press_feel(check)
+		_overlay_vbox.add_child(check)
 	if LanSession.has_wizard_save():
 		var nw := Button.new()
 		nw.name = "StartNewWorldButton"

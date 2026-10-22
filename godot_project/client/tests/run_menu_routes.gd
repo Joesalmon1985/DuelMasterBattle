@@ -67,6 +67,19 @@ func _run() -> void:
 		root.get_viewport().get_texture().get_image().save_png(shot_dir.path_join("main_menu_settings.png"))
 		menu._overlay.visible = false
 		await process_frame
+		# the LAN launcher's home page (Host / Join), for the same review
+		var was_mode: String = lan.mode
+		lan.mode = ""
+		var launcher = load("res://client/scenes/lan_menu.tscn").instantiate()
+		root.add_child(launcher)
+		for _i in 20:
+			await process_frame
+		await RenderingServer.frame_post_draw
+		root.get_viewport().get_texture().get_image().save_png(shot_dir.path_join("lan_home.png"))
+		root.remove_child(launcher)
+		launcher.queue_free()
+		lan.mode = was_mode
+		await process_frame
 	if wrote_legacy:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(adv.SAVE_PATH))
 	# single player: a private session of the one Wizard World (a new campaign here; continue when a save exists)
@@ -129,7 +142,9 @@ func _run() -> void:
 			_fail("main_menu.gd references %s" % needle)
 	lan.reset()
 	if _failed:
+		lan.stop_local_host()
 		quit(1)
 		return
+	lan.stop_local_host()  # the single-player route started a host on the LAN port: a later headed run must find the port free
 	print("MENU_ROUTES_OK")
 	quit(0)
