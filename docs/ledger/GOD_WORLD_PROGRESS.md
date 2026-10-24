@@ -265,7 +265,7 @@ the combined one with retries from the checkpoint up to `--max-retries` and hone
 | P17 | verified | `test_p16_*`: the fourth unit outbreaks to every neighbour, once per location per chain |
 | P18 | verified | `test_p18_*`: the bottom card, three units, the shuffled discard on top; the rate track `[2,2,2,3,3,4,4]`; `test_p19_*` the three losses |
 | P19 | verified | treat removes the canonical count once (`rules.treat`); the viewer shows the formation's `n`, nothing else can change it |
-| P20 | verified (honest) | `test_p21_*`: `public_view` hides the decks; over 60 crises on seed 0's island the coordinator wins 21 and loses 39 (outbreaks 22, deck 11, reserve 6); the baseline before the rendezvous rule won 16 of 40 |
+| P20 | verified (honest) | `test_p21_*`: `public_view` hides the decks. Benchmark (120 crises on seeds 0 and 1's islands, `coordinator.TUNING`): the first coordinator won 35%; with the play habits added afterwards (the dispatcher brokers the researcher to the collector, the medic never collects, a collector near a countermeasure keeps to a post, shorter flights to trouble, the cards seen going back on top at an escalation weighted as coming soon, families near the end of their reserve treated first, the quarantine specialist standing where she shields most) it wins 59% (71 of 120: outbreaks 33, reserve 11, deck 5). Ablations: the broker and the medic rule carry most of the gain |
 | P21 | verified | `test_p17_*` (four cures win once; a cured family needs its cards at a post), `test_p19_*` (every defeat condition) |
 | P22 | verified | `test_god_world_gate.py::test_p22_*`: ten points first then the campaign, and the campaign first then ten points, each transitions exactly once with the recorded cause |
 | P23 | verified | `test_p20_*` (the campaign's state is identical after a JSON round trip and six more turns), `test_p24_*` (a world save mid-campaign replays turn for turn), `test_p09_*` (mid-build), `test_p03_*` (the boundary) |
@@ -275,7 +275,7 @@ the combined one with retries from the checkpoint up to `--max-retries` and hone
 
 - Economy-only (`--economy-only`, `docs/evidence/god_world/corpus_economy.json`): 21 seeds through four ages, no stall; ages run longer than before
   the brief because production places unlock one roll at a time and the island is larger (10.2 to 22.8 game-minutes an age over 84 age results, 33.1 to 55.2 s wall a seed).
-- Combined (`docs/evidence/god_world/corpus_combined.json`, retries from the checkpoint up to 6): 21 seeds; 9 complete all four ages (seeds 1, 2, 4, 6, 7, 8, 12, 16, 17), 12 stop in an age whose campaign was lost seven times running (the retry limit; no seed hit the pulse budget); 62 campaigns won and 124 lost (outbreaks 62, the player deck 36, a reserve 26), 112 retries; a won campaign takes 7.3 to 13.0 game-minutes (median 11.7, 21 to 38 turns), so a won age runs 11.8 to 23 game-minutes; 46 to 186 s wall a seed. The campaign is the limiting condition in every stalled seed: the economy had qualified or would have. This is reported as it is; the coordinator's strength is the open lever (see the limits below).
+- Combined (`docs/evidence/god_world/corpus_combined.json`, retries from the checkpoint up to 6, the tuned coordinator): 21 seeds; 18 complete all four ages, 3 (seeds 11, 15, 18) stop in an age whose campaign was lost seven times running (no seed hit the pulse budget); 81 campaigns won and 76 lost (outbreaks 56, a reserve 14, the player deck 6), 73 retries; a won campaign takes 7.3 to 12.7 game-minutes (median 10.0, 21 to 37 turns); a won age runs 11.8 to 66.8 game-minutes (the long ones waited through lost campaigns); 45 to 157 s wall a seed. Before the coordinator's play habits the same corpus completed 9 seeds with 62 campaigns won and 124 lost (112 retries). Reported as it is.
 
 ### Headed evidence (24 Oct 2026, 450x800 window)
 
@@ -287,8 +287,8 @@ each age.
 
 ### Not done, and honest limits
 
-- The coordinator wins about a third of crises; the corpus retries from the checkpoint and records every loss. A stronger cooperative plan (card
-  concentration, forecasting) is the next lever if the owner wants more wins.
+- The coordinator wins about six crises in ten (it won a third before the play habits of 24 Oct evening); the corpus retries from the checkpoint
+  and records every loss. Further gains would need real planning over several turns (card routing, outbreak forecasting).
 - No phone run and no device figures for the 384-tile island (P24); the PC viewer holds the frame at village zoom.
 - A real age boundary with frozen villages is covered by tests, not by a headed capture (the ages runner opens fresh ages).
 - The builder's own sprite does not exist in the frozen roster: the carrier with a hard hat and the OpenRA engineer stand in (D51).
@@ -303,4 +303,6 @@ each age.
   `embedding.build_scaled`, 4 s to build); the dressing's search window scaled with the map.
 - 20:00 to 21:10 The campaign: rules, scenario, coordinator, bridge, presentation, gate, retry op, inspect, the HUD panel and the loss card; the
   coordinator measured over 60 crises; the headed test's campaign section (a camera focus settles a frame later than the call: position asked after).
-- 21:10 onward Corpora, the ages capture, the documentation, the commit.
+- 21:10 to 22:30 Corpora, the ages capture, the documentation, commit `19968f2a`.
+- 22:30 onward The owner asked for a stronger coordinator: `coordinator.TUNING` habits benchmarked one by one (`scratchpad coord_bench`), 35% to 59%
+  over 120 crises; the combined corpus rerun.

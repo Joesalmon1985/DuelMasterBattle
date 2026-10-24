@@ -12,6 +12,8 @@ from typing import Any
 from . import rules as R
 
 MAX_PLAN_STEPS = 40
+# the play's tunable habits (benchmarked in the ledger; every one of them is a choice within the published rules, never a rule)
+TUNING = {"treat_skip_ones": True, "collector_to_post": True, "dispatch_broker": True, "medic_never_collects": True, "quarantine_station": True, "flight_dist": 2, "hot_cards": True, "reserve_weight": True}
 
 
 def bfs(links: dict[str, list[str]], start: str) -> dict[str, int]:
@@ -48,9 +50,15 @@ def danger(view: dict[str, Any], nid: str) -> float:
         return 0.0
     worst = max(loc["units"].values())
     score = total * total * 2.0 + (18.0 if worst >= 3 else (5.0 if worst == 2 else 0.0))
+    if TUNING["reserve_weight"]:
+        for f, u in loc["units"].items():
+            if u and int(view["families"][f]["reserve"]) <= 6:
+                score += 6.0 * u  # a family near the end of its reserve loses the campaign by itself
     for o in view["links"].get(nid, []):
         if max(view["locations"][o]["units"].values()) >= 3:
             score += 3.0  # an outbreak next door would spill here and chain
+    if TUNING["hot_cards"] and nid in view.get("hot", []):
+        score += 4.0 + 4.0 * total  # its card went back on top at the last escalation: it is coming again soon
     return score
 
 
@@ -61,7 +69,10 @@ def collectors(view: dict[str, Any]) -> dict[str, str]:
         if view["families"][f]["cured"]:
             continue
         best = None
+        others_hold = any(len(R.hand_by_family(view, o)[f]) > 0 and o["role"] != "medic" for o in view["responders"])
         for r in view["responders"]:
+            if TUNING["medic_never_collects"] and r["role"] == "medic" and others_hold:
+                continue  # the medic roams and treats; her cards go to whoever collects
             n = len(R.hand_by_family(view, r)[f])
             key = (n, 1 if r["role"] == "scientist" else 0, r["id"])
             if best is None or key > best[0]:
@@ -139,11 +150,28 @@ def _choose(view: dict[str, Any], r: dict[str, Any]) -> dict[str, Any] | None:
             f = R.family_of(view, c)
             if f and col.get(f) == r["id"] and (other["role"] == "researcher" or c == here) and not view["families"][f]["cured"]:
                 return {"kind": "share", "other": other["id"], "card": c}
-    # 4. treat the heaviest formation here (a cured family's first: it vanishes whole)
+    # 3b. a collector near a countermeasure keeps to a field post, so the fifth card is played the turn it arrives
+    if TUNING["collector_to_post"] and not loc["post"]:
+        near_cure = [f for f, rid in col.items() if rid == r["id"] and len(by[f]) >= R.cure_cards_needed(r) - 2]
+        if near_cure:
+            d_here = bfs(links, here)
+            heavy_near = any(max(view["locations"][n]["units"].values()) >= 3 and d_here.get(n, 99) <= 2 for n in view["locations"])
+            if not heavy_near:
+                step = _toward_post(view, r)
+                if step:
+                    return step
+    # 4. treat the heaviest formation here (a cured family's first: it vanishes whole); a lone unit can wait when a heavy stack is near
     present = [(view["families"][f]["cured"], loc["units"][f], f) for f in R.FAMILIES if loc["units"][f] > 0]
     if present:
-        present.sort(key=lambda t: (not t[0], -t[1]))
-        return {"kind": "treat", "family": present[0][2]}
+        present.sort(key=lambda t: (not t[0], -t[1], int(view["families"][t[2]]["reserve"])))
+        top = present[0]
+        skip = False
+        if TUNING["treat_skip_ones"] and top[1] == 1 and not top[0]:
+            g = _threat_goal(view, r)
+            if g and g != here and max(view["locations"][g]["units"].values()) >= 2 and bfs(links, here).get(g, 99) <= 3:
+                skip = True
+        if not skip:
+            return {"kind": "treat", "family": top[2]}
     # 5. the dispatcher brings a far responder next to trouble when nobody is close
     if r["role"] == "dispatcher":
         move = _dispatch_plan(view, r)
@@ -219,7 +247,7 @@ def _step_to(view: dict[str, Any], r: dict[str, Any], goal: str) -> dict[str, An
             spare = next((c for c in r["hand"] if R.family_of(view, c) and not _needed(view, r, c)), None)
             if spare:
                 return {"kind": "ops_shuttle", "to": goal, "card": spare}
-    if dist > 3 and goal in r["hand"] and not _needed(view, r, goal):
+    if dist > TUNING["flight_dist"] and goal in r["hand"] and not _needed(view, r, goal):
         return {"kind": "direct_flight", "to": goal}
     if dist > 4 and here in r["hand"] and not _needed(view, r, here):
         return {"kind": "charter_flight", "to": goal}
@@ -232,6 +260,24 @@ def _threat_goal(view: dict[str, Any], r: dict[str, Any]) -> str | None:
     dist = bfs(view["links"], here)
     others = [o for o in view["responders"] if o["id"] != r["id"]]
     best = None
+    if TUNING["quarantine_station"] and r["role"] == "quarantine_specialist":
+        # she shields her place and its neighbours: stand where the most threatened mass is covered
+        for nid in view["locations"]:
+            dd = dist.get(nid, 1 << 30)
+            if dd > 6:
+                continue
+            mass = 0.0
+            for m in [nid] + list(view["links"].get(nid, [])):
+                u = max(view["locations"][m]["units"].values())
+                mass += u * u if u >= 2 else 0.0
+            if mass <= 0:
+                continue
+            score = mass - dd * 1.5
+            if best is None or score > best[0]:
+                best = (score, nid)
+        if best is not None and best[0] > 0:
+            return best[1]
+        best = None
     for nid, loc in view["locations"].items():
         d = danger(view, nid)
         if d <= 0:
@@ -310,6 +356,27 @@ def _rendezvous_goal(view: dict[str, Any], r: dict[str, Any], col: dict[str, str
 
 def _dispatch_plan(view: dict[str, Any], r: dict[str, Any]) -> dict[str, Any] | None:
     """Move the medic (or the idlest responder) one link toward a heavy formation that no one else is near."""
+    if TUNING["dispatch_broker"]:
+        # the broker: bring the researcher to the collector she can help most, or a holder of the collector's own-location card to the collector
+        col = collectors(view)
+        researcher = next((o for o in view["responders"] if o["role"] == "researcher"), None)
+        if researcher is not None and researcher["id"] != r["id"]:
+            rby = R.hand_by_family(view, researcher)
+            best = None
+            for f, rid in col.items():
+                if rid == researcher["id"] or not rby[f]:
+                    continue
+                collector = R.responder(view, rid)
+                if collector["location"] == researcher["location"]:
+                    continue
+                have = len(R.hand_by_family(view, collector)[f])
+                need = R.cure_cards_needed(collector)
+                if have + len(rby[f]) >= need - 1:
+                    key = (need - have - len(rby[f]), -have)
+                    if best is None or key < best[0]:
+                        best = (key, collector["location"])
+            if best is not None:
+                return {"kind": "dispatch", "pawn": researcher["id"], "to": best[1]}
     heavy = [nid for nid, loc in view["locations"].items() if max(loc["units"].values()) >= 3]
     if not heavy:
         return None

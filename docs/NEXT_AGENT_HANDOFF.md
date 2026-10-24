@@ -15,7 +15,7 @@ responder turn every 20 game seconds, six responders manufactured at the bases, 
 gate needs ten points and the campaign's win in either order, a loss pausing the run for a retry from the checkpoint or a new world (`retry` op, the
 HUD's card). Verified: 69 God World tests, the economy-only corpus (21 seeds, no stall), the combined corpus (honest wins and losses, see the ledger),
 `GOD_WORLD_OK` with the campaign, `GOD_AGES_OK`. Not done: a phone run and device figures for the larger island, a headed capture of a real boundary
-with frozen villages, a stronger coordinator (it wins about a third of crises). To continue: the ledger's "Not done" list under that section.
+with frozen villages, a stronger coordinator still (it wins about six crises in ten after the evening's play habits, a third before). To continue: the ledger's "Not done" list under that section.
 
 ## 24 Oct 2026 (later): the island and the living villages (branch `feature/god-world`, from commit `0c16e875`)
 

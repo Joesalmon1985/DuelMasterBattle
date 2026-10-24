@@ -62,7 +62,7 @@ def new_campaign(scenario: dict[str, Any], seed: int) -> dict[str, Any]:
     st: dict[str, Any] = {"seed": int(seed), "rng": (int(seed) * 2654435761 + 97) & 0xFFFFFFFFFFFFFFFF, "locations": {}, "links": {}, "families": {},
                           "responders": [], "player_deck": [], "player_discard": [], "infection_deck": [], "infection_discard": [], "outbreaks": 0,
                           "rate_index": 0, "turn": 0, "turn_count": 0, "actions_left": ACTIONS_PER_TURN, "quiet_night": False, "result": None,
-                          "lost_reason": "", "log": [], "last": [], "posts": [], "removed": []}
+                          "lost_reason": "", "log": [], "last": [], "posts": [], "removed": [], "hot": []}
     for nid, fam in scenario["locations"].items():
         if fam not in FAMILIES:
             raise ValueError(f"unknown family {fam} at {nid}")
@@ -462,6 +462,8 @@ def end_turn(st: dict[str, Any], discard_policy=None) -> dict[str, Any]:
                     break
                 card = st["infection_deck"].pop()
                 st["infection_discard"].append(card)
+                if card in st.get("hot", []):
+                    st["hot"].remove(card)
                 _add_units(st, card, st["locations"][card]["family"], 1, set(), "infect")
     st["turn"] = (int(st["turn"]) + 1) % len(st["responders"])
     st["turn_count"] = int(st["turn_count"]) + 1
@@ -482,7 +484,8 @@ def _epidemic(st: dict[str, Any]) -> None:
         st["last"].append({"kind": "epidemic", "location": card})
         st["log"].append({"kind": "epidemic", "location": card, "turn": int(st["turn_count"]), "rate": rate(st)})
         _add_units(st, card, st["locations"][card]["family"], 3, set(), "epidemic")
-    # intensify: the discard shuffled and put on TOP of the infection deck
+    # intensify: the discard shuffled and put on TOP of the infection deck; which cards went back is public (everyone saw the discard), their order is not
+    st["hot"] = sorted(set(st["infection_discard"]))
     st["infection_deck"].extend(shuffle(st, st["infection_discard"]))
     st["infection_discard"] = []
 
