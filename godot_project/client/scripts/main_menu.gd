@@ -21,6 +21,7 @@ var _panel_vbox: VBoxContainer
 var _overlay: ColorRect
 var _overlay_vbox: VBoxContainer
 var _overlay_panel: PanelContainer
+var god_btn: Button  # God World (docs/GOD_WORLD_PRD.md): the ordinary game
 var single_btn: Button
 var host_btn: Button
 var join_btn: Button
@@ -76,7 +77,7 @@ func _build() -> void:
 	title.add_theme_constant_override("outline_size", 10)
 	_panel_vbox.add_child(title)
 	var sub := Label.new()
-	sub.text = "Wizard World"
+	sub.text = "God World"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_VT.apply_label_secondary(sub)
@@ -120,11 +121,13 @@ func _build() -> void:
 	mv.add_theme_constant_override("separation", 14)
 	menu_panel.add_child(mv)
 
-	single_btn = _menu_button(mv, "SingleButton", "Play Single Player", true, 30, 84)
+	god_btn = _menu_button(mv, "GodButton", "Watch the World", true, 30, 84)
+	god_btn.pressed.connect(_on_god_world)
+	single_btn = _menu_button(mv, "SingleButton", "Wizard World (legacy)", false, 24, 60)
 	single_btn.pressed.connect(_on_single_player)
-	host_btn = _menu_button(mv, "HostButton", "Host Multiplayer", true, 30, 84)
+	host_btn = _menu_button(mv, "HostButton", "Host Wizard World", false, 24, 60)
 	host_btn.pressed.connect(func(): _open_lan("host"))
-	join_btn = _menu_button(mv, "JoinButton", "Join Multiplayer", true, 30, 84)
+	join_btn = _menu_button(mv, "JoinButton", "Join Wizard World", false, 24, 60)
 	join_btn.pressed.connect(func(): _open_lan("join"))
 	settings_btn = _menu_button(mv, "SettingsButton", "Settings", false, 26, 68)
 	settings_btn.pressed.connect(_show_settings)
@@ -174,6 +177,16 @@ func _menu_button(parent: Control, node_name: String, text_value: String, primar
 
 ## Wizard World alone. A saved campaign on this device is offered first; everything else starts a new one. Either way it is the same world the
 ## multiplayer game hosts, running in a private session on this device (the phone's Python host, or a local Python process on a PC).
+## God World: the god's view of the island (docs/GOD_WORLD_PRD.md). No avatar, no name, no lobby: the scene hosts the world on this device and continues
+## the saved one when there is one (Settings and the in-world menu start a new world).
+func _on_god_world() -> void:
+	LanSession.reset()
+	var sfx := get_node_or_null("/root/Sfx")
+	if sfx:
+		sfx.cast()
+	get_tree().change_scene_to_file("res://client/scenes/god_world.tscn")
+
+
 func _on_single_player() -> void:
 	if LanSession.has_wizard_save():
 		_show_continue_choice()
@@ -462,7 +475,7 @@ class _Vignette:
 
 func ui_visible_entries() -> Array:
 	var out: Array = []
-	for b in [single_btn, host_btn, join_btn, settings_btn, dev_btn]:
+	for b in [god_btn, single_btn, host_btn, join_btn, settings_btn, dev_btn]:
 		if b != null and b.visible:
 			out.append(b.text)
 	return out
@@ -470,6 +483,10 @@ func ui_visible_entries() -> Array:
 
 func ui_press_single() -> void:
 	_on_single_player()
+
+
+func ui_press_god() -> void:
+	_on_god_world()
 
 
 func ui_press_host() -> void:

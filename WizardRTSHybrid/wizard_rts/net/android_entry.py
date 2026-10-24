@@ -37,21 +37,28 @@ def _run(args: dict[str, Any]) -> None:
         if args.get("runs_dir"):
             os.environ["DMB_RUNS"] = str(args["runs_dir"])  # where Wizard World saves live: the app's own storage, which the menu can also look at
         seed, map_size, profile = int(args.get("seed", 507)), str(args.get("map", "small")), str(args.get("profile", "campaign"))
-        permanent = bool(args.get("runs_dir")) or bool(args.get("continue"))
-        world, prepared = prepare_world(profile, seed, map_size, new_world_flag=bool(args.get("new_world")), new_wizard=bool(args.get("new_wizard")), permanent=permanent)
-        if bool(args.get("games_village")):
-            from wizard_rts.narrative import games_village
+        if profile == "god_catan_v1":  # God World (docs/GOD_WORLD_PRD.md): the on-device authority is GodWorld, nothing of the wizard's world is built
+            from wizard_rts.net.host import build_god_host
 
-            games_village.ensure(world)
-        session = MultiplayerSession(world, name=str(args.get("name", "Phone")), join_code=args.get("code"), host_secret=args.get("secret"),
-                                     max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)),
-                                     world_factory=lambda: new_world(seed, map_size, profile), ai_companions=1 if int(args.get("max_players", 2)) == 1 else 0)
-        host = HostServer(world, session, bind=str(args.get("bind", "0.0.0.0")), port=int(args.get("port", protocol.DEFAULT_PORT)),
-                          discovery_port=(int(args["discovery_port"]) if args.get("discovery_port") else None))
-        host.permanent = permanent
-        host.prepared = prepared
-        if prepared.get("loaded"):
-            host.begin_catch_up(int(prepared.get("owed_ms", 0)))
+            host = build_god_host({**args, "seed": seed, "max_players": 1})
+            session = host.session
+            prepared = host.prepared
+        else:
+            permanent = bool(args.get("runs_dir")) or bool(args.get("continue"))
+            world, prepared = prepare_world(profile, seed, map_size, new_world_flag=bool(args.get("new_world")), new_wizard=bool(args.get("new_wizard")), permanent=permanent)
+            if bool(args.get("games_village")):
+                from wizard_rts.narrative import games_village
+
+                games_village.ensure(world)
+            session = MultiplayerSession(world, name=str(args.get("name", "Phone")), join_code=args.get("code"), host_secret=args.get("secret"),
+                                         max_players=int(args.get("max_players", 2)), view_radius=int(args.get("view_radius", protocol.DEFAULT_VIEW_RADIUS)),
+                                         world_factory=lambda: new_world(seed, map_size, profile), ai_companions=1 if int(args.get("max_players", 2)) == 1 else 0)
+            host = HostServer(world, session, bind=str(args.get("bind", "0.0.0.0")), port=int(args.get("port", protocol.DEFAULT_PORT)),
+                              discovery_port=(int(args["discovery_port"]) if args.get("discovery_port") else None))
+            host.permanent = permanent
+            host.prepared = prepared
+            if prepared.get("loaded"):
+                host.begin_catch_up(int(prepared.get("owed_ms", 0)))
         host.start()
         _host = host
         _status.update(state="ready", port=host.port, code=session.join_code, secret=session.host_secret, lan=lan_addresses(), name=session.name,

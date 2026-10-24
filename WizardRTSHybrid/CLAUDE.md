@@ -2,6 +2,8 @@
 
 Read these before changing the hybrid. This file does not restate design, architecture or status.
 
+**24 Oct 2026: the player's game is God World** (`../docs/GOD_WORLD_PRD.md`, D35 to D41, ledger `../docs/ledger/GOD_WORLD_PROGRESS.md`). Its authority is `wizard_rts/god_world/` (profile `god_catan_v1`); items 1, 2 and 6 below describe the earlier wizard-led game, which stays as legacy.
+
 0. [../docs/DuelMasterBattle_Consolidated_Design.md](../docs/DuelMasterBattle_Consolidated_Design.md) — single-read edition of items 1, 2, 4, 5, 6 below plus Mindustry notes (generated from them).
 1. [../docs/DuelMasterBattle_Design_v0_5.md](../docs/DuelMasterBattle_Design_v0_5.md) — the approved game direction (wizard-led adventure in an autonomous civilisation sim; four eras; Widelands + OpenRA + Mindustry).
 2. [../docs/DECISION_REGISTER.md](../docs/DECISION_REGISTER.md) — D01–D20 approved; open defaults S01–S12.

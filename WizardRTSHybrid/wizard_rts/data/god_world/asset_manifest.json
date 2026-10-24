@@ -1,0 +1,20 @@
+{
+  "notes": "The verified art roster of God World (PRD 5.2, 13.4): every catalogue id the viewer may draw, by purpose. Resolved through godot_project/client/hybrid/art/catalogue.json; tests/test_god_world_assets.py checks that each id exists, is imported (not a bare alias) and that its image files are in the repository. Worker ids are the idle/walk sheet families (the viewer appends .walk.<dir> / .idle as hybrid_art.gd does).",
+  "warehouse": ["widelands.warehouse"],
+  "production": {
+    "age1": ["widelands.lumberjack", "widelands.empire_quarry", "widelands.empire_hunters_house", "widelands.frisians_reed_farm", "widelands.coalmine"],
+    "age2": ["widelands.empire_lumberjacks_house", "widelands.empire_sawmill", "widelands.empire_quarry", "widelands.empire_stonemasons_house", "widelands.empire_piggery", "widelands.empire_farm", "widelands.empire_ironmine", "widelands.coalmine"],
+    "age3": ["mindustry.block.mechanical_drill", "mindustry.block.pneumatic_drill", "mindustry.block.laser_drill"],
+    "age4": ["mindustry.block.pyratite_mixer", "mindustry.block.silicon_smelter", "mindustry.block.phase_weaver", "mindustry.block.blast_mixer", "mindustry.block.surge_smelter"]
+  },
+  "military": {
+    "age1": ["widelands.barbarians_barracks", "widelands.soldier"],
+    "age2": ["openra.barracks", "openra.e1", "openra.weap", "openra.3tnk"],
+    "age3": ["mindustry.block.ground_factory", "mindustry.unit.dagger", "mindustry.unit.mace"],
+    "age4": ["mindustry.block.ground_factory", "mindustry.unit.dagger", "mindustry.unit.mace"]
+  },
+  "workers": ["widelands.carrier", "widelands.barbarians_carrier_worker", "widelands.barbarians_lumberjack_worker", "widelands.barbarians_stonemason_worker", "widelands.barbarians_hunter_worker", "widelands.barbarians_farmer_worker", "widelands.barbarians_miner_worker", "widelands.barbarians_cattlebreeder_worker"],
+  "worker_sheets": [".walk.e", ".walk.w", ".walk.ne", ".walk.nw", ".walk.se", ".walk.sw", ".idle"],
+  "scenery": ["widelands.alder.old", "widelands.aspen.old", "widelands.beech.old", "widelands.birch.old", "widelands.fallentree"],
+  "aliases_not_claimed": ["dmb.war_lodge", "dmb.clubman", "dmb.caravan", "dmb.settlers"]
+}

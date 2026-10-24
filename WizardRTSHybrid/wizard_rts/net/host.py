@@ -190,8 +190,35 @@ def lan_addresses() -> list[str]:
     return out
 
 
+def world_sequence(world: Any) -> int:
+    """The clock sequence a world resumes from: the embedded DMB clock of a HybridWorld, or a GodWorld's own counter."""
+    dmb = getattr(world, "dmb", None)
+    if dmb is not None:
+        return int(dmb.clock.get("clock_sequence", 0))
+    return int(getattr(world, "clock_sequence", 0))
+
+
+GOD_PROFILE = "god_catan_v1"
+
+
+def build_god_host(args: dict[str, Any]) -> "HostServer":
+    """A God World host (docs/GOD_WORLD_PRD.md): `GodWorld` is the only live simulation of this profile; `GodSession` speaks the same wire as the
+    Wizard World session, so HostServer, the Android plugin and the Godot LanSession carry it unchanged. `args` keys as the plugin passes them."""
+    from wizard_rts.god_world.session import GodSession, build_world
+
+    world, info = build_world(args)
+    session = GodSession(world, name=str(args.get("name", "God World")), join_code=args.get("code"), host_secret=args.get("secret"),
+                         max_players=int(args.get("max_players", 1)), permanent=bool(info.get("permanent")))
+    discovery = args.get("discovery_port")
+    host = HostServer(world, session, bind=str(args.get("bind", "127.0.0.1")), port=int(args.get("port", protocol.DEFAULT_PORT)),
+                      discovery_port=int(discovery) if discovery else None)
+    host.permanent = bool(info.get("permanent"))
+    host.prepared = info
+    return host
+
+
 class HostServer:
-    def __init__(self, world: HybridWorld, session: MultiplayerSession, bind: str = "0.0.0.0", port: int = protocol.DEFAULT_PORT,
+    def __init__(self, world: Any, session: Any, bind: str = "0.0.0.0", port: int = protocol.DEFAULT_PORT,
                  discovery_port: int | None = protocol.DISCOVERY_PORT, tick_s: float = 0.1, max_catchup_s: float = 0.5, clock=time.monotonic) -> None:
         self.world = world
         self.session = session
@@ -205,7 +232,7 @@ class HostServer:
         self.listener: socket.socket | None = None
         self.udp: socket.socket | None = None
         self.buffers: dict[socket.socket, bytes] = {}
-        self.seq = int(world.dmb.clock.get("clock_sequence", 0))
+        self.seq = world_sequence(world)
         self.last_tick: float | None = None
         self.stop_flag = False
         self.stats = {"bytes_in": 0, "bytes_out": 0, "messages": 0, "replies": 0, "advances": 0, "quanta": 0, "probes": 0, "connections": 0, "tick_ms_max": 0.0, "tick_ms_total": 0.0, "ticks": 0}
@@ -268,9 +295,9 @@ class HostServer:
             self.ending_save = self.save_world("quit")
         self.stop_at = self.clock() + 30.0
 
-    def _adopt_world(self, world: HybridWorld) -> None:
+    def _adopt_world(self, world: Any) -> None:
         self.world = world
-        self.seq = int(world.dmb.clock.get("clock_sequence", 0))
+        self.seq = world_sequence(world)
 
     # ---------------------------------------------------------------- lifecycle
     def start(self) -> None:
@@ -491,6 +518,11 @@ class HostServer:
 def build(args: argparse.Namespace) -> HostServer:
     """The app always passes `--runs-dir`, which makes the world permanent (the newest save is the world). A developer host without it builds a fresh
     world unless `--continue` asks for the save (the old behaviour, kept for the launchers and the headed tests)."""
+    if str(getattr(args, "profile", "")) == GOD_PROFILE:
+        return build_god_host({"bind": args.bind, "port": args.port, "name": args.name, "code": args.code, "secret": args.secret, "seed": args.seed,
+                               "max_players": args.max_players, "discovery_port": None if args.no_discovery else args.discovery_port, "runs_dir": getattr(args, "runs_dir", ""),
+                               "continue": bool(getattr(args, "continue_game", False)), "new_world": bool(getattr(args, "new_world", False)),
+                               "fresh": bool(getattr(args, "fresh", False))})
     if getattr(args, "runs_dir", ""):
         os.environ["DMB_RUNS"] = str(args.runs_dir)
     permanent = bool(getattr(args, "runs_dir", "")) or bool(getattr(args, "continue_game", False))

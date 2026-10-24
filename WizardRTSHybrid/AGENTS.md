@@ -2,9 +2,19 @@
 
 This file is the restart contract. Status, tasks and evidence live in the docs it names. Do not treat chat history as project memory. The previous version is archived at `docs/archive/AGENTS_session3_pre_ratification.md`.
 
-## Objective (ratified 11 October 2026)
+## Objective (God World, 24 October 2026; the wizard-led adventure below is legacy)
 
-DuelMasterBattle is a **wizard-led adventure inside an autonomous civilisation simulation**, not a player-controlled RTS. The wizard walks real settlements, talks to residents, explores dungeons, solves puzzles, intervenes in crises, and fights Mastermind-style duels. The world is a real Widelands-style economy and OpenRA-style military across four eras (Prehistoric, Historic, Modern, Dystopian Future), with Mindustry-style industry arriving in Modern. God Mode and the training API exist for development, tests and AI research only.
+**The player's game is God World** (`../docs/GOD_WORLD_PRD.md`; decisions D35 to D41 in `../docs/DECISION_REGISTER.md` section 7; ledger
+`../docs/ledger/GOD_WORLD_PROGRESS.md`): a god with a free camera watches six autonomous factions settle, trade, build roads and raise cities on the
+logical board of a 5-6 player Catan game, drawn as one continuous island, through four ages; the player only views, inspects and sets playback. The
+profile `god_catan_v1` lives in `wizard_rts/god_world/` and is the only live simulation when selected (`net/host.py --profile god_catan_v1`,
+`net/android_entry.py`); it never constructs `HybridWorld`. In that profile the hex/node/edge graph IS the strategic rule (production, legality,
+ownership, connectivity); the "square grid is authoritative, never restore Catan topology" rule below applies to the Wizard World profile only. Its
+economy is five stable roles with Catan costs and odds (one ledger, `god_world/ledger.py`), not the ware economy. Tests:
+`python -m pytest WizardRTSHybrid/tests/test_god_world_*.py -q`; corpus: `python WizardRTSHybrid/scripts/god_world_run.py --seeds 0-19 507`; headed:
+`godot --path godot_project --rendering-method forward_plus --script res://client/tests/run_god_world.gd`.
+
+The earlier objective (ratified 11 October 2026), kept for the legacy profiles: DuelMasterBattle was a **wizard-led adventure inside an autonomous civilisation simulation**, not a player-controlled RTS. The wizard walks real settlements, talks to residents, explores dungeons, solves puzzles, intervenes in crises, and fights Mastermind-style duels. The world is a real Widelands-style economy and OpenRA-style military across four eras (Prehistoric, Historic, Modern, Dystopian Future), with Mindustry-style industry arriving in Modern. God Mode and the training API exist for development, tests and AI research only.
 
 Read in this order:
 
@@ -19,7 +29,7 @@ Read in this order:
 ## Architecture constraints
 
 - Python `HybridWorld` (`wizard_rts/world.py`) is the only live simulation; it embeds DuelMasterBattle `WorldState` and `ClockService`. Godot presents it (`godot_project/client/scenes/hybrid_world.gd` extends `overworld.gd`, helpers in `client/hybrid/`). No second economy, army or clock.
-- The **square grid with four-direction movement is authoritative** (D03, `docs/DECISIONS.md` D5). The hex code in `coords.py` is a legacy label and the future logical catastrophe overlay; never a placement, movement or territory rule. Do not restore Catan topology.
+- Wizard World profiles: the **square grid with four-direction movement is authoritative** (D03, `docs/DECISIONS.md` D5); the hex code in `coords.py` is a legacy label there. God World (D36) is the exception: `god_world/board.py` is a real Catan graph and the rule of that profile.
 - A settlement is a deployed MCV or a faction's first warehouse plus its territory (`territory.py`). Six factions, five Widelands tribes.
 - Mindustry is **in scope** (D06) and **not yet implemented**. Official source `https://github.com/Anuken/Mindustry` (GPL-3.0). Read `docs/MINDUSTRY_PROVENANCE.md` before touching it; pin a revision first; no Java runtime; no second army or economy.
 - Wares are conserved (`ARCHITECTURE_CONTRACT.md` section 5). Early output comes from real workers and movement; automation uses real belts, pipes, machines and power (D08).

@@ -8,7 +8,7 @@ extends Node
 const SimClient = preload("res://client/hybrid/sim_client.gd")
 
 const PROTOCOL_VERSION := 4  # 4: the village minigames; 3: mortal apprentices, the Trial, the catch-up page; 2: real-time PvP casts, the narrative ops, single-player save/continue
-const GAME_VERSION := "0.5.1"  # must match WizardRTSHybrid/wizard_rts/net/protocol.py
+const GAME_VERSION := "0.6.0"  # must match WizardRTSHybrid/wizard_rts/net/protocol.py
 const DEFAULT_PORT := 8765
 const DISCOVERY_PORT := 8767
 
@@ -32,6 +32,7 @@ var new_wizard := false  # retire the saved wizard (dead or alive) and seat a ne
 var new_world := false  # the explicit "Start a new world": archive the saves and build afresh
 var fresh_world := false  # the developer's total reset: delete every save on this device (archives too) and build from nothing
 var games_village := false  # the developer's village of games (docs/PLAN_VILLAGE_MINIGAMES.md): its own saves folder, every game's host present
+var profile := "campaign"  # the world the host builds: "campaign" (Wizard World) or "god_catan_v1" (God World, docs/GOD_WORLD_PRD.md)
 
 var _host_pid := -1
 var _ready_file := ""
@@ -59,6 +60,7 @@ func reset() -> void:
 	new_world = false
 	fresh_world = false
 	games_village = false
+	profile = "campaign"
 	if sim != null:
 		sim.disconnect_from_host()
 	sim = null
@@ -158,7 +160,7 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	_host_status = {"state": "starting"}
 	var bind := "127.0.0.1" if private else "0.0.0.0"
 	var args := {"port": DEFAULT_PORT, "bind": bind, "name": name, "code": code, "secret": host_secret, "seed": seed_, "map": map_,
-		"profile": "campaign", "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
+		"profile": profile, "max_players": 1 if private else 2, "discovery_port": 0 if private else DISCOVERY_PORT,
 		"continue": continue_game and private, "runs_dir": runs_dir(), "new_wizard": new_wizard, "new_world": new_world, "fresh": fresh_world,
 		"games_village": games_village}
 	if Engine.has_singleton("DmbPySim"):
@@ -176,7 +178,7 @@ func start_local_host(name: String, code: String, seed_: int, map_: String, priv
 	_ready_file = OS.get_user_data_dir().path_join("lan_host_ready_%d.json" % (Time.get_ticks_msec() % 100000))
 	var argv: PackedStringArray = ["-u", hyb.path_join("wizard_rts/net/host.py"), "--bind", bind, "--port", str(DEFAULT_PORT), "--name", name, "--code", code,
 		"--secret", host_secret, "--seed", str(seed_), "--map", map_, "--max-players", "1" if private else "2", "--ready-file", _ready_file,
-		"--runs-dir", runs_dir()]
+		"--runs-dir", runs_dir(), "--profile", profile]
 	if private:
 		argv.append("--no-discovery")
 		if continue_game:

@@ -44,7 +44,7 @@ func _run() -> void:
 	for _i in 4:
 		await process_frame
 	var entries: Array = menu.ui_visible_entries()
-	if entries != ["Play Single Player", "Host Multiplayer", "Join Multiplayer", "Settings"]:
+	if entries != ["Watch the World", "Wizard World (legacy)", "Host Wizard World", "Join Wizard World", "Settings"]:
 		_fail("entries are %s" % str(entries))
 	var texts: Array = []
 	_texts(menu, texts)

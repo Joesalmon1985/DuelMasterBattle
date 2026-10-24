@@ -1,0 +1,113 @@
+{
+  "ruleset": "god_catan_v1",
+  "schema": 1,
+  "notes": "God World (docs/GOD_WORLD_PRD.md). Five stable economic roles; their names, buildings and chains change by age. Costs and timings are game-time rules, art ids resolve through godot_project/client/hybrid/art/catalogue.json.",
+  "roles": ["WOOD", "BRICK", "SHEEP", "WHEAT", "ORE"],
+  "board": {
+    "shape": "catan_5_6",
+    "role_counts": {"WOOD": 6, "BRICK": 5, "SHEEP": 6, "WHEAT": 6, "ORE": 5, "DESERT": 2},
+    "tokens": [2, 2, 12, 12, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11],
+    "keep_apart": [6, 8]
+  },
+  "costs": {
+    "road": {"WOOD": 1, "BRICK": 1},
+    "settlement": {"WOOD": 1, "BRICK": 1, "SHEEP": 1, "WHEAT": 1},
+    "city": {"WHEAT": 2, "ORE": 3}
+  },
+  "vp": {"settlement": 1, "city": 2, "target": 10},
+  "bank": {"give": 4, "get": 1},
+  "timings_ms": {
+    "roll_interval": 15000,
+    "setup_step": 2000,
+    "road_build": 8000,
+    "city_build": 8000,
+    "warehouse_stage": 8000,
+    "district_stage": 10000,
+    "edge_travel_road": 6000,
+    "edge_travel_trail": 12000,
+    "approach_leg": 1500,
+    "bank_leg": 9000,
+    "military_interval": 45000,
+    "transition_build": 10000,
+    "ai_pass": 1000
+  },
+  "limits": {
+    "ai_actions_per_pass": 2,
+    "active_trades_per_faction": 2,
+    "garrison_settlement": 4,
+    "garrison_city": 8,
+    "stall_pulses": 40,
+    "diagnostic_pulses_per_age": 600
+  },
+  "factions": [
+    {"id": "f1", "name": "Ashwell", "colour": "#d64545"},
+    {"id": "f2", "name": "Bluecairn", "colour": "#3f7fd6"},
+    {"id": "f3", "name": "Greenhollow", "colour": "#3fa65b"},
+    {"id": "f4", "name": "Goldmere", "colour": "#d6a63f"},
+    {"id": "f5", "name": "Violetmoor", "colour": "#8f5fd6"},
+    {"id": "f6", "name": "Whitecliff", "colour": "#e8e4d8"}
+  ],
+  "ages": [
+    {
+      "index": 1,
+      "name": "Prehistoric",
+      "roles": {
+        "WOOD": {"name": "Wood", "hex": "Woodland", "buildings": ["widelands.lumberjack"], "worker": "widelands.barbarians_lumberjack_worker"},
+        "BRICK": {"name": "Quarry stone", "hex": "Rocky hills", "buildings": ["widelands.empire_quarry"], "worker": "widelands.barbarians_stonemason_worker"},
+        "SHEEP": {"name": "Game", "hex": "Hunting grounds", "buildings": ["widelands.empire_hunters_house"], "worker": "widelands.barbarians_hunter_worker"},
+        "WHEAT": {"name": "Reeds", "hex": "Reed beds", "buildings": ["widelands.frisians_reed_farm"], "worker": "widelands.barbarians_farmer_worker"},
+        "ORE": {"name": "Coal", "hex": "Coal mountain", "buildings": ["widelands.coalmine"], "worker": "widelands.barbarians_miner_worker"}
+      },
+      "military": {"facility": "widelands.barbarians_barracks", "facility_name": "Barracks", "unit": "widelands.soldier", "unit_name": "Soldier",
+                   "city_facility": "", "city_unit": ""}
+    },
+    {
+      "index": 2,
+      "name": "Historic",
+      "roles": {
+        "WOOD": {"name": "Timber", "hex": "Woodland", "buildings": ["widelands.empire_lumberjacks_house", "widelands.empire_sawmill"], "worker": "widelands.barbarians_lumberjack_worker"},
+        "BRICK": {"name": "Worked stone", "hex": "Rocky hills", "buildings": ["widelands.empire_quarry", "widelands.empire_stonemasons_house"], "worker": "widelands.barbarians_stonemason_worker"},
+        "SHEEP": {"name": "Livestock", "hex": "Pasture", "buildings": ["widelands.empire_piggery"], "worker": "widelands.barbarians_cattlebreeder_worker"},
+        "WHEAT": {"name": "Wheat", "hex": "Farmland", "buildings": ["widelands.empire_farm"], "worker": "widelands.barbarians_farmer_worker"},
+        "ORE": {"name": "Iron", "hex": "Ore mountain", "buildings": ["widelands.empire_ironmine", "widelands.coalmine"], "worker": "widelands.barbarians_miner_worker"}
+      },
+      "military": {"facility": "openra.barracks", "facility_name": "Barracks", "unit": "openra.e1", "unit_name": "Rifle infantry",
+                   "city_facility": "openra.weap", "city_facility_name": "Vehicle yard", "city_unit": "openra.3tnk", "city_unit_name": "Heavy tank"}
+    },
+    {
+      "index": 3,
+      "name": "Modern",
+      "roles": {
+        "WOOD": {"name": "Coal", "hex": "Coal field", "buildings": ["mindustry.block.mechanical_drill"], "worker": "widelands.barbarians_miner_worker"},
+        "BRICK": {"name": "Titanium", "hex": "Titanium deposit", "buildings": ["mindustry.block.laser_drill"], "worker": "widelands.barbarians_miner_worker"},
+        "SHEEP": {"name": "Sand", "hex": "Sand flats", "buildings": ["mindustry.block.mechanical_drill"], "worker": "widelands.barbarians_miner_worker"},
+        "WHEAT": {"name": "Lead", "hex": "Lead deposit", "buildings": ["mindustry.block.pneumatic_drill"], "worker": "widelands.barbarians_miner_worker"},
+        "ORE": {"name": "Copper", "hex": "Copper deposit", "buildings": ["mindustry.block.pneumatic_drill"], "worker": "widelands.barbarians_miner_worker"}
+      },
+      "military": {"facility": "mindustry.block.ground_factory", "facility_name": "Ground factory", "unit": "mindustry.unit.dagger", "unit_name": "Dagger",
+                   "city_facility": "", "city_unit": "mindustry.unit.mace", "city_unit_name": "Mace"}
+    },
+    {
+      "index": 4,
+      "name": "Dystopian Future",
+      "roles": {
+        "WOOD": {"name": "Pyratite", "hex": "Pyratite works", "buildings": ["mindustry.block.pyratite_mixer"], "worker": "widelands.barbarians_miner_worker"},
+        "BRICK": {"name": "Silicon", "hex": "Silicon works", "buildings": ["mindustry.block.silicon_smelter"], "worker": "widelands.barbarians_miner_worker"},
+        "SHEEP": {"name": "Phase fabric", "hex": "Phase works", "buildings": ["mindustry.block.phase_weaver"], "worker": "widelands.barbarians_miner_worker"},
+        "WHEAT": {"name": "Blast compound", "hex": "Blast works", "buildings": ["mindustry.block.blast_mixer"], "worker": "widelands.barbarians_miner_worker"},
+        "ORE": {"name": "Surge alloy", "hex": "Surge works", "buildings": ["mindustry.block.surge_smelter"], "worker": "widelands.barbarians_miner_worker"}
+      },
+      "military": {"facility": "mindustry.block.ground_factory", "facility_name": "Ground factory", "unit": "mindustry.unit.dagger", "unit_name": "Dagger",
+                   "city_facility": "", "city_unit": "mindustry.unit.mace", "city_unit_name": "Mace"}
+    }
+  ],
+  "warehouse": "widelands.warehouse",
+  "expedition_party": [
+    {"role": "builder", "art": "widelands.barbarians_carrier_worker"},
+    {"role": "woodcutter", "art": "widelands.barbarians_lumberjack_worker"},
+    {"role": "stoneworker", "art": "widelands.barbarians_stonemason_worker"},
+    {"role": "porter", "art": "widelands.carrier"}
+  ],
+  "caravan": "widelands.carrier",
+  "road_crew": "widelands.barbarians_carrier_worker"
+}

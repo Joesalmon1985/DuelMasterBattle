@@ -158,13 +158,14 @@ def test_the_client_and_the_host_say_the_same_version_and_protocol():
 
 # ------------------------------------------------------------------ one game: the menu and the project
 
-def test_the_player_menu_is_wizard_world_only():
+def test_the_player_menu_is_god_world_first_then_wizard_world():
     lines = (PROJECT / "client/scripts/main_menu.gd").read_text(encoding="utf-8").splitlines()
     main = chr(10).join(l for l in lines if not l.strip().startswith("#"))  # the header comment names what was removed; the code must not
     for needle in ("overworld.tscn", "game_board.tscn", "g01_shell", "Adventure", "has_save", "EncounterSession", "NEW GAME", "RESUME", "Quick Duel"):
         assert needle not in main, needle
-    for label in ("Play Single Player", "Host Multiplayer", "Join Multiplayer", "Settings"):
+    for label in ("Watch the World", "Wizard World (legacy)", "Host Wizard World", "Join Wizard World", "Settings"):
         assert '"%s"' % label in main
+    assert "god_world.tscn" in main  # God World is the ordinary game (docs/GOD_WORLD_PRD.md AC01)
     project = (PROJECT / "project.godot").read_text(encoding="utf-8")
     assert 'run/main_scene="res://client/scenes/main_menu.tscn"' in project
     # the developer menu is only entered through the dev switch

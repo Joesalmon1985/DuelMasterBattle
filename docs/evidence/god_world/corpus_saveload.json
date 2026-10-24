@@ -1,0 +1,266 @@
+{
+ "summary": {
+  "seeds": 2,
+  "ok": true,
+  "stalled": [],
+  "minutes_per_age": [
+   13.9,
+   14.1,
+   16.1,
+   16.7,
+   17.1,
+   18.8,
+   19.4,
+   19.8
+  ],
+  "pulses_per_age": [
+   54,
+   55,
+   63,
+   65,
+   67,
+   74,
+   77,
+   78
+  ]
+ },
+ "runs": [
+  {
+   "seed": 3,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 54,
+     "minutes": 13.9,
+     "vp": {
+      "f1": 7,
+      "f2": 5,
+      "f3": 6,
+      "f4": 10,
+      "f5": 7,
+      "f6": 6
+     },
+     "villages": 30,
+     "cities": 11,
+     "trades": 58,
+     "bank_trades": 37,
+     "roads": 50
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 78,
+     "minutes": 19.8,
+     "vp": {
+      "f1": 9,
+      "f2": 10,
+      "f3": 8,
+      "f4": 8,
+      "f5": 8,
+      "f6": 6
+     },
+     "villages": 30,
+     "cities": 19,
+     "trades": 147,
+     "bank_trades": 74,
+     "roads": 103
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 74,
+     "minutes": 18.8,
+     "vp": {
+      "f1": 8,
+      "f2": 10,
+      "f3": 4,
+      "f4": 8,
+      "f5": 6,
+      "f6": 9
+     },
+     "villages": 31,
+     "cities": 14,
+     "trades": 228,
+     "bank_trades": 102,
+     "roads": 149
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 77,
+     "minutes": 19.4,
+     "vp": {
+      "f1": 7,
+      "f2": 5,
+      "f3": 8,
+      "f4": 6,
+      "f5": 10,
+      "f6": 6
+     },
+     "villages": 28,
+     "cities": 14,
+     "trades": 300,
+     "bank_trades": 133,
+     "roads": 195
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 72.0,
+   "wall_s": 27.4,
+   "counters": {
+    "trades": 300,
+    "bank_trades": 133,
+    "declined": 3623,
+    "roads": 195,
+    "settlements": 83,
+    "cities": 58,
+    "recruits": 615,
+    "ai_actions": 779
+   },
+   "final": true
+  },
+  {
+   "seed": 7,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 65,
+     "minutes": 16.7,
+     "vp": {
+      "f1": 10,
+      "f2": 9,
+      "f3": 5,
+      "f4": 8,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 32,
+     "cities": 15,
+     "trades": 60,
+     "bank_trades": 36,
+     "roads": 44
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 67,
+     "minutes": 17.1,
+     "vp": {
+      "f1": 7,
+      "f2": 8,
+      "f3": 10,
+      "f4": 8,
+      "f5": 9,
+      "f6": 9
+     },
+     "villages": 34,
+     "cities": 17,
+     "trades": 146,
+     "bank_trades": 71,
+     "roads": 103
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 63,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 6,
+      "f2": 5,
+      "f3": 5,
+      "f4": 10,
+      "f5": 5,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 10,
+     "trades": 203,
+     "bank_trades": 101,
+     "roads": 151
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 55,
+     "minutes": 14.1,
+     "vp": {
+      "f1": 9,
+      "f2": 8,
+      "f3": 6,
+      "f4": 6,
+      "f5": 8,
+      "f6": 10
+     },
+     "villages": 32,
+     "cities": 15,
+     "trades": 258,
+     "bank_trades": 124,
+     "roads": 199
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 64.0,
+   "wall_s": 24.0,
+   "counters": {
+    "trades": 258,
+    "bank_trades": 124,
+    "declined": 2959,
+    "roads": 199,
+    "settlements": 91,
+    "cities": 57,
+    "recruits": 604,
+    "ai_actions": 741
+   },
+   "final": true
+  }
+ ],
+ "budget": 600
+}

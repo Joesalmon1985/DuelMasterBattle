@@ -1,5 +1,21 @@
 # Next agent handoff
 
+## 24 Oct 2026: God World, 0.6.0 (branch `feature/god-world`, from `feature/polish-watching-feel` at `1e37aef2`)
+
+The owner handed over `docs/GOD_WORLD_PRD.md` and asked for a new branch that carries all the work so far and rejigs the game to it. Ledger and the
+acceptance table: `docs/ledger/GOD_WORLD_PROGRESS.md`; decisions D35 to D41. In one paragraph: `WizardRTSHybrid/wizard_rts/god_world/` is the whole
+`god_catan_v1` profile (explicit 30/80/109 board, five-role ledger with reservations, escrow and cargo, `GodWorld` on one 100 ms clock with snake setup,
+the 2d6 pulse, road crews, founding expeditions over own roads, escrowed caravans, 4:1 bank caravans, a bounded idle garrison, a readable heuristic AI
+with wait reasons, the 10-VP shared age rollover that keeps two villages per faction, the fourth-age result, JSON saves under `DMB_RUNS/god_world/`);
+`net/host.py` and `net/android_entry.py` select it by profile and `GodSession` speaks the Wizard World wire plus board/label/inspect/pause/speed/save/
+new_world. The viewer `godot_project/client/god_world/` (camera with gesture arbitration, the drawn island through `hybrid_art.gd` and `AssetLoader`,
+two-step labels, HUD) is opened by the main menu's first entry **Watch the World** and by `Watch the World.bat`; `LanSession.profile` carries the
+profile to the host. Verified: 29 God World tests (AC02 to AC24, AC28), the 21-seed corpus through four ages with no stall (AC30), the save/load
+round-trip corpus, the host route; headed: `client/tests/run_god_world.gd` (pan, pinch, label, details, region and board zoom, pause and speed; shots
+in `docs/evidence/god_world/headed/`). Not verified: a phone (AC29), device frame times. Rules kept: content frozen (the manifest lists only imported
+ids), never `git add -A`, `docs/release_notes.md` never committed, merging into `main` is the owner's call. To continue: read the PRD's section 16 (the
+three owner-facing choices), then the ledger's "Not done" list.
+
 ## 22 Oct 2026: polish for watching, 0.5.1 (branch `feature/polish-watching-feel`, from `feature/village-minigames` at `69165b95`)
 
 The owner asked (22 Oct 2026, three and a half hours) for the minigame interfaces and the world to be polished along the lines of a "satisfying to

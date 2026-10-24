@@ -1,5 +1,15 @@
 # DuelMasterBattle — repository entry
 
+**Current programme (owner's PRD of 24 Oct 2026): God World.** The player-facing game is a god's view of one continuous island on the 5-6 player Catan
+board, where six AI factions settle, trade, build roads and raise cities through four ages; the player pans, pinches and taps. The PRD is
+`docs/GOD_WORLD_PRD.md`; decisions D35 to D41 in `docs/DECISION_REGISTER.md` section 7 supersede the wizard-led product rules and the "never restore
+Catan topology" rule for this profile; the ledger is `docs/ledger/GOD_WORLD_PROGRESS.md`; the restart notes are the first section of
+`docs/NEXT_AGENT_HANDOFF.md`. The authority is `WizardRTSHybrid/wizard_rts/god_world/` (profile `god_catan_v1`, hosted by `net/host.py` and
+`net/android_entry.py`); the viewer is `godot_project/client/god_world/`; the menu's first entry is **Watch the World** (`Watch the World.bat`).
+Branch `feature/god-world` (0.6.0), cut from `feature/polish-watching-feel`, so every earlier branch's work is included. Everything below describes
+the earlier wizard-led game: it is kept as legacy and development material, not deleted, and its product rules no longer decide the player's game.
+Merging into `main` is the owner's call.
+
 The active development is the wizard-led hybrid in `WizardRTSHybrid/`. Start at `WizardRTSHybrid/CLAUDE.md` and `WizardRTSHybrid/AGENTS.md`. The approved direction is `docs/DuelMasterBattle_Design_v0_5.md`; the decision register is `docs/DECISION_REGISTER.md`.
 
 The rest of this repository (`sim/dmb`, `godot_project`, `tests`, `DD`, `python_prototype`, older `docs/*`) is the earlier Catan-era game and its quest, dialogue, dungeon and Mastermind duel assets. Reuse them, do not delete them, and treat their economy/map rules as superseded (see `docs/CURRENT_STATUS_AND_GAPS.md` section 5). Root `README.md` is a historical Village Test note.
