@@ -118,7 +118,7 @@ def _transition(world, winner: str, cause: dict[str, Any], vp: dict[str, int]) -
             v["status"] = "historical"
             v["retired_age"] = old_age
             v["final_level"] = int(v["level"])
-            local_ops.release(world, v)
+            local_ops.freeze(world, v)  # the actual built picture stays (D49)
             retired.append(vid)
             world.history["retired"].append({"village": vid, "faction": v["faction"], "age": old_age, "level": int(v["level"])})
     for r in world.roads.values():
@@ -134,10 +134,22 @@ def _transition(world, winner: str, cause: dict[str, Any], vp: dict[str, int]) -
     world.touch_topology()
     world.age = old_age + 1
     world.epoch += 1
+    world.pandemic = None  # the new age's campaign begins when its sites are ready (D56)
+    world.pandemic_won = False
+    world.pandemic_lost = None
+    world.economic_qualified = None
     world.pulses = 0
     world.progress_pulse = 0
     world.last_roll = None
     world.next_roll_ms = None
+    # the renewal (D48): the productive tokens are reshuffled once, after the ranking that used the old ones; roles, deserts, graph and terrain stay
+    shuffle = world.board.reshuffle_tokens(world.rng_layout)
+    world.production_revision += 1
+    for v in world.villages.values():
+        v.pop("dev", None)  # the new age's development begins again from one place per district
+    from . import snapshot as _snap
+
+    _snap.invalidate_layouts(world)
     grants: dict[str, dict[str, int]] = {}
     for fid in world.fids:
         low = world.villages[selected[fid][1]]
@@ -148,6 +160,7 @@ def _transition(world, winner: str, cause: dict[str, Any], vp: dict[str, int]) -
         grants[fid] = goods
     world.transition = {"id": tid, "phase": "TRANSITIONING", "age_from": old_age, "age_to": old_age + 1, "winner": winner, "cause": dict(cause), "vp": vp,
                         "candidates": candidates, "selected": selected, "retired": retired, "archived": archived, "receipts": receipts, "grants": grants,
+                        "tokens_before": shuffle["before"], "tokens_after": shuffle["after"], "production_revision": int(world.production_revision),
                         "started_ms": int(world.game_ms), "ready_ms": int(world.game_ms) + rules.timing("transition_build"), "completed_ms": None}
     world.history["transitions"].append({k: world.transition[k] for k in ("id", "age_from", "age_to", "winner", "vp", "selected", "retired", "started_ms")})
     world.ledger.check()

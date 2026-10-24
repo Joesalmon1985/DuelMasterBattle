@@ -181,3 +181,126 @@ age. Shots: `age{2,3,4}_village_close`, `age{2,3,4}_village`, `age{2,3,4}_overla
   units got their own id counter (the strategic invariance test had seen village ids drift). Commit `0c16e875`.
 - 17:30 to 18:10 Evidence: corridor leg times made exact per edge (the first living corpus had drifted from the bare one by rounding); agents refreshed on
   re-plan (age-3 carriers had stayed carriers instead of trucks); Mindustry machines scaled to their cells. `GOD_AGES_OK`, `GOD_WORLD_OK`, the corpus.
+
+## Renewal, growth and Pandemic (the owner's third brief of 24 Oct 2026: organic growth, age renewal and the shared campaign)
+
+Plan with the improvements made to the brief: `docs/PLAN_GOD_WORLD_PANDEMIC.md`; decisions D48 to D56 (`docs/DECISION_REGISTER.md` section 9). Built on
+the living-villages build (`0b627f43`). Version 0.6.1. The brief's screenshot was not attached; the captures of `0b627f43` were the before reference.
+
+**What is built, one paragraph each.**
+
+*Renewal (D48).* `board.reshuffle_tokens(rng)` shuffles the 28 productive tokens under the keep-apart rule from `world.rng_layout`, a saved stream of its
+own; `ages._transition` calls it once, after the ranking that used the old tokens, and bumps `world.production_revision`, which keys every layout cache,
+every village's development record and the planner's re-plan; the transition record carries `tokens_before`, `tokens_after` and the revision. Saves carry
+the layout stream and the revision, so a save before the boundary replays to the same tokens and a save after keeps them.
+
+*History (D49).* A retired village is frozen by `local_ops.freeze`: the sites it had actually completed, its finished belts and its streets, with its
+age; it holds no ops, claims, hand, reservations or VP. The snapshot sends `frozen` for historical villages in the window (the hub alone outside it);
+the viewer draws the frozen buildings faded with no smoke, crates, accent or flag, frozen streets and belts faint, and `inspect` answers "Old <name>" for
+them. A new village on the node supersedes the frozen hub always and any frozen building its own buildings cover (`_supersede_history`); never two hubs.
+
+*Growth (D50).* `planner.plan` lays the whole eventual network out once as a blueprint: every district's sites carry a `slot` in the mixed sequence
+(producer, support, processor, second producer, second processor, the rest) and a `district`. `local_ops.ensure` commissions at founding only the hub, the
+military facility, the age's infrastructure (support drills, generator, pump, tank, factory), one seed producer per district and a village allowance for a
+first processor (settlement 1, city 3). `village["dev"][region] = {cap, unlocked, receipts}` with `cap = pips x level`; `world._roll` hands every matching
+grant to `local_ops.growth_ticket(world, village, region, "epoch:pulse:village:region")`, which unlocks one further place once per receipt, never past the
+cap, never for a retired or pending village, and commissions the district's next latent slot. A city raises the cap without filling it. Cities and
+carried villages re-seed the same way in the new age (the record is reset at the boundary).
+
+*Construction (D51).* Every commissioned site goes PLANNED, RESERVED, FOUNDATION, BUILDING, then operates: `BUILD_MS` by kind (8 to 20 s), one crew per
+settlement and two per city (`builder` agents, the carrier family with a hard hat in the early ages and the OpenRA engineer later), who walk to the
+site, work it (the hammer swings) and go home; workers appear only on completion; belts move nothing until both ends stand; `work_done_ms`, `build_ms`
+and the state are saved, so a save mid-build resumes the same build. The viewer draws pegs (planned), the cleared footprint (reserved), a low stone
+course (foundation), the native Widelands `.build` sheet at the frame of the progress where the roster has one, else the finished sprite revealed from
+the ground behind scaffolding, and a progress arc; `inspect` names the stage and the percentage.
+
+*Processing in every age (D52).* `chains.json` adds age 1 charcoal kiln, lime kiln, smokehouse (the tavern), weaving hut and coal-fired smithy (the metal
+workshop); age 2 the tavern and the mill; age 3 the graphite press, kiln, separator and pulverizer with support drills for lead and sand. Every age
+and every role has a processor (`test_p07_*`). The roster is unchanged: the names in play are adaptations of imported buildings, as the register says.
+
+*Space and sight (D53, brief items 4 to 6).* The command centre's grey rectangle and the core's dark slab are gone: `_draw_apron` lays packed earth and
+tyre tracks that fade into the terrain. `_plan_industry` runs from age 3: belts from every drill to its district's processor and from the support
+drills, trucks still carry to the command centre; age 4 belts everything to the core as before. The island is `Egyptian_Mandala_v1.2@2x`:
+`wl_map.upsample` resamples the map two to one with weighted-majority terrain (coast and class boundaries round instead of stepping), interpolated
+heights and resources re-checked against their class; `embedding.build_scaled` places every node at twice its base position (a few tiles of slack for
+the smoothed coast), re-routes every corridor on the fine grid and validates (unit 26.74 tiles, no crossings, no poor plots). `DEFAULT_MAP` is the 2x
+map; a save made on the base map reloads on the base map with its own embedding.
+
+*Pandemic (D54, D55).* `god_world/pandemic/`: `rules.py` (the published core rules, pure, one JSON-able state with its own generator), `scenario.py`
+(the 80 nodes as locations, 109 links, four families by quarter of the island, six field posts at the factions' bases, six responders with the six
+published roles), `coordinator.py` (the cooperative mind playing from `public_view`, which hides the decks: cure when a hand allows, concentrate a
+family's cards in one collector by sharing and rendezvous, treat the heaviest formations, dispatcher and researcher roles, events when they are worth
+more than keeping), `campaign.py` (the bridge: begun when an age runs, one responder turn every 20 game seconds on the shared clock, responders
+manufactured at the base facilities under recorded supply contracts in `history["pandemic_contracts"]`, results in `history["pandemic"]`, retry from
+the age's checkpoint with a new crisis seed), `presentation.py` (formations in the age's hostile art with enemy livery, responders in the age's art
+with a role crest walking their last turn's path along the corridors, posts, the panel, short effects). The viewer draws all of it at the three zoom
+levels (`_draw_campaign`), the HUD's campaign panel shows the four countermeasures, outbreaks and rate, deck and posts, whose turn and the gate, and a
+lost campaign raises the card with "Retry from the checkpoint" or "A new world" (`retry` op, host only).
+
+*The gate (D56).* `world.gate_open()` is the campaign off or won this age; a ten-point completion with the gate shut records `economic_qualified` (the
+first qualifying completion is the cause) and the age waits; the campaign's win then triggers the age with that cause; the other order triggers at
+once. A loss pauses the run (`paused`, `pandemic_lost`). `scripts/god_world_run.py --economy-only` keeps the strategic regression; the default run is
+the combined one with retries from the checkpoint up to `--max-retries` and honest per-age campaign records.
+
+### Acceptance (the brief's P01 to P24)
+
+| Check | Status | Evidence |
+| --- | --- | --- |
+| P01 | verified | `test_god_world_renewal.py::test_p01_*`, `test_p02_*`: the multiset, roles, graph and keep-apart hold; the shuffle happens once per boundary from its own stream |
+| P02 | verified | `test_p02_*` (ranking on the old tokens, capacities and `dev` on the new), `test_p03_*` (a save before the boundary replays to the same tokens; a save after keeps them) |
+| P03 | verified (test and headed) | `test_p04_*`: frozen sites are exactly the built ones, no claims, the picture never changes, build-over supersedes the hub; headed boundary not captured this session (the ages run opens fresh ages) |
+| P04 | verified | `test_god_world_growth.py::test_p05_*`: one seed producer per district, repeated `ensure` never fills the blueprint |
+| P05 | verified | `test_p05_*`, `test_p06_*`: one place per matching grant, once per receipt, never past `pips x level`; the roll itself is the receipt |
+| P06 | verified | `test_p05_*`: an unmatched region, a duplicate receipt and a retired village add nothing; a city raises the cap without filling it (`test_p08_*`) |
+| P07 | verified (test and headed) | `test_p08_*` (the lifecycle, one job per builder, nothing works before completion, workers on completion, two crews for a city), `test_p09_*` (a save mid-build resumes); headed age 2 capture shows pegs, footprint and a foundation |
+| P08 | verified | `test_p07_*`: a processor in every age for every role; the allowance commissions a first one at founding |
+| P09 | verified (headed) | `headed_ages/age3_village_close.png`: the command centre on its earthen apron, no rectangle; the core likewise |
+| P10 | verified (test and headed) | age 3 belts from drills to processors (`test_god_world_industry.py` fixtures at age 3 and 4), headed age 3 and 4 captures with packets on the belts and consumption at processors and the factory |
+| P11 | verified | `test_v11_a_broken_belt_*`; an unbuilt end moves nothing (`_step_segments` requires both ends built); the viewer draws an inactive belt faded |
+| P12 | verified (test) | `test_the_resampled_island_*`: 384 x 384, every node at twice its base separation, every adjacency and corridor validated without crossings; device measurements not taken |
+| P13 | verified (test) | `test_p24_*`: six contracts, one per faction, each manufactured after the last; the campaign never reads the garrison (`units` are untouched by `pandemic/`) |
+| P14 | verified (headed) | formations drawn per node and family with stable ids `formation:<node>:<family>`, `n` = the canonical count, era art with enemy livery and the family glyph (`headed/11_campaign_formation.png`) |
+| P15 | verified | `test_god_world_pandemic.py::test_p15_*`: 80 location cards, four reserves of 24, six roles at six posts, two cards each, four escalations, five events, 3/3/3 with 3/2/1 |
+| P16 | verified | `test_p16_*`: four actions, links, flights need cards, treat counts; `IllegalAction` leaves the state untouched |
+| P17 | verified | `test_p16_*`: the fourth unit outbreaks to every neighbour, once per location per chain |
+| P18 | verified | `test_p18_*`: the bottom card, three units, the shuffled discard on top; the rate track `[2,2,2,3,3,4,4]`; `test_p19_*` the three losses |
+| P19 | verified | treat removes the canonical count once (`rules.treat`); the viewer shows the formation's `n`, nothing else can change it |
+| P20 | verified (honest) | `test_p21_*`: `public_view` hides the decks; over 60 crises on seed 0's island the coordinator wins 21 and loses 39 (outbreaks 22, deck 11, reserve 6); the baseline before the rendezvous rule won 16 of 40 |
+| P21 | verified | `test_p17_*` (four cures win once; a cured family needs its cards at a post), `test_p19_*` (every defeat condition) |
+| P22 | verified | `test_god_world_gate.py::test_p22_*`: ten points first then the campaign, and the campaign first then ten points, each transitions exactly once with the recorded cause |
+| P23 | verified | `test_p20_*` (the campaign's state is identical after a JSON round trip and six more turns), `test_p24_*` (a world save mid-campaign replays turn for turn), `test_p09_*` (mid-build), `test_p03_*` (the boundary) |
+| P24 | partial | the ordinary viewer runs the 384-tile island on the PC (`GOD_WORLD_OK` with the campaign, `GOD_AGES_OK`); no phone run, no device frame-time or memory figures |
+
+### Corpora (`scripts/god_world_run.py`, 24 Oct 2026, the 2x island, growth on)
+
+- Economy-only (`--economy-only`, `docs/evidence/god_world/corpus_economy.json`): 21 seeds through four ages, no stall; ages run longer than before
+  the brief because production places unlock one roll at a time and the island is larger (10.2 to 22.8 game-minutes an age over 84 age results, 33.1 to 55.2 s wall a seed).
+- Combined (`docs/evidence/god_world/corpus_combined.json`, retries from the checkpoint up to 6): 21 seeds; 9 complete all four ages (seeds 1, 2, 4, 6, 7, 8, 12, 16, 17), 12 stop in an age whose campaign was lost seven times running (the retry limit; no seed hit the pulse budget); 62 campaigns won and 124 lost (outbreaks 62, the player deck 36, a reserve 26), 112 retries; a won campaign takes 7.3 to 13.0 game-minutes (median 11.7, 21 to 38 turns), so a won age runs 11.8 to 23 game-minutes; 46 to 186 s wall a seed. The campaign is the limiting condition in every stalled seed: the economy had qualified or would have. This is reported as it is; the coordinator's strength is the open lever (see the limits below).
+
+### Headed evidence (24 Oct 2026, 450x800 window)
+
+`client/tests/run_god_world.gd` (`GOD_WORLD_OK`, shots in `docs/evidence/god_world/headed/`): the age-1 tour as before, then the campaign: six responders
+manufactured, formations and six posts on the island, the campaign panel, a tap on a formation labels it (`11_campaign_formation`, `12_campaign_label`,
+`13_campaign_board`). `client/tests/run_god_world_ages.gd` (`GOD_AGES_OK`, `docs/evidence/god_world/headed_ages/`): ages 2, 3 and 4 opened fresh on the
+2x island, villages growing one place at a time with builders at work, age 3 belts and trucks, age 4 belts, water and the factory, the campaign in
+each age.
+
+### Not done, and honest limits
+
+- The coordinator wins about a third of crises; the corpus retries from the checkpoint and records every loss. A stronger cooperative plan (card
+  concentration, forecasting) is the next lever if the owner wants more wins.
+- No phone run and no device figures for the 384-tile island (P24); the PC viewer holds the frame at village zoom.
+- A real age boundary with frozen villages is covered by tests, not by a headed capture (the ages runner opens fresh ages).
+- The builder's own sprite does not exist in the frozen roster: the carrier with a hard hat and the OpenRA engineer stand in (D51).
+- The grey rectangle's screenshot was not attached to the brief; the before reference was the previous commit's capture.
+
+### Session log (continued)
+
+- 18:30 to 19:20 The plan, decisions D48 to D56, the audit of construction and troop art and of the legacy hazards deck (not reused: it recycles the
+  discard on exhaustion). Stages 1 and 2 in Python: the reshuffle, frozen histories, development records, blueprint slots, the construction lifecycle
+  and builders; the chain tests complete the blueprint through `local_ops.complete_all`.
+- 19:20 to 20:00 The viewer: construction stages, frozen villages, the hard hat and hammer, the apron; the 2x island (`wl_map.upsample`,
+  `embedding.build_scaled`, 4 s to build); the dressing's search window scaled with the map.
+- 20:00 to 21:10 The campaign: rules, scenario, coordinator, bridge, presentation, gate, retry op, inspect, the HUD panel and the loss card; the
+  coordinator measured over 60 crises; the headed test's campaign section (a camera focus settles a frame later than the call: position asked after).
+- 21:10 onward Corpora, the ages capture, the documentation, the commit.

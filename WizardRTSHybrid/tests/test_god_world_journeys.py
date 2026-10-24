@@ -11,6 +11,7 @@ from wizard_rts.god_world.world import GodWorld
 
 def _running(seed=1):
     w = GodWorld(seed=seed)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     w.ai_enabled = False  # these tests drive the commands themselves (setup placement is not the AI pass and still happens)
     seq = [0]
 

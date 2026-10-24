@@ -8,7 +8,11 @@ Catan topology" rule for this profile; the ledger is `docs/ledger/GOD_WORLD_PROG
 `net/android_entry.py`); the viewer is `godot_project/client/god_world/`; the menu's first entry is **Watch the World** (`Watch the World.bat`).
 Branch `feature/god-world` (0.6.0), cut from `feature/polish-watching-feel`, so every earlier branch's work is included. **Second brief (same day): natural
 terrain and living villages**: the island is a real Widelands map (D42 to D47, plan `docs/PLAN_GOD_WORLD_LIVING.md`), villages run local networks of
-workers, carriers, belts and machines from a capacity budget (`god_world/local_ops.py`, `planner.py`, `data/god_world/chains.json`). Everything below describes
+workers, carriers, belts and machines from a capacity budget (`god_world/local_ops.py`, `planner.py`, `data/god_world/chains.json`). **Third brief (same
+day, 0.6.1): organic growth, age renewal and the shared Pandemic campaign** (D48 to D56, plan `docs/PLAN_GOD_WORLD_PANDEMIC.md`): tokens reshuffle at every
+age boundary, retired villages stay as frozen buildings, villages grow one place per matching roll through a visible construction lifecycle, the island is
+the 384-tile `Egyptian_Mandala_v1.2@2x`, and `god_world/pandemic/` runs the published Pandemic core as a cooperative military campaign whose win, with ten
+points, gates every age (`scripts/god_world_run.py --economy-only` keeps the economy-only corpus). Everything below describes
 the earlier wizard-led game: it is kept as legacy and development material, not deleted, and its product rules no longer decide the player's game.
 Merging into `main` is the owner's call.
 

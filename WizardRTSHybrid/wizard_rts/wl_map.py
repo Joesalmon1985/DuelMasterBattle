@@ -12,6 +12,8 @@ forests from the terrain (fertility and affinity). Heights and resources are cop
 
 from __future__ import annotations
 
+import math
+
 import re
 import struct
 from pathlib import Path
@@ -59,6 +61,54 @@ class _Reader:
         return s
 
 
+def upsample(base: T.TerrainGrid, k: int = 2) -> T.TerrainGrid:
+    """The same island at k times the tile count (docs/PLAN_GOD_WORLD_PANDEMIC.md stage 3, D53): every base tile becomes a k x k block, the
+    terrain of each new tile is the weighted majority of the four nearest base tiles (so coast and class boundaries round off instead of
+    stepping), heights are interpolated, resources follow the nearest base tile. Nothing else of the map changes; starts scale with it."""
+    w, h = base.w * k, base.h * k
+    g = T.TerrainGrid(w, h, list(base.palette))
+    bw, bh = base.w, base.h
+    for y in range(h):
+        fy = (y + 0.5) / k - 0.5
+        y0 = max(0, min(bh - 1, int(math.floor(fy))))
+        y1 = min(bh - 1, y0 + 1)
+        ty = min(1.0, max(0.0, fy - y0))
+        for x in range(w):
+            fx = (x + 0.5) / k - 0.5
+            x0 = max(0, min(bw - 1, int(math.floor(fx))))
+            x1 = min(bw - 1, x0 + 1)
+            tx = min(1.0, max(0.0, fx - x0))
+            weights = {}
+            hsum = 0.0
+            for (bx, by, wgt) in ((x0, y0, (1 - tx) * (1 - ty)), (x1, y0, tx * (1 - ty)), (x0, y1, (1 - tx) * ty), (x1, y1, tx * ty)):
+                i = by * bw + bx
+                t = base.terrain[i]
+                weights[t] = weights.get(t, 0.0) + wgt
+                hsum += base.height[i] * wgt
+            best = max(weights.items(), key=lambda kv: (round(kv[1], 6), -kv[0]))[0]
+            j = y * w + x
+            g.terrain[j] = best
+            g.height[j] = int(round(hsum))
+            ni = int(round(fy)) * bw + int(round(fx))
+            ni = max(0, min(bw * bh - 1, ni))
+            g.res_kind[j] = base.res_kind[ni]
+            g.res_amt[j] = base.res_amt[ni]
+            g.res_init[j] = base.res_init[ni]
+    g.compute()
+    # a resource only where its class still allows it after the smoothing
+    ok_class = {T.RES_CODE[n]: c for n, c in (("coal", T.MINEABLE), ("iron", T.MINEABLE), ("gold", T.MINEABLE), ("stones", T.MINEABLE), ("fish", T.WATER), ("water", T.ARABLE)) if n in T.RES_CODE}
+    for j in range(w * h):
+        rk = g.res_kind[j]
+        if rk and ok_class.get(rk) is not None and g.cls[j] != ok_class[rk]:
+            g.res_kind[j] = g.res_amt[j] = g.res_init[j] = 0
+    g.starts = [(sx * k + k // 2, sy * k + k // 2) for sx, sy in base.starts]
+    g.meta = dict(base.meta)
+    g.meta.update({"map": f"{base.meta.get('map', '')}@{k}x", "base_map": base.meta.get("map", ""), "resampled": k,
+                   "capitals": [[sx * k + k // 2, sy * k + k // 2] for sx, sy in base.starts], "all_starts": [[sx * k + k // 2, sy * k + k // 2] for sx, sy in base.meta.get("all_starts", [])],
+                   "translation": base.meta.get("translation", "") + f"; resampled x{k} with weighted-majority terrain and interpolated heights (god_world embedding @2x)"})
+    return g
+
+
 def _ini(text: str) -> dict[str, str]:
     out = {}
     for line in text.splitlines():
@@ -80,6 +130,8 @@ def _terrain_name(raw: str, defs: dict) -> str:
 
 
 def load(name: str, players: int = 6) -> T.TerrainGrid:
+    if name.endswith("@2x"):
+        return upsample(load(name[:-3], players), 2)
     root = MAPS / f"{name}.wmf"
     if not root.is_dir():
         raise FileNotFoundError(f"no Widelands map {name}; available: {available()}")

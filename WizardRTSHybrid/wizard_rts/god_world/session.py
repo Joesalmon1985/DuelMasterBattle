@@ -15,8 +15,8 @@ from . import inspect as inspect_mod
 from . import rules, snapshot
 from .world import GodWorld
 
-GOD_OPS = frozenset({"ping", "lobby", "start", "state", "leave", "board", "inspect", "label", "pause", "speed", "save", "new_world", "stats", "events"})
-HOST_ONLY = frozenset({"start", "pause", "speed", "save", "new_world"})
+GOD_OPS = frozenset({"ping", "lobby", "start", "state", "leave", "board", "inspect", "label", "pause", "speed", "save", "new_world", "stats", "events", "retry"})
+HOST_ONLY = frozenset({"start", "pause", "speed", "save", "new_world", "retry"})
 
 
 class Link:
@@ -159,6 +159,10 @@ class GodSession:
         if op == "speed":
             r = self.world.set_speed(int(message.get("scale", 1)))
             self.command_log.append({"op": op, "player": link.id, "scale": self.world.speed, "game_ms": self.game_ms()})
+            return r
+        if op == "retry":
+            r = self.world.retry_pandemic()
+            self.command_log.append({"op": op, "player": link.id, "result": r.get("status"), "game_ms": self.game_ms()})
             return r
         if op == "save":
             return self._save(str(message.get("slot", "manual")))

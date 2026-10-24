@@ -80,6 +80,8 @@ def test_boundary_checkpoints_are_written_by_the_session_tick(tmp_path, monkeypa
     from wizard_rts.god_world.session import GodSession
 
     w = GodWorld(seed=0)
+
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     s = GodSession(w, permanent=True, autosave_s=0)
     seq = 0
     while not w.history["age_winners"]:

@@ -11,6 +11,7 @@ from wizard_rts.god_world.world import GodWorld
 
 def _age4_village(seed=0, role_needed="BRICK"):
     w = GodWorld(seed=seed)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     w.ai_enabled = False
     seq = [0]
 
@@ -25,7 +26,7 @@ def _age4_village(seed=0, role_needed="BRICK"):
         v["age"] = 4
     v = next((v for v in w.villages.values() if v["status"] == "operational" and any(w.board.role(h) == role_needed for h in w.board.node_hexes[v["node"]])), None)
     assert v is not None
-    ops = local_ops.ensure(w, v)
+    ops = local_ops.complete_all(w, v)
     for s in ops["sites"].values():
         s["state"] = "idle"
         s["ready_ms"] = 0
@@ -166,7 +167,9 @@ def test_v09_silicon_and_lead_build_a_unit_within_the_quota():
 
 def test_the_industrial_layer_does_not_move_the_strategic_game_either():
     a = GodWorld(seed=5)
+    a.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     b = GodWorld(seed=5)
+    b.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     b.local_ops_enabled = False
     for i in range(600):
         a.advance(1000, i + 1, snapshot=False)

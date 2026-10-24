@@ -12,6 +12,7 @@ from typing import Any
 
 from . import ai as ai_mod
 from . import ages, composition, embedding, local_ops, rules
+from .pandemic import campaign as pandemic_mod
 from .board import GodBoard
 from .ledger import Ledger
 
@@ -39,6 +40,8 @@ class GodWorld:
         if map_name:
             self._attach_map(map_name)
         self.rng = random.Random(self.seed * 7919 + 3)
+        self.rng_layout = random.Random(self.seed * 31 + 7)  # the age renewal's own stream: reshuffles the tokens, never the dice (D48)
+        self.production_revision = 1  # bumps at every reshuffle; every capacity, label and layout cache keys on it
         self.cosmetic_seed = self.seed * 104729 + 11  # the viewer's own stream: never the dice
         self.game_ms = 0
         self._carry_ms = 0
@@ -72,6 +75,13 @@ class GodWorld:
         self.ai_enabled = True  # tests of one rule at a time switch the factions off; the game never does
         self.transition: dict[str, Any] | None = None
         self.final_result: dict[str, Any] | None = None
+        # the shared Pandemic campaign (D54, D56): one per age on the same clock; the age advances on the economy AND the campaign, either order
+        self.pandemic_enabled = True
+        self.pandemic: dict[str, Any] | None = None
+        self.pandemic_won = False
+        self.pandemic_lost: dict[str, Any] | None = None
+        self.pandemic_retries = 0
+        self.economic_qualified: dict[str, Any] | None = None
         self.topology_version = 0
         self._reach_cache: dict[str, tuple[int, dict[str, Any]]] = {}
         self._next_id = 1
@@ -93,7 +103,8 @@ class GodWorld:
         grid = wl_map.load(map_name)
         emb = embedding.load(map_name)
         if emb is None or emb.get("map_static_hash") != grid.static_hash() or emb.get("shape") != self.board.shape:
-            emb = embedding.build(self.board, grid, map_name)
+            base = embedding.load(map_name[:-3]) if map_name.endswith("@2x") else None
+            emb = embedding.build_scaled(self.board, grid, map_name, base) if base else embedding.build(self.board, grid, map_name)
         self.terrain = grid
         self.board.attach_embedding(emb, grid)
 
@@ -317,6 +328,10 @@ class GodWorld:
             ages.sites_ready(self)
         if self.phase == "RUNNING" and self.next_roll_ms is not None and self.game_ms >= self.next_roll_ms:
             self._roll()
+        if self.pandemic_enabled and self.phase == "RUNNING" and self.final_result is None:
+            if self.pandemic is None or int(self.pandemic.get("epoch", -1)) != int(self.epoch) or int(self.pandemic.get("age", -1)) != int(self.age):
+                pandemic_mod.begin(self)  # a new age (or a developer jump to one) gets its own campaign
+            pandemic_mod.step(self)
         self._step_military()
         if self.phase == "RUNNING" and self.game_ms % rules.timing("ai_pass") == 0:
             self._ai_pass()
@@ -390,6 +405,9 @@ class GodWorld:
         self.pulses += 1
         self.pulses_total += 1
         self.last_roll = {"game_ms": int(self.game_ms), "dice": [d1, d2], "total": total, "grants": grants, "pulse": self.pulses}
+        if self.local_ops_enabled:  # growth tickets (D50): one development place per matching grant, once per receipt; never a token
+            for g in grants:
+                local_ops.growth_ticket(self, self.villages[g["village"]], g["hex"], f"{self.epoch}:{self.pulses}:{g['village']}:{g['hex']}")
         self.next_roll_ms = int(self.next_roll_ms or self.game_ms) + rules.timing("roll_interval")
         self.log("roll", dice=[d1, d2], total=total, grants=len(grants))
         if self.pulses - self.progress_pulse >= rules.limit("stall_pulses") and (self.pulses - self.progress_pulse) % rules.limit("stall_pulses") == 0:
@@ -665,9 +683,20 @@ class GodWorld:
                 continue
             fid = done["faction"]
             if self.vp(fid) >= rules.vp_target():
-                ages.trigger(self, fid, done)
-                self.pending_completions.clear()
-                break
+                if self.gate_open():
+                    ages.trigger(self, fid, done)
+                    self.pending_completions.clear()
+                    break
+                if self.economic_qualified is None:  # the first qualifying completion is the recorded cause; the age waits for the campaign
+                    self.economic_qualified = {"faction": fid, "cause": dict(done), "game_ms": int(self.game_ms), "vp": self.vp(fid)}
+                    self.log("economic_qualified", faction=fid, vp=self.vp(fid))
+
+    def gate_open(self) -> bool:
+        """The age may advance: the campaign is off, or won this age (D56)."""
+        return (not self.pandemic_enabled) or bool(self.pandemic_won)
+
+    def retry_pandemic(self) -> dict[str, Any]:
+        return pandemic_mod.retry(self)
 
     # ------------------------------------------------------------------ military presentation
     def recruit_at(self, v: dict[str, Any], art: str = "", name: str = "") -> bool:
@@ -736,11 +765,12 @@ class GodWorld:
     def to_dict(self) -> dict[str, Any]:
         return {"schema": SCHEMA, "profile": self.profile, "run_id": self.run_id, "seed": self.seed, "map": self.map_name, "cosmetic_seed": self.cosmetic_seed, "game_ms": self.game_ms,
                 "carry_ms": self._carry_ms, "clock_sequence": self.clock_sequence, "speed": self.speed, "paused": self.paused, "age": self.age, "epoch": self.epoch,
-                "phase": self.phase, "rng": _rng_state(self.rng), "board": self.board.to_dict(), "factions": self.factions, "ledger": self.ledger.to_dict(),
+                "phase": self.phase, "rng": _rng_state(self.rng), "rng_layout": _rng_state(self.rng_layout), "production_revision": self.production_revision, "board": self.board.to_dict(), "factions": self.factions, "ledger": self.ledger.to_dict(),
                 "villages": self.villages, "roads": self.roads, "journeys": self.journeys, "units": self.units, "node_reserved": self.node_reserved,
                 "events": self.events[-200:], "history": self.history, "counters": self.counters, "setup": self.setup, "next_roll_ms": self.next_roll_ms,
                 "last_roll": self.last_roll, "pulses": self.pulses, "pulses_total": self.pulses_total, "progress_pulse": self.progress_pulse, "ai": self.ai,
                 "ai_pass_index": self.ai_pass_index, "ai_enabled": self.ai_enabled, "tree_claims": self.tree_claims, "local_ops_enabled": self.local_ops_enabled, "transition": self.transition, "final_result": self.final_result, "next_id": self._next_id, "next_unit_id": self._next_unit_id,
+                "pandemic_enabled": self.pandemic_enabled, "pandemic": self.pandemic, "pandemic_won": self.pandemic_won, "pandemic_lost": self.pandemic_lost, "pandemic_retries": self.pandemic_retries, "economic_qualified": self.economic_qualified,
                 "name_index": self._name_index, "topology_version": self.topology_version, "pending_completions": self.pending_completions}
 
     @classmethod
@@ -759,6 +789,9 @@ class GodWorld:
         w.epoch = int(payload.get("epoch", 1))
         w.phase = str(payload["phase"])
         w.rng = _rng_load(payload["rng"])
+        if payload.get("rng_layout"):
+            w.rng_layout = _rng_load(payload["rng_layout"])
+        w.production_revision = int(payload.get("production_revision", 1))
         w.factions = [dict(f) for f in payload["factions"]]
         w.fids = [f["id"] for f in w.factions]
         w.ledger = Ledger.from_dict(payload["ledger"])
@@ -783,6 +816,12 @@ class GodWorld:
         w.local_ops_enabled = bool(payload.get("local_ops_enabled", True))
         w.transition = payload.get("transition")
         w.final_result = payload.get("final_result")
+        w.pandemic_enabled = bool(payload.get("pandemic_enabled", False if "pandemic" not in payload else True))
+        w.pandemic = payload.get("pandemic")
+        w.pandemic_won = bool(payload.get("pandemic_won", False))
+        w.pandemic_lost = payload.get("pandemic_lost")
+        w.pandemic_retries = int(payload.get("pandemic_retries", 0))
+        w.economic_qualified = payload.get("economic_qualified")
         w._next_id = int(payload.get("next_id", 1))
         w._next_unit_id = int(payload.get("next_unit_id", 1))
         w._name_index = int(payload.get("name_index", 0))

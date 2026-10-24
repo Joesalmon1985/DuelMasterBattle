@@ -61,7 +61,8 @@ def main(argv: list[str] | None = None) -> int:
             print("EMBEDDING_MISSING")
             return 1
     else:
-        emb = embedding.build(board, grid, args.map)
+        base = embedding.load(args.map[:-3]) if args.map.endswith("@2x") else None
+        emb = embedding.build_scaled(board, grid, args.map, base) if base else embedding.build(board, grid, args.map)
         path = embedding.embedding_path(args.map)
         path.write_text(json.dumps(emb, separators=(",", ":")), encoding="utf-8")
         print("wrote", path)

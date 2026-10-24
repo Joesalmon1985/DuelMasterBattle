@@ -260,6 +260,28 @@ class GodBoard:
             raise ValueError("saved edge ids do not match the rebuilt topology")
         return board
 
+    # ------------------------------------------------------------------ the age's renewal (D48)
+    def reshuffle_tokens(self, rng: random.Random) -> dict[str, Any]:
+        """Shuffle the productive hexes' number tokens (the same multiset) under the keep-apart rule; roles and deserts untouched. Returns before/after."""
+        spec = rules.board_spec()
+        keep_apart = {int(t) for t in spec.get("keep_apart", [])}
+        productive = [h for h in self.hexes if self.roles.get(h) != rules.DESERT]
+        before = {h: int(self.tokens[h]) for h in productive}
+        pool = [before[h] for h in productive]
+        for _attempt in range(10_000):
+            rng.shuffle(pool)
+            tokens = {h: pool[i] for i, h in enumerate(productive)}
+            ok = True
+            for h in productive:
+                if tokens[h] in keep_apart and any(tokens.get(o) in keep_apart for o in self.hex_neighbours(h)):
+                    ok = False
+                    break
+            if ok:
+                self.tokens = tokens
+                self.validate()
+                return {"before": before, "after": dict(tokens)}
+        raise RuntimeError("could not reshuffle the tokens under the keep-apart rule")
+
     # ------------------------------------------------------------------ generation
     @classmethod
     def generate(cls, seed: int) -> "GodBoard":

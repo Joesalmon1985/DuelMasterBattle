@@ -14,6 +14,7 @@ from wizard_rts.god_world.world import GodWorld
 
 def _running(seed=0):
     w = GodWorld(seed=seed)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     w.ai_enabled = False
     seq = [0]
 
@@ -124,7 +125,7 @@ def test_v07_a_log_goes_from_a_tree_through_the_sawmill_to_the_hub_and_the_woodl
         step()
     wood = next((v for v in w.villages.values() if v["status"] == "operational" and any(w.board.role(h) == "WOOD" for h in w.board.node_hexes[v["node"]])), None)
     assert wood is not None
-    ops = local_ops.ensure(w, wood)
+    ops = local_ops.complete_all(w, wood)
     assert int(wood["age"]) == 2
     cutters = [s for s in ops["sites"].values() if s["kind"] == "producer" and s["task"] == "fell"]
     mills = [s for s in ops["sites"].values() if s["kind"] == "processor" and s["good"] == "planks"]
@@ -164,7 +165,9 @@ def test_v07_a_log_goes_from_a_tree_through_the_sawmill_to_the_hub_and_the_woodl
 
 def test_v12_v18_operating_goods_never_touch_the_hand_and_the_layer_is_strategically_invisible():
     a = GodWorld(seed=6)
+    a.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     b = GodWorld(seed=6)
+    b.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     b.local_ops_enabled = False
     for i in range(1800):
         a.advance(1000, i + 1, snapshot=False)

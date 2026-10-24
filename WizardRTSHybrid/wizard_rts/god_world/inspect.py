@@ -48,9 +48,56 @@ def details(world, sid: str) -> dict[str, Any]:
             return _site(world, rest)
         if kind == "agent":
             return _agent(world, rest)
+        if kind in ("formation", "responder", "post"):
+            return _campaign(world, kind, rest)
     except KeyError:
         pass
     return {"id": sid, "title": "Nothing here", "subtitle": "", "lines": []}
+
+
+def _campaign(world, kind: str, rest: str) -> dict[str, Any]:
+    from .pandemic import presentation as P, rules as R
+
+    camp = world.pandemic
+    if camp is None:
+        raise KeyError(rest)
+    st = camp["state"]
+    age = int(camp["age"])
+    if kind == "formation":
+        nid, _, fam = rest.rpartition(":")
+        loc = st["locations"][nid]
+        n = int(loc["units"].get(fam, 0))
+        if n <= 0:
+            raise KeyError(rest)
+        name = P.family_name(age, fam)
+        lines = [f"A hostile formation of {name.lower()}: {n} {'unit' if n == 1 else 'units'} on this ground." + (" At full strength: one more and they break out into every neighbouring place." if n >= 3 else ""),
+                 "They are beaten by the responders' work here, not by the garrisons: each treatment sends one unit back; a cured family goes at once."]
+        if st["families"][fam]["cured"]:
+            lines.append("Their countermeasure is known.")
+        return {"id": f"formation:{rest}", "title": name, "subtitle": f"{n} of 3 · {rules.hex_name(age, world.board.role(world.board.node_hexes[nid][0])) if world.board.node_hexes[nid] else 'crossing'}", "lines": lines, "faction": ""}
+    if kind == "responder":
+        r = R.responder(st, rest)
+        by = R.hand_by_family(st, r)
+        held = ", ".join(f"{P.family_name(age, f)} {len(c)}" for f, c in by.items() if c) or "no location cards"
+        fname = _faction_name(world, r["faction"])
+        role_lines = {"medic": "Clears every unit of a family where she works, and keeps a cured family from returning where she stands.",
+                      "scientist": "Finds a countermeasure with four matching cards instead of five.",
+                      "researcher": "May hand any location card to a responder standing with him.",
+                      "dispatcher": "May move another responder, or bring one to any responder's side.",
+                      "operations_expert": "Raises a field post anywhere without a card, and may fly from a post to any place once a turn.",
+                      "quarantine_specialist": "No unit arrives where she stands or in the neighbouring places."}
+        lines = [f"Manufactured at {fname}'s base under supply contract for {P.CAMPAIGN_NAMES.get(age, 'the campaign').lower()}.", role_lines[r["role"]], f"Holding {held}; events: {', '.join(R.EVENT_NAMES[c] for c in r['hand'] if c in R.EVENTS) or 'none'}."]
+        if r is R.current(st) and st["result"] is None:
+            lines.append("Acting now.")
+        return {"id": f"responder:{rest}", "title": R.ROLE_NAMES[r["role"]], "subtitle": f"{fname} · responder", "lines": lines, "faction": r["faction"]}
+    if kind == "post":
+        nid = rest
+        if not st["locations"][nid]["post"]:
+            raise KeyError(rest)
+        owner = next((fid for fid, b in camp.get("bases", {}).items() if b == nid), "")
+        lines = ["A field post: countermeasures are found here, and responders shuttle between posts in one move."]
+        return {"id": f"post:{nid}", "title": "Field post", "subtitle": (_faction_name(world, owner) + "'s base") if owner else "raised in the field", "lines": lines, "faction": owner}
+    raise KeyError(rest)
 
 
 def _hex(world, hid: str) -> dict[str, Any]:
@@ -124,16 +171,29 @@ def _site(world, sid: str) -> dict[str, Any]:
     v = world.villages[vid]
     ops = v.get("ops") or {}
     s = ops.get("sites", {}).get(sid)
+    fname = _faction_name(world, v["faction"])
+    if s is None and v.get("frozen"):
+        fs = next((x for x in v["frozen"]["sites"] if x["id"] == sid), None)
+        if fs is None:
+            raise KeyError(sid)
+        return {"id": f"site:{sid}", "title": f"Old {fs['name'].lower()}", "subtitle": f"{v['name']} · {fname} · {rules.age_name(int(v['frozen']['age']))} age",
+                "lines": [f"Built when {v['name']} was {fname}'s. It stands quiet now: nobody works here and nothing it held counts.", "A new settlement on this ground may build over it."],
+                "faction": v["faction"]}
     if s is None:
         raise KeyError(sid)
     age = int(v["age"])
-    fname = _faction_name(world, v["faction"])
     lines: list[str] = []
-    state = {"building": "Under construction.", "idle": "Ready for the next job.", "working": "At work.", "full": "Its store is full: waiting for a carrier.",
+    state = {"planned": "Planned: waiting for the builders.", "reserved": "The builders are on their way.", "foundation": "The foundations are being laid.",
+             "building": "Under construction.", "idle": "Ready for the next job.", "working": "At work.", "full": "Its store is full: waiting for a carrier.",
              "short": "Waiting for its inputs.", "no_work": "Nothing to work on nearby just now.", "unpowered": "No power."}.get(s["state"], s["state"])
+    if s["state"] in local_ops.CONSTRUCTION:
+        lines.append(f"{state} {int(local_ops.build_progress(s) * 100)}% built.")
     if s["kind"] == "hub":
         hub = ops.get("hub", {})
         lines.append(f"{v['name']}'s one store and dispatch yard. Everything the village makes is carried here.")
+        dev = v.get("dev") or {}
+        if dev:
+            lines.append("Growth: " + "; ".join(f"{rules.hex_name(age, world.board.role(h)).lower()} {world.board.token(h)}: {r['unlocked']} of {r['cap']} places unlocked" for h, r in sorted(dev.items())) + ". Each matching roll unlocks one more.")
         stock = _goods_ops(hub.get("stock", {}))
         lines.append(f"In the yard: {stock}.")
         shipped = sum(int(n) for n in hub.get("shipped", {}).values())

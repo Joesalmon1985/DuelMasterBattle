@@ -170,7 +170,7 @@ def plan(world, village: dict[str, Any]) -> dict[str, Any]:
         wx, wy = board.work_site(hid)
         reach = min(math.hypot(wx - cx, wy - cy), unit * 1.05)
         mine = spec["producer"]["task"] == "mine"
-        # producers: along the district direction, fanning out; mines may stand on the mountain itself
+        dsites: list[dict[str, Any]] = []  # the district's blueprint, then ordered into the mixed sequence (D50)
         for i in range(c["producers"]):
             depth = 3.4 + 2.3 * (i // 2)
             lat = (1.0 if i % 2 == 0 else -1.0) * (1.9 if c["producers"] > 1 else 0.0)
@@ -182,27 +182,27 @@ def plan(world, village: dict[str, Any]) -> dict[str, Any]:
                 pos = plot.place((cx + ux * 4.0, cy + uy * 4.0), mine_ok=True, force=True)  # every district has at least its first producer
             if pos is None:
                 continue
-            p = spec["producer"]
-            sites.append({"id": f"{vid}:{hid}:a{age}:prod{i}", "kind": "producer", "role": role, "art": p["art"], "name": p["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
-                          "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": spec["good"], "worker": p.get("worker", ""), "task": p["task"],
-                          "work_ms": int(p.get("work_ms", 12000)), "work_anim": p.get("work_anim", ""), "workers": c["workers_per_producer"],
-                          "needs_water": bool(p.get("needs_water", False))})
+            pr = spec["producer"]
+            dsites.append({"id": f"{vid}:{hid}:a{age}:prod{i}", "kind": "producer", "role": role, "art": pr["art"], "name": pr["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
+                           "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": spec["good"], "worker": pr.get("worker", ""), "task": pr["task"],
+                           "work_ms": int(pr.get("work_ms", 12000)), "work_anim": pr.get("work_anim", ""), "workers": c["workers_per_producer"],
+                           "needs_water": bool(pr.get("needs_water", False)), "seq": i})
         second = spec.get("second")
         if second is not None:
             ideal = (cx + ux * min(reach, 7.5) - vx * 3.6, cy + uy * min(reach, 7.5) - vy * 3.6)
             pos = plot.place(ideal, mine_ok=True)
             if pos is not None:
-                sites.append({"id": f"{vid}:{hid}:a{age}:second", "kind": "producer", "role": role, "art": second["art"], "name": second["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
-                              "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": second["good"], "worker": second.get("worker", ""), "task": second["task"],
-                              "work_ms": int(second.get("work_ms", 12000)), "work_anim": second.get("work_anim", ""), "workers": 1, "needs_water": False})
+                dsites.append({"id": f"{vid}:{hid}:a{age}:second", "kind": "producer", "role": role, "art": second["art"], "name": second["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
+                               "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": second["good"], "worker": second.get("worker", ""), "task": second["task"],
+                               "work_ms": int(second.get("work_ms", 12000)), "work_anim": second.get("work_anim", ""), "workers": 1, "needs_water": False, "seq": 100})
         support = spec.get("support")
         if support is not None and cap >= 2:
             ideal = (cx + ux * 5.6 + vx * 4.2, cy + uy * 5.6 + vy * 4.2)
             pos = plot.place(ideal)
             if pos is not None:
-                sites.append({"id": f"{vid}:{hid}:a{age}:support", "kind": "support", "role": role, "art": support["art"], "name": support["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
-                              "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": "", "worker": support.get("worker", ""), "task": support.get("task", ""),
-                              "work_ms": int(support.get("work_ms", 0)), "work_anim": support.get("work_anim", ""), "workers": 1 if support.get("worker") else 0})
+                dsites.append({"id": f"{vid}:{hid}:a{age}:support", "kind": "support", "role": role, "art": support["art"], "name": support["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
+                               "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": "", "worker": support.get("worker", ""), "task": support.get("task", ""),
+                               "work_ms": int(support.get("work_ms", 0)), "work_anim": support.get("work_anim", ""), "workers": 1 if support.get("worker") else 0, "seq": 50})
         proc = spec.get("processor")
         for k in range(c["processors"]):
             if proc is None:
@@ -211,9 +211,28 @@ def plan(world, village: dict[str, Any]) -> dict[str, Any]:
             pos = plot.place(ideal)
             if pos is None:
                 continue
-            sites.append({"id": f"{vid}:{hid}:a{age}:proc{k}", "kind": "processor", "role": role, "art": proc["art"], "name": proc["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
-                          "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": proc["out"], "recipe": dict(proc["recipe"]), "work_ms": int(proc.get("work_ms", 15000)),
-                          "power": bool(proc.get("power", False))})
+            dsites.append({"id": f"{vid}:{hid}:a{age}:proc{k}", "kind": "processor", "role": role, "art": proc["art"], "name": proc["name"], "x": round(pos[0], 2), "y": round(pos[1], 2),
+                           "ex": round(pos[0], 2), "ey": round(pos[1] + 1.2, 2), "hex": hid, "good": proc["out"], "recipe": dict(proc["recipe"]), "work_ms": int(proc.get("work_ms", 15000)),
+                           "power": bool(proc.get("power", False)), "seq": 60 + k})
+        # the mixed sequence of the district's places: producer, support, processor, second producer, second processor, the rest
+        order = {"producer": 0, "support": 1, "processor": 2}
+        def seq_key(site: dict[str, Any]) -> tuple:
+            if site["kind"] == "producer" and site["seq"] == 0:
+                return (0, 0)
+            if site["kind"] == "support":
+                return (1, 0)
+            if site["kind"] == "processor" and site["seq"] == 60:
+                return (2, 0)
+            if site["kind"] == "producer" and site["seq"] == 1:
+                return (3, 0)
+            if site["kind"] == "processor":
+                return (4, site["seq"])
+            return (5, site["seq"])
+        dsites.sort(key=seq_key)
+        for slot, site in enumerate(dsites):
+            site["district"] = hid
+            site["slot"] = slot
+            sites.append(site)
     # the military facility: on the side with no district, else beside the smallest district
     used = [dirs[h] for h, _c in districts]
     if used:
@@ -232,7 +251,7 @@ def plan(world, village: dict[str, Any]) -> dict[str, Any]:
         sites.append({"id": f"{vid}:mil", "kind": "military", "role": "", "art": mil["facility"], "name": mil.get("facility_name", "Barracks"), "x": round(pos[0], 2), "y": round(pos[1], 2),
                       "ex": round(pos[0], 2), "ey": round(pos[1] + 1.3, 2), "hex": "", "good": "", "dir": [round(mx, 3), round(my, 3)]})
     segments: list[dict[str, Any]] = []
-    if age >= 4:
+    if age >= 3:
         _plan_industry(world, village, plot, sites, segments, mx, my)
     producers_total = sum(1 for s in sites if s["kind"] == "producer")
     carriers = min(6, 1 + producers_total // 2)
@@ -310,23 +329,37 @@ def _plan_industry(world, village: dict[str, Any], plot: Plot, sites: list[dict[
             produced.setdefault(good, []).append(site)
         return site
 
-    # district chains: every producer feeds its district's processor (else the core); every processor feeds the core; processors get their other inputs
+    # district chains: every producer feeds its district's processor by belt (else the core in the future age; trucks carry to the modern hub);
+    # every processor feeds the core by belt in the future age; processors get their other inputs from support sources
+    belts_to_hub = age >= 4
     for s in list(sites):
         if s["kind"] == "producer" and s.get("hex"):
             procs = [p for p in sites if p["kind"] == "processor" and p.get("hex") == s["hex"] and s["good"] in p.get("recipe", {})]
-            dst = procs[0] if procs else hub
-            segments.append(_belt(vid, len(segments), s, dst, good=s["good"]))
+            if procs:
+                segments.append(_belt(vid, len(segments), s, procs[0], good=s["good"]))
+            elif belts_to_hub:
+                segments.append(_belt(vid, len(segments), s, hub, good=s["good"]))
     for p in list(sites):
         if p["kind"] == "processor" and p.get("hex"):
-            segments.append(_belt(vid, len(segments), p, hub, good=p["good"]))
+            if belts_to_hub:
+                segments.append(_belt(vid, len(segments), p, hub, good=p["good"]))
             for g in p.get("recipe", {}):
                 if any(seg["to"] == p["id"] and seg.get("good") == g for seg in segments):
                     continue
                 src = ensure_source(g)
                 if src is not None:
                     segments.append(_belt(vid, len(segments), src, p, good=g))
+    if age == 3:
+        # a modern village without a district processor still gets one processing service (the kiln) fed by belt from support drills
+        if not any(p["kind"] == "processor" for p in sites):
+            kiln = ensure_source("metaglass")
+            if kiln is not None:
+                kiln["allowance_hint"] = True
+        return
     # power: a combustion generator fed with coal
     gen_pos = next_slot()
+    if age < 4:
+        gen_pos = None
     if gen_pos is not None:
         gen = {"id": f"{vid}:a{age}:generator", "kind": "generator", "role": "", "art": "mindustry.block.combustion_generator", "name": "Combustion generator", "x": round(gen_pos[0], 2),
                "y": round(gen_pos[1], 2), "ex": round(gen_pos[0], 2), "ey": round(gen_pos[1] + 1.0, 2), "hex": "", "good": "", "recipe": {"coal": 1}, "work_ms": 25000, "fuel": 0}

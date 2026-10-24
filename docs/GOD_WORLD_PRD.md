@@ -650,3 +650,21 @@ Official publisher references establish the underlying board-game mechanics. The
 - [CATAN 5–6 rules, 2025](https://www.catan.com/sites/default/files/2025-03/CN3082%20CATAN%20%E2%80%93%205-6%20Rulebook%202025%20reduced.pdf): extension components, number discs and paired-player turn structure. This PRD intentionally replaces that tabletop turn structure with autonomous continuous action.
 
 The 80-node/109-edge totals are derived from the explicit 30-cell graph, not claimed as counts printed in the rulebooks. Production percentages are exact calculations from two fair dice, rounded to two decimal places for display.
+
+## 18. Renewal, growth and the shared campaign (the owner's third brief, 24 Oct 2026)
+
+The brief "God World: organic growth, age renewal and Pandemic" amends this PRD as follows; decisions D48 to D56 and `docs/PLAN_GOD_WORLD_PANDEMIC.md`
+carry the detail, the ledger the evidence.
+
+- **10.1 Trigger** now reads: an age advances when one faction stands at ten points AND the age's shared campaign is won, in either order; the first
+  qualifying completion is the recorded cause and the age waits for the other condition. A lost campaign pauses the world for a retry from the age's
+  checkpoint (a new crisis) or a new world.
+- **10.3 Transition** adds: the productive number tokens are reshuffled once at every real boundary (roles, deserts, graph and terrain fixed) after the
+  carry-over ranking, and retired villages keep their actual buildings as frozen history that a new settlement may build over.
+- **7.1 and 7.2** are amended: a village begins with its hub, one seed site per productive region and a small processing allowance; each successful
+  matching roll unlocks one more place up to `pips x level`; every building is built visibly in stages by a bounded crew; every age has processing;
+  the modern age has conveyors from its drills; the command centre stands on an earthen apron.
+- **4.2** is amended: the island is the Widelands map resampled to 384 x 384 with the nodes twice as far apart; older saves keep their map.
+- **11** is amended: the shared Pandemic campaign (`god_world/pandemic/`) adds six manufactured responders and four threat families as hostile formations
+  in era art, played by a cooperative coordinator on the published core rules, one responder turn every twenty game seconds; combat stays the action
+  economy, never faction-versus-faction war.

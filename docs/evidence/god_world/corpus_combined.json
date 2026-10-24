@@ -1,0 +1,5864 @@
+{
+ "summary": {
+  "seeds": 21,
+  "ok": false,
+  "stalled": [
+   0,
+   3,
+   5,
+   9,
+   10,
+   11,
+   13,
+   14,
+   15,
+   18,
+   19,
+   507
+  ],
+  "economy_only": false,
+  "campaign_wins": 62,
+  "campaign_losses": 124,
+  "retries": 112,
+  "minutes_per_age": [
+   11.8,
+   12.4,
+   12.8,
+   13.3,
+   15.1,
+   15.5,
+   15.6,
+   15.6,
+   16.1,
+   16.6,
+   16.6,
+   16.8,
+   16.9,
+   16.9,
+   17.2,
+   17.2,
+   17.5,
+   18.1,
+   18.1,
+   18.3,
+   18.6,
+   19.3,
+   19.4,
+   19.8,
+   20.5,
+   20.7,
+   20.7,
+   20.8,
+   21.9,
+   22.5,
+   22.5,
+   22.5,
+   22.5,
+   22.5,
+   22.8,
+   23.2,
+   23.4,
+   23.5,
+   23.8,
+   24.8,
+   24.8,
+   25.2,
+   25.4,
+   27.5,
+   28.2,
+   32.8,
+   33.4,
+   33.5,
+   33.5,
+   34.1,
+   34.4,
+   35.2,
+   35.5,
+   41.2,
+   43.8,
+   45.5,
+   45.7,
+   48.7,
+   54.4,
+   58.4,
+   65.1,
+   70.5
+  ],
+  "pulses_per_age": [
+   46,
+   48,
+   49,
+   52,
+   59,
+   61,
+   61,
+   61,
+   62,
+   65,
+   65,
+   65,
+   66,
+   67,
+   67,
+   68,
+   68,
+   70,
+   71,
+   71,
+   73,
+   76,
+   76,
+   78,
+   81,
+   81,
+   81,
+   82,
+   86,
+   89,
+   89,
+   89,
+   89,
+   89,
+   90,
+   92,
+   92,
+   93,
+   94,
+   98,
+   98,
+   100,
+   100,
+   109,
+   112,
+   130,
+   132,
+   133,
+   133,
+   134,
+   136,
+   140,
+   141,
+   164,
+   174,
+   181,
+   181,
+   193,
+   216,
+   232,
+   258,
+   281
+  ]
+ },
+ "runs": [
+  {
+   "seed": 0,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 48,
+     "minutes": 12.4,
+     "vp": {
+      "f1": 4,
+      "f2": 13,
+      "f3": 5,
+      "f4": 3,
+      "f5": 6,
+      "f6": 6
+     },
+     "villages": 25,
+     "cities": 12,
+     "trades": 61,
+     "bank_trades": 21,
+     "roads": 38
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": null,
+     "pulses": 301,
+     "minutes": 75.5,
+     "vp": {
+      "f1": 16,
+      "f2": 20,
+      "f3": 6,
+      "f4": 10,
+      "f5": 8,
+      "f6": 12
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 182,
+     "bank_trades": 96,
+     "roads": 104,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 2,
+      "turns": 30,
+      "outbreaks": 8,
+      "game_ms": 5274000,
+      "retries": 6
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ]
+   ],
+   "game_minutes": 87.9,
+   "wall_s": 70.8,
+   "counters": {
+    "trades": 182,
+    "bank_trades": 96,
+    "declined": 2476,
+    "roads": 104,
+    "settlements": 49,
+    "cities": 48,
+    "recruits": 407,
+    "ai_actions": 474
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 7919,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 744000,
+     "minutes": 12.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 15838,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 0,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 754000,
+     "ended_ms": 1534000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 120567,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 1534000,
+     "ended_ms": 2314000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 225296,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 22,
+     "outbreaks": 6,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 2314000,
+     "ended_ms": 2754000,
+     "minutes": 7.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 330025,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 2754000,
+     "ended_ms": 3234000,
+     "minutes": 8.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 434754,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 33,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 3234000,
+     "ended_ms": 3894000,
+     "minutes": 11.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 539483,
+     "retries": 5,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 3894000,
+     "ended_ms": 4674000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 644212,
+     "retries": 6,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 30,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 4674000,
+     "ended_ms": 5274000,
+     "minutes": 10.0
+    }
+   ],
+   "campaign_wins": 1,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 1,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 134,
+     "minutes": 34.1,
+     "vp": {
+      "f1": 20,
+      "f2": 12,
+      "f3": 10,
+      "f4": 8,
+      "f5": 8,
+      "f6": 14
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 119,
+     "bank_trades": 65,
+     "roads": 50
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 61,
+     "minutes": 15.6,
+     "vp": {
+      "f1": 4,
+      "f2": 4,
+      "f3": 5,
+      "f4": 3,
+      "f5": 10,
+      "f6": 3
+     },
+     "villages": 21,
+     "cities": 8,
+     "trades": 162,
+     "bank_trades": 79,
+     "roads": 82
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 89,
+     "minutes": 22.5,
+     "vp": {
+      "f1": 16,
+      "f2": 13,
+      "f3": 4,
+      "f4": 9,
+      "f5": 10,
+      "f6": 9
+     },
+     "villages": 36,
+     "cities": 25,
+     "trades": 256,
+     "bank_trades": 120,
+     "roads": 141
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 141,
+     "minutes": 35.5,
+     "vp": {
+      "f1": 16,
+      "f2": 12,
+      "f3": 8,
+      "f4": 11,
+      "f5": 10,
+      "f6": 14
+     },
+     "villages": 36,
+     "cities": 35,
+     "trades": 371,
+     "bank_trades": 209,
+     "roads": 199
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f1"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 107.6,
+   "wall_s": 146.9,
+   "counters": {
+    "trades": 371,
+    "bank_trades": 209,
+    "declined": 6091,
+    "roads": 199,
+    "settlements": 93,
+    "cities": 104,
+    "recruits": 733,
+    "ai_actions": 969
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 1007922,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 30,
+     "outbreaks": 5,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 624000,
+     "minutes": 10.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 1112651,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 624000,
+     "ended_ms": 1404000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 1217380,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1404000,
+     "ended_ms": 2044000,
+     "minutes": 10.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 1015841,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 30,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2054000,
+     "ended_ms": 2674000,
+     "minutes": 10.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 1023760,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 31,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2987000,
+     "ended_ms": 3607000,
+     "minutes": 10.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 1128489,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3607000,
+     "ended_ms": 4327000,
+     "minutes": 12.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 1031679,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 34,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 4337000,
+     "ended_ms": 5017000,
+     "minutes": 11.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 1136408,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 35,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 5017000,
+     "ended_ms": 5717000,
+     "minutes": 11.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 1241137,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5717000,
+     "ended_ms": 6457000,
+     "minutes": 12.3
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 5,
+   "retries": 5
+  },
+  {
+   "seed": 2,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 81,
+     "minutes": 20.7,
+     "vp": {
+      "f1": 9,
+      "f2": 7,
+      "f3": 8,
+      "f4": 10,
+      "f5": 16,
+      "f6": 7
+     },
+     "villages": 37,
+     "cities": 20,
+     "trades": 102,
+     "bank_trades": 25,
+     "roads": 53
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 133,
+     "minutes": 33.5,
+     "vp": {
+      "f1": 12,
+      "f2": 12,
+      "f3": 12,
+      "f4": 12,
+      "f5": 12,
+      "f6": 14
+     },
+     "villages": 37,
+     "cities": 37,
+     "trades": 217,
+     "bank_trades": 110,
+     "roads": 114
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 112,
+     "minutes": 28.2,
+     "vp": {
+      "f1": 18,
+      "f2": 12,
+      "f3": 12,
+      "f4": 8,
+      "f5": 10,
+      "f6": 13
+     },
+     "villages": 37,
+     "cities": 36,
+     "trades": 331,
+     "bank_trades": 182,
+     "roads": 174
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 92,
+     "minutes": 23.2,
+     "vp": {
+      "f1": 7,
+      "f2": 15,
+      "f3": 11,
+      "f4": 4,
+      "f5": 8,
+      "f6": 19
+     },
+     "villages": 37,
+     "cities": 27,
+     "trades": 437,
+     "bank_trades": 218,
+     "roads": 239
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f5"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 105.6,
+   "wall_s": 111.0,
+   "counters": {
+    "trades": 437,
+    "bank_trades": 218,
+    "declined": 5423,
+    "roads": 239,
+    "settlements": 112,
+    "cities": 120,
+    "recruits": 845,
+    "ai_actions": 1119
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 2007925,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 604000,
+     "minutes": 9.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 2112654,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 604000,
+     "ended_ms": 1244000,
+     "minutes": 10.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 2015844,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 30,
+     "outbreaks": 2,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 1254000,
+     "ended_ms": 1854000,
+     "minutes": 10.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 2120573,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 35,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1854000,
+     "ended_ms": 2554000,
+     "minutes": 11.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 2225302,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2554000,
+     "ended_ms": 3254000,
+     "minutes": 11.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 2023763,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 17,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 3264000,
+     "ended_ms": 3604000,
+     "minutes": 5.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 2128492,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 3604000,
+     "ended_ms": 4384000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 2233221,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 27,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4384000,
+     "ended_ms": 4944000,
+     "minutes": 9.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 2031682,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 30,
+     "outbreaks": 8,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 4954000,
+     "ended_ms": 5554000,
+     "minutes": 10.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 2136411,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5554000,
+     "ended_ms": 6334000,
+     "minutes": 13.0
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 6,
+   "retries": 6
+  },
+  {
+   "seed": 3,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 100,
+     "minutes": 25.4,
+     "vp": {
+      "f1": 14,
+      "f2": 10,
+      "f3": 12,
+      "f4": 14,
+      "f5": 8,
+      "f6": 11
+     },
+     "villages": 35,
+     "cities": 34,
+     "trades": 94,
+     "bank_trades": 67,
+     "roads": 49
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f1",
+     "pulses": 61,
+     "minutes": 15.6,
+     "vp": {
+      "f1": 10,
+      "f2": 3,
+      "f3": 6,
+      "f4": 5,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 28,
+     "cities": 11,
+     "trades": 183,
+     "bank_trades": 88,
+     "roads": 94
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 213,
+     "minutes": 53.5,
+     "vp": {
+      "f1": 10,
+      "f2": 16,
+      "f3": 8,
+      "f4": 10,
+      "f5": 10,
+      "f6": 16
+     },
+     "villages": 35,
+     "cities": 35,
+     "trades": 305,
+     "bank_trades": 162,
+     "roads": 148,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 27,
+      "outbreaks": 8,
+      "game_ms": 5671000,
+      "retries": 5
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f1"
+    ]
+   ],
+   "game_minutes": 94.5,
+   "wall_s": 107.7,
+   "counters": {
+    "trades": 305,
+    "bank_trades": 162,
+    "declined": 4009,
+    "roads": 148,
+    "settlements": 74,
+    "cities": 80,
+    "recruits": 676,
+    "ai_actions": 760
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 3007928,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 804000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 3112657,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 804000,
+     "ended_ms": 1524000,
+     "minutes": 12.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 3015847,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1534000,
+     "ended_ms": 2234000,
+     "minutes": 11.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3023766,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 22,
+     "outbreaks": 8,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 2471000,
+     "ended_ms": 2911000,
+     "minutes": 7.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3128495,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 25,
+     "outbreaks": 8,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 2911000,
+     "ended_ms": 3411000,
+     "minutes": 8.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3233224,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 29,
+     "outbreaks": 7,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 3411000,
+     "ended_ms": 3991000,
+     "minutes": 9.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3337953,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 25,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 3991000,
+     "ended_ms": 4491000,
+     "minutes": 8.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3442682,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 4491000,
+     "ended_ms": 5131000,
+     "minutes": 10.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 3547411,
+     "retries": 5,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 27,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 5131000,
+     "ended_ms": 5671000,
+     "minutes": 9.0
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 4,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 258,
+     "minutes": 65.1,
+     "vp": {
+      "f1": 16,
+      "f2": 16,
+      "f3": 8,
+      "f4": 14,
+      "f5": 12,
+      "f6": 10
+     },
+     "villages": 38,
+     "cities": 38,
+     "trades": 121,
+     "bank_trades": 48,
+     "roads": 58
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 65,
+     "minutes": 16.6,
+     "vp": {
+      "f1": 4,
+      "f2": 9,
+      "f3": 8,
+      "f4": 6,
+      "f5": 6,
+      "f6": 10
+     },
+     "villages": 31,
+     "cities": 12,
+     "trades": 193,
+     "bank_trades": 80,
+     "roads": 119
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 68,
+     "minutes": 17.2,
+     "vp": {
+      "f1": 4,
+      "f2": 10,
+      "f3": 6,
+      "f4": 6,
+      "f5": 5,
+      "f6": 8
+     },
+     "villages": 24,
+     "cities": 15,
+     "trades": 250,
+     "bank_trades": 109,
+     "roads": 156
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f2",
+     "pulses": 93,
+     "minutes": 23.5,
+     "vp": {
+      "f1": 3,
+      "f2": 19,
+      "f3": 9,
+      "f4": 6,
+      "f5": 8,
+      "f6": 11
+     },
+     "villages": 35,
+     "cities": 21,
+     "trades": 328,
+     "bank_trades": 165,
+     "roads": 216
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f2"
+    ]
+   ],
+   "game_minutes": 122.5,
+   "wall_s": 100.7,
+   "counters": {
+    "trades": 328,
+    "bank_trades": 165,
+    "declined": 3900,
+    "roads": 216,
+    "settlements": 92,
+    "cities": 86,
+    "recruits": 614,
+    "ai_actions": 888
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4007931,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 32,
+     "outbreaks": 5,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 664000,
+     "minutes": 10.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4112660,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 664000,
+     "ended_ms": 1444000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4217389,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1444000,
+     "ended_ms": 2224000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4322118,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 22,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2224000,
+     "ended_ms": 2664000,
+     "minutes": 7.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4426847,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 2664000,
+     "ended_ms": 3144000,
+     "minutes": 8.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 4531576,
+     "retries": 5,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3144000,
+     "ended_ms": 3904000,
+     "minutes": 12.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 4015850,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3914000,
+     "ended_ms": 4634000,
+     "minutes": 12.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 4023769,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 32,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4913000,
+     "ended_ms": 5573000,
+     "minutes": 11.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 4031688,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 5948000,
+     "ended_ms": 6728000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 4136417,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 30,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 6728000,
+     "ended_ms": 7348000,
+     "minutes": 10.3
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 6,
+   "retries": 6
+  },
+  {
+   "seed": 5,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 193,
+     "minutes": 48.7,
+     "vp": {
+      "f1": 14,
+      "f2": 8,
+      "f3": 8,
+      "f4": 16,
+      "f5": 16,
+      "f6": 6
+     },
+     "villages": 34,
+     "cities": 34,
+     "trades": 98,
+     "bank_trades": 100,
+     "roads": 61
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 140,
+     "minutes": 35.2,
+     "vp": {
+      "f1": 12,
+      "f2": 10,
+      "f3": 18,
+      "f4": 8,
+      "f5": 6,
+      "f6": 14
+     },
+     "villages": 34,
+     "cities": 34,
+     "trades": 216,
+     "bank_trades": 146,
+     "roads": 122
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 78,
+     "minutes": 19.8,
+     "vp": {
+      "f1": 10,
+      "f2": 6,
+      "f3": 9,
+      "f4": 7,
+      "f5": 8,
+      "f6": 4
+     },
+     "villages": 33,
+     "cities": 11,
+     "trades": 305,
+     "bank_trades": 180,
+     "roads": 178
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": null,
+     "pulses": 32,
+     "minutes": 8.2,
+     "vp": {
+      "f1": 2,
+      "f2": 4,
+      "f3": 4,
+      "f4": 3,
+      "f5": 3,
+      "f6": 3
+     },
+     "villages": 15,
+     "cities": 4,
+     "trades": 331,
+     "bank_trades": 186,
+     "roads": 191,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 4,
+      "turns": 24,
+      "outbreaks": 8,
+      "game_ms": 6714000,
+      "retries": 0
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f1"
+    ]
+   ],
+   "game_minutes": 111.9,
+   "wall_s": 66.2,
+   "counters": {
+    "trades": 331,
+    "bank_trades": 186,
+    "declined": 4209,
+    "roads": 191,
+    "settlements": 80,
+    "cities": 83,
+    "recruits": 700,
+    "ai_actions": 865
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 5007934,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 22,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 24000,
+     "ended_ms": 464000,
+     "minutes": 7.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 5112663,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F3"
+     ],
+     "started_ms": 464000,
+     "ended_ms": 944000,
+     "minutes": 8.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 5217392,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 944000,
+     "ended_ms": 1424000,
+     "minutes": 8.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 5322121,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 1424000,
+     "ended_ms": 2204000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 5426850,
+     "retries": 4,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2204000,
+     "ended_ms": 2924000,
+     "minutes": 12.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 5015853,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2934000,
+     "ended_ms": 3714000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 5120582,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 3714000,
+     "ended_ms": 4354000,
+     "minutes": 10.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 5225311,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 33,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4354000,
+     "ended_ms": 5034000,
+     "minutes": 11.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 5023772,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5044000,
+     "ended_ms": 5824000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 5031691,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 6234000,
+     "ended_ms": 6714000,
+     "minutes": 8.0
+    }
+   ],
+   "campaign_wins": 3,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 6,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 71,
+     "minutes": 18.3,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 7,
+      "f4": 6,
+      "f5": 10,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 14,
+     "trades": 63,
+     "bank_trades": 35,
+     "roads": 43
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 61,
+     "minutes": 15.5,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 6,
+      "f4": 10,
+      "f5": 6,
+      "f6": 3
+     },
+     "villages": 24,
+     "cities": 11,
+     "trades": 123,
+     "bank_trades": 59,
+     "roads": 86
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 59,
+     "minutes": 15.1,
+     "vp": {
+      "f1": 5,
+      "f2": 8,
+      "f3": 10,
+      "f4": 4,
+      "f5": 7,
+      "f6": 4
+     },
+     "villages": 22,
+     "cities": 16,
+     "trades": 182,
+     "bank_trades": 79,
+     "roads": 116
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 130,
+     "minutes": 32.8,
+     "vp": {
+      "f1": 8,
+      "f2": 8,
+      "f3": 18,
+      "f4": 22,
+      "f5": 10,
+      "f6": 4
+     },
+     "villages": 36,
+     "cities": 34,
+     "trades": 288,
+     "bank_trades": 128,
+     "roads": 179
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 81.7,
+   "wall_s": 74.4,
+   "counters": {
+    "trades": 288,
+    "bank_trades": 128,
+    "declined": 3662,
+    "roads": 179,
+    "settlements": 75,
+    "cities": 75,
+    "recruits": 525,
+    "ai_actions": 754
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 6007937,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 12,
+     "outbreaks": 3,
+     "cured": [],
+     "started_ms": 24000,
+     "ended_ms": 264000,
+     "minutes": 4.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 6112666,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 264000,
+     "ended_ms": 1024000,
+     "minutes": 12.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 6015856,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1107000,
+     "ended_ms": 1807000,
+     "minutes": 11.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 6023775,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2037000,
+     "ended_ms": 2797000,
+     "minutes": 12.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 6031694,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 20,
+     "outbreaks": 2,
+     "cured": [
+      "F2",
+      "F3"
+     ],
+     "started_ms": 2940000,
+     "ended_ms": 3340000,
+     "minutes": 6.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 6136423,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 15,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 3340000,
+     "ended_ms": 3640000,
+     "minutes": 5.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 6241152,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 26,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 3640000,
+     "ended_ms": 4160000,
+     "minutes": 8.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 6345881,
+     "retries": 3,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4160000,
+     "ended_ms": 4900000,
+     "minutes": 12.3
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 4,
+   "retries": 4
+  },
+  {
+   "seed": 7,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 65,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 10,
+      "f2": 7,
+      "f3": 5,
+      "f4": 8,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 31,
+     "cities": 14,
+     "trades": 60,
+     "bank_trades": 34,
+     "roads": 45
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 71,
+     "minutes": 18.1,
+     "vp": {
+      "f1": 5,
+      "f2": 7,
+      "f3": 6,
+      "f4": 8,
+      "f5": 10,
+      "f6": 7
+     },
+     "villages": 30,
+     "cities": 13,
+     "trades": 140,
+     "bank_trades": 68,
+     "roads": 97
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 86,
+     "minutes": 21.9,
+     "vp": {
+      "f1": 7,
+      "f2": 6,
+      "f3": 6,
+      "f4": 10,
+      "f5": 8,
+      "f6": 7
+     },
+     "villages": 30,
+     "cities": 14,
+     "trades": 226,
+     "bank_trades": 108,
+     "roads": 150
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 174,
+     "minutes": 43.8,
+     "vp": {
+      "f1": 8,
+      "f2": 18,
+      "f3": 10,
+      "f4": 18,
+      "f5": 16,
+      "f6": 6
+     },
+     "villages": 38,
+     "cities": 38,
+     "trades": 358,
+     "bank_trades": 177,
+     "roads": 218
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 100.7,
+   "wall_s": 108.3,
+   "counters": {
+    "trades": 358,
+    "bank_trades": 177,
+    "declined": 5203,
+    "roads": 218,
+    "settlements": 93,
+    "cities": 79,
+    "recruits": 677,
+    "ai_actions": 930
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 7007940,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 724000,
+     "minutes": 11.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 7015859,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 25,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1020000,
+     "ended_ms": 1540000,
+     "minutes": 8.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 7023778,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 17,
+     "outbreaks": 6,
+     "cured": [],
+     "started_ms": 2106000,
+     "ended_ms": 2446000,
+     "minutes": 5.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 7128507,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 33,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2446000,
+     "ended_ms": 3126000,
+     "minutes": 11.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 7031697,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F3"
+     ],
+     "started_ms": 3420000,
+     "ended_ms": 4060000,
+     "minutes": 10.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 7136426,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 23,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 4060000,
+     "ended_ms": 4520000,
+     "minutes": 7.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 7241155,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 37,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4520000,
+     "ended_ms": 5260000,
+     "minutes": 12.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 7345884,
+     "retries": 3,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5260000,
+     "ended_ms": 6040000,
+     "minutes": 13.0
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 4,
+   "retries": 4
+  },
+  {
+   "seed": 8,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 136,
+     "minutes": 34.4,
+     "vp": {
+      "f1": 10,
+      "f2": 16,
+      "f3": 10,
+      "f4": 6,
+      "f5": 20,
+      "f6": 10
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 109,
+     "bank_trades": 59,
+     "roads": 55
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 67,
+     "minutes": 16.9,
+     "vp": {
+      "f1": 7,
+      "f2": 6,
+      "f3": 8,
+      "f4": 4,
+      "f5": 7,
+      "f6": 10
+     },
+     "villages": 28,
+     "cities": 14,
+     "trades": 182,
+     "bank_trades": 75,
+     "roads": 106
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 66,
+     "minutes": 16.9,
+     "vp": {
+      "f1": 7,
+      "f2": 4,
+      "f3": 10,
+      "f4": 4,
+      "f5": 7,
+      "f6": 4
+     },
+     "villages": 31,
+     "cities": 5,
+     "trades": 248,
+     "bank_trades": 94,
+     "roads": 158
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 81,
+     "minutes": 20.5,
+     "vp": {
+      "f1": 10,
+      "f2": 6,
+      "f3": 10,
+      "f4": 5,
+      "f5": 14,
+      "f6": 5
+     },
+     "villages": 36,
+     "cities": 14,
+     "trades": 341,
+     "bank_trades": 139,
+     "roads": 219
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 88.7,
+   "wall_s": 68.9,
+   "counters": {
+    "trades": 341,
+    "bank_trades": 139,
+    "declined": 4527,
+    "roads": 219,
+    "settlements": 95,
+    "cities": 69,
+    "recruits": 591,
+    "ai_actions": 869
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 8007943,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 34,
+     "outbreaks": 6,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 704000,
+     "minutes": 11.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 8112672,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 704000,
+     "ended_ms": 1344000,
+     "minutes": 10.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 8217401,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1344000,
+     "ended_ms": 2064000,
+     "minutes": 12.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 8015862,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 21,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2074000,
+     "ended_ms": 2514000,
+     "minutes": 7.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 8023781,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3090000,
+     "ended_ms": 3850000,
+     "minutes": 12.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 8031700,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4101000,
+     "ended_ms": 4681000,
+     "minutes": 9.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 8136429,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4681000,
+     "ended_ms": 5321000,
+     "minutes": 10.7
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 3,
+   "retries": 3
+  },
+  {
+   "seed": 9,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f3",
+     "pulses": 68,
+     "minutes": 17.5,
+     "vp": {
+      "f1": 9,
+      "f2": 9,
+      "f3": 10,
+      "f4": 5,
+      "f5": 8,
+      "f6": 5
+     },
+     "villages": 33,
+     "cities": 13,
+     "trades": 80,
+     "bank_trades": 25,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f1",
+     "pulses": 89,
+     "minutes": 22.5,
+     "vp": {
+      "f1": 16,
+      "f2": 9,
+      "f3": 5,
+      "f4": 7,
+      "f5": 7,
+      "f6": 7
+     },
+     "villages": 33,
+     "cities": 18,
+     "trades": 170,
+     "bank_trades": 49,
+     "roads": 104
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 76,
+     "minutes": 19.3,
+     "vp": {
+      "f1": 10,
+      "f2": 5,
+      "f3": 7,
+      "f4": 4,
+      "f5": 7,
+      "f6": 7
+     },
+     "villages": 22,
+     "cities": 18,
+     "trades": 238,
+     "bank_trades": 88,
+     "roads": 135
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": null,
+     "pulses": 232,
+     "minutes": 58.2,
+     "vp": {
+      "f1": 10,
+      "f2": 14,
+      "f3": 16,
+      "f4": 12,
+      "f5": 8,
+      "f6": 14
+     },
+     "villages": 37,
+     "cities": 37,
+     "trades": 368,
+     "bank_trades": 139,
+     "roads": 189,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "player_deck_exhausted",
+      "age": 4,
+      "turns": 39,
+      "outbreaks": 6,
+      "game_ms": 7050000,
+      "retries": 5
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f3"
+    ],
+    [
+     2,
+     "f1"
+    ],
+    [
+     3,
+     "f1"
+    ]
+   ],
+   "game_minutes": 117.5,
+   "wall_s": 186.3,
+   "counters": {
+    "trades": 368,
+    "bank_trades": 139,
+    "declined": 4632,
+    "roads": 189,
+    "settlements": 89,
+    "cities": 86,
+    "recruits": 735,
+    "ai_actions": 879
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 9007946,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 29,
+     "outbreaks": 0,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 624000,
+     "minutes": 10.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 9015865,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 30,
+     "outbreaks": 5,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 1062000,
+     "ended_ms": 1662000,
+     "minutes": 10.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 9120594,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1662000,
+     "ended_ms": 2402000,
+     "minutes": 12.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 9023784,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2412000,
+     "ended_ms": 3132000,
+     "minutes": 12.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9031703,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 28,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 3570000,
+     "ended_ms": 4130000,
+     "minutes": 9.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9136432,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4130000,
+     "ended_ms": 4910000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9241161,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 7,
+     "cured": [
+      "F2",
+      "F3"
+     ],
+     "started_ms": 4910000,
+     "ended_ms": 5690000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9345890,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 5690000,
+     "ended_ms": 6170000,
+     "minutes": 8.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9450619,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 5,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 6170000,
+     "ended_ms": 6270000,
+     "minutes": 1.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 9555348,
+     "retries": 5,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F2",
+      "F3"
+     ],
+     "started_ms": 6270000,
+     "ended_ms": 7050000,
+     "minutes": 13.0
+    }
+   ],
+   "campaign_wins": 3,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 10,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 132,
+     "minutes": 33.4,
+     "vp": {
+      "f1": 16,
+      "f2": 12,
+      "f3": 10,
+      "f4": 14,
+      "f5": 16,
+      "f6": 12
+     },
+     "villages": 40,
+     "cities": 40,
+     "trades": 127,
+     "bank_trades": 76,
+     "roads": 63
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 133,
+     "minutes": 33.5,
+     "vp": {
+      "f1": 14,
+      "f2": 14,
+      "f3": 6,
+      "f4": 8,
+      "f5": 16,
+      "f6": 22
+     },
+     "villages": 40,
+     "cities": 40,
+     "trades": 247,
+     "bank_trades": 156,
+     "roads": 129
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 105,
+     "minutes": 26.5,
+     "vp": {
+      "f1": 16,
+      "f2": 16,
+      "f3": 4,
+      "f4": 3,
+      "f5": 14,
+      "f6": 22
+     },
+     "villages": 40,
+     "cities": 35,
+     "trades": 355,
+     "bank_trades": 220,
+     "roads": 197,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 28,
+      "outbreaks": 8,
+      "game_ms": 5604000,
+      "retries": 2
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f6"
+    ]
+   ],
+   "game_minutes": 93.4,
+   "wall_s": 81.1,
+   "counters": {
+    "trades": 355,
+    "bank_trades": 220,
+    "declined": 4467,
+    "roads": 197,
+    "settlements": 96,
+    "cities": 115,
+    "recruits": 925,
+    "ai_actions": 972
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 10007949,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 804000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 10112678,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 28,
+     "outbreaks": 7,
+     "cured": [
+      "F2",
+      "F3"
+     ],
+     "started_ms": 804000,
+     "ended_ms": 1364000,
+     "minutes": 9.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 10217407,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1364000,
+     "ended_ms": 2004000,
+     "minutes": 10.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 10015868,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 31,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2014000,
+     "ended_ms": 2634000,
+     "minutes": 10.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 10120597,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2634000,
+     "ended_ms": 3414000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 10225326,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 29,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3414000,
+     "ended_ms": 4014000,
+     "minutes": 10.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 10023787,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 30,
+     "outbreaks": 3,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 4024000,
+     "ended_ms": 4624000,
+     "minutes": 10.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 10128516,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 21,
+     "outbreaks": 5,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 4624000,
+     "ended_ms": 5044000,
+     "minutes": 7.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 10233245,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 28,
+     "outbreaks": 8,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5044000,
+     "ended_ms": 5604000,
+     "minutes": 9.3
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 11,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 67,
+     "minutes": 17.2,
+     "vp": {
+      "f1": 10,
+      "f2": 9,
+      "f3": 9,
+      "f4": 6,
+      "f5": 7,
+      "f6": 5
+     },
+     "villages": 31,
+     "cities": 15,
+     "trades": 89,
+     "bank_trades": 26,
+     "roads": 45
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 281,
+     "minutes": 70.5,
+     "vp": {
+      "f1": 14,
+      "f2": 16,
+      "f3": 6,
+      "f4": 12,
+      "f5": 8,
+      "f6": 14
+     },
+     "villages": 35,
+     "cities": 35,
+     "trades": 198,
+     "bank_trades": 78,
+     "roads": 108
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 85,
+     "minutes": 21.5,
+     "vp": {
+      "f1": 6,
+      "f2": 20,
+      "f3": 8,
+      "f4": 11,
+      "f5": 11,
+      "f6": 12
+     },
+     "villages": 36,
+     "cities": 32,
+     "trades": 308,
+     "bank_trades": 122,
+     "roads": 161,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 35,
+      "outbreaks": 8,
+      "game_ms": 6550000,
+      "retries": 1
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f2"
+    ]
+   ],
+   "game_minutes": 109.2,
+   "wall_s": 68.4,
+   "counters": {
+    "trades": 308,
+    "bank_trades": 122,
+    "declined": 2671,
+    "roads": 161,
+    "settlements": 78,
+    "cities": 82,
+    "recruits": 669,
+    "ai_actions": 744
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 11007952,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 764000,
+     "minutes": 12.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11015871,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 24,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 1040000,
+     "ended_ms": 1520000,
+     "minutes": 8.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11120600,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1520000,
+     "ended_ms": 2300000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11225329,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2300000,
+     "ended_ms": 2920000,
+     "minutes": 10.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11330058,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 2920000,
+     "ended_ms": 3700000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11434787,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 3700000,
+     "ended_ms": 4480000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 11539516,
+     "retries": 5,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4480000,
+     "ended_ms": 5260000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 11023790,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 5270000,
+     "ended_ms": 5850000,
+     "minutes": 9.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 11128519,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 35,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 5850000,
+     "ended_ms": 6550000,
+     "minutes": 11.7
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 12,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 76,
+     "minutes": 19.4,
+     "vp": {
+      "f1": 7,
+      "f2": 7,
+      "f3": 4,
+      "f4": 12,
+      "f5": 9,
+      "f6": 9
+     },
+     "villages": 33,
+     "cities": 15,
+     "trades": 73,
+     "bank_trades": 22,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f1",
+     "pulses": 90,
+     "minutes": 22.8,
+     "vp": {
+      "f1": 14,
+      "f2": 8,
+      "f3": 16,
+      "f4": 10,
+      "f5": 4,
+      "f6": 7
+     },
+     "villages": 34,
+     "cities": 25,
+     "trades": 157,
+     "bank_trades": 70,
+     "roads": 109
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 65,
+     "minutes": 16.6,
+     "vp": {
+      "f1": 6,
+      "f2": 4,
+      "f3": 10,
+      "f4": 6,
+      "f5": 5,
+      "f6": 6
+     },
+     "villages": 23,
+     "cities": 14,
+     "trades": 223,
+     "bank_trades": 88,
+     "roads": 144
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f3",
+     "pulses": 98,
+     "minutes": 24.8,
+     "vp": {
+      "f1": 12,
+      "f2": 8,
+      "f3": 12,
+      "f4": 12,
+      "f5": 11,
+      "f6": 14
+     },
+     "villages": 37,
+     "cities": 32,
+     "trades": 332,
+     "bank_trades": 146,
+     "roads": 195
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f1"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f3"
+    ]
+   ],
+   "game_minutes": 83.6,
+   "wall_s": 68.1,
+   "counters": {
+    "trades": 332,
+    "bank_trades": 146,
+    "declined": 4239,
+    "roads": 195,
+    "settlements": 91,
+    "cities": 86,
+    "recruits": 559,
+    "ai_actions": 856
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 12007955,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 31,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 644000,
+     "minutes": 10.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 12112684,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 25,
+     "outbreaks": 0,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 644000,
+     "ended_ms": 1164000,
+     "minutes": 8.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 12015874,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 38,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 1174000,
+     "ended_ms": 1934000,
+     "minutes": 12.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 12120603,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 29,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1934000,
+     "ended_ms": 2534000,
+     "minutes": 10.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 12023793,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2544000,
+     "ended_ms": 3244000,
+     "minutes": 11.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 12031712,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 38,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 3537000,
+     "ended_ms": 4297000,
+     "minutes": 12.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 12136441,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4297000,
+     "ended_ms": 5017000,
+     "minutes": 12.0
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 3,
+   "retries": 3
+  },
+  {
+   "seed": 13,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 81,
+     "minutes": 20.7,
+     "vp": {
+      "f1": 12,
+      "f2": 12,
+      "f3": 10,
+      "f4": 11,
+      "f5": 14,
+      "f6": 12
+     },
+     "villages": 36,
+     "cities": 35,
+     "trades": 106,
+     "bank_trades": 50,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 109,
+     "minutes": 27.5,
+     "vp": {
+      "f1": 12,
+      "f2": 8,
+      "f3": 6,
+      "f4": 12,
+      "f5": 14,
+      "f6": 20
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 216,
+     "bank_trades": 108,
+     "roads": 104
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f6",
+     "pulses": 98,
+     "minutes": 24.8,
+     "vp": {
+      "f1": 4,
+      "f2": 14,
+      "f3": 10,
+      "f4": 10,
+      "f5": 13,
+      "f6": 16
+     },
+     "villages": 36,
+     "cities": 31,
+     "trades": 322,
+     "bank_trades": 178,
+     "roads": 167
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": null,
+     "pulses": 144,
+     "minutes": 36.2,
+     "vp": {
+      "f1": 18,
+      "f2": 10,
+      "f3": 10,
+      "f4": 8,
+      "f5": 12,
+      "f6": 14
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 444,
+     "bank_trades": 253,
+     "roads": 228,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 4,
+      "turns": 30,
+      "outbreaks": 8,
+      "game_ms": 6554000,
+      "retries": 2
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f6"
+    ]
+   ],
+   "game_minutes": 109.2,
+   "wall_s": 110.6,
+   "counters": {
+    "trades": 444,
+    "bank_trades": 253,
+    "declined": 5430,
+    "roads": 228,
+    "settlements": 108,
+    "cities": 138,
+    "recruits": 962,
+    "ai_actions": 1163
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 13007958,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 22,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 464000,
+     "minutes": 7.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 13112687,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 464000,
+     "ended_ms": 1244000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 13015877,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 27,
+     "outbreaks": 8,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1254000,
+     "ended_ms": 1794000,
+     "minutes": 9.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 13120606,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 21,
+     "outbreaks": 8,
+     "cured": [
+      "F1"
+     ],
+     "started_ms": 1794000,
+     "ended_ms": 2214000,
+     "minutes": 7.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 13225335,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 33,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2214000,
+     "ended_ms": 2894000,
+     "minutes": 11.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 13023796,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2904000,
+     "ended_ms": 3684000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 13128525,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 34,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3684000,
+     "ended_ms": 4384000,
+     "minutes": 11.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 13031715,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 4394000,
+     "ended_ms": 5174000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 13136444,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 5174000,
+     "ended_ms": 5954000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 13241173,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 30,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5954000,
+     "ended_ms": 6554000,
+     "minutes": 10.0
+    }
+   ],
+   "campaign_wins": 3,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 14,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 62,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 7,
+      "f2": 6,
+      "f3": 7,
+      "f4": 6,
+      "f5": 10,
+      "f6": 7
+     },
+     "villages": 34,
+     "cities": 9,
+     "trades": 81,
+     "bank_trades": 23,
+     "roads": 51
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 89,
+     "minutes": 22.5,
+     "vp": {
+      "f1": 11,
+      "f2": 6,
+      "f3": 10,
+      "f4": 8,
+      "f5": 12,
+      "f6": 6
+     },
+     "villages": 35,
+     "cities": 18,
+     "trades": 178,
+     "bank_trades": 70,
+     "roads": 113
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 274,
+     "minutes": 68.8,
+     "vp": {
+      "f1": 16,
+      "f2": 10,
+      "f3": 4,
+      "f4": 10,
+      "f5": 20,
+      "f6": 12
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 301,
+     "bank_trades": 139,
+     "roads": 174,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 33,
+      "outbreaks": 8,
+      "game_ms": 6444000,
+      "retries": 5
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f5"
+    ]
+   ],
+   "game_minutes": 107.4,
+   "wall_s": 92.3,
+   "counters": {
+    "trades": 301,
+    "bank_trades": 139,
+    "declined": 4029,
+    "roads": 174,
+    "settlements": 81,
+    "cities": 63,
+    "recruits": 621,
+    "ai_actions": 753
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 14007961,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 25,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 544000,
+     "minutes": 8.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 14015880,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 974000,
+     "ended_ms": 1554000,
+     "minutes": 9.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 14120609,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1554000,
+     "ended_ms": 2314000,
+     "minutes": 12.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14023799,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 36,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 2324000,
+     "ended_ms": 3044000,
+     "minutes": 12.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14128528,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 30,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 3044000,
+     "ended_ms": 3644000,
+     "minutes": 10.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14233257,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3644000,
+     "ended_ms": 4424000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14337986,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4424000,
+     "ended_ms": 5204000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14442715,
+     "retries": 4,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 5204000,
+     "ended_ms": 5784000,
+     "minutes": 9.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 14547444,
+     "retries": 5,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 33,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5784000,
+     "ended_ms": 6444000,
+     "minutes": 11.0
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 15,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 232,
+     "minutes": 58.4,
+     "vp": {
+      "f1": 12,
+      "f2": 16,
+      "f3": 8,
+      "f4": 10,
+      "f5": 8,
+      "f6": 14
+     },
+     "villages": 34,
+     "cities": 34,
+     "trades": 99,
+     "bank_trades": 52,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 89,
+     "minutes": 22.5,
+     "vp": {
+      "f1": 7,
+      "f2": 4,
+      "f3": 11,
+      "f4": 11,
+      "f5": 6,
+      "f6": 12
+     },
+     "villages": 34,
+     "cities": 17,
+     "trades": 222,
+     "bank_trades": 104,
+     "roads": 106
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 72,
+     "minutes": 18.2,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 5,
+      "f4": 5,
+      "f5": 5,
+      "f6": 10
+     },
+     "villages": 24,
+     "cities": 11,
+     "trades": 263,
+     "bank_trades": 135,
+     "roads": 139,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 30,
+      "outbreaks": 8,
+      "game_ms": 5944000,
+      "retries": 1
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f6"
+    ]
+   ],
+   "game_minutes": 99.1,
+   "wall_s": 54.9,
+   "counters": {
+    "trades": 263,
+    "bank_trades": 135,
+    "declined": 3634,
+    "roads": 139,
+    "settlements": 68,
+    "cities": 62,
+    "recruits": 567,
+    "ai_actions": 669
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 15007964,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 30,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 624000,
+     "minutes": 10.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 15112693,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 624000,
+     "ended_ms": 1264000,
+     "minutes": 10.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 15217422,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 36,
+     "outbreaks": 7,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1264000,
+     "ended_ms": 1984000,
+     "minutes": 12.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 15322151,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 0,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 1984000,
+     "ended_ms": 2764000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 15426880,
+     "retries": 4,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2764000,
+     "ended_ms": 3504000,
+     "minutes": 12.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 15015883,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 31,
+     "outbreaks": 7,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3514000,
+     "ended_ms": 4134000,
+     "minutes": 10.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 15120612,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4134000,
+     "ended_ms": 4854000,
+     "minutes": 12.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 15023802,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 24,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 4864000,
+     "ended_ms": 5344000,
+     "minutes": 8.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 15128531,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 30,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 5344000,
+     "ended_ms": 5944000,
+     "minutes": 10.0
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 16,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f3",
+     "pulses": 49,
+     "minutes": 12.8,
+     "vp": {
+      "f1": 4,
+      "f2": 5,
+      "f3": 10,
+      "f4": 5,
+      "f5": 6,
+      "f6": 7
+     },
+     "villages": 26,
+     "cities": 11,
+     "trades": 48,
+     "bank_trades": 19,
+     "roads": 35
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 82,
+     "minutes": 20.8,
+     "vp": {
+      "f1": 8,
+      "f2": 5,
+      "f3": 9,
+      "f4": 10,
+      "f5": 11,
+      "f6": 10
+     },
+     "villages": 34,
+     "cities": 19,
+     "trades": 133,
+     "bank_trades": 77,
+     "roads": 97
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 46,
+     "minutes": 11.8,
+     "vp": {
+      "f1": 6,
+      "f2": 3,
+      "f3": 10,
+      "f4": 4,
+      "f5": 4,
+      "f6": 4
+     },
+     "villages": 22,
+     "cities": 9,
+     "trades": 174,
+     "bank_trades": 85,
+     "roads": 126
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f3",
+     "pulses": 164,
+     "minutes": 41.2,
+     "vp": {
+      "f1": 8,
+      "f2": 12,
+      "f3": 22,
+      "f4": 10,
+      "f5": 16,
+      "f6": 4
+     },
+     "villages": 36,
+     "cities": 36,
+     "trades": 268,
+     "bank_trades": 160,
+     "roads": 191
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f3"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f3"
+    ]
+   ],
+   "game_minutes": 86.6,
+   "wall_s": 87.8,
+   "counters": {
+    "trades": 268,
+    "bank_trades": 160,
+    "declined": 3826,
+    "roads": 191,
+    "settlements": 82,
+    "cities": 75,
+    "recruits": 609,
+    "ai_actions": 783
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 16007967,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 32,
+     "outbreaks": 3,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 684000,
+     "minutes": 11.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 16015886,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 777000,
+     "ended_ms": 1557000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 16120615,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 22,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1557000,
+     "ended_ms": 2017000,
+     "minutes": 7.7
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 16023805,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 25,
+     "outbreaks": 0,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2027000,
+     "ended_ms": 2547000,
+     "minutes": 8.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 16031724,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2735000,
+     "ended_ms": 3515000,
+     "minutes": 13.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 16136453,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 29,
+     "outbreaks": 8,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 3515000,
+     "ended_ms": 4095000,
+     "minutes": 9.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 16241182,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 23,
+     "outbreaks": 8,
+     "cured": [
+      "F3"
+     ],
+     "started_ms": 4095000,
+     "ended_ms": 4555000,
+     "minutes": 7.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 16345911,
+     "retries": 3,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4555000,
+     "ended_ms": 5195000,
+     "minutes": 10.7
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 4,
+   "retries": 4
+  },
+  {
+   "seed": 17,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 70,
+     "minutes": 18.1,
+     "vp": {
+      "f1": 14,
+      "f2": 8,
+      "f3": 11,
+      "f4": 11,
+      "f5": 7,
+      "f6": 7
+     },
+     "villages": 37,
+     "cities": 21,
+     "trades": 78,
+     "bank_trades": 36,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 181,
+     "minutes": 45.5,
+     "vp": {
+      "f1": 16,
+      "f2": 10,
+      "f3": 12,
+      "f4": 14,
+      "f5": 14,
+      "f6": 10
+     },
+     "villages": 38,
+     "cities": 38,
+     "trades": 186,
+     "bank_trades": 113,
+     "roads": 105
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 94,
+     "minutes": 23.8,
+     "vp": {
+      "f1": 10,
+      "f2": 12,
+      "f3": 6,
+      "f4": 14,
+      "f5": 22,
+      "f6": 8
+     },
+     "villages": 38,
+     "cities": 34,
+     "trades": 285,
+     "bank_trades": 184,
+     "roads": 172
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 52,
+     "minutes": 13.3,
+     "vp": {
+      "f1": 7,
+      "f2": 5,
+      "f3": 3,
+      "f4": 5,
+      "f5": 10,
+      "f6": 3
+     },
+     "villages": 23,
+     "cities": 10,
+     "trades": 336,
+     "bank_trades": 191,
+     "roads": 206
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f5"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 100.7,
+   "wall_s": 71.3,
+   "counters": {
+    "trades": 336,
+    "bank_trades": 191,
+    "declined": 4729,
+    "roads": 206,
+    "settlements": 100,
+    "cities": 103,
+    "recruits": 782,
+    "ai_actions": 938
+   },
+   "final": true,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 17007970,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 21,
+     "outbreaks": 7,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 444000,
+     "minutes": 7.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 17112699,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 444000,
+     "ended_ms": 1084000,
+     "minutes": 10.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 17015889,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 38,
+     "outbreaks": 4,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1094000,
+     "ended_ms": 1854000,
+     "minutes": 12.7
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 17120618,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 1854000,
+     "ended_ms": 2634000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 17225347,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 34,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 2634000,
+     "ended_ms": 3314000,
+     "minutes": 11.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 17330076,
+     "retries": 3,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 24,
+     "outbreaks": 1,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3314000,
+     "ended_ms": 3814000,
+     "minutes": 8.3
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 17023808,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3824000,
+     "ended_ms": 4604000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 17128537,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 31,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4604000,
+     "ended_ms": 5244000,
+     "minutes": 10.7
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 17031727,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 37,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5254000,
+     "ended_ms": 6014000,
+     "minutes": 12.7
+    }
+   ],
+   "campaign_wins": 4,
+   "campaign_losses": 5,
+   "retries": 5
+  },
+  {
+   "seed": 18,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 216,
+     "minutes": 54.4,
+     "vp": {
+      "f1": 10,
+      "f2": 10,
+      "f3": 14,
+      "f4": 10,
+      "f5": 8,
+      "f6": 14
+     },
+     "villages": 33,
+     "cities": 33,
+     "trades": 80,
+     "bank_trades": 58,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": null,
+     "pulses": 150,
+     "minutes": 37.8,
+     "vp": {
+      "f1": 10,
+      "f2": 6,
+      "f3": 10,
+      "f4": 14,
+      "f5": 8,
+      "f6": 18
+     },
+     "villages": 33,
+     "cities": 33,
+     "trades": 179,
+     "bank_trades": 111,
+     "roads": 110,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 2,
+      "turns": 35,
+      "outbreaks": 8,
+      "game_ms": 5534000,
+      "retries": 2
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ]
+   ],
+   "game_minutes": 92.2,
+   "wall_s": 45.6,
+   "counters": {
+    "trades": 179,
+    "bank_trades": 111,
+    "declined": 3152,
+    "roads": 110,
+    "settlements": 54,
+    "cities": 66,
+    "recruits": 528,
+    "ai_actions": 508
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 18007973,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F3"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 804000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 18112702,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 34,
+     "outbreaks": 0,
+     "cured": [
+      "F2",
+      "F4"
+     ],
+     "started_ms": 804000,
+     "ended_ms": 1484000,
+     "minutes": 11.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 18217431,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 29,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F4"
+     ],
+     "started_ms": 1484000,
+     "ended_ms": 2064000,
+     "minutes": 9.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 18322160,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 29,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2"
+     ],
+     "started_ms": 2064000,
+     "ended_ms": 2644000,
+     "minutes": 9.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 18426889,
+     "retries": 4,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 30,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2644000,
+     "ended_ms": 3264000,
+     "minutes": 10.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 18015892,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 3,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3274000,
+     "ended_ms": 4054000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 18120621,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4054000,
+     "ended_ms": 4834000,
+     "minutes": 13.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 18225350,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 35,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F2",
+      "F3"
+     ],
+     "started_ms": 4834000,
+     "ended_ms": 5534000,
+     "minutes": 11.7
+    }
+   ],
+   "campaign_wins": 1,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 19,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 92,
+     "minutes": 23.4,
+     "vp": {
+      "f1": 14,
+      "f2": 12,
+      "f3": 6,
+      "f4": 16,
+      "f5": 12,
+      "f6": 9
+     },
+     "villages": 37,
+     "cities": 32,
+     "trades": 88,
+     "bank_trades": 55,
+     "roads": 42
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 100,
+     "minutes": 25.2,
+     "vp": {
+      "f1": 16,
+      "f2": 6,
+      "f3": 4,
+      "f4": 20,
+      "f5": 17,
+      "f6": 10
+     },
+     "villages": 37,
+     "cities": 36,
+     "trades": 199,
+     "bank_trades": 96,
+     "roads": 108
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": null,
+     "pulses": 177,
+     "minutes": 44.5,
+     "vp": {
+      "f1": 12,
+      "f2": 10,
+      "f3": 8,
+      "f4": 16,
+      "f5": 18,
+      "f6": 10
+     },
+     "villages": 37,
+     "cities": 37,
+     "trades": 307,
+     "bank_trades": 155,
+     "roads": 164,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "outbreaks",
+      "age": 3,
+      "turns": 31,
+      "outbreaks": 8,
+      "game_ms": 5584000,
+      "retries": 3
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f4"
+    ]
+   ],
+   "game_minutes": 93.1,
+   "wall_s": 70.1,
+   "counters": {
+    "trades": 307,
+    "bank_trades": 155,
+    "declined": 3601,
+    "roads": 164,
+    "settlements": 87,
+    "cities": 105,
+    "recruits": 840,
+    "ai_actions": 807
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 19007976,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 32,
+     "outbreaks": 8,
+     "cured": [
+      "F3"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 664000,
+     "minutes": 10.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 19112705,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 36,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 664000,
+     "ended_ms": 1404000,
+     "minutes": 12.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 19015895,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 36,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 1414000,
+     "ended_ms": 2134000,
+     "minutes": 12.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 19120624,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 3,
+     "outbreaks": 8,
+     "cured": [],
+     "started_ms": 2134000,
+     "ended_ms": 2194000,
+     "minutes": 1.0
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 19225353,
+     "retries": 2,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 35,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2194000,
+     "ended_ms": 2914000,
+     "minutes": 12.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 19023814,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2924000,
+     "ended_ms": 3704000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 19128543,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3704000,
+     "ended_ms": 4484000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 19233272,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 24,
+     "outbreaks": 7,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 4484000,
+     "ended_ms": 4964000,
+     "minutes": 8.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 19338001,
+     "retries": 3,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 31,
+     "outbreaks": 8,
+     "cured": [
+      "F1",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4964000,
+     "ended_ms": 5584000,
+     "minutes": 10.3
+    }
+   ],
+   "campaign_wins": 2,
+   "campaign_losses": 7,
+   "retries": 6
+  },
+  {
+   "seed": 507,
+   "ok": false,
+   "stalled": true,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f6",
+     "pulses": 181,
+     "minutes": 45.7,
+     "vp": {
+      "f1": 12,
+      "f2": 8,
+      "f3": 8,
+      "f4": 12,
+      "f5": 12,
+      "f6": 16
+     },
+     "villages": 34,
+     "cities": 34,
+     "trades": 95,
+     "bank_trades": 76,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 89,
+     "minutes": 22.5,
+     "vp": {
+      "f1": 4,
+      "f2": 12,
+      "f3": 8,
+      "f4": 24,
+      "f5": 6,
+      "f6": 12
+     },
+     "villages": 34,
+     "cities": 32,
+     "trades": 202,
+     "bank_trades": 112,
+     "roads": 101
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 73,
+     "minutes": 18.6,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 8,
+      "f4": 8,
+      "f5": 10,
+      "f6": 9
+     },
+     "villages": 26,
+     "cities": 21,
+     "trades": 284,
+     "bank_trades": 160,
+     "roads": 150
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": null,
+     "pulses": 128,
+     "minutes": 32.2,
+     "vp": {
+      "f1": 8,
+      "f2": 14,
+      "f3": 4,
+      "f4": 16,
+      "f5": 4,
+      "f6": 22
+     },
+     "villages": 34,
+     "cities": 34,
+     "trades": 396,
+     "bank_trades": 213,
+     "roads": 200,
+     "stalled": true,
+     "lost_campaign": {
+      "reason": "player_deck_exhausted",
+      "age": 4,
+      "turns": 39,
+      "outbreaks": 5,
+      "game_ms": 7137000,
+      "retries": 2
+     }
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f6"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f5"
+    ]
+   ],
+   "game_minutes": 119.0,
+   "wall_s": 93.8,
+   "counters": {
+    "trades": 396,
+    "bank_trades": 213,
+    "declined": 5530,
+    "roads": 200,
+    "settlements": 92,
+    "cities": 121,
+    "recruits": 758,
+    "ai_actions": 1019
+   },
+   "final": false,
+   "economy_only": false,
+   "campaigns": [
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 507009440,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 6,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 24000,
+     "ended_ms": 804000,
+     "minutes": 13.0
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 507114169,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 28,
+     "outbreaks": 5,
+     "cured": [],
+     "started_ms": 804000,
+     "ended_ms": 1364000,
+     "minutes": 9.3
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 507218898,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 35,
+     "outbreaks": 8,
+     "cured": [
+      "F4"
+     ],
+     "started_ms": 1364000,
+     "ended_ms": 2064000,
+     "minutes": 11.7
+    },
+    {
+     "age": 1,
+     "epoch": 1,
+     "seed": 507323627,
+     "retries": 3,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 33,
+     "outbreaks": 7,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 2064000,
+     "ended_ms": 2744000,
+     "minutes": 11.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 507017359,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 28,
+     "outbreaks": 8,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 2754000,
+     "ended_ms": 3314000,
+     "minutes": 9.3
+    },
+    {
+     "age": 2,
+     "epoch": 2,
+     "seed": 507122088,
+     "retries": 1,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 38,
+     "outbreaks": 4,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 3314000,
+     "ended_ms": 4094000,
+     "minutes": 13.0
+    },
+    {
+     "age": 3,
+     "epoch": 3,
+     "seed": 507025278,
+     "retries": 0,
+     "result": "won",
+     "lost_reason": "",
+     "turns": 33,
+     "outbreaks": 2,
+     "cured": [
+      "F1",
+      "F2",
+      "F3",
+      "F4"
+     ],
+     "started_ms": 4104000,
+     "ended_ms": 4784000,
+     "minutes": 11.3
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 507033197,
+     "retries": 0,
+     "result": "lost",
+     "lost_reason": "reserve_exhausted",
+     "turns": 24,
+     "outbreaks": 4,
+     "cured": [
+      "F2"
+     ],
+     "started_ms": 5217000,
+     "ended_ms": 5697000,
+     "minutes": 8.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 507137926,
+     "retries": 1,
+     "result": "lost",
+     "lost_reason": "outbreaks",
+     "turns": 33,
+     "outbreaks": 8,
+     "cured": [
+      "F3",
+      "F4"
+     ],
+     "started_ms": 5697000,
+     "ended_ms": 6357000,
+     "minutes": 11.0
+    },
+    {
+     "age": 4,
+     "epoch": 4,
+     "seed": 507242655,
+     "retries": 2,
+     "result": "lost",
+     "lost_reason": "player_deck_exhausted",
+     "turns": 39,
+     "outbreaks": 5,
+     "cured": [
+      "F1",
+      "F2",
+      "F4"
+     ],
+     "started_ms": 6357000,
+     "ended_ms": 7137000,
+     "minutes": 13.0
+    }
+   ],
+   "campaign_wins": 3,
+   "campaign_losses": 7,
+   "retries": 6
+  }
+ ],
+ "budget": 600
+}

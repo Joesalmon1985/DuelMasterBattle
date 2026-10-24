@@ -5,10 +5,15 @@
   ],
   "production": {
     "age1": [
+      "widelands.barbarians_charcoal_kiln",
       "widelands.barbarians_hunters_hut",
+      "widelands.barbarians_lime_kiln",
+      "widelands.barbarians_metal_workshop",
       "widelands.barbarians_quarry",
       "widelands.barbarians_rangers_hut",
       "widelands.barbarians_reed_yard",
+      "widelands.barbarians_tavern",
+      "widelands.barbarians_weaving_mill",
       "widelands.coalmine",
       "widelands.empire_hunters_house",
       "widelands.empire_quarry",
@@ -21,17 +26,23 @@
       "widelands.empire_foresters_house",
       "widelands.empire_ironmine",
       "widelands.empire_lumberjacks_house",
+      "widelands.empire_mill",
       "widelands.empire_piggery",
       "widelands.empire_quarry",
       "widelands.empire_sawmill",
       "widelands.empire_smelting_works",
       "widelands.empire_stonemasons_house",
+      "widelands.empire_tavern",
       "widelands.empire_well"
     ],
     "age3": [
+      "mindustry.block.graphite_press",
+      "mindustry.block.kiln",
+      "mindustry.block.laser_drill",
       "mindustry.block.mechanical_drill",
       "mindustry.block.pneumatic_drill",
-      "mindustry.block.laser_drill"
+      "mindustry.block.pulverizer",
+      "mindustry.block.separator"
     ],
     "age4": [
       "mindustry.block.blast_mixer",
@@ -130,5 +141,9 @@
     "widelands.ware.iron_ore",
     "widelands.ware.coal",
     "widelands.ware.iron"
+  ],
+  "builders": [
+    "widelands.barbarians_carrier_worker",
+    "openra.e6"
   ]
 }

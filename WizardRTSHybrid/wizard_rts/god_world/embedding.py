@@ -21,9 +21,23 @@ from . import rules
 
 VERSION = 1
 DATA = Path(__file__).resolve().parents[1] / "data" / "god_world"
-DEFAULT_MAP = "Egyptian_Mandala_v1.2"
-PLOT_RADIUS = 6  # tiles around a node that a village needs clear and buildable
-SEARCH_RADIUS = 11  # how far a node may move from its ideal regular position
+BASE_MAP = "Egyptian_Mandala_v1.2"
+DEFAULT_MAP = "Egyptian_Mandala_v1.2@2x"  # the island resampled to 384 x 384 with the nodes twice as far apart (D53); older saves keep their own map
+PLOT_RADIUS = 6  # tiles around a node that a village needs clear and buildable, on the base map (scaled with the map: `_pr`)
+SEARCH_RADIUS = 11  # how far a node may move from its ideal regular position, on the base map (scaled with the map: `_sr`)
+
+
+def _k(grid) -> int:
+    """The map's resampling factor against the base island (1 for the 192-tile map, 2 for the 384-tile one)."""
+    return max(1, int(round(grid.w / 192.0)))
+
+
+def _pr(grid) -> int:
+    return PLOT_RADIUS * _k(grid)
+
+
+def _sr(grid) -> int:
+    return SEARCH_RADIUS * _k(grid)
 MIN_NODE_GAP = 0.55  # of the unit edge length
 TREE_SPECIES = ("beech", "alder", "aspen", "birch")
 
@@ -173,11 +187,11 @@ def _place_nodes(board, grid: T.TerrainGrid, ideal: dict[str, tuple[float, float
     """Each node to the best buildable plot near its ideal spot, poorest spots first; None when one has no plot."""
     gap = MIN_NODE_GAP * unit
     placed: dict[str, tuple[float, float]] = {}
-    order = sorted(board.nodes, key=lambda n: (_buildable_fraction(grid, int(ideal[n][0]), int(ideal[n][1]), PLOT_RADIUS), n))
+    order = sorted(board.nodes, key=lambda n: (_buildable_fraction(grid, int(ideal[n][0]), int(ideal[n][1]), _pr(grid)), n))
     for n in order:
         ix, iy = ideal[n]
         best = None
-        for r in range(0, SEARCH_RADIUS + 1):
+        for r in range(0, _sr(grid) + 1):
             cands = []
             for dy in range(-r, r + 1):
                 for dx in range(-r, r + 1):
@@ -188,10 +202,10 @@ def _place_nodes(board, grid: T.TerrainGrid, ideal: dict[str, tuple[float, float
                         continue
                     if any(math.hypot(x + 0.5 - px, y + 0.5 - py) < gap for px, py in placed.values()):
                         continue
-                    frac = _buildable_fraction(grid, x, y, PLOT_RADIUS)
+                    frac = _buildable_fraction(grid, x, y, _pr(grid))
                     if frac < 0.6:
                         continue
-                    score = frac * 2.0 - math.hypot(dx, dy) / SEARCH_RADIUS
+                    score = frac * 2.0 - math.hypot(dx, dy) / _sr(grid)
                     cands.append((score, -abs(dx) - abs(dy), x, y))
             if cands:
                 cands.sort(reverse=True)
@@ -207,7 +221,7 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
     """Lay the board's graph onto the grid. Raises if a plot or a corridor cannot be found; a map that fails here is not a host."""
     x0, y0, x1, y1 = _land_bbox(grid)
     bx0, by0, bx1, by1 = board.bounds
-    margin = PLOT_RADIUS + 4
+    margin = _pr(grid) + 4
     base_scale = min((x1 - x0 - 2 * margin) / max(bx1 - bx0, 1e-6), (y1 - y0 - 2 * margin) / max(by1 - by0, 1e-6))
     best_trial = None
     # the board's scale and offset are searched: the placement that moves nodes least and keeps the fewest chords over water hosts the game
@@ -215,8 +229,8 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
         scale = base_scale * sf
         cx = x0 + (x1 - x0 - (bx1 - bx0) * scale) / 2.0
         cy = y0 + (y1 - y0 - (by1 - by0) * scale) / 2.0
-        for shx in (-9, -6, -3, 0, 3, 6, 9):
-            for shy in (-9, -6, -3, 0, 3, 6, 9):
+        for shx in (v * _k(grid) for v in (-9, -6, -3, 0, 3, 6, 9)):
+            for shy in (v * _k(grid) for v in (-9, -6, -3, 0, 3, 6, 9)):
                 ox, oy = cx + shx, cy + shy
                 ideal = {n: ((board.node_xy(n)[0] - bx0) * scale + ox, (board.node_xy(n)[1] - by0) * scale + oy) for n in board.nodes}
                 placed = _place_nodes(board, grid, ideal, scale)
@@ -238,6 +252,66 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
     if best_trial is None:
         raise ValueError(f"{map_name}: no scale and offset places every node on buildable land")
     _cost, scale, ox, oy, ideal, placed, disp, water = best_trial
+    return _finish(board, grid, map_name, scale, ox, oy, ideal, placed, disp, water, strict,
+                   "nodes relaxed to buildable plots from the regular layout (scale and offset searched); corridors A* over passable tiles avoiding other plots; no terrain edits")
+
+
+def build_scaled(board, grid: T.TerrainGrid, map_name: str, base: dict[str, Any], strict: bool = True) -> dict[str, Any]:
+    """The embedding of a resampled map from the base map's geometry (D53): every node at k times its base position, so the separation is k times
+    the base one and the picture is the same island at a finer grain; corridors are routed afresh on the fine grid."""
+    k = _k(grid)
+    if int(base.get("map_w", 0)) * k != grid.w:
+        raise ValueError(f"{map_name}: base embedding is {base.get('map_w')} wide, the map {grid.w}: not a x{k} resample")
+    scale = float(base["unit"]) * k
+    ox, oy = float(base["offset"][0]) * k, float(base["offset"][1]) * k
+    ideal = {n: (p[0] * k, p[1] * k) for n, p in base["ideal"].items()}
+    placed: dict[str, tuple[float, float]] = {}
+    gap = MIN_NODE_GAP * scale
+    for n, p in base["nodes"].items():
+        x, y = p[0] * k, p[1] * k
+        # the smoothed coast may have moved a plot's ground: the nearest buildable tile with a good plot, never far
+        best = None
+        for r in range(0, 4 * k + 1):
+            cands = []
+            for dy in range(-r, r + 1):
+                for dx in range(-r, r + 1):
+                    if max(abs(dx), abs(dy)) != r:
+                        continue
+                    tx, ty = int(x) + dx, int(y) + dy
+                    if not grid.in_bounds(tx, ty) or grid.cls[ty * grid.w + tx] not in (T.ARABLE, T.WALKABLE):
+                        continue
+                    if any(math.hypot(tx + 0.5 - px, ty + 0.5 - py) < gap for px, py in placed.values()):
+                        continue
+                    frac = _buildable_fraction(grid, tx, ty, _pr(grid))
+                    if frac < 0.6:
+                        continue
+                    cands.append((frac * 2.0 - math.hypot(dx, dy) / (4.0 * k), -abs(dx) - abs(dy), tx, ty))
+            if cands:
+                cands.sort(reverse=True)
+                best = (cands[0][2] + 0.5, cands[0][3] + 0.5)
+                break
+        if best is None:
+            raise ValueError(f"{map_name}: no buildable plot near the scaled position of {n}")
+        placed[n] = best
+    disp = sum(math.hypot(placed[n][0] - ideal[n][0], placed[n][1] - ideal[n][1]) for n in board.nodes)
+    water = 0
+    for a_, b_ in board.edge_endpoints.values():
+        (ax, ay), (bx_, by_) = placed[a_], placed[b_]
+        steps = int(math.hypot(bx_ - ax, by_ - ay)) + 1
+        for i in range(steps + 1):
+            t = i / steps
+            tx, ty = int(ax + (bx_ - ax) * t), int(ay + (by_ - ay) * t)
+            if not grid.in_bounds(tx, ty) or grid.cls[ty * grid.w + tx] not in PASSABLE:
+                water += 1
+    out = _finish(board, grid, map_name, scale, ox, oy, ideal, placed, disp, water, strict,
+                  f"the base map's geometry ({base['map']}) at x{k}: nodes at {k} times their base positions, corridors re-routed on the resampled grid; no terrain edits")
+    out["base_map"] = base["map"]
+    out["resampled"] = k
+    return out
+
+
+def _finish(board, grid: T.TerrainGrid, map_name: str, scale: float, ox: float, oy: float, ideal: dict[str, tuple[float, float]], placed: dict[str, tuple[float, float]],
+            disp: float, water: int, strict: bool, notes: str) -> dict[str, Any]:
     unit = scale  # the regular edge length is one board unit
     # planarity: corridors are routed over terrain, but the straight chords must not cross either (they are the overlay and the sanity of the layout)
     edges = list(board.edge_endpoints.items())
@@ -263,12 +337,12 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
     # corridors: A* over passable tiles, steering clear of every other plot
     avoid: dict[tuple[int, int], float] = {}
     for n, (px, py) in placed.items():
-        for dy in range(-PLOT_RADIUS, PLOT_RADIUS + 1):
-            for dx in range(-PLOT_RADIUS, PLOT_RADIUS + 1):
+        for dy in range(-_pr(grid), _pr(grid) + 1):
+            for dx in range(-_pr(grid), _pr(grid) + 1):
                 d = math.hypot(dx, dy)
-                if d <= PLOT_RADIUS:
+                if d <= _pr(grid):
                     t = (int(px) + dx, int(py) + dy)
-                    avoid[t] = avoid.get(t, 0.0) + (PLOT_RADIUS - d) * 3.0
+                    avoid[t] = avoid.get(t, 0.0) + (_pr(grid) - d) * 3.0
     corridors: dict[str, list[list[float]]] = {}
     paths: dict[str, list[tuple[int, int]]] = {}
 
@@ -283,7 +357,7 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
     def route(eid: str, hard: set[str], soft: set[str]) -> bool:
         a, b = board.edge_endpoints[eid]
         pa, pb = placed[a], placed[b]
-        near_end = lambda t: math.hypot(t[0] + 0.5 - pa[0], t[1] + 0.5 - pa[1]) <= PLOT_RADIUS or math.hypot(t[0] + 0.5 - pb[0], t[1] + 0.5 - pb[1]) <= PLOT_RADIUS  # noqa: E731
+        near_end = lambda t: math.hypot(t[0] + 0.5 - pa[0], t[1] + 0.5 - pa[1]) <= _pr(grid) or math.hypot(t[0] + 0.5 - pb[0], t[1] + 0.5 - pb[1]) <= _pr(grid)  # noqa: E731
         av = {t: c for t, c in avoid.items() if not near_end(t)}
         shares = set(board.node_edges[a]) | set(board.node_edges[b])
         for other in soft | hard:
@@ -293,7 +367,7 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
                 if other in shares and near_end(t):
                     continue
                 av[t] = 1e9 if other in hard else av.get(t, 0.0) + 60.0
-        box = (max(0, int(min(pa[0], pb[0])) - 18), max(0, int(min(pa[1], pb[1])) - 18), min(grid.w - 1, int(max(pa[0], pb[0])) + 18), min(grid.h - 1, int(max(pa[1], pb[1])) + 18))
+        box = (max(0, int(min(pa[0], pb[0])) - 18 * _k(grid)), max(0, int(min(pa[1], pb[1])) - 18 * _k(grid)), min(grid.w - 1, int(max(pa[0], pb[0])) + 18 * _k(grid)), min(grid.h - 1, int(max(pa[1], pb[1])) + 18 * _k(grid)))
         path = _astar(grid, (int(pa[0]), int(pa[1])), (int(pb[0]), int(pb[1])), av, box)
         if path is None:
             return False
@@ -367,7 +441,7 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
         L = math.hypot(dx, dy) or 1.0
         dx, dy = dx / L, dy / L
         found = None
-        for k in range(1, 120):
+        for k in range(1, 120 * _k(grid)):
             x, y = int(px + dx * k), int(py + dy * k)
             if not grid.in_bounds(x, y):
                 found = (px + dx * (k - 1), py + dy * (k - 1))
@@ -375,13 +449,13 @@ def build(board, grid: T.TerrainGrid, map_name: str, strict: bool = True) -> dic
             if grid.cls[y * grid.w + x] == T.WATER:
                 found = (x + 0.5, y + 0.5)
                 break
-        coast[n] = [round(found[0], 2), round(found[1], 2)] if found else [round(px + dx * 20, 2), round(py + dy * 20, 2)]
+        coast[n] = [round(found[0], 2), round(found[1], 2)] if found else [round(px + dx * 20 * _k(grid), 2), round(py + dy * 20 * _k(grid), 2)]
     out = {"version": VERSION, "map": map_name, "map_static_hash": grid.static_hash(), "map_w": grid.w, "map_h": grid.h, "shape": board.shape, "unit": round(unit, 4), "scale": round(scale, 4),
-           "offset": [round(ox, 3), round(oy, 3)], "plot_radius": PLOT_RADIUS, "nodes": {n: [round(p[0], 2), round(p[1], 2)] for n, p in placed.items()},
+           "offset": [round(ox, 3), round(oy, 3)], "plot_radius": _pr(grid), "nodes": {n: [round(p[0], 2), round(p[1], 2)] for n, p in placed.items()},
            "ideal": {n: [round(p[0], 2), round(p[1], 2)] for n, p in ideal.items()}, "corridors": corridors, "regions": regions, "coast": coast,
            "corridor_tiles": sorted([list(t) for t in corridor_tiles]),
            "displacement": round(disp, 1), "chord_water_tiles": water,
-           "edits": [], "notes": "nodes relaxed to buildable plots from the regular layout (scale and offset searched); corridors A* over passable tiles avoiding other plots; no terrain edits"}
+           "edits": [], "notes": notes}
     if strict:
         validate(out, board, grid)
     return out
@@ -402,12 +476,12 @@ def dress(emb: dict[str, Any], board, grid: T.TerrainGrid) -> dict[str, Any]:
         role = board.role(hid)
         cx, cy = reg["centroid"]
         best = None
-        for dy in range(-8, 9):
-            for dx in range(-8, 9):
+        for dy in range(-8 * _k(grid), 8 * _k(grid) + 1):
+            for dx in range(-8 * _k(grid), 8 * _k(grid) + 1):
                 x, y = int(cx) + dx, int(cy) + dy
                 if not grid.in_bounds(x, y) or grid.cls[y * grid.w + x] not in pref[role] or (x, y) in corridor_tiles:
                     continue
-                if any(math.hypot(x + 0.5 - px, y + 0.5 - py) < PLOT_RADIUS + 1.0 for px, py in placed.values()):
+                if any(math.hypot(x + 0.5 - px, y + 0.5 - py) < _pr(grid) + 1.0 for px, py in placed.values()):
                     continue
                 d = math.hypot(dx, dy)
                 if best is None or d < best[0]:
@@ -431,14 +505,14 @@ def dress(emb: dict[str, Any], board, grid: T.TerrainGrid) -> dict[str, Any]:
                 dx, dy = cx - px, cy - py
                 d = math.hypot(dx, dy) or 1.0
                 for k in range(7):
-                    off = PLOT_RADIUS + 1.6 + rng.next() * 3.0
+                    off = _pr(grid) + 1.6 + rng.next() * 3.0
                     side = (rng.next() - 0.5) * 5.0
                     spots.append((px + dx / d * off - dy / d * side, py + dy / d * off + dx / d * side))
         for x, y in spots:
             tx, ty = int(x), int(y)
             if not grid.in_bounds(tx, ty) or grid.cls[ty * grid.w + tx] not in ground or (tx, ty) in corridor_tiles:
                 continue
-            if any(math.hypot(x - px, y - py) < PLOT_RADIUS + 1.0 for px, py in placed.values()):
+            if any(math.hypot(x - px, y - py) < _pr(grid) + 1.0 for px, py in placed.values()):
                 continue
             trees.append({"hex": hid, "x": round(x, 2), "y": round(y, 2), "species": TREE_SPECIES[int(rng.next() * len(TREE_SPECIES)) % len(TREE_SPECIES)]})
     return {"work_sites": work_sites, "trees": trees}
@@ -457,7 +531,7 @@ def validate(emb: dict[str, Any], board, grid: T.TerrainGrid) -> dict[str, Any]:
     for n, (x, y) in nodes.items():
         if not grid.in_bounds(int(x), int(y)) or grid.cls[int(y) * grid.w + int(x)] not in (T.ARABLE, T.WALKABLE):
             raise ValueError(f"{n} plot is not on buildable land")
-        frac = _buildable_fraction(grid, int(x), int(y), PLOT_RADIUS)
+        frac = _buildable_fraction(grid, int(x), int(y), _pr(grid))
         if frac < 0.6:
             poor.append((n, round(frac, 2)))
     ids = list(nodes)

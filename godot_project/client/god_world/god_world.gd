@@ -274,6 +274,15 @@ func new_world() -> void:
 			_apply_state(st)
 
 
+func retry_campaign() -> Dictionary:
+	var r: Dictionary = sim_op({"op": "retry"})
+	if str(r.get("status", "")) == "ok":
+		var st: Dictionary = LanSession.sim.op({"op": "state", "full": true, "seq": 0}, 8000)
+		if str(st.get("status", "")) == "ok":
+			_apply_state(st)
+	return r
+
+
 func leave_to_menu() -> void:
 	if LanSession.sim != null and LanSession.sim.connected():
 		LanSession.sim.op({"op": "save", "slot": "quit"}, 3000)
@@ -288,7 +297,47 @@ func leave_to_menu() -> void:
 func ui_state() -> Dictionary:
 	return {"state": state, "status": status_text, "polls": polls, "game_ms": last_poll_ms, "age": int(snapshot.get("age", 0)), "phase": str(snapshot.get("phase", "")),
 			"villages": snapshot.get("villages", []).size(), "journeys": snapshot.get("journeys", []).size(), "camera": camera_ctl.gesture_state(), "labels": labels.ui_state(),
-			"missing_art": view.missing.duplicate(), "paused": bool(snapshot.get("paused", false)), "speed": int(snapshot.get("speed", 1))}
+			"missing_art": view.missing.duplicate(), "paused": bool(snapshot.get("paused", false)), "speed": int(snapshot.get("speed", 1)),
+			"campaign": _campaign_state()}
+
+
+func _campaign_state() -> Dictionary:
+	var camp: Variant = snapshot.get("pandemic")
+	if camp == null or typeof(camp) != TYPE_DICTIONARY:
+		return {"active": false, "formations": 0, "responders": 0, "posts": 0, "result": "", "gate": snapshot.get("gate", {})}
+	var p: Dictionary = camp.get("panel", {})
+	return {"active": true, "formations": camp.get("formations", []).size(), "responders": camp.get("responders", []).size(), "posts": camp.get("posts", []).size(),
+			"result": str(p.get("result", "")) if p.get("result") != null else "", "turn": int(p.get("turn_count", 0)), "gate": snapshot.get("gate", {}), "panel_visible": hud.campaign.visible}
+
+
+## The heaviest formation (the one a tester looks at): its world position, or Vector2.INF when none.
+func _heaviest_formation() -> Vector2:
+	var camp: Variant = snapshot.get("pandemic")
+	if camp == null or typeof(camp) != TYPE_DICTIONARY:
+		return Vector2.INF
+	var best: Dictionary = {}
+	for fm in camp.get("formations", []):
+		if best.is_empty() or int(fm.get("n", 0)) > int(best.get("n", 0)):
+			best = fm
+	if best.is_empty():
+		return Vector2.INF
+	return GodViewScript.bu(float(best["x"]), float(best["y"]))
+
+
+## Centre the camera on the heaviest formation at village zoom; the camera's transform settles on the next frame, so a position is asked after.
+func ui_focus_formation() -> bool:
+	var wp := _heaviest_formation()
+	if wp == Vector2.INF:
+		return false
+	camera_ctl.focus_on(wp, 0.5)
+	return true
+
+
+func ui_formation_screen_pos() -> Vector2:
+	var wp := _heaviest_formation()
+	if wp == Vector2.INF:
+		return Vector2(-1, -1)
+	return camera_ctl.world_to_screen(wp)
 
 
 ## The operational village nearest the camera's centre, in viewport units (the one a tester taps).

@@ -11,7 +11,8 @@ profile `god_catan_v1` lives in `wizard_rts/god_world/` and is the only live sim
 `net/android_entry.py`); it never constructs `HybridWorld`. In that profile the hex/node/edge graph IS the strategic rule (production, legality,
 ownership, connectivity); the "square grid is authoritative, never restore Catan topology" rule below applies to the Wizard World profile only. Its
 economy is five stable roles with Catan costs and odds (one ledger, `god_world/ledger.py`), not the ware economy. Tests:
-`python -m pytest WizardRTSHybrid/tests/test_god_world_*.py -q`; corpus: `python WizardRTSHybrid/scripts/god_world_run.py --seeds 0-19 507`; headed:
+`python -m pytest WizardRTSHybrid/tests/test_god_world_*.py -q`; corpora: `python WizardRTSHybrid/scripts/god_world_run.py --seeds 0-19 507` (the combined
+run: economy and the Pandemic campaign, retries from the checkpoint recorded) and the same with `--economy-only` (the strategic regression); headed:
 `godot --path godot_project --rendering-method forward_plus --script res://client/tests/run_god_world.gd`.
 
 The earlier objective (ratified 11 October 2026), kept for the legacy profiles: DuelMasterBattle was a **wizard-led adventure inside an autonomous civilisation simulation**, not a player-controlled RTS. The wizard walks real settlements, talks to residents, explores dungeons, solves puzzles, intervenes in crises, and fights Mastermind-style duels. The world is a real Widelands-style economy and OpenRA-style military across four eras (Prehistoric, Historic, Modern, Dystopian Future), with Mindustry-style industry arriving in Modern. God Mode and the training API exist for development, tests and AI research only.

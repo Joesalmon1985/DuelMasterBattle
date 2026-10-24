@@ -1,5 +1,22 @@
 # Next agent handoff
 
+## 24 Oct 2026 (evening): organic growth, age renewal and the shared Pandemic campaign, 0.6.1 (branch `feature/god-world`)
+
+The owner's third brief of the day. Plan with the improvements made to it: `docs/PLAN_GOD_WORLD_PANDEMIC.md`; decisions D48 to D56; the ledger's
+"Renewal, growth and Pandemic" section carries the P01 to P24 table and the corpora. In one paragraph: every real age boundary reshuffles the productive
+number tokens from a saved stream of their own (`board.reshuffle_tokens`, `production_revision`); retired villages keep their actual built picture,
+frozen and faded, and are built over without two hubs (`local_ops.freeze`, snapshot `frozen`); a village begins with its hub, one seed producer per
+region and a small processing allowance, and every matching roll unlocks one further place up to `pips x level` (`village["dev"]`, `growth_ticket`,
+the planner's blueprint slots); every building passes PLANNED, RESERVED, FOUNDATION, BUILDING under a bounded crew of builders (`_step_builder`, native
+`.build` art or footprint-and-reveal in `god_view._draw_construction`); every age has processing (`chains.json`); the command centre sits on an earthen
+apron, age 3 has belts from the drills, the island is `Egyptian_Mandala_v1.2@2x` (384 x 384, `wl_map.upsample`, `embedding.build_scaled`, old saves keep
+their map); `god_world/pandemic/` is the published Pandemic core adapted to the 80 nodes (rules, scenario, coordinator, bridge, presentation), one
+responder turn every 20 game seconds, six responders manufactured at the bases, four threat families as hostile formations in era art, and the age
+gate needs ten points and the campaign's win in either order, a loss pausing the run for a retry from the checkpoint or a new world (`retry` op, the
+HUD's card). Verified: 69 God World tests, the economy-only corpus (21 seeds, no stall), the combined corpus (honest wins and losses, see the ledger),
+`GOD_WORLD_OK` with the campaign, `GOD_AGES_OK`. Not done: a phone run and device figures for the larger island, a headed capture of a real boundary
+with frozen villages, a stronger coordinator (it wins about a third of crises). To continue: the ledger's "Not done" list under that section.
+
 ## 24 Oct 2026 (later): the island and the living villages (branch `feature/god-world`, from commit `0c16e875`)
 
 The owner's second brief of the day ("natural terrain and living village networks") asked for a real landscape and villages that work. Plan with the

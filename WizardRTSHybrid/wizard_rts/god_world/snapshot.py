@@ -6,12 +6,18 @@ from __future__ import annotations
 from typing import Any
 
 from . import composition, local_ops, rules
+from .pandemic import campaign as pandemic_mod
 
 _LAYOUT_CACHE: dict[tuple[str, str, int, int], dict[str, Any]] = {}
 
 
+def invalidate_layouts(world) -> None:
+    for k in [k for k in _LAYOUT_CACHE if k[0] == world.run_id]:
+        del _LAYOUT_CACHE[k]
+
+
 def village_layout(world, v: dict[str, Any]) -> dict[str, Any]:
-    key = (world.run_id, v["id"], int(v["age"]), int(v["level"]) if v["status"] not in ("pending", "building") else 0)
+    key = (world.run_id, v["id"], int(v["age"]), int(v["level"]) if v["status"] not in ("pending", "building") else 0, int(world.production_revision))
     lay = _LAYOUT_CACHE.get(key)
     if lay is None:
         lay = composition.layout(world.board, v, int(v["age"]), level=key[3])
@@ -71,7 +77,7 @@ def snapshot(world, view: list[float] | None = None) -> dict[str, Any]:
     if view and len(view) == 4:
         g = 1.5 * unit
         win = (float(view[0]) - g, float(view[1]) - g, float(view[2]) + g, float(view[3]) + g)
-    out: dict[str, Any] = {"profile": world.profile, "run_id": world.run_id, "game_ms": int(world.game_ms), "clock_sequence": int(world.clock_sequence),
+    out: dict[str, Any] = {"profile": world.profile, "run_id": world.run_id, "game_ms": int(world.game_ms), "clock_sequence": int(world.clock_sequence), "production_revision": int(world.production_revision),
                            "age": age, "age_name": rules.age_name(age), "phase": world.phase, "paused": world.paused, "speed": world.speed, "seed": world.seed,
                            "next_roll_in_ms": (int(world.next_roll_ms) - int(world.game_ms)) if world.next_roll_ms else None, "last_roll": world.last_roll,
                            "role_names": {r: rules.role_name(age, r) for r in rules.ROLES}, "pulses": int(world.pulses), "setup": {"step": world.setup["step"], "total": len(world.setup["order"])}}
@@ -97,10 +103,16 @@ def snapshot(world, view: list[float] | None = None) -> dict[str, Any]:
         if v["status"] == "historical":
             row["final_level"] = int(v.get("final_level", 1))
             row["retired_age"] = int(v.get("retired_age", age))
-            lay = village_layout(world, {**v, "level": 1})
-            row["warehouse"] = lay["warehouse"]
+            row["warehouse"] = None
             row["districts"] = []
             row["military"] = None
+            vx, vy = world.board.node_xy(v["node"])
+            frozen = v.get("frozen")
+            if frozen and (win is None or (win[0] <= vx <= win[2] and win[1] <= vy <= win[3])):
+                row["frozen"] = {"age": frozen["age"], "sites": [s for s in frozen["sites"] if not s.get("superseded")],
+                                 "segments": [g for g in frozen["segments"] if not g.get("superseded")], "streets": frozen.get("streets", [])}
+            elif frozen:
+                row["frozen"] = {"age": frozen["age"], "sites": [s for s in frozen["sites"] if s["kind"] == "hub" and not s.get("superseded")], "segments": [], "streets": []}
         elif v["status"] == "pending":
             row["districts"] = []
             row["warehouse"] = None
@@ -129,6 +141,8 @@ def snapshot(world, view: list[float] | None = None) -> dict[str, Any]:
                                            slots=[[round(mil["x"] + wx * (i - (cap - 1) / 2.0) * 0.55 + float(d[0]) * 1.6, 3), round(mil["y"] + wy * (i - (cap - 1) / 2.0) * 0.55 + float(d[1]) * 1.6, 3)] for i in range(cap)])
         villages.append(row)
     out["villages"] = villages
+    out["pandemic"] = pandemic_mod.view(world, win) if world.pandemic is not None else None
+    out["gate"] = pandemic_mod.gate(world)
     roads = []
     for eid in sorted(world.roads):
         r = world.roads[eid]

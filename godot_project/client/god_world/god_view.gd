@@ -20,6 +20,8 @@ const ROLE_COLOR := {
 }
 const SCALE_BY_GAME := {"widelands": 2.0, "openra": 2.0, "mindustry": 1.6}  # a Mindustry cell (32 px) is 0.8 tile: a 3x3 block spans 2.4 tiles, the planner's spacing
 const MIND_PAD := Color(0.17, 0.17, 0.2)
+const CONSTRUCTION_STATES := ["planned", "reserved", "foundation", "building"]
+const FROZEN_TINT := Color(0.62, 0.6, 0.57, 0.6)  # a historical village's buildings: present, quiet, no accents
 
 var board: Dictionary = {}
 var snapshot: Dictionary = {}
@@ -143,7 +145,158 @@ func anchor_of(id: String) -> Vector2:
 		for r in snapshot.get("roads", []):
 			if str(r["id"]) == rest:
 				return (bu(float(r["a"][0]), float(r["a"][1])) + bu(float(r["b"][0]), float(r["b"][1]))) * 0.5
+	var camp: Variant = snapshot.get("pandemic")
+	if camp != null and typeof(camp) == TYPE_DICTIONARY:
+		var lists := {"formation": "formations", "responder": "responders", "post": "posts"}
+		if lists.has(kind):
+			for it in camp.get(lists[kind], []):
+				if str(it["id"]) == id:
+					return bu(float(it["x"]), float(it["y"])) - Vector2(0, 50)
 	return Vector2.INF
+
+
+# ------------------------------------------------------------------ the shared Pandemic campaign (D55)
+
+const ENEMY_TINT := Color(0.62, 0.52, 0.5, 1.0)  # hostile livery: a darkened cast under an orange crest
+const CREST := Color(1.0, 0.55, 0.12)
+
+
+## Formations of the four threat families in the age's hostile art with enemy livery, the six responders with their role crests walking the
+## corridors, the field posts at the bases, and the short-lived effects: arrivals, outbreaks, treatments and countermeasures found.
+func _draw_campaign(vp: Rect2, level: String) -> void:
+	var camp: Variant = snapshot.get("pandemic")
+	if camp == null or typeof(camp) != TYPE_DICTIONARY:
+		return
+	var now_ms := int(snapshot.get("game_ms", 0))
+	for p in camp.get("posts", []):
+		var pp := bu(float(p["x"]), float(p["y"]))
+		if not vp.grow(200.0).has_point(pp):
+			continue
+		var col: Color = faction_colors.get(str(p.get("faction", "")), Color.WHITE)
+		if level == "board":
+			draw_rect(Rect2(pp + Vector2(-18, -18), Vector2(36, 36)), Color.WHITE, true)
+			draw_rect(Rect2(pp + Vector2(-18, -18), Vector2(36, 36)), col, false, 6.0)
+			continue
+		var base := pp + Vector2(46, -8)
+		draw_line(base, base + Vector2(0, -90), Color(0.25, 0.2, 0.15), 5.0)
+		var fl := Rect2(base + Vector2(2, -90), Vector2(50, 34))
+		draw_rect(fl, Color.WHITE, true)
+		draw_rect(Rect2(fl.position + Vector2(21, 5), Vector2(8, 24)), col, true)
+		draw_rect(Rect2(fl.position + Vector2(13, 13), Vector2(24, 8)), col, true)
+		_hit.append({"id": str(p["id"]), "rect": Rect2(base + Vector2(-10, -96), Vector2(70, 100)), "priority": 2})
+	for f in camp.get("fx", []):
+		if not f.has("x"):
+			continue
+		var fp := bu(float(f["x"]), float(f["y"]))
+		if not vp.grow(300.0).has_point(fp):
+			continue
+		var age_s := float(now_ms - int(f.get("game_ms", 0))) / 1000.0
+		var kind := str(f.get("kind", ""))
+		var fcol := Color(str(FAMILY_COLOURS.get(str(f.get("family", "")), "#ffffff")))
+		if kind == "outbreak" and age_s < 5.0:
+			var t := age_s / 5.0
+			draw_arc(fp, 60.0 + t * 420.0, 0, TAU, 48, Color(1.0, 0.25, 0.15, 0.8 * (1.0 - t)), 10.0)
+			draw_arc(fp, 30.0 + t * 240.0, 0, TAU, 40, Color(1.0, 0.6, 0.2, 0.6 * (1.0 - t)), 6.0)
+			draw_string(_font, fp + Vector2(-16, -120 - t * 60.0), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 64, Color(1.0, 0.3, 0.2, 1.0 - t))
+		elif (kind == "arrive" or kind == "epidemic") and age_s < 3.0:
+			var t2 := age_s / 3.0
+			draw_arc(fp, 40.0 + t2 * 160.0, 0, TAU, 36, Color(fcol.r, fcol.g, fcol.b, 0.7 * (1.0 - t2)), 6.0)
+		elif kind == "treat" and age_s < 2.5:
+			var t3 := age_s / 2.5
+			for i in 6:
+				var a := TAU * i / 6.0 + t3 * 2.0
+				var q := fp + Vector2(cos(a), sin(a)) * (30.0 + t3 * 90.0)
+				draw_circle(q, 7.0 * (1.0 - t3), Color(0.5, 1.0, 0.6, 1.0 - t3))
+		elif kind == "cured" and age_s < 6.0:
+			var t4 := age_s / 6.0
+			draw_arc(fp, 50.0 + t4 * 300.0, 0, TAU, 48, Color(1.0, 0.9, 0.4, 0.9 * (1.0 - t4)), 12.0)
+	for fm in camp.get("formations", []):
+		var fpos := bu(float(fm["x"]), float(fm["y"]))
+		if not vp.grow(200.0).has_point(fpos):
+			continue
+		var n := int(fm.get("n", 1))
+		var fcol2 := Color(str(fm.get("colour", "#ff4040")))
+		var glyph := str(fm.get("glyph", ""))
+		if level != "detail":
+			var rr := 40.0 if level == "board" else 30.0
+			draw_circle(fpos, rr + 6.0, Color(0.05, 0.03, 0.03, 0.9))
+			draw_circle(fpos, rr, fcol2.darkened(0.25))
+			draw_arc(fpos, rr - 5.0, 0, TAU, 24, CREST, 5.0)
+			draw_string(_font, fpos + Vector2(-12 if glyph.length() < 2 else -22, 12), glyph + ("" if level == "board" else str(n)), HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color.WHITE)
+			_hit.append({"id": str(fm["id"]), "rect": Rect2(fpos - Vector2(rr, rr), Vector2(rr, rr) * 2.0), "priority": 3})
+			continue
+		var art_id := str(fm.get("art", ""))
+		var rect_all := Rect2(fpos, Vector2.ZERO)
+		for i in n:
+			var off := Vector2(-34 + i * 34, (i % 2) * 18 - 8)
+			var r := _draw_unit_art(art_id, fpos + off, ENEMY_TINT, 1.0)
+			rect_all = r if i == 0 else rect_all.merge(r)
+			# the crest: an orange pennant over each unit
+			var top := Vector2(r.get_center().x, r.position.y - 6.0)
+			draw_colored_polygon(PackedVector2Array([top, top + Vector2(-9, -16), top + Vector2(9, -16)]), CREST)
+		# the family glyph on a dark disc beside the formation
+		var disc := Vector2(rect_all.end.x + 18.0, rect_all.position.y + 10.0)
+		draw_circle(disc, 20.0, Color(0.05, 0.03, 0.03, 0.9))
+		draw_arc(disc, 20.0, 0, TAU, 20, fcol2, 4.0)
+		draw_string(_font, disc + Vector2(-9 if glyph.length() < 2 else -16, 9), glyph, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, fcol2.lightened(0.3))
+		if n >= 3:
+			draw_string(_font, disc + Vector2(-8, 40), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 28, Color(1.0, 0.35, 0.2))
+		_hit.append({"id": str(fm["id"]), "rect": rect_all.grow(10.0), "priority": 3})
+	for rp in camp.get("responders", []):
+		var rpos := bu(float(rp["x"]), float(rp["y"]))
+		if not vp.grow(200.0).has_point(rpos):
+			continue
+		var col2: Color = faction_colors.get(str(rp.get("faction", "")), Color.WHITE)
+		var glyph2 := str(rp.get("glyph", "?"))
+		if level == "board":
+			draw_circle(rpos, 30.0, Color.WHITE)
+			draw_circle(rpos, 22.0, col2)
+			continue
+		var emerging := bool(rp.get("emerging", false))
+		var sc := 1.0 if not emerging else 0.4 + 0.6 * float(rp.get("emerge_t", 0.0))
+		var tint := Color(1, 1, 1, 1) if not emerging else Color(1, 1, 1, 0.35 + 0.65 * float(rp.get("emerge_t", 0.0)))
+		var r2 := _draw_unit_art(str(rp.get("art", "")), rpos, tint, sc, float(rp.get("heading", 0.0)), bool(rp.get("moving", false)))
+		draw_circle(rpos + Vector2(0, 6), 10.0, Color(0, 0, 0, 0.55))
+		draw_circle(rpos + Vector2(0, 6), 7.0, col2)
+		var badge := Vector2(r2.get_center().x, r2.position.y - 22.0)
+		draw_circle(badge, 18.0, Color.WHITE)
+		draw_arc(badge, 18.0, 0, TAU, 20, Color(0.1, 0.1, 0.12), 3.0)
+		draw_string(_font, badge + Vector2(-8, 8), glyph2, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color(0.1, 0.1, 0.12))
+		if bool(rp.get("acting", false)):
+			var pulse := 0.5 + 0.5 * sin(clock * 4.0)
+			draw_arc(rpos + Vector2(0, 6), 26.0 + pulse * 10.0, 0, TAU, 28, Color(1, 1, 1, 0.5 + 0.4 * pulse), 4.0)
+		_hit.append({"id": str(rp["id"]), "rect": r2.grow(8.0), "priority": 3})
+
+
+const FAMILY_COLOURS := {"F1": "#d8403a", "F2": "#e0a52a", "F3": "#2fb5a8", "F4": "#8b5cd6"}
+
+
+## One unit of the roster drawn at a point: a Widelands soldier sheet, a Red Alert infantry or vehicle sequence (facing from the heading), or a
+## Mindustry unit's parts. Returns the rect on screen.
+func _draw_unit_art(art_id: String, pos: Vector2, tint: Color, sc_mul: float, heading: float = 0.0, moving: bool = false) -> Rect2:
+	var item: Dictionary = art.items.get(art_id, {})
+	if item.is_empty():
+		draw_circle(pos, 12.0 * sc_mul, tint)
+		return Rect2(pos - Vector2(12, 12) * sc_mul, Vector2(24, 24) * sc_mul)
+	if str(item.get("game", "")) == "mindustry":
+		var sc := 1.4 * sc_mul
+		var w := float(item.get("width", 48)) * sc
+		var rect := Rect2(pos - Vector2(w * 0.5, w * 0.7), Vector2(w, w))
+		var drew := false
+		for p in item.get("parts", []):
+			if str(p.get("role", "")) in ["main", "base"]:
+				var tex: Texture2D = _part_tex(str(p.get("file", "")))
+				if tex != null:
+					draw_set_transform(rect.get_center(), heading + PI * 0.5 if moving else 0.0, Vector2.ONE)
+					draw_texture_rect(tex, Rect2(-rect.size * 0.5, rect.size), false, tint)
+					draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+					drew = true
+		if not drew:
+			draw_circle(pos, 12.0 * sc_mul, tint)
+		return rect
+	if str(item.get("game", "")) == "openra":
+		return _draw_sheet(item, pos, tint, sc_mul, {"facing": _facing_of(heading), "status": "moving" if moving else "idle"})
+	return _draw_sheet(item, pos, tint, sc_mul, {"facing": _facing_of(heading) if moving else "s", "status": "moving" if moving else "idle"})
 
 
 # ------------------------------------------------------------------ drawing
@@ -161,11 +314,14 @@ func _draw() -> void:
 	_draw_roads(vp_rect)
 	if zoom < ZOOM_REGION:
 		_draw_board_level(vp_rect)
+		_draw_campaign(vp_rect, "board")
 		return
 	if zoom < ZOOM_DETAIL:
 		_draw_region_level(vp_rect)
+		_draw_campaign(vp_rect, "region")
 		return
 	_draw_detail_level(vp_rect)
+	_draw_campaign(vp_rect, "detail")
 
 
 func _visible_world_rect() -> Rect2:
@@ -422,7 +578,18 @@ func _draw_detail_level(vp: Rect2) -> void:
 		if status == "pending":
 			continue
 		if status == "historical":
-			items.append({"y": c.y, "kind": "remains", "v": v, "pos": c})
+			var fz: Variant = v.get("frozen")
+			if fz == null or typeof(fz) != TYPE_DICTIONARY or (fz as Dictionary).get("sites", []).is_empty():
+				items.append({"y": c.y, "kind": "remains", "v": v, "pos": c})
+				continue
+			# the frozen historical village (D49): what it had actually built, quiet and faded; nothing works, nothing counts
+			for st in fz.get("streets", []):
+				items.append({"y": -1e9, "kind": "street", "a": bu(float(st[0]), float(st[1])), "b": bu(float(st[2]), float(st[3])), "frozen": true})
+			for seg in fz.get("segments", []):
+				items.append({"y": -1e8, "kind": "segment", "seg": {"id": seg["id"], "kind": seg["kind"], "pts": seg["pts"], "items": [], "fill": 0.0, "broken": false, "good": ""}, "col": Color(0.6, 0.6, 0.6), "frozen": true})
+			for fs in fz.get("sites", []):
+				var fp := bu(float(fs["x"]), float(fs["y"]))
+				items.append({"y": fp.y, "kind": "frozen", "art": str(fs["art"]), "pos": fp, "id": ("remains:" + str(v["id"])) if str(fs["kind"]) == "hub" else ("site:" + str(fs["id"])), "site_kind": str(fs["kind"])})
 			continue
 		var col: Color = faction_colors.get(str(v["faction"]), Color.WHITE)
 		var ops: Variant = v.get("ops")
@@ -447,6 +614,12 @@ func _draw_detail_level(vp: Rect2) -> void:
 		for s_ in ops.get("sites", []):
 			var sp := bu(float(s_["x"]), float(s_["y"]))
 			var kind := str(s_["kind"])
+			var sstate := str(s_["state"])
+			if sstate in CONSTRUCTION_STATES:
+				# every building passes through the one construction lifecycle (D51): pegs, footprint, foundation, the rising building
+				items.append({"y": sp.y + (1.0 if kind == "hub" else 0.0), "kind": "construction", "art": str(s_["art"]), "pos": sp, "col": col, "state": sstate, "build": float(s_.get("build", 0.0)),
+					"id": ("village:" + str(v["id"])) if kind == "hub" else (("facility:" + str(v["id"])) if kind == "military" else "site:" + str(s_["id"])), "site_kind": kind, "v": v})
+				continue
 			if kind == "hub":
 				items.append({"y": sp.y + 1.0, "kind": "hub", "v": v, "site": s_, "pos": sp, "col": col, "scaffold": str(s_["state"]) == "building"})
 			elif kind == "military":
@@ -471,12 +644,14 @@ func _draw_detail_level(vp: Rect2) -> void:
 	items.sort_custom(func(a, b): return a["y"] < b["y"])
 	for it in items:
 		match str(it["kind"]):
-			"street": draw_line(it["a"], it["b"], Color(0.42, 0.36, 0.26, 0.55), 9.0)
+			"street": draw_line(it["a"], it["b"], Color(0.4, 0.38, 0.34, 0.3) if bool(it.get("frozen", false)) else Color(0.42, 0.36, 0.26, 0.55), 9.0)
 			"segment": _draw_segment(it)
 			"tree": _draw_tree(it)
 			"warehouse": _draw_warehouse(it)
 			"hub": _draw_hub(it)
 			"building": _draw_building(it)
+			"construction": _draw_construction(it)
+			"frozen": _draw_frozen(it)
 			"agent": _draw_agent(it)
 			"unit": _draw_unit(it)
 			"remains": _draw_remains(it["v"], it["pos"])
@@ -491,6 +666,12 @@ const GOOD_COLOR := {"coal": Color(0.12, 0.12, 0.14), "sand": Color(0.93, 0.85, 
 
 
 func _draw_segment(it: Dictionary) -> void:
+	if bool(it.get("frozen", false)) or not bool((it["seg"] as Dictionary).get("active", true)):
+		var seg0: Dictionary = it["seg"]
+		var pts0: Array = seg0.get("pts", [])
+		for i in range(pts0.size() - 1):
+			draw_line(bu(float(pts0[i][0]), float(pts0[i][1])), bu(float(pts0[i + 1][0]), float(pts0[i + 1][1])), Color(0.45, 0.45, 0.47, 0.45), 14.0)
+		return
 	var seg: Dictionary = it["seg"]
 	var pts := PackedVector2Array()
 	for p in seg.get("pts", []):
@@ -531,6 +712,134 @@ func _draw_segment(it: Dictionary) -> void:
 
 ## The village's one hub, in the age's dress: the primitive store (a timber hut with its stockpiles), the warehouse and its yard, the command
 ## centre on its pad, the core. Never two of them.
+## A worn apron under a modern command centre: packed earth and tyre tracks fading into the terrain, no hard-edged slab of its own.
+func _draw_apron(c: Vector2, radii: Vector2) -> void:
+	for ring in 3:
+		var f := 1.0 + ring * 0.18
+		var pts := PackedVector2Array()
+		for i in 28:
+			var a := TAU * i / 28.0
+			var wob := 1.0 + 0.04 * sin(a * 3.0 + c.x * 0.01)
+			pts.append(c + Vector2(cos(a) * radii.x * f * wob, sin(a) * radii.y * f * wob))
+		draw_colored_polygon(pts, Color(0.33, 0.3, 0.25, 0.3 - ring * 0.09))
+	for t in 2:
+		var y0 := c.y + 30.0 + t * 22.0
+		draw_line(Vector2(c.x - radii.x * 0.9, y0), Vector2(c.x + radii.x * 0.9, y0 + 6.0), Color(0.25, 0.22, 0.18, 0.28), 4.0)
+
+
+## A building under construction (D51): planned shows the surveyor's pegs, reserved the cleared footprint, foundation a stone base, building the
+## native build animation where the roster has one (Widelands) or the finished sprite revealed from the ground up behind scaffolding otherwise.
+func _draw_construction(it: Dictionary) -> void:
+	var item: Dictionary = art.items.get(str(it["art"]), {})
+	var pos: Vector2 = it["pos"]
+	var state := str(it.get("state", "planned"))
+	var build := clampf(float(it.get("build", 0.0)), 0.0, 1.0)
+	var col: Color = it["col"]
+	var size := Vector2(100, 70)
+	if not item.is_empty():
+		if str(item.get("game", "")) == "mindustry":
+			var w := float(item.get("width", 64)) * _item_scale(item)
+			size = Vector2(w, w)
+		else:
+			var tex0: Texture2D = art._tex(str(item.get("id", ""))) if str(item.get("mode", "")) != "sequence" else null
+			if tex0 != null:
+				size = art._frame_size(item, tex0) * _item_scale(item)
+	var foot := Rect2(pos - Vector2(size.x * 0.5, size.y * 0.45), Vector2(size.x, size.y * 0.55))
+	# the footprint on the ground, then pegs at its corners
+	if state != "planned":
+		draw_colored_polygon(PackedVector2Array([foot.position, foot.position + Vector2(foot.size.x, 0), foot.end, foot.position + Vector2(0, foot.size.y)]), Color(0.42, 0.36, 0.27, 0.55))
+	for corner in [foot.position, foot.position + Vector2(foot.size.x, 0), foot.end, foot.position + Vector2(0, foot.size.y)]:
+		draw_line(corner, corner + Vector2(0, -14), Color(0.55, 0.4, 0.2), 3.0)
+		draw_circle(corner + Vector2(0, -14), 3.0, col)
+	var rect := Rect2(pos - Vector2(size.x * 0.5, size.y * 0.8), size)
+	if state == "foundation":
+		# the foundations: a low stone course around the footprint with earth inside, never a slab
+		var base := Rect2(foot.position + Vector2(4, -6), Vector2(foot.size.x - 8, foot.size.y * 0.5 + 6))
+		draw_rect(base, Color(0.4, 0.34, 0.26, 0.5), true)
+		draw_rect(base, Color(0.58, 0.56, 0.52), false, 7.0)
+		draw_rect(base, Color(0.25, 0.23, 0.2), false, 2.0)
+		for i in 4:
+			var bx := base.position.x + 10.0 + i * (base.size.x - 20.0) / 3.0
+			draw_rect(Rect2(bx - 6.0, base.position.y - 4.0, 12.0, 8.0), Color(0.62, 0.6, 0.56), true)
+	elif state == "building":
+		var bkey := str(it["art"]) + ".build"
+		if art.items.has(bkey):
+			var bitem: Dictionary = art.items[bkey]
+			var frames := maxi(int(bitem.get("frames", 1)), 1)
+			rect = _draw_sheet_frame(bitem, pos, Color.WHITE, mini(int(build * frames), frames - 1))
+		else:
+			var reveal := 0.15 + 0.85 * build
+			if str(item.get("game", "")) == "mindustry":
+				_draw_mindustry(item, pos, Color(1, 1, 1, reveal), false)
+			elif not item.is_empty():
+				_draw_sheet_reveal(item, pos, reveal)
+			# scaffolding poles and a plank line at the top of the finished part
+			for i in 3:
+				var x := rect.position.x + 8.0 + i * (rect.size.x - 16.0) * 0.5
+				draw_line(Vector2(x, rect.end.y), Vector2(x, rect.end.y - rect.size.y * reveal - 10.0), Color(0.6, 0.45, 0.25), 3.0)
+			var ty := rect.end.y - rect.size.y * reveal - 10.0
+			draw_line(Vector2(rect.position.x, ty), Vector2(rect.end.x, ty), Color(0.6, 0.45, 0.25), 3.0)
+	if state == "foundation" or state == "building":
+		draw_arc(Vector2(rect.position.x + 14.0, rect.position.y + 14.0), 10.0, -PI * 0.5, -PI * 0.5 + TAU * build, 20, Color(1, 0.9, 0.4), 4.0)
+	draw_circle(pos + Vector2(0, 6), 6.0, col)
+	_hit.append({"id": str(it["id"]), "rect": rect, "priority": 3})
+
+
+func _draw_sheet_frame(item: Dictionary, pos: Vector2, tint: Color, frame: int) -> Rect2:
+	var tex: Texture2D = art._tex(str(item.get("id", "")))
+	if tex == null:
+		return Rect2(pos - Vector2(40, 60), Vector2(80, 60))
+	var columns := maxi(int(item.get("columns", 1)), 1)
+	var rows := maxi(int(item.get("rows", 1)), 1)
+	var fw := tex.get_width() / columns
+	var fh := tex.get_height() / rows
+	var src := Rect2((frame % columns) * fw, mini(frame / columns, rows - 1) * fh, fw, fh)
+	var sc := _item_scale(item)
+	var hs: Array = item.get("hotspot", [0, 0])
+	var rect := Rect2(pos - Vector2(float(hs[0]), float(hs[1])) * sc, Vector2(fw, fh) * sc)
+	draw_texture_rect_region(tex, rect, src, tint)
+	return rect
+
+
+func _draw_sheet_reveal(item: Dictionary, pos: Vector2, reveal: float) -> void:
+	var tex: Texture2D = art._tex(str(item.get("id", "")))
+	if tex == null:
+		return
+	var sc := _item_scale(item)
+	var hs: Array = item.get("hotspot", [0, 0])
+	var fsize: Vector2 = art._frame_size(item, tex)
+	var src: Rect2 = art._source_rect(item, tex, {"_static": true})
+	var rect := Rect2(pos - Vector2(float(hs[0]), float(hs[1])) * sc, fsize * sc)
+	var cut := fsize.y * (1.0 - reveal)
+	var src2 := Rect2(src.position + Vector2(0, cut), Vector2(src.size.x, src.size.y - cut))
+	var rect2 := Rect2(rect.position + Vector2(0, cut * sc), Vector2(rect.size.x, rect.size.y - cut * sc))
+	draw_texture_rect_region(tex, rect2, src2, Color(0.95, 0.95, 0.95, 0.95))
+
+
+## A frozen building of a historical village: its sprite, faded, with no smoke, crates, accent or flag.
+func _draw_frozen(it: Dictionary) -> void:
+	var item: Dictionary = art.items.get(str(it["art"]), {})
+	var pos: Vector2 = it["pos"]
+	var rect: Rect2
+	if item.is_empty():
+		rect = Rect2(pos - Vector2(50, 70), Vector2(100, 70))
+		draw_rect(rect, Color(0.4, 0.38, 0.36, 0.4), true)
+	elif str(item.get("game", "")) == "mindustry":
+		rect = _draw_mindustry(item, pos, FROZEN_TINT, false)
+	elif str(item.get("game", "")) == "openra" and item.has("states"):
+		var st_files: Array = item["states"].get("idle", {}).get("files", [])
+		var tex: Texture2D = _part_tex(str(st_files[0])) if st_files.size() > 0 else null
+		if tex != null:
+			var size := Vector2(tex.get_width(), tex.get_height()) * 2.6667
+			rect = Rect2(pos - Vector2(size.x * 0.5, size.y * 0.8), size)
+			draw_texture_rect(tex, rect, false, FROZEN_TINT)
+		else:
+			rect = Rect2(pos - Vector2(90, 90), Vector2(180, 120))
+	else:
+		rect = _draw_sheet(item, pos, FROZEN_TINT, 1.0, {"facing": "s", "class": "building", "_static": true})
+	_hit.append({"id": str(it["id"]), "rect": rect, "priority": 2})
+
+
 func _draw_hub(it: Dictionary) -> void:
 	var v: Dictionary = it["v"]
 	var site: Dictionary = it["site"]
@@ -556,13 +865,9 @@ func _draw_hub(it: Dictionary) -> void:
 			draw_circle(bp, 10.0, Color(0.72, 0.58, 0.32))
 			draw_arc(bp, 10.0, 0, TAU, 12, Color(0.35, 0.25, 0.1), 2.0)
 	elif props == "industrial":
-		var pad := Rect2(pos - Vector2(170, 150), Vector2(340, 240))
-		draw_rect(pad, Color(0.32, 0.31, 0.3, 0.85), true)
-		draw_rect(pad, Color(0.12, 0.12, 0.12), false, 3.0)
+		_draw_apron(pos + Vector2(0, -20), Vector2(190, 130))
 	elif props == "core":
-		var pad2 := Rect2(pos - Vector2(150, 130), Vector2(300, 220))
-		draw_rect(pad2, Color(0.2, 0.21, 0.24, 0.9), true)
-		draw_rect(pad2, Color(0.5, 0.55, 0.6), false, 3.0)
+		_draw_apron(pos + Vector2(0, -20), Vector2(170, 120))
 	var rect: Rect2
 	if item.is_empty():
 		rect = Rect2(pos - Vector2(60, 90), Vector2(120, 90))
@@ -624,6 +929,15 @@ func _draw_agent(it: Dictionary) -> void:
 			rect = Rect2(pos - Vector2(10, 10), Vector2(20, 20))
 		else:
 			rect = _draw_sheet(item2, pos, Color.WHITE, 1.0, entity)
+	if kind == "builder":
+		var head := Vector2(rect.position.x + rect.size.x * 0.5, rect.position.y + 6.0)
+		draw_circle(head, 7.0, Color(0.95, 0.8, 0.15))
+		draw_arc(head, 7.0, PI, TAU, 10, Color(0.3, 0.2, 0.05), 2.0)
+		if anim == "build":
+			var swing := sin(clock * 9.0 + pos.x * 0.05)
+			var hand := pos + Vector2(14, -16)
+			draw_line(hand, hand + Vector2(14, -12 * swing), Color(0.35, 0.25, 0.12), 3.0)
+			draw_rect(Rect2(hand + Vector2(14, -12 * swing) - Vector2(5, 4), Vector2(10, 8)), Color(0.3, 0.3, 0.32), true)
 	var cargo := str(a.get("cargo", ""))
 	if cargo != "":
 		var icon := "widelands.ware.%s" % cargo

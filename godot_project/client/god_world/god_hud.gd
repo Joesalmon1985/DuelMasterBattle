@@ -23,6 +23,12 @@ var _last_event_ms := -1
 var _chips: Dictionary = {}
 var _age_shown := 0
 var _final_shown := false
+var campaign: PanelContainer
+var camp_title: Label
+var camp_line: Label
+var camp_gate: Label
+var camp_chips: Array = []
+var _lost_shown_ms := -1
 
 
 func setup(p_world: Node) -> void:
@@ -81,6 +87,51 @@ func setup(p_world: Node) -> void:
 	overlay_btn = _small_button("OverlayButton", "#", 76)
 	overlay_btn.pressed.connect(func(): world.view.show_overlay = not world.view.show_overlay; world.view.queue_redraw())
 	corner.add_child(overlay_btn)
+	# the campaign panel (bottom-left): the age's crisis, the four countermeasures, outbreaks and rate, whose turn, and the age gate
+	campaign = PanelContainer.new()
+	campaign.name = "CampaignPanel"
+	campaign.add_theme_stylebox_override("panel", _VT.flat_panel_style(Color(0.07, 0.05, 0.12, 0.82), 8))
+	campaign.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	campaign.offset_left = 12
+	campaign.offset_top = -236
+	campaign.offset_right = 372
+	campaign.offset_bottom = -96
+	campaign.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	campaign.visible = false
+	add_child(campaign)
+	var cv := VBoxContainer.new()
+	cv.add_theme_constant_override("separation", 4)
+	cv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	campaign.add_child(cv)
+	camp_title = Label.new()
+	camp_title.name = "CampaignTitle"
+	camp_title.add_theme_font_size_override("font_size", 22)
+	camp_title.add_theme_color_override("font_color", _VT.COLOR_TEXT_PRIMARY)
+	cv.add_child(camp_title)
+	var chips := HBoxContainer.new()
+	chips.name = "Countermeasures"
+	chips.add_theme_constant_override("separation", 8)
+	cv.add_child(chips)
+	for i in 4:
+		var chip := Label.new()
+		chip.name = "Family%d" % i
+		chip.custom_minimum_size = Vector2(80, 30)
+		chip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		chip.add_theme_font_size_override("font_size", 20)
+		chip.add_theme_color_override("font_outline_color", Color(0.05, 0.03, 0.08))
+		chip.add_theme_constant_override("outline_size", 4)
+		chips.add_child(chip)
+		camp_chips.append(chip)
+	camp_line = Label.new()
+	camp_line.name = "CampaignLine"
+	camp_line.add_theme_font_size_override("font_size", 19)
+	camp_line.add_theme_color_override("font_color", _VT.COLOR_TEXT_PRIMARY)
+	cv.add_child(camp_line)
+	camp_gate = Label.new()
+	camp_gate.name = "CampaignGate"
+	camp_gate.add_theme_font_size_override("font_size", 18)
+	camp_gate.add_theme_color_override("font_color", Color(0.85, 0.82, 0.9))
+	cv.add_child(camp_gate)
 	toast = Label.new()
 	toast.name = "Toast"
 	toast.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -173,13 +224,14 @@ func apply_snapshot(s: Dictionary) -> void:
 			show_toast(line)
 	if not s.get("events", []).is_empty():
 		_last_event_ms = int(s["events"][-1].get("game_ms", 0))
+	_apply_campaign(s)
 	# the age change and the final result: dismissible cards
 	var t = s.get("transition")
 	if t != null and typeof(t) == TYPE_DICTIONARY and int(t.get("age_to", 0)) > _age_shown and int(t.get("age_to", 0)) == age and not notice.visible:
 		_age_shown = age
 		var winner := _faction_name(s, str(t.get("winner", "")))
-		notice.show_card("The %s age" % str(s.get("age_name", "")), "%s reached ten points" % winner,
-			"Every faction keeps its two most productive villages and begins again as settlements. The old towns fall quiet; their roads remain as paths.", [], [{"id": "ok", "text": "Watch on"}])
+		notice.show_card("The %s age" % str(s.get("age_name", "")), "%s reached ten points and the campaign was won" % winner,
+			"Every faction keeps its two most productive villages and begins again as settlements. The number tokens are shuffled anew. The old towns stand quiet as they were built; their roads remain as paths.", [], [{"id": "ok", "text": "Watch on"}])
 	var fr = s.get("final_result")
 	if fr != null and typeof(fr) == TYPE_DICTIONARY and not _final_shown and not notice.visible:
 		_final_shown = true
@@ -201,6 +253,17 @@ func _faction_name(s: Dictionary, fid: String) -> String:
 
 
 func _event_line(e: Dictionary, s: Dictionary) -> String:
+	var ek := str(e.get("kind", ""))
+	if ek == "pandemic_begin":
+		return "The age's campaign begins: six responders take the field"
+	if ek == "pandemic_won":
+		return "The campaign is won: all four countermeasures found"
+	if ek == "pandemic_lost":
+		return "The campaign is lost"
+	if ek == "pandemic_retry":
+		return "A new crisis from the checkpoint"
+	if ek == "economic_qualified":
+		return "%s stands at ten points: the age waits on the campaign" % _faction_name(s, str(e.get("faction", "")))
 	var kind := str(e.get("kind", ""))
 	var who := _faction_name(s, str(e.get("faction", "")))
 	match kind:
@@ -220,6 +283,52 @@ func show_toast(text: String, seconds: float = 3.5) -> void:
 	toast.text = text
 	toast.visible = true
 	_toast_t = seconds
+
+
+func _apply_campaign(s: Dictionary) -> void:
+	var camp: Variant = s.get("pandemic")
+	var gate: Dictionary = s.get("gate", {})
+	if camp == null or typeof(camp) != TYPE_DICTIONARY:
+		campaign.visible = false
+	else:
+		campaign.visible = true
+		var p: Dictionary = camp.get("panel", {})
+		var cur: Dictionary = p.get("current", {})
+		var nxt := int(ceil(float(p.get("next_turn_in_ms", 0)) / 1000.0))
+		var res := str(p.get("result", "")) if p.get("result") != null else ""
+		if res == "won":
+			camp_title.text = "%s · won" % str(p.get("name", "The campaign"))
+		elif res == "lost":
+			camp_title.text = "%s · lost" % str(p.get("name", "The campaign"))
+		else:
+			camp_title.text = "%s · turn %d · %s (%s) in %ds" % [str(p.get("name", "The campaign")), int(p.get("turn_count", 0)), str(cur.get("role_name", "")), _faction_name(s, str(cur.get("faction", ""))).substr(0, 6), nxt]
+		var fams: Array = p.get("families", [])
+		for i in camp_chips.size():
+			var chip: Label = camp_chips[i]
+			if i >= fams.size():
+				chip.visible = false
+				continue
+			chip.visible = true
+			var f: Dictionary = fams[i]
+			var colr := Color(str(f.get("colour", "#ffffff")))
+			chip.text = "%s %s" % [str(f.get("glyph", "")), "✓" if bool(f.get("cured", false)) else str(int(f.get("out", 0)))]
+			chip.add_theme_color_override("font_color", colr.lightened(0.35) if not bool(f.get("cured", false)) else Color(1.0, 0.95, 0.6))
+			chip.tooltip_text = str(f.get("name", ""))
+		camp_line.text = "Outbreaks %d of %d · rate %d · deck %d · posts %d" % [int(p.get("outbreaks", 0)), int(p.get("outbreaks_max", 8)), int(p.get("rate", 2)), int(p.get("player_deck", 0)), int(p.get("posts", 0))]
+	var econ: Variant = gate.get("economic")
+	var won := bool(gate.get("pandemic_won", false))
+	if not bool(gate.get("enabled", true)):
+		camp_gate.text = "Age gate: ten points"
+	else:
+		var e_txt := "ten points ✓ (%s)" % _faction_name(s, str(econ.get("faction", ""))).substr(0, 8) if econ != null and typeof(econ) == TYPE_DICTIONARY else "ten points –"
+		camp_gate.text = "Age gate: %s · campaign %s" % [e_txt, "won ✓" if won else "–"]
+	var lost: Variant = gate.get("pandemic_lost")
+	if lost != null and typeof(lost) == TYPE_DICTIONARY and int(lost.get("game_ms", 0)) != _lost_shown_ms and not notice.visible:
+		_lost_shown_ms = int(lost.get("game_ms", 0))
+		var why: String = str({"outbreaks": "the eighth outbreak", "reserve_exhausted": "a family's reserve ran out", "player_deck_exhausted": "the responders ran out of time"}.get(str(lost.get("reason", "")), str(lost.get("reason", ""))))
+		notice.show_card("The campaign is lost", "Age %d: %s" % [int(lost.get("age", 1)), why],
+			"The island pauses. Retry the age's campaign from its checkpoint (the same island and bases, a new crisis), or start a new world.",
+			[{"id": "retry", "text": "Retry from the checkpoint"}, {"id": "new_world_yes", "text": "A new world"}], [])
 
 
 func _on_pause() -> void:
@@ -247,6 +356,10 @@ func _on_notice_choice(id: String) -> void:
 		"new_world_yes":
 			notice.hide_card()
 			world.new_world()
+		"retry":
+			notice.hide_card()
+			var rr: Dictionary = world.retry_campaign()
+			show_toast("A new crisis begins from the checkpoint" if str(rr.get("status", "")) == "ok" else "Could not retry: %s" % str(rr.get("reason", "")))
 		"main_menu":
 			notice.hide_card()
 			world.leave_to_menu()

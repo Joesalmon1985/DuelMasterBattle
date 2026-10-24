@@ -23,6 +23,7 @@ def _run_until(w, pred, limit_s=20000):
 
 def test_ac04_six_ais_place_two_legal_sites_each_in_snake_order_and_get_second_site_resources_once():
     w = GodWorld(seed=12)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     w.ai_enabled = False  # placement is not the AI pass; the pass would start spending the grants in the same quantum
     assert _run_until(w, lambda w: w.phase != "SETUP", 60)
     log = w.setup["log"]
@@ -42,6 +43,7 @@ def test_ac04_six_ais_place_two_legal_sites_each_in_snake_order_and_get_second_s
 
 def test_ac18_only_one_faction_at_ten_triggers_and_six_factions_summing_to_ten_do_not_and_waiting_never_advances():
     w = GodWorld(seed=13)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     assert _run_until(w, lambda w: w.phase == "RUNNING", 60)
     # six factions at 2 VP sum to 12 > 10: no transition, however long we wait without completions
     w.ai = {f: {**w.ai[f]} for f in w.fids}
@@ -60,6 +62,7 @@ def test_ac18_only_one_faction_at_ten_triggers_and_six_factions_summing_to_ten_d
 
 def _age_one_win(seed):
     w = GodWorld(seed=seed)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     assert _run_until(w, lambda w: bool(w.history["age_winners"]), 20000), "no age-one win within the budget"
     return w
 
@@ -115,6 +118,8 @@ def test_carry_over_vector_both_cities_restart_as_settlements_with_two_vp():
     from wizard_rts.god_world import ages
 
     w = GodWorld(seed=14)
+
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     assert _run_until(w, lambda w: w.phase == "RUNNING", 60)
     f = w.fids[0]
     vills = w.faction_villages(f)
@@ -127,6 +132,7 @@ def test_carry_over_vector_both_cities_restart_as_settlements_with_two_vp():
 
 def test_ac23_ac24_a_full_autonomous_run_reaches_the_fourth_age_result_with_idle_bounded_garrisons():
     w = GodWorld(seed=1)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     seq = 0
     budget = rules.limit("diagnostic_pulses_per_age")
     while w.final_result is None:
@@ -158,7 +164,10 @@ def test_ac28_presentation_calls_never_change_the_simulation():
     from wizard_rts.god_world import snapshot
 
     a = GodWorld(seed=15)
+
+    a.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     b = GodWorld(seed=15)
+    b.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     seq = 0
     for i in range(400):
         seq += 1
@@ -177,6 +186,7 @@ def test_ac28_presentation_calls_never_change_the_simulation():
 
 def test_save_load_round_trip_mid_age_is_exact():
     a = GodWorld(seed=16)
+    a.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     seq = 0
     for _ in range(300):
         seq += 1

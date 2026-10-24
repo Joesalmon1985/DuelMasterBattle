@@ -210,6 +210,26 @@ func _run() -> void:
 	await _frames(20)
 	_check(_world.ui_state()["game_ms"] >= ms_a, "clock resumed")
 	_check(_world.ui_state()["missing_art"].is_empty(), "no missing art after the tour: %s" % str(_world.ui_state()["missing_art"]))
+	# the shared campaign: six responders manufactured at the bases, formations on the island, the panel and the gate shown, a formation labelled
+	ok = await _wait_until(func(): return bool(_world.ui_state()["campaign"]["active"]) and int(_world.ui_state()["campaign"]["responders"]) == 6, 30.0)
+	_check(ok, "the age's campaign is on: six responders (%s)" % str(_world.ui_state()["campaign"]))
+	var cs: Dictionary = _world.ui_state()["campaign"]
+	_check(int(cs["formations"]) > 0 and int(cs["posts"]) == 6, "formations stand on the island and six field posts at the bases (%d formations)" % int(cs["formations"]))
+	_check(bool(cs["panel_visible"]), "the campaign panel shows countermeasures, outbreaks and the gate")
+	_world.ui_focus_formation()
+	await _frames(8)
+	var fpos: Vector2 = _world.ui_formation_screen_pos()
+	await _shot("11_campaign_formation")
+	_check(_world.ui_state()["missing_art"].is_empty(), "no missing art with the campaign drawn: %s" % str(_world.ui_state()["missing_art"]))
+	if fpos.x >= 0.0:
+		await _tap(fpos)
+		await _frames(4)
+		ls = _world.ui_state()["labels"]
+		_check(ls["state"] == "LABEL" and str(ls["id"]).begins_with("formation:"), "a tap on a formation labels it (%s)" % str(ls["id"]))
+		await _shot("12_campaign_label")
+		await _tap(Vector2(40.0, 1180.0))
+	_world.camera_ctl.fit_board()
+	await _shot("13_campaign_board")
 	_finish()
 
 

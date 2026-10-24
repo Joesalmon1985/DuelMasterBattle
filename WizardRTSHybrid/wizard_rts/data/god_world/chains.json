@@ -1,68 +1,661 @@
 {
   "notes": "God World local operations (docs/PLAN_GOD_WORLD_LIVING.md stage B/C): per age and resource role, the producer, its worker family and task, the operating good it yields, the support building, the processor and its recipe. Operating goods are local units (logs, granite, ore packets): never Catan tokens. Work durations are adapted from the Widelands worker programs transcribed in wizard_rts/programs_data.py (lumberjack hack 15 s, stonemason hack 17.5 s, farmer plant/harvest, ranger dig+plant+water 9.5 s, hunter walk+1 s) and from the pinned Mindustry Blocks.java recipes (ratios kept, times scaled to the world's pace, see provenance in docs/SOURCE_REUSE.md).",
-  "speeds_tiles_per_s": {"worker": 1.6, "carrier": 1.9, "truck": 3.6},
-  "caps": {"site_out": 4, "site_in": 6, "hub_stock": 20},
-  "hubs": {
-    "1": {"art": "widelands.barbarians_wood_hardener", "name": "Store", "city_art": "widelands.barbarians_wood_hardener", "city_name": "Great store", "props": "primitive"},
-    "2": {"art": "widelands.warehouse", "name": "Warehouse", "city_art": "widelands.warehouse", "city_name": "Warehouse and yard", "props": "yard"},
-    "3": {"art": "openra.fact", "name": "Command centre", "city_art": "openra.fact", "city_name": "Command centre", "props": "industrial"},
-    "4": {"art": "mindustry.block.core_shard", "name": "Core", "city_art": "mindustry.block.core_foundation", "city_name": "Core foundation", "props": "core"}
+  "speeds_tiles_per_s": {
+    "worker": 1.6,
+    "carrier": 1.9,
+    "truck": 3.6
   },
-  "transport": {"1": "carrier", "2": "carrier", "3": "truck", "4": "belt"},
-  "carrier_art": {"carrier": "widelands.barbarians_carrier_worker", "truck": "openra.truk", "belt": ""},
-  "ages": {
+  "caps": {
+    "site_out": 4,
+    "site_in": 6,
+    "hub_stock": 20
+  },
+  "hubs": {
     "1": {
-      "WOOD": {"good": "log", "producer": {"art": "widelands.lumberjack", "name": "Woodcutter's hut", "worker": "widelands.barbarians_lumberjack_worker", "task": "fell", "work_ms": 15000, "work_anim": "hack"},
-               "support": {"art": "widelands.barbarians_rangers_hut", "name": "Ranger's hut", "worker": "widelands.barbarians_ranger_worker", "task": "plant", "work_ms": 9500, "work_anim": "plant"}},
-      "BRICK": {"good": "granite", "producer": {"art": "widelands.barbarians_quarry", "name": "Quarry", "worker": "widelands.barbarians_stonemason_worker", "task": "quarry", "work_ms": 17500, "work_anim": "hack"}},
-      "SHEEP": {"good": "meat", "producer": {"art": "widelands.barbarians_hunters_hut", "name": "Hunter's hut", "worker": "widelands.barbarians_hunter_worker", "task": "hunt", "work_ms": 4000, "work_anim": "idle"}},
-      "WHEAT": {"good": "reed", "producer": {"art": "widelands.barbarians_reed_yard", "name": "Reed yard", "worker": "widelands.barbarians_gardener_worker", "task": "field", "work_ms": 12000, "work_anim": "harvest"}},
-      "ORE": {"good": "coal", "producer": {"art": "widelands.coalmine", "name": "Coal mine", "worker": "widelands.barbarians_miner_worker", "task": "mine", "work_ms": 14000, "work_anim": "inside"}}
+      "art": "widelands.barbarians_wood_hardener",
+      "name": "Store",
+      "city_art": "widelands.barbarians_wood_hardener",
+      "city_name": "Great store",
+      "props": "primitive"
     },
     "2": {
-      "WOOD": {"good": "log", "producer": {"art": "widelands.empire_lumberjacks_house", "name": "Woodcutter's house", "worker": "widelands.barbarians_lumberjack_worker", "task": "fell", "work_ms": 15000, "work_anim": "hack"},
-               "support": {"art": "widelands.empire_foresters_house", "name": "Forester's house", "worker": "widelands.empire_forester_worker", "task": "plant", "work_ms": 9500, "work_anim": "planting"},
-               "processor": {"art": "widelands.empire_sawmill", "name": "Sawmill", "recipe": {"log": 2}, "out": "planks", "work_ms": 20000}},
-      "BRICK": {"good": "granite", "producer": {"art": "widelands.empire_quarry", "name": "Quarry", "worker": "widelands.empire_stonemason_worker", "task": "quarry", "work_ms": 17500, "work_anim": "hacking"},
-                "processor": {"art": "widelands.empire_stonemasons_house", "name": "Stonemason's house", "recipe": {"granite": 2}, "out": "marble", "work_ms": 22000}},
-      "SHEEP": {"good": "meat", "producer": {"art": "widelands.empire_piggery", "name": "Piggery", "worker": "widelands.empire_pigbreeder_worker", "task": "tend", "work_ms": 16000, "work_anim": "walk"}},
-      "WHEAT": {"good": "wheat", "producer": {"art": "widelands.empire_farm", "name": "Farm", "worker": "widelands.barbarians_farmer_worker", "task": "field", "work_ms": 14000, "work_anim": "harvest"},
-                "support": {"art": "widelands.empire_well", "name": "Well", "worker": "", "task": "", "work_ms": 0, "work_anim": ""}},
-      "ORE": {"good": "iron_ore", "producer": {"art": "widelands.empire_ironmine", "name": "Iron mine", "worker": "widelands.barbarians_miner_worker", "task": "mine", "work_ms": 14000, "work_anim": "inside"},
-              "second": {"good": "coal", "art": "widelands.coalmine", "name": "Coal mine", "worker": "widelands.barbarians_miner_worker", "task": "mine", "work_ms": 14000, "work_anim": "inside"},
-              "processor": {"art": "widelands.empire_smelting_works", "name": "Smelting works", "recipe": {"iron_ore": 1, "coal": 1}, "out": "iron", "work_ms": 24000}}
+      "art": "widelands.warehouse",
+      "name": "Warehouse",
+      "city_art": "widelands.warehouse",
+      "city_name": "Warehouse and yard",
+      "props": "yard"
     },
     "3": {
-      "WOOD": {"good": "coal", "producer": {"art": "mindustry.block.mechanical_drill", "name": "Coal drill", "worker": "", "task": "drill", "work_ms": 9000, "work_anim": ""}},
-      "BRICK": {"good": "titanium", "producer": {"art": "mindustry.block.laser_drill", "name": "Titanium drill", "worker": "", "task": "drill", "work_ms": 11000, "work_anim": ""}},
-      "SHEEP": {"good": "sand", "producer": {"art": "mindustry.block.mechanical_drill", "name": "Sand drill", "worker": "", "task": "drill", "work_ms": 8000, "work_anim": ""}},
-      "WHEAT": {"good": "lead", "producer": {"art": "mindustry.block.pneumatic_drill", "name": "Lead drill", "worker": "", "task": "drill", "work_ms": 9000, "work_anim": ""}},
-      "ORE": {"good": "copper", "producer": {"art": "mindustry.block.pneumatic_drill", "name": "Copper drill", "worker": "", "task": "drill", "work_ms": 9000, "work_anim": ""}}
+      "art": "openra.fact",
+      "name": "Command centre",
+      "city_art": "openra.fact",
+      "city_name": "Command centre",
+      "props": "industrial"
     },
     "4": {
-      "WOOD": {"good": "coal", "producer": {"art": "mindustry.block.mechanical_drill", "name": "Coal drill", "worker": "", "task": "drill", "work_ms": 8000, "work_anim": ""},
-               "processor": {"art": "mindustry.block.pyratite_mixer", "name": "Pyratite mixer", "recipe": {"coal": 1, "lead": 2, "sand": 2}, "out": "pyratite", "work_ms": 12000, "power": true}},
-      "BRICK": {"good": "sand", "producer": {"art": "mindustry.block.mechanical_drill", "name": "Sand drill", "worker": "", "task": "drill", "work_ms": 7000, "work_anim": ""},
-                "processor": {"art": "mindustry.block.silicon_smelter", "name": "Silicon smelter", "recipe": {"coal": 1, "sand": 2}, "out": "silicon", "work_ms": 10000, "power": true}},
-      "SHEEP": {"good": "thorium", "producer": {"art": "mindustry.block.laser_drill", "name": "Thorium drill", "worker": "", "task": "drill", "work_ms": 11000, "work_anim": ""},
-                "processor": {"art": "mindustry.block.phase_weaver", "name": "Phase weaver", "recipe": {"thorium": 4, "sand": 10}, "out": "phase_fabric", "work_ms": 18000, "power": true}},
-      "WHEAT": {"good": "spore_pod", "producer": {"art": "mindustry.block.cultivator", "name": "Cultivator", "worker": "", "task": "cultivate", "work_ms": 9000, "work_anim": "", "needs_water": true},
-                "processor": {"art": "mindustry.block.blast_mixer", "name": "Blast mixer", "recipe": {"pyratite": 1, "spore_pod": 1}, "out": "blast_compound", "work_ms": 12000, "power": true}},
-      "ORE": {"good": "copper", "producer": {"art": "mindustry.block.pneumatic_drill", "name": "Copper drill", "worker": "", "task": "drill", "work_ms": 8000, "work_anim": ""},
-              "processor": {"art": "mindustry.block.surge_smelter", "name": "Surge smelter", "recipe": {"copper": 3, "lead": 4, "titanium": 2, "silicon": 3}, "out": "surge_alloy", "work_ms": 16000, "power": true}}
+      "art": "mindustry.block.core_shard",
+      "name": "Core",
+      "city_art": "mindustry.block.core_foundation",
+      "city_name": "Core foundation",
+      "props": "core"
+    }
+  },
+  "transport": {
+    "1": "carrier",
+    "2": "carrier",
+    "3": "truck",
+    "4": "belt"
+  },
+  "carrier_art": {
+    "carrier": "widelands.barbarians_carrier_worker",
+    "truck": "openra.truk",
+    "belt": ""
+  },
+  "ages": {
+    "1": {
+      "WOOD": {
+        "good": "log",
+        "producer": {
+          "art": "widelands.lumberjack",
+          "name": "Woodcutter's hut",
+          "worker": "widelands.barbarians_lumberjack_worker",
+          "task": "fell",
+          "work_ms": 15000,
+          "work_anim": "hack"
+        },
+        "support": {
+          "art": "widelands.barbarians_rangers_hut",
+          "name": "Ranger's hut",
+          "worker": "widelands.barbarians_ranger_worker",
+          "task": "plant",
+          "work_ms": 9500,
+          "work_anim": "plant"
+        },
+        "processor": {
+          "art": "widelands.barbarians_charcoal_kiln",
+          "name": "Charcoal kiln",
+          "recipe": {
+            "log": 2
+          },
+          "out": "charcoal",
+          "work_ms": 22000
+        }
+      },
+      "BRICK": {
+        "good": "granite",
+        "producer": {
+          "art": "widelands.barbarians_quarry",
+          "name": "Quarry",
+          "worker": "widelands.barbarians_stonemason_worker",
+          "task": "quarry",
+          "work_ms": 17500,
+          "work_anim": "hack"
+        },
+        "processor": {
+          "art": "widelands.barbarians_lime_kiln",
+          "name": "Lime kiln",
+          "recipe": {
+            "granite": 2
+          },
+          "out": "grout",
+          "work_ms": 20000
+        }
+      },
+      "SHEEP": {
+        "good": "meat",
+        "producer": {
+          "art": "widelands.barbarians_hunters_hut",
+          "name": "Hunter's hut",
+          "worker": "widelands.barbarians_hunter_worker",
+          "task": "hunt",
+          "work_ms": 4000,
+          "work_anim": "idle"
+        },
+        "processor": {
+          "art": "widelands.barbarians_tavern",
+          "name": "Smokehouse",
+          "recipe": {
+            "meat": 1
+          },
+          "out": "ration",
+          "work_ms": 16000
+        }
+      },
+      "WHEAT": {
+        "good": "reed",
+        "producer": {
+          "art": "widelands.barbarians_reed_yard",
+          "name": "Reed yard",
+          "worker": "widelands.barbarians_gardener_worker",
+          "task": "field",
+          "work_ms": 12000,
+          "work_anim": "harvest"
+        },
+        "processor": {
+          "art": "widelands.barbarians_weaving_mill",
+          "name": "Weaving hut",
+          "recipe": {
+            "reed": 2
+          },
+          "out": "cloth",
+          "work_ms": 20000
+        }
+      },
+      "ORE": {
+        "good": "coal",
+        "producer": {
+          "art": "widelands.coalmine",
+          "name": "Coal mine",
+          "worker": "widelands.barbarians_miner_worker",
+          "task": "mine",
+          "work_ms": 14000,
+          "work_anim": "inside"
+        },
+        "processor": {
+          "art": "widelands.barbarians_metal_workshop",
+          "name": "Coal-fired smithy",
+          "recipe": {
+            "coal": 1
+          },
+          "out": "tools",
+          "work_ms": 18000
+        }
+      }
+    },
+    "2": {
+      "WOOD": {
+        "good": "log",
+        "producer": {
+          "art": "widelands.empire_lumberjacks_house",
+          "name": "Woodcutter's house",
+          "worker": "widelands.barbarians_lumberjack_worker",
+          "task": "fell",
+          "work_ms": 15000,
+          "work_anim": "hack"
+        },
+        "support": {
+          "art": "widelands.empire_foresters_house",
+          "name": "Forester's house",
+          "worker": "widelands.empire_forester_worker",
+          "task": "plant",
+          "work_ms": 9500,
+          "work_anim": "planting"
+        },
+        "processor": {
+          "art": "widelands.empire_sawmill",
+          "name": "Sawmill",
+          "recipe": {
+            "log": 2
+          },
+          "out": "planks",
+          "work_ms": 20000
+        }
+      },
+      "BRICK": {
+        "good": "granite",
+        "producer": {
+          "art": "widelands.empire_quarry",
+          "name": "Quarry",
+          "worker": "widelands.empire_stonemason_worker",
+          "task": "quarry",
+          "work_ms": 17500,
+          "work_anim": "hacking"
+        },
+        "processor": {
+          "art": "widelands.empire_stonemasons_house",
+          "name": "Stonemason's house",
+          "recipe": {
+            "granite": 2
+          },
+          "out": "marble",
+          "work_ms": 22000
+        }
+      },
+      "SHEEP": {
+        "good": "meat",
+        "producer": {
+          "art": "widelands.empire_piggery",
+          "name": "Piggery",
+          "worker": "widelands.empire_pigbreeder_worker",
+          "task": "tend",
+          "work_ms": 16000,
+          "work_anim": "walk"
+        },
+        "processor": {
+          "art": "widelands.empire_tavern",
+          "name": "Tavern",
+          "recipe": {
+            "meat": 1
+          },
+          "out": "ration",
+          "work_ms": 16000
+        }
+      },
+      "WHEAT": {
+        "good": "wheat",
+        "producer": {
+          "art": "widelands.empire_farm",
+          "name": "Farm",
+          "worker": "widelands.barbarians_farmer_worker",
+          "task": "field",
+          "work_ms": 14000,
+          "work_anim": "harvest"
+        },
+        "support": {
+          "art": "widelands.empire_well",
+          "name": "Well",
+          "worker": "",
+          "task": "",
+          "work_ms": 0,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "widelands.empire_mill",
+          "name": "Mill",
+          "recipe": {
+            "wheat": 2
+          },
+          "out": "flour",
+          "work_ms": 18000
+        }
+      },
+      "ORE": {
+        "good": "iron_ore",
+        "producer": {
+          "art": "widelands.empire_ironmine",
+          "name": "Iron mine",
+          "worker": "widelands.barbarians_miner_worker",
+          "task": "mine",
+          "work_ms": 14000,
+          "work_anim": "inside"
+        },
+        "second": {
+          "good": "coal",
+          "art": "widelands.coalmine",
+          "name": "Coal mine",
+          "worker": "widelands.barbarians_miner_worker",
+          "task": "mine",
+          "work_ms": 14000,
+          "work_anim": "inside"
+        },
+        "processor": {
+          "art": "widelands.empire_smelting_works",
+          "name": "Smelting works",
+          "recipe": {
+            "iron_ore": 1,
+            "coal": 1
+          },
+          "out": "iron",
+          "work_ms": 24000
+        }
+      }
+    },
+    "3": {
+      "WOOD": {
+        "good": "coal",
+        "producer": {
+          "art": "mindustry.block.mechanical_drill",
+          "name": "Coal drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 9000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.graphite_press",
+          "name": "Graphite press",
+          "recipe": {
+            "coal": 2
+          },
+          "out": "graphite",
+          "work_ms": 12000
+        }
+      },
+      "BRICK": {
+        "good": "titanium",
+        "producer": {
+          "art": "mindustry.block.laser_drill",
+          "name": "Titanium drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 11000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.pulverizer",
+          "name": "Pulverizer",
+          "recipe": {
+            "titanium": 1
+          },
+          "out": "sand",
+          "work_ms": 9000
+        }
+      },
+      "SHEEP": {
+        "good": "sand",
+        "producer": {
+          "art": "mindustry.block.mechanical_drill",
+          "name": "Sand drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 8000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.kiln",
+          "name": "Kiln",
+          "recipe": {
+            "sand": 1,
+            "lead": 1
+          },
+          "out": "metaglass",
+          "work_ms": 11000
+        }
+      },
+      "WHEAT": {
+        "good": "lead",
+        "producer": {
+          "art": "mindustry.block.pneumatic_drill",
+          "name": "Lead drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 9000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.kiln",
+          "name": "Kiln",
+          "recipe": {
+            "lead": 1,
+            "sand": 1
+          },
+          "out": "metaglass",
+          "work_ms": 11000
+        }
+      },
+      "ORE": {
+        "good": "copper",
+        "producer": {
+          "art": "mindustry.block.pneumatic_drill",
+          "name": "Copper drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 9000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.separator",
+          "name": "Separator",
+          "recipe": {
+            "copper": 2
+          },
+          "out": "scrap",
+          "work_ms": 12000
+        }
+      }
+    },
+    "4": {
+      "WOOD": {
+        "good": "coal",
+        "producer": {
+          "art": "mindustry.block.mechanical_drill",
+          "name": "Coal drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 8000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.pyratite_mixer",
+          "name": "Pyratite mixer",
+          "recipe": {
+            "coal": 1,
+            "lead": 2,
+            "sand": 2
+          },
+          "out": "pyratite",
+          "work_ms": 12000,
+          "power": true
+        }
+      },
+      "BRICK": {
+        "good": "sand",
+        "producer": {
+          "art": "mindustry.block.mechanical_drill",
+          "name": "Sand drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 7000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.silicon_smelter",
+          "name": "Silicon smelter",
+          "recipe": {
+            "coal": 1,
+            "sand": 2
+          },
+          "out": "silicon",
+          "work_ms": 10000,
+          "power": true
+        }
+      },
+      "SHEEP": {
+        "good": "thorium",
+        "producer": {
+          "art": "mindustry.block.laser_drill",
+          "name": "Thorium drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 11000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.phase_weaver",
+          "name": "Phase weaver",
+          "recipe": {
+            "thorium": 4,
+            "sand": 10
+          },
+          "out": "phase_fabric",
+          "work_ms": 18000,
+          "power": true
+        }
+      },
+      "WHEAT": {
+        "good": "spore_pod",
+        "producer": {
+          "art": "mindustry.block.cultivator",
+          "name": "Cultivator",
+          "worker": "",
+          "task": "cultivate",
+          "work_ms": 9000,
+          "work_anim": "",
+          "needs_water": true
+        },
+        "processor": {
+          "art": "mindustry.block.blast_mixer",
+          "name": "Blast mixer",
+          "recipe": {
+            "pyratite": 1,
+            "spore_pod": 1
+          },
+          "out": "blast_compound",
+          "work_ms": 12000,
+          "power": true
+        }
+      },
+      "ORE": {
+        "good": "copper",
+        "producer": {
+          "art": "mindustry.block.pneumatic_drill",
+          "name": "Copper drill",
+          "worker": "",
+          "task": "drill",
+          "work_ms": 8000,
+          "work_anim": ""
+        },
+        "processor": {
+          "art": "mindustry.block.surge_smelter",
+          "name": "Surge smelter",
+          "recipe": {
+            "copper": 3,
+            "lead": 4,
+            "titanium": 2,
+            "silicon": 3
+          },
+          "out": "surge_alloy",
+          "work_ms": 16000,
+          "power": true
+        }
+      }
     }
   },
   "support_goods": {
-    "4": {"lead": {"art": "mindustry.block.pneumatic_drill", "name": "Lead drill", "work_ms": 9000}, "titanium": {"art": "mindustry.block.laser_drill", "name": "Titanium drill", "work_ms": 11000},
-          "sand": {"art": "mindustry.block.mechanical_drill", "name": "Sand drill", "work_ms": 7000}, "coal": {"art": "mindustry.block.mechanical_drill", "name": "Coal drill", "work_ms": 8000},
-          "silicon": {"art": "mindustry.block.silicon_smelter", "name": "Silicon smelter", "recipe": {"coal": 1, "sand": 2}, "work_ms": 10000}}
+    "4": {
+      "lead": {
+        "art": "mindustry.block.pneumatic_drill",
+        "name": "Lead drill",
+        "work_ms": 9000
+      },
+      "titanium": {
+        "art": "mindustry.block.laser_drill",
+        "name": "Titanium drill",
+        "work_ms": 11000
+      },
+      "sand": {
+        "art": "mindustry.block.mechanical_drill",
+        "name": "Sand drill",
+        "work_ms": 7000
+      },
+      "coal": {
+        "art": "mindustry.block.mechanical_drill",
+        "name": "Coal drill",
+        "work_ms": 8000
+      },
+      "silicon": {
+        "art": "mindustry.block.silicon_smelter",
+        "name": "Silicon smelter",
+        "recipe": {
+          "coal": 1,
+          "sand": 2
+        },
+        "work_ms": 10000
+      }
+    },
+    "3": {
+      "lead": {
+        "art": "mindustry.block.pneumatic_drill",
+        "name": "Lead drill",
+        "work_ms": 9000
+      },
+      "sand": {
+        "art": "mindustry.block.mechanical_drill",
+        "name": "Sand drill",
+        "work_ms": 8000
+      },
+      "metaglass": {
+        "art": "mindustry.block.kiln",
+        "name": "Kiln",
+        "recipe": {
+          "sand": 1,
+          "lead": 1
+        },
+        "work_ms": 11000
+      }
+    }
   },
-  "water": {"4": {"pump": {"art": "mindustry.block.mechanical_pump", "name": "Mechanical pump", "rate_ms": 3000}, "tank": {"art": "mindustry.block.liquid_tank", "name": "Liquid tank", "cap": 12}, "conduit": "mindustry.block.conduit"}},
-  "factory": {"3": {"art": "mindustry.block.ground_factory", "name": "Ground factory", "recipe": {"silicon": 10, "lead": 10}, "work_ms": 30000, "unit": "mindustry.unit.dagger"},
-              "4": {"art": "mindustry.block.ground_factory", "name": "Ground factory", "recipe": {"silicon": 10, "lead": 10}, "work_ms": 30000, "unit": "mindustry.unit.dagger"}},
-  "good_names": {"log": "logs", "planks": "planks", "granite": "granite", "marble": "worked stone", "meat": "game", "reed": "reeds", "wheat": "wheat", "iron_ore": "iron ore", "coal": "coal", "iron": "iron",
-                 "titanium": "titanium", "sand": "sand", "lead": "lead", "copper": "copper", "silicon": "silicon", "pyratite": "pyratite", "thorium": "thorium", "phase_fabric": "phase fabric",
-                 "spore_pod": "spore pods", "blast_compound": "blast compound", "surge_alloy": "surge alloy", "water": "water"},
-  "good_icons": {"log": "widelands.ware.log", "planks": "widelands.ware.planks", "granite": "widelands.ware.granite", "marble": "widelands.ware.marble", "meat": "widelands.ware.meat", "reed": "widelands.ware.reed",
-                 "wheat": "widelands.ware.wheat", "iron_ore": "widelands.ware.iron_ore", "coal": "widelands.ware.coal", "iron": "widelands.ware.iron"}
+  "water": {
+    "4": {
+      "pump": {
+        "art": "mindustry.block.mechanical_pump",
+        "name": "Mechanical pump",
+        "rate_ms": 3000
+      },
+      "tank": {
+        "art": "mindustry.block.liquid_tank",
+        "name": "Liquid tank",
+        "cap": 12
+      },
+      "conduit": "mindustry.block.conduit"
+    }
+  },
+  "factory": {
+    "3": {
+      "art": "mindustry.block.ground_factory",
+      "name": "Ground factory",
+      "recipe": {
+        "silicon": 10,
+        "lead": 10
+      },
+      "work_ms": 30000,
+      "unit": "mindustry.unit.dagger"
+    },
+    "4": {
+      "art": "mindustry.block.ground_factory",
+      "name": "Ground factory",
+      "recipe": {
+        "silicon": 10,
+        "lead": 10
+      },
+      "work_ms": 30000,
+      "unit": "mindustry.unit.dagger"
+    }
+  },
+  "good_names": {
+    "log": "logs",
+    "planks": "planks",
+    "granite": "granite",
+    "marble": "worked stone",
+    "meat": "game",
+    "reed": "reeds",
+    "wheat": "wheat",
+    "iron_ore": "iron ore",
+    "coal": "coal",
+    "iron": "iron",
+    "titanium": "titanium",
+    "sand": "sand",
+    "lead": "lead",
+    "copper": "copper",
+    "silicon": "silicon",
+    "pyratite": "pyratite",
+    "thorium": "thorium",
+    "phase_fabric": "phase fabric",
+    "spore_pod": "spore pods",
+    "blast_compound": "blast compound",
+    "surge_alloy": "surge alloy",
+    "water": "water",
+    "charcoal": "charcoal",
+    "grout": "grout",
+    "ration": "rations",
+    "cloth": "cloth",
+    "tools": "tools",
+    "graphite": "graphite",
+    "metaglass": "metaglass",
+    "scrap": "scrap",
+    "flour": "flour"
+  },
+  "good_icons": {
+    "log": "widelands.ware.log",
+    "planks": "widelands.ware.planks",
+    "granite": "widelands.ware.granite",
+    "marble": "widelands.ware.marble",
+    "meat": "widelands.ware.meat",
+    "reed": "widelands.ware.reed",
+    "wheat": "widelands.ware.wheat",
+    "iron_ore": "widelands.ware.iron_ore",
+    "coal": "widelands.ware.coal",
+    "iron": "widelands.ware.iron",
+    "charcoal": "widelands.ware.coal",
+    "grout": "widelands.ware.grout",
+    "ration": "widelands.ware.ration",
+    "cloth": "widelands.ware.cloth",
+    "flour": "widelands.ware.flour"
+  },
+  "builders": {
+    "1": "widelands.barbarians_carrier_worker",
+    "2": "widelands.barbarians_carrier_worker",
+    "3": "openra.e6",
+    "4": "openra.e6"
+  }
 }

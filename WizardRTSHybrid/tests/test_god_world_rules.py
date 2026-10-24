@@ -63,6 +63,7 @@ def test_pips_and_odds():
 
 def _world_running(seed=1):
     w = GodWorld(seed=seed)
+    w.pandemic_enabled = False  # the economy-only regression (the campaign has its own tests)
     seq = 0
     while w.phase == "SETUP":
         seq += 1
