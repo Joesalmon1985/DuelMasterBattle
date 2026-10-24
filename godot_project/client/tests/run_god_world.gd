@@ -87,6 +87,7 @@ func _run() -> void:
 	if runs == "":
 		runs = OS.get_user_data_dir().path_join("god_world_test_runs_%d" % (Time.get_ticks_msec() % 100000))
 		OS.set_environment("DMB_RUNS_DIR", runs)
+	preload("res://client/scripts/save_data.gd").set_setting("god_zoom", 0.5)  # an earlier run's remembered zoom must not shape this one
 	get_root().size = Vector2i(450, 800)
 	DisplayServer.window_set_size(Vector2i(450, 800))
 	change_scene_to_file("res://client/scenes/god_world.tscn")

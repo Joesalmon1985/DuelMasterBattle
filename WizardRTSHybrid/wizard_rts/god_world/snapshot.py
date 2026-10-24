@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from . import composition, rules
+from . import composition, local_ops, rules
 
 _LAYOUT_CACHE: dict[tuple[str, str, int, int], dict[str, Any]] = {}
 
@@ -29,9 +29,21 @@ def board_view(world) -> dict[str, Any]:
         x, y = b.hex_xy(hid)
         hexes.append({"id": hid, "q": q, "r": r, "x": round(x, 4), "y": round(y, 4), "role": b.role(hid), "token": b.token(hid), "pips": rules.pips(b.token(hid)),
                       "corners": [[round(c, 4) for c in b.node_xy(n)] for n in b.hex_nodes[hid]], "nodes": list(b.hex_nodes[hid])})
-    return {"shape": b.shape, "hexes": hexes, "nodes": {n: [round(c, 4) for c in b.node_xy(n)] for n in b.nodes},
-            "edges": {e: list(ab) for e, ab in b.edge_endpoints.items()}, "bounds": [round(c, 4) for c in b.bounds], "centre": [round(c, 4) for c in b.centre],
-            "cosmetic_seed": world.cosmetic_seed, "roles": list(rules.ROLES)}
+    out = {"shape": b.shape, "hexes": hexes, "nodes": {n: [round(c, 4) for c in b.node_xy(n)] for n in b.nodes},
+           "edges": {e: list(ab) for e, ab in b.edge_endpoints.items()}, "bounds": [round(c, 4) for c in b.bounds], "centre": [round(c, 4) for c in b.centre],
+           "cosmetic_seed": world.cosmetic_seed, "roles": list(rules.ROLES), "unit": float(getattr(b, "unit", 1.0)),
+           "corridors": {e: [[round(x, 3), round(y, 3)] for x, y in b.corridor(e)] for e in b.edges}}
+    for h in hexes:
+        h["corners"] = [[round(x, 3), round(y, 3)] for x, y in b.region_corners(h["id"])]
+        h["work_site"] = [round(c, 3) for c in b.work_site(h["id"])]
+    emb = getattr(b, "embedding", None)
+    if emb is not None and world.terrain is not None:
+        out["map"] = {"name": emb["map"], "w": emb["map_w"], "h": emb["map_h"], "unit": emb["unit"], "author": world.terrain.meta.get("author", ""),
+                      "title": world.terrain.meta.get("name", emb["map"]), "source": world.terrain.meta.get("source", "")}
+        out["terrain"] = world.terrain.wire()
+        out["trees"] = b.trees
+        out["coast"] = emb.get("coast", {})
+    return out
 
 
 def journey_pose(j: dict[str, Any]) -> tuple[float, float, float]:
@@ -50,8 +62,15 @@ def journey_pose(j: dict[str, Any]) -> tuple[float, float, float]:
     return x, y, math.atan2(by - ay, bx - ax)
 
 
-def snapshot(world) -> dict[str, Any]:
+def snapshot(world, view: list[float] | None = None) -> dict[str, Any]:
+    """`view` is the camera's world window [x0, y0, x1, y1] in tiles; the heavy local picture (sites, agents, trees) is sent only for villages
+    inside it, grown by a unit and a half. Without a view every village carries it."""
     age = int(world.age)
+    unit = float(getattr(world.board, "unit", 1.0))
+    win = None
+    if view and len(view) == 4:
+        g = 1.5 * unit
+        win = (float(view[0]) - g, float(view[1]) - g, float(view[2]) + g, float(view[3]) + g)
     out: dict[str, Any] = {"profile": world.profile, "run_id": world.run_id, "game_ms": int(world.game_ms), "clock_sequence": int(world.clock_sequence),
                            "age": age, "age_name": rules.age_name(age), "phase": world.phase, "paused": world.paused, "speed": world.speed, "seed": world.seed,
                            "next_roll_in_ms": (int(world.next_roll_ms) - int(world.game_ms)) if world.next_roll_ms else None, "last_roll": world.last_roll,
@@ -96,6 +115,18 @@ def snapshot(world) -> dict[str, Any]:
             row["units"] = [{"id": u["id"], "art": u["art"], "name": u["name"], "slot": int(u["slot"]), "status": u["status"], "age": int(u["age"])}
                             for u in sorted(world.units.values(), key=lambda u: u["id"]) if u["village"] == vid and u["status"] == "active"]
             row["veterans"] = sum(1 for u in world.units.values() if u["village"] == vid and u["status"] == "veteran")
+            vx, vy = world.board.node_xy(v["node"])
+            in_view = win is None or (win[0] <= vx <= win[2] and win[1] <= vy <= win[3])
+            ops = local_ops.view(v) if in_view else local_ops.view_lean(v)
+            if ops is not None:
+                row["ops"] = ops
+                mil = next((s for s in ops["sites"] if s["kind"] == "military"), None)
+                if mil is not None and row.get("military"):
+                    d = mil.get("dir") or [0.0, -1.0]
+                    wx, wy = -float(d[1]), float(d[0])
+                    cap = rules.limit("garrison_city")
+                    row["military"] = dict(row["military"], x=mil["x"], y=mil["y"], id=mil["id"], art=mil["art"], name=mil["name"],
+                                           slots=[[round(mil["x"] + wx * (i - (cap - 1) / 2.0) * 0.55 + float(d[0]) * 1.6, 3), round(mil["y"] + wy * (i - (cap - 1) / 2.0) * 0.55 + float(d[1]) * 1.6, 3)] for i in range(cap)])
         villages.append(row)
     out["villages"] = villages
     roads = []

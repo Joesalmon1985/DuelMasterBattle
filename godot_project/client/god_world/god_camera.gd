@@ -20,7 +20,7 @@ const TAP_MAX_MS := 600
 var camera: Camera2D
 var host: Node  # the world scene (for the viewport)
 var bounds := Rect2()  # world-space board bounds (pixels)
-var margin_px := 600.0
+var margin_px := 200.0
 var zoom_level := DEFAULT_ZOOM
 var min_zoom := 0.05
 

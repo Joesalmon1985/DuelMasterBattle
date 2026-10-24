@@ -201,7 +201,12 @@ class GodSession:
                 "profile": self.world.profile, "join_code_required": True, "pose": {"tx": 0, "ty": 0, "facing": "down", "hex": [0, 0], "seq": 0}, "duel": {}}
 
     def state_view(self, link: Link, message: dict[str, Any]) -> dict[str, Any]:
-        snap = snapshot.snapshot(self.world)
+        view = message.get("view")
+        try:
+            view = [float(c) for c in view] if isinstance(view, (list, tuple)) and len(view) == 4 else None
+        except (TypeError, ValueError):
+            view = None
+        snap = snapshot.snapshot(self.world, view)
         out = {"status": "ok", "seq": message.get("seq"), "you": link.id, "session_state": self.state, "snapshot": snap, "notices": list(link.notices),
                "players_online": sum(1 for l in self.links.values() if l.connected)}
         if bool(message.get("full", False)) or not link.board_sent:
@@ -237,8 +242,20 @@ def build_world(args: dict[str, Any]) -> tuple[GodWorld, dict[str, Any]]:
     if bool(args.get("new_world")) or bool(args.get("fresh")):
         info["archived"] = persist.archive_all()
     path = persist.latest() if (permanent and not args.get("new_world") and not args.get("fresh")) else None
-    if path is None:
-        return GodWorld(seed=int(args.get("seed", 507))), info
+    start_age = int(args.get("start_age") or os.environ.get("DMB_GOD_START_AGE", "0") or 0)
+    if path is None or start_age:
+        world = GodWorld(seed=int(args.get("seed", 507)))
+        if start_age in (2, 3, 4):  # developer evidence only: the island opens in a later age with the same two villages per faction
+            seq = 0
+            while world.phase == "SETUP":
+                seq += 1
+                world.advance(1000, seq, snapshot=False)
+            world.age = start_age
+            for v in world.villages.values():
+                v["age"] = start_age
+            info["start_age"] = start_age
+            info["permanent"] = False
+        return world, info
     world, li = persist.load_world(path)
     info.update(loaded=True, path=li["path"], game_ms=int(world.game_ms), age=int(world.age))
     return world, info

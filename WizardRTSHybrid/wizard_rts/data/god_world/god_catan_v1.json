@@ -106,8 +106,8 @@
     {"role": "builder", "art": "widelands.barbarians_carrier_worker"},
     {"role": "woodcutter", "art": "widelands.barbarians_lumberjack_worker"},
     {"role": "stoneworker", "art": "widelands.barbarians_stonemason_worker"},
-    {"role": "porter", "art": "widelands.carrier"}
+    {"role": "porter", "art": "widelands.barbarians_carrier_worker"}
   ],
-  "caravan": "widelands.carrier",
+  "caravan": "widelands.barbarians_carrier_worker",
   "road_crew": "widelands.barbarians_carrier_worker"
 }

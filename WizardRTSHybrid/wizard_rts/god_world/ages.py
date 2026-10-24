@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from . import composition, rules
+from . import composition, local_ops, rules
 
 
 def rank_villages(world, fid: str) -> list[dict[str, Any]]:
@@ -48,6 +48,7 @@ def _cancel_commitments(world) -> list[dict[str, Any]]:
                 receipts.append({"kind": "expedition_refunded", "faction": j["faction"], "village": v["id"]})
             if v is not None:
                 world.node_reserved.pop(v["node"], None)
+                local_ops.release(world, v)
                 v["status"] = "cancelled"
                 v["rid"] = None
                 v["construction"] = None
@@ -117,6 +118,7 @@ def _transition(world, winner: str, cause: dict[str, Any], vp: dict[str, int]) -
             v["status"] = "historical"
             v["retired_age"] = old_age
             v["final_level"] = int(v["level"])
+            local_ops.release(world, v)
             retired.append(vid)
             world.history["retired"].append({"village": vid, "faction": v["faction"], "age": old_age, "level": int(v["level"])})
     for r in world.roads.values():

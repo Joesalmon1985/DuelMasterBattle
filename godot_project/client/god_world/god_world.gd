@@ -75,7 +75,7 @@ func _ready() -> void:
 	_VT.apply_label_primary(_status_lbl)
 	_status_layer.add_child(_status_lbl)
 	var saved_zoom = SaveData.get_setting("god_zoom", GodCameraScript.DEFAULT_ZOOM)
-	camera_ctl.set_zoom(float(saved_zoom))
+	camera_ctl.set_zoom(clampf(float(saved_zoom), 0.35, 1.0))  # the world opens near a village at a readable scale, never at the whole-island fit
 	get_viewport().size_changed.connect(func(): camera_ctl.clamp_position())
 	_begin()
 
@@ -152,11 +152,21 @@ func _process(delta: float) -> void:
 		_poll_acc = 0.0
 		_seq += 1
 		_poll_pending = true
-		LanSession.sim.request({"op": "state", "seq": _seq}, _on_state_reply)
+		LanSession.sim.request({"op": "state", "seq": _seq, "view": _view_window()}, _on_state_reply)
 	if not LanSession.sim.connected():
 		state = "failed"
 		_status_layer.visible = true
 		_set_status("The connection to the world was lost.")
+
+
+## The camera's world window in tiles: the host sends the living picture (people, workshops, trees) only for villages inside it.
+func _view_window() -> Array:
+	var xf := get_viewport().get_canvas_transform().affine_inverse()
+	var vis := get_viewport().get_visible_rect().size
+	var a := xf * Vector2.ZERO
+	var b := xf * vis
+	var tp: float = GodViewScript.TILE_PX
+	return [minf(a.x, b.x) / tp, minf(a.y, b.y) / tp, maxf(a.x, b.x) / tp, maxf(a.y, b.y) / tp]
 
 
 func _on_state_reply(reply: Dictionary) -> void:
@@ -172,6 +182,7 @@ func _apply_state(reply: Dictionary) -> void:
 		board = reply["board"]
 		view.set_board(board)
 		camera_ctl.set_bounds(view.board_bounds())
+		camera_ctl.margin_px = 200.0
 	snapshot = reply.get("snapshot", {})
 	last_poll_ms = int(snapshot.get("game_ms", 0))
 	view.zoom = camera_ctl.zoom_level

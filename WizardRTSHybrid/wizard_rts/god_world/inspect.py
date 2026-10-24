@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from . import composition, rules
+from . import composition, local_ops, rules
 from .snapshot import village_layout
 
 
@@ -44,6 +44,10 @@ def details(world, sid: str) -> dict[str, Any]:
             return _unit(world, rest)
         if kind == "remains":
             return _village(world, rest)
+        if kind == "site":
+            return _site(world, rest)
+        if kind == "agent":
+            return _agent(world, rest)
     except KeyError:
         pass
     return {"id": sid, "title": "Nothing here", "subtitle": "", "lines": []}
@@ -108,6 +112,89 @@ def _village(world, vid: str) -> dict[str, Any]:
     if plan:
         lines.append(f"{fname} is working on: {plan}." + (f" Waiting: {st['reason']}." if st.get("reason") else ""))
     return {"id": f"village:{vid}", "title": v["name"], "subtitle": f"{fname} · {kind}", "lines": lines, "faction": v["faction"]}
+
+
+def _goods_ops(goods: dict[str, int]) -> str:
+    parts = [f"{n} {local_ops.good_name(g)}" for g, n in goods.items() if n]
+    return ", ".join(parts) if parts else "nothing"
+
+
+def _site(world, sid: str) -> dict[str, Any]:
+    vid = sid.split(":", 1)[0]
+    v = world.villages[vid]
+    ops = v.get("ops") or {}
+    s = ops.get("sites", {}).get(sid)
+    if s is None:
+        raise KeyError(sid)
+    age = int(v["age"])
+    fname = _faction_name(world, v["faction"])
+    lines: list[str] = []
+    state = {"building": "Under construction.", "idle": "Ready for the next job.", "working": "At work.", "full": "Its store is full: waiting for a carrier.",
+             "short": "Waiting for its inputs.", "no_work": "Nothing to work on nearby just now.", "unpowered": "No power."}.get(s["state"], s["state"])
+    if s["kind"] == "hub":
+        hub = ops.get("hub", {})
+        lines.append(f"{v['name']}'s one store and dispatch yard. Everything the village makes is carried here.")
+        stock = _goods_ops(hub.get("stock", {}))
+        lines.append(f"In the yard: {stock}.")
+        shipped = sum(int(n) for n in hub.get("shipped", {}).values())
+        if shipped:
+            lines.append(f"{shipped} loads have gone out to the wider world since the age began.")
+        hand = world.ledger.available(v["faction"])
+        lines.append(f"{fname}'s tradeable resources (the faction's hand, not this yard's goods): {_goods(world, hand)}.")
+    elif s["kind"] == "producer":
+        hexname = rules.hex_name(age, world.board.role(s["hex"])).lower() if s.get("hex") else "the land"
+        token = world.board.token(s["hex"]) if s.get("hex") else 0
+        lines.append(f"Works the {hexname} {token} for {local_ops.good_name(s['good'])}. {state}")
+        lines.append(f"Made {int(s.get('produced', 0))} loads this age; {_goods_ops(s['out'])} waiting at the door.")
+        lines.append(f"The dice decide what {fname} can trade and build: this district's region pays {rules.role_name(age, world.board.role(s['hex'])).lower() if s.get('hex') else ''} on a {token}.")
+    elif s["kind"] == "processor":
+        lines.append(f"Turns {', '.join(f'{n} {local_ops.good_name(g)}' for g, n in s.get('recipe', {}).items())} into {local_ops.good_name(s['good'])}. {state}")
+        lines.append(f"Holds {_goods_ops(s['in'])}; {_goods_ops(s['out'])} finished and waiting; {int(s.get('produced', 0))} made this age.")
+    elif s["kind"] == "support":
+        lines.append({"plant": "Replants the woodland the woodcutters fell.", "": "Keeps the district supplied."}.get(s.get("task", ""), "Supports the district.") + f" {state}")
+    elif s["kind"] == "military":
+        return _facility(world, vid)
+    elif s["kind"] == "generator":
+        lines.append(f"Burns coal for the village's machines. {'Running.' if s['state'] == 'working' else 'Out of coal: the machines stand idle.'} Coal in the hopper: {int(s['in'].get('coal', 0))}.")
+    elif s["kind"] == "pump":
+        lines.append(f"Draws water {'from the shore' if 'pump' in s['id'] else 'from the ground'} into the pipe. {state}")
+    elif s["kind"] == "tank":
+        lines.append(f"Holds {int(s.get('water', 0))} of {int(s.get('cap', 12))} water for the cultivator.")
+    elif s["kind"] == "factory":
+        lines.append(f"Builds a unit from {', '.join(f'{n} {local_ops.good_name(g)}' for g, n in s.get('recipe', {}).items())}. {state}")
+        lines.append(f"Holds {_goods_ops(s['in'])}; {int(ops.get('units_made', 0))} units mustered this age. Beyond the garrison's quota it stops.")
+    if s.get("support"):
+        lines.append("A local supply for the village's machines: it yields operating material only, never a tradeable resource.")
+    if s.get("power") and not ops.get("power", True):
+        lines.append("Unpowered: the generator has no coal.")
+    return {"id": f"site:{sid}", "title": s["name"], "subtitle": f"{v['name']} · {fname}", "lines": lines, "faction": v["faction"]}
+
+
+def _agent(world, aid: str) -> dict[str, Any]:
+    vid = aid.split(":", 1)[0]
+    v = world.villages[vid]
+    ops = v.get("ops") or {}
+    a = ops.get("agents", {}).get(aid)
+    if a is None:
+        raise KeyError(aid)
+    site = ops.get("sites", {}).get(a["site"], {})
+    fname = _faction_name(world, v["faction"])
+    if a["kind"] == "worker":
+        job = {"fell": "Woodcutter", "plant": "Forester", "quarry": "Quarryman", "hunt": "Hunter", "field": "Farmer", "tend": "Herder", "mine": "Miner"}.get(a.get("task", ""), "Worker")
+        doing = {"home": "at the door, between jobs", "to_work": "walking out to work", "working": "working", "to_home": "carrying the load home"}.get(a["phase"], a["phase"])
+        lines = [f"{job} of the {site.get('name', 'workshop').lower()} at {v['name']}: {doing}."]
+        if a.get("cargo"):
+            lines.append(f"Carrying {local_ops.good_name(a['cargo'])}.")
+        return {"id": f"agent:{aid}", "title": job, "subtitle": f"{v['name']} · {fname}", "lines": lines, "faction": v["faction"]}
+    title = "Carrier" if a["kind"] == "carrier" else "Cargo truck"
+    doing = {"idle": "waiting at the yard for a load", "to_pickup": "going to fetch a load", "to_deliver": "delivering", "to_home": "returning to the yard"}.get(a["phase"], a["phase"])
+    lines = [f"{title} of {v['name']}: {doing}."]
+    job = a.get("job") or {}
+    if job:
+        frm = ops["sites"].get(job.get("from"), {}).get("name", "a workshop")
+        to = ops["sites"].get(job.get("to"), {}).get("name", "the store")
+        lines.append(f"{local_ops.good_name(job.get('good', ''))} from the {frm.lower()} to the {to.lower()}.")
+    return {"id": f"agent:{aid}", "title": title, "subtitle": f"{v['name']} · {fname}", "lines": lines, "faction": v["faction"]}
 
 
 def _station(world, rest: str) -> dict[str, Any]:

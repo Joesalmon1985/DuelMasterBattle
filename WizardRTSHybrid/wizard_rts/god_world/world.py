@@ -11,7 +11,7 @@ import random
 from typing import Any
 
 from . import ai as ai_mod
-from . import ages, composition, rules
+from . import ages, composition, embedding, local_ops, rules
 from .board import GodBoard
 from .ledger import Ledger
 
@@ -30,10 +30,14 @@ PRODUCING = ("operational",)
 class GodWorld:
     profile = rules.PROFILE
 
-    def __init__(self, seed: int = 507, run_id: str | None = None, board: GodBoard | None = None) -> None:
+    def __init__(self, seed: int = 507, run_id: str | None = None, board: GodBoard | None = None, map_name: str | None = embedding.DEFAULT_MAP) -> None:
         self.seed = int(seed)
         self.run_id = run_id or f"god-{self.seed}"
         self.board = board or GodBoard.generate(self.seed)
+        self.map_name = map_name or ""
+        self.terrain = None  # the Widelands map grid the island is drawn from (wizard_rts.terrain.TerrainGrid), None in the bare regular layout
+        if map_name:
+            self._attach_map(map_name)
         self.rng = random.Random(self.seed * 7919 + 3)
         self.cosmetic_seed = self.seed * 104729 + 11  # the viewer's own stream: never the dice
         self.game_ms = 0
@@ -71,6 +75,7 @@ class GodWorld:
         self.topology_version = 0
         self._reach_cache: dict[str, tuple[int, dict[str, Any]]] = {}
         self._next_id = 1
+        self._next_unit_id = 1  # units have their own counter: recruiting (a presentation function) never shifts a village's or a journey's id
         self._name_index = 0
         self.players: dict[str, Any] = {}  # host.py compatibility: nobody walks in this world
         self.map_size = self.board.shape
@@ -78,6 +83,36 @@ class GodWorld:
         self.catching_up = False
         self.save_requested: str | None = None  # the host writes a checkpoint when this is set (age boundaries)
         self.pending_completions: list[dict[str, Any]] = []
+        self.tree_claims: dict[str, str] = {}  # embedding tree index -> village id working it (local operations)
+        self.local_ops_enabled = True  # the living village layer; off only in tests of strategic invariance (it never changes the rules either way)
+
+    def _attach_map(self, map_name: str) -> None:
+        """The terrain embedding of this board shape on the named map: the checked-in file, or built now (and not written) when it is missing."""
+        from wizard_rts import wl_map
+
+        grid = wl_map.load(map_name)
+        emb = embedding.load(map_name)
+        if emb is None or emb.get("map_static_hash") != grid.static_hash() or emb.get("shape") != self.board.shape:
+            emb = embedding.build(self.board, grid, map_name)
+        self.terrain = grid
+        self.board.attach_embedding(emb, grid)
+
+    def path_legs(self, path: list[str], ms_per_edge: int, road_flags: list[bool] | None = None) -> list[dict[str, Any]]:
+        """Journey legs along the corridors of consecutive nodes: each edge's time is spread over its polyline by length."""
+        legs: list[dict[str, Any]] = []
+        for i in range(len(path) - 1):
+            a, b = path[i], path[i + 1]
+            eid = self.board.edge(a, b)
+            poly = self.board.corridor(eid) if eid else [self.board.node_xy(a), self.board.node_xy(b)]
+            if eid and self.board.edge_endpoints[eid][0] != a:
+                poly = list(reversed(poly))
+            seg = [((poly[k + 1][0] - poly[k][0]) ** 2 + (poly[k + 1][1] - poly[k][1]) ** 2) ** 0.5 for k in range(len(poly) - 1)]
+            total = sum(seg) or 1.0
+            for k in range(len(poly) - 1):
+                legs.append({"a": [round(poly[k][0], 3), round(poly[k][1], 3)], "b": [round(poly[k + 1][0], 3), round(poly[k + 1][1], 3)],
+                             "ms": max(100, int(ms_per_edge * seg[k] / total)), "node": b if k == len(poly) - 2 else None, "edge": eid,
+                             "road": bool(road_flags[i]) if road_flags else True})
+        return legs
 
     # ------------------------------------------------------------------ small helpers
     def new_id(self, prefix: str) -> str:
@@ -250,7 +285,7 @@ class GodWorld:
         if snapshot:
             from . import snapshot as snap
 
-            out["snapshot"] = snap.snapshot(self)
+            out["snapshot"] = snap.snapshot(self, _kw.get("view"))
         return out
 
     def set_speed(self, scale: int) -> dict[str, Any]:
@@ -270,6 +305,8 @@ class GodWorld:
                 self._setup_step()
         self._step_journeys()
         self._step_constructions()
+        if self.local_ops_enabled:
+            local_ops.step_all(self)
         if self.phase == "TRANSITIONING" and self.transition is not None and self.game_ms >= int(self.transition["ready_ms"]):
             ages.sites_ready(self)
         if self.phase == "RUNNING" and self.next_roll_ms is not None and self.game_ms >= self.next_roll_ms:
@@ -400,7 +437,7 @@ class GodWorld:
         v["rid"] = rid
         self.node_reserved[node] = {"faction": fid, "village": v["id"]}
         jid = self.new_id("j")
-        legs = [{"a": list(self.board.node_xy(path[i])), "b": list(self.board.node_xy(path[i + 1])), "ms": rules.timing("edge_travel_road"), "node": path[i + 1]} for i in range(len(path) - 1)]
+        legs = self.path_legs(path, rules.timing("edge_travel_road"))
         self.journeys[jid] = {"id": jid, "type": "expedition", "faction": fid, "origin": from_vid, "dest_node": node, "village": v["id"], "route": list(path), "legs": legs,
                               "leg": 0, "leg_ms": 0, "phase": "outbound", "rid": rid, "started_ms": int(self.game_ms),
                               "party": [dict(m) for m in rules.data()["expedition_party"]], "supplies": rules.cost("settlement")}
@@ -487,11 +524,7 @@ class GodWorld:
         if cid is None:
             return self._reject("cannot_afford")
         ox, oy = self.board.node_xy(origin[0]["node"])
-        cx, cy = self.board.centre
-        dx, dy = ox - cx, oy - cy
-        d = (dx * dx + dy * dy) ** 0.5 or 1.0
-        far = 2.2
-        bx, by = ox + dx / d * far, oy + dy / d * far
+        bx, by = self.board.coast(origin[0]["node"])
         legs = [{"a": [ox, oy], "b": [bx, by], "ms": rules.timing("bank_leg"), "node": None}]
         self.journeys[jid] = {"id": jid, "type": "bank", "faction": fid, "origin": origin[0]["id"], "give": {give_role: n}, "want": {want_role: int(rules.data()["bank"]["get"])},
                               "cargo": cid, "legs": legs, "leg": 0, "leg_ms": 0, "phase": "outbound", "exchanged": False, "started_ms": int(self.game_ms), "bank_point": [bx, by]}
@@ -503,8 +536,7 @@ class GodWorld:
         prev = start
         for node, ms in legs:
             r = self.roads.get(self.board.edge(prev, node) or "")
-            out.append({"a": list(self.board.node_xy(prev)), "b": list(self.board.node_xy(node)), "ms": int(ms), "node": node,
-                        "road": bool(r is not None and r["status"] == "complete")})
+            out += self.path_legs([prev, node], int(ms), [bool(r is not None and r["status"] == "complete")])
             prev = node
         return out
 
@@ -632,29 +664,40 @@ class GodWorld:
                 break
 
     # ------------------------------------------------------------------ military presentation
+    def recruit_at(self, v: dict[str, Any], art: str = "", name: str = "") -> bool:
+        """One recruit at this village if its garrison quota has room (a presentation unit: no cost, no combat). Shared by the barracks timer of the
+        early ages and the ground factory of the last, so the quota is one rule."""
+        vid = v["id"]
+        quota = rules.limit("garrison_city") if int(v["level"]) >= 2 else rules.limit("garrison_settlement")
+        mine = [u for u in self.units.values() if u["village"] == vid and u["status"] == "active" and u["age"] == self.age]
+        if len(mine) >= quota:
+            return False
+        used = {int(u["slot"]) for u in mine}
+        slot = next(s for s in range(rules.limit("garrison_city")) if s not in used)
+        spec = rules.military_spec(self.age)
+        city_unit = spec.get("city_unit") and int(v["level"]) >= 2 and slot % 2 == 1
+        self._next_unit_id += 1
+        uid = f"u{self._next_unit_id}"
+        self.units[uid] = {"id": uid, "village": vid, "faction": v["faction"], "age": int(self.age), "slot": slot, "status": "active",
+                           "art": art or (spec["city_unit"] if city_unit else spec["unit"]), "name": name or (spec.get("city_unit_name") if city_unit else spec.get("unit_name", "Soldier")),
+                           "recruited_ms": int(self.game_ms)}
+        self.counters["recruits"] += 1
+        self.log("recruited", faction=v["faction"], village=vid, unit=uid)
+        return True
+
     def _step_military(self) -> None:
         interval = rules.timing("military_interval")
         for vid in sorted(self.villages):
             v = self.villages[vid]
             if v["status"] != "operational" or self.game_ms < int(v.get("ready_ms", 0)):
                 continue
+            ops = v.get("ops")
+            if ops and any(s["kind"] == "factory" for s in ops.get("sites", {}).values()):
+                continue  # the ground factory musters this village's units from its ingredients (local_ops._step_factory)
             if self.game_ms < int(v.get("next_recruit_ms", 0)):
                 continue
             v["next_recruit_ms"] = int(self.game_ms) + interval
-            quota = rules.limit("garrison_city") if int(v["level"]) >= 2 else rules.limit("garrison_settlement")
-            mine = [u for u in self.units.values() if u["village"] == vid and u["status"] == "active" and u["age"] == self.age]
-            if len(mine) >= quota:
-                continue
-            used = {int(u["slot"]) for u in mine}
-            slot = next(s for s in range(rules.limit("garrison_city")) if s not in used)
-            spec = rules.military_spec(self.age)
-            city_unit = spec.get("city_unit") and int(v["level"]) >= 2 and slot % 2 == 1
-            uid = self.new_id("u")
-            self.units[uid] = {"id": uid, "village": vid, "faction": v["faction"], "age": int(self.age), "slot": slot, "status": "active",
-                               "art": spec["city_unit"] if city_unit else spec["unit"], "name": spec.get("city_unit_name") if city_unit else spec.get("unit_name", "Soldier"),
-                               "recruited_ms": int(self.game_ms)}
-            self.counters["recruits"] += 1
-            self.log("recruited", faction=v["faction"], village=vid, unit=uid)
+            self.recruit_at(v)
 
     # ------------------------------------------------------------------ the AI pass
     def _ai_pass(self) -> None:
@@ -685,13 +728,13 @@ class GodWorld:
 
     # ------------------------------------------------------------------ save and load
     def to_dict(self) -> dict[str, Any]:
-        return {"schema": SCHEMA, "profile": self.profile, "run_id": self.run_id, "seed": self.seed, "cosmetic_seed": self.cosmetic_seed, "game_ms": self.game_ms,
+        return {"schema": SCHEMA, "profile": self.profile, "run_id": self.run_id, "seed": self.seed, "map": self.map_name, "cosmetic_seed": self.cosmetic_seed, "game_ms": self.game_ms,
                 "carry_ms": self._carry_ms, "clock_sequence": self.clock_sequence, "speed": self.speed, "paused": self.paused, "age": self.age, "epoch": self.epoch,
                 "phase": self.phase, "rng": _rng_state(self.rng), "board": self.board.to_dict(), "factions": self.factions, "ledger": self.ledger.to_dict(),
                 "villages": self.villages, "roads": self.roads, "journeys": self.journeys, "units": self.units, "node_reserved": self.node_reserved,
                 "events": self.events[-200:], "history": self.history, "counters": self.counters, "setup": self.setup, "next_roll_ms": self.next_roll_ms,
                 "last_roll": self.last_roll, "pulses": self.pulses, "pulses_total": self.pulses_total, "progress_pulse": self.progress_pulse, "ai": self.ai,
-                "ai_pass_index": self.ai_pass_index, "ai_enabled": self.ai_enabled, "transition": self.transition, "final_result": self.final_result, "next_id": self._next_id,
+                "ai_pass_index": self.ai_pass_index, "ai_enabled": self.ai_enabled, "tree_claims": self.tree_claims, "local_ops_enabled": self.local_ops_enabled, "transition": self.transition, "final_result": self.final_result, "next_id": self._next_id, "next_unit_id": self._next_unit_id,
                 "name_index": self._name_index, "topology_version": self.topology_version, "pending_completions": self.pending_completions}
 
     @classmethod
@@ -699,7 +742,7 @@ class GodWorld:
         if payload.get("profile") != rules.PROFILE or int(payload.get("schema", 0)) != SCHEMA:
             raise ValueError(f"unsupported God World save: profile {payload.get('profile')!r} schema {payload.get('schema')!r}")
         board = GodBoard.from_dict(payload["board"])
-        w = cls(seed=int(payload["seed"]), run_id=str(payload.get("run_id") or f"god-{payload['seed']}"), board=board)
+        w = cls(seed=int(payload["seed"]), run_id=str(payload.get("run_id") or f"god-{payload['seed']}"), board=board, map_name=str(payload.get("map", "")) or None)
         w.cosmetic_seed = int(payload.get("cosmetic_seed", w.cosmetic_seed))
         w.game_ms = int(payload["game_ms"])
         w._carry_ms = int(payload.get("carry_ms", 0))
@@ -730,9 +773,12 @@ class GodWorld:
         w.ai = {k: dict(v) for k, v in payload.get("ai", {}).items()} or {f: ai_mod.new_state() for f in w.fids}
         w.ai_pass_index = int(payload.get("ai_pass_index", 0))
         w.ai_enabled = bool(payload.get("ai_enabled", True))
+        w.tree_claims = {str(k): str(x) for k, x in payload.get("tree_claims", {}).items()}
+        w.local_ops_enabled = bool(payload.get("local_ops_enabled", True))
         w.transition = payload.get("transition")
         w.final_result = payload.get("final_result")
         w._next_id = int(payload.get("next_id", 1))
+        w._next_unit_id = int(payload.get("next_unit_id", 1))
         w._name_index = int(payload.get("name_index", 0))
         w.topology_version = int(payload.get("topology_version", 0))
         w.pending_completions = list(payload.get("pending_completions", []))

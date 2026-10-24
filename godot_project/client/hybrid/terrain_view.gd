@@ -47,8 +47,11 @@ func load_from(reply: Dictionary) -> bool:
 	cls = _decode(str(t["cls"]), w * h)
 	build = _decode(str(t["build"]), w * h)
 	textures.clear()
-	for name in palette:
-		var path := "res://client/hybrid/art/terrain/%s.png" % str(name)
+	for i in palette.size():
+		var name := str(palette[i])
+		var path := "res://client/hybrid/art/terrain/%s.png" % name
+		if not ResourceLoader.exists(path):
+			path = "res://client/hybrid/art/terrain/%s.png" % _fallback_terrain(name, str(palette_class[i]))
 		var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
 		textures.append(tex)
 	_build_overview()
@@ -56,6 +59,44 @@ func load_from(reply: Dictionary) -> bool:
 	_build_edges()
 	loaded = true
 	return true
+
+
+## Only the summer terrain set is imported; a map of another world (desert, winter, wasteland) is drawn with the summer terrain of the same
+## kind, chosen by name first and by class after, so the island keeps its shape even when its ground is painted with a neighbouring palette.
+static func _fallback_terrain(name: String, cls: String) -> String:
+	if name.contains("water"):
+		return "summer_water"
+	if name.contains("beach"):
+		return "summer_beach"
+	if name.contains("forested_mountain"):
+		return "summer_forested_mountain1"
+	if name.contains("mountainmeadow") or name.contains("mountain_meadow"):
+		return "summer_mountain_meadow"
+	for k in ["1", "2", "3", "4"]:
+		if name.contains("mountain") and name.ends_with(k):
+			return "summer_mountain" + k
+		if name.contains("meadow") and name.ends_with(k):
+			return "summer_meadow" + k
+	if name.contains("mountain"):
+		return "summer_mountain1"
+	if name.contains("meadow"):
+		return "summer_meadow1"
+	if name.contains("snow") or name.contains("ice"):
+		return "summer_snow"
+	if name.contains("drysoil") or name.contains("desert") or name.contains("steppe_barren") or name.contains("ashes"):
+		return "summer_steppe_barren"
+	if name.contains("steppe") or name.contains("tundra") or name.contains("taiga"):
+		return "summer_steppe"
+	match cls:
+		"arable":
+			return "summer_meadow1"
+		"mineable":
+			return "summer_mountain1"
+		"walkable":
+			return "summer_steppe"
+		"water":
+			return "summer_water"
+	return "summer_snow"
 
 
 func _load_water() -> void:

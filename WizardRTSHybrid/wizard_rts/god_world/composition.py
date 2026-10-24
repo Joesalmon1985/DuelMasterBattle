@@ -56,6 +56,7 @@ def layout(board, village: dict[str, Any], age: int, level: int | None = None) -
     node = str(village["node"])
     lvl = int(village.get("level", 1) if level is None else level)
     px, py = board.node_xy(node)
+    unit = float(getattr(board, "unit", 1.0))
     districts: list[dict[str, Any]] = []
     touching = list(board.node_hexes[node])
     # the military wedge: the touching hex with the fewest stations (a desert first); boundary nodes use the open side instead
@@ -68,18 +69,19 @@ def layout(board, village: dict[str, Any], age: int, level: int | None = None) -
         cx, cy = board.hex_xy(hid)
         ux, uy = _norm(cx - px, cy - py)
         vx, vy = -uy, ux
+        reach = min(math.hypot(cx - px, cy - py), unit)  # the district runs from the plot toward its region, never past the region's centre
         n = counts[hid]
         pushed = (hid == mil_hex) and not boundary
         stations = []
         arts = rules.role_buildings(age, role) if role != rules.DESERT else []
         for i, (depth, lateral, row) in enumerate(station_positions(n, pushed)):
             sid = f"{vid}:st:{hid}:a{age}:{i}"
-            sx = px + ux * depth + vx * lateral
-            sy = py + uy * depth + vy * lateral
+            sx = px + ux * depth * reach + vx * lateral * unit
+            sy = py + uy * depth * reach + vy * lateral * unit
             buildings = []
             for k, art in enumerate(arts):
-                bx = sx + (ux * PAIR_OFFSET[0] + vx * PAIR_OFFSET[1]) * k
-                by = sy + (uy * PAIR_OFFSET[0] + vy * PAIR_OFFSET[1]) * k
+                bx = sx + (ux * PAIR_OFFSET[0] + vx * PAIR_OFFSET[1]) * k * unit
+                by = sy + (uy * PAIR_OFFSET[0] + vy * PAIR_OFFSET[1]) * k * unit
                 buildings.append({"id": f"{sid}:b{k}", "art": art, "x": round(bx, 4), "y": round(by, 4), "part": k})
             stations.append({"id": sid, "index": i, "row": row, "x": round(sx, 4), "y": round(sy, 4), "buildings": buildings})
         districts.append({"hex": hid, "role": role, "token": token, "pips": rules.pips(token) if role != rules.DESERT else 0,
@@ -92,14 +94,14 @@ def layout(board, village: dict[str, Any], age: int, level: int | None = None) -
     else:
         d = next(d for d in districts if d["hex"] == mil_hex)
         mx, my = d["dir"]
-    fx, fy = px + mx * FACILITY_DEPTH, py + my * FACILITY_DEPTH
+    fx, fy = px + mx * FACILITY_DEPTH * unit, py + my * FACILITY_DEPTH * unit
     spec = rules.military_spec(age)
     slots = []
     wx, wy = -my, mx
     cap = rules.limit("garrison_city")
     for i in range(cap):
-        off = (i - (cap - 1) / 2.0) * 0.07
-        slots.append([round(fx + wx * off + mx * 0.09, 4), round(fy + wy * off + my * 0.09, 4)])
+        off = (i - (cap - 1) / 2.0) * 0.07 * unit
+        slots.append([round(fx + wx * off + mx * 0.09 * unit, 4), round(fy + wy * off + my * 0.09 * unit, 4)])
     return {"village": vid, "node": node, "age": age, "level": lvl, "x": round(px, 4), "y": round(py, 4),
             "warehouse": {"id": f"{vid}:wh", "art": rules.data()["warehouse"], "x": round(px, 4), "y": round(py, 4)},
             "districts": districts, "stations_total": sum(d["count"] for d in districts),

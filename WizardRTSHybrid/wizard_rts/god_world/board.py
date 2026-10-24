@@ -94,20 +94,77 @@ class GodBoard:
         self.roles: dict[str, str] = dict(roles or {})
         self.tokens: dict[str, int] = {k: int(v) for k, v in (tokens or {}).items()}
         self.node_edges: dict[str, tuple[str, ...]] = {nid: tuple(self._endpoint_edge[(nid, o) if nid < o else (o, nid)] for o in self.adjacency[nid]) for nid in self.nodes}
-        xs = [units_to_xy(*u)[0] for u in self.node_units.values()]
-        ys = [units_to_xy(*u)[1] for u in self.node_units.values()]
-        self.bounds = (min(xs), min(ys), max(xs), max(ys))
-        self.centre = ((self.bounds[0] + self.bounds[2]) / 2.0, (self.bounds[1] + self.bounds[3]) / 2.0)
+        self.embedding: dict[str, Any] | None = None
+        self.attach_embedding(None)
         self.validate()
+
+    # ------------------------------------------------------------------ the terrain embedding (god_world/embedding.py)
+    def attach_embedding(self, emb: dict[str, Any] | None, grid: Any = None) -> None:
+        """Physical positions from a terrain embedding: node plots, region centroids, road corridors, work sites, the coast. Topology is untouched.
+        With the map grid, the role-dependent dressing (work sites, trees) is computed for this board's roles."""
+        self.embedding = emb
+        self.dressing: dict[str, Any] = {"work_sites": {}, "trees": []}
+        if emb is not None and grid is not None:
+            from . import embedding as _emb
+
+            self.dressing = _emb.dress(emb, self, grid)
+        if emb is None:
+            self.unit = 1.0
+            xs = [units_to_xy(*u)[0] for u in self.node_units.values()]
+            ys = [units_to_xy(*u)[1] for u in self.node_units.values()]
+            self.bounds = (min(xs), min(ys), max(xs), max(ys))
+        else:
+            self.unit = float(emb["unit"])
+            self.bounds = (0.0, 0.0, float(emb.get("map_w", 192)), float(emb.get("map_h", 192)))
+        self.centre = ((self.bounds[0] + self.bounds[2]) / 2.0, (self.bounds[1] + self.bounds[3]) / 2.0)
+
+    def corridor(self, eid: str) -> list[tuple[float, float]]:
+        """The road's world path from endpoint a to endpoint b (a straight chord without an embedding)."""
+        a, b = self.edge_endpoints[eid]
+        if self.embedding is not None:
+            return [(float(x), float(y)) for x, y in self.embedding["corridors"][eid]]
+        return [self.node_xy(a), self.node_xy(b)]
+
+    def work_site(self, hid: str) -> tuple[float, float]:
+        ws = self.dressing.get("work_sites", {}).get(hid)
+        if ws is not None:
+            return float(ws[0]), float(ws[1])
+        return self.hex_xy(hid)
+
+    @property
+    def trees(self) -> list[dict[str, Any]]:
+        return list(self.dressing.get("trees", []))
+
+    def region_corners(self, hid: str) -> list[tuple[float, float]]:
+        if self.embedding is not None:
+            return [(float(x), float(y)) for x, y in self.embedding["regions"][hid]["corners"]]
+        return [self.node_xy(n) for n in self.hex_nodes[hid]]
+
+    def coast(self, nid: str) -> tuple[float, float]:
+        """An exterior endpoint for bank caravans: the nearest shore outward from the node."""
+        if self.embedding is not None:
+            x, y = self.embedding["coast"][nid]
+            return float(x), float(y)
+        px, py = self.node_xy(nid)
+        cx, cy = self.centre
+        dx, dy = px - cx, py - cy
+        d = (dx * dx + dy * dy) ** 0.5 or 1.0
+        return px + dx / d * 2.2 * self.unit, py + dy / d * 2.2 * self.unit
 
     # ------------------------------------------------------------------ topology queries
     def axial(self, hid: str) -> tuple[int, int]:
         return self._axial[hid]
 
     def hex_xy(self, hid: str) -> tuple[float, float]:
+        if self.embedding is not None:
+            x, y = self.embedding["regions"][hid]["centroid"]
+            return float(x), float(y)
         return units_to_xy(*hex_units(*self._axial[hid]))
 
     def node_xy(self, nid: str) -> tuple[float, float]:
+        if self.embedding is not None:
+            x, y = self.embedding["nodes"][nid]
+            return float(x), float(y)
         return units_to_xy(*self.node_units[nid])
 
     def edge(self, a: str, b: str) -> str | None:
