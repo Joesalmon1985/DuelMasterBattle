@@ -108,9 +108,15 @@ class GodWorld:
                 poly = list(reversed(poly))
             seg = [((poly[k + 1][0] - poly[k][0]) ** 2 + (poly[k + 1][1] - poly[k][1]) ** 2) ** 0.5 for k in range(len(poly) - 1)]
             total = sum(seg) or 1.0
+            cum = 0.0
+            spent = 0
             for k in range(len(poly) - 1):
+                cum += seg[k]
+                end_ms = int(ms_per_edge) if k == len(poly) - 2 else int(round(ms_per_edge * cum / total))
+                leg_ms = end_ms - spent  # the legs of an edge sum exactly to the edge's declared time: the corridor's shape never changes a journey's length
+                spent = end_ms
                 legs.append({"a": [round(poly[k][0], 3), round(poly[k][1], 3)], "b": [round(poly[k + 1][0], 3), round(poly[k + 1][1], 3)],
-                             "ms": max(100, int(ms_per_edge * seg[k] / total)), "node": b if k == len(poly) - 2 else None, "edge": eid,
+                             "ms": max(0, leg_ms), "node": b if k == len(poly) - 2 else None, "edge": eid,
                              "road": bool(road_flags[i]) if road_flags else True})
         return legs
 

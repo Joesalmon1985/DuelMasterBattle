@@ -1,0 +1,2660 @@
+{
+ "summary": {
+  "seeds": 21,
+  "ok": true,
+  "stalled": [],
+  "minutes_per_age": [
+   10.2,
+   10.6,
+   10.8,
+   10.9,
+   11.9,
+   12.3,
+   12.4,
+   12.6,
+   12.6,
+   12.8,
+   12.8,
+   13.1,
+   13.1,
+   13.3,
+   13.5,
+   13.6,
+   13.8,
+   13.8,
+   13.9,
+   14.0,
+   14.0,
+   14.1,
+   14.2,
+   14.5,
+   14.5,
+   14.6,
+   14.6,
+   14.6,
+   14.7,
+   14.8,
+   14.8,
+   14.9,
+   15.0,
+   15.0,
+   15.1,
+   15.1,
+   15.3,
+   15.3,
+   15.4,
+   15.5,
+   15.5,
+   15.7,
+   15.8,
+   16.1,
+   16.1,
+   16.1,
+   16.1,
+   16.2,
+   16.2,
+   16.2,
+   16.3,
+   16.5,
+   16.7,
+   16.8,
+   16.8,
+   16.8,
+   16.8,
+   16.8,
+   17.0,
+   17.1,
+   17.1,
+   17.2,
+   17.2,
+   17.3,
+   17.4,
+   17.5,
+   17.6,
+   17.8,
+   18.0,
+   18.2,
+   18.3,
+   18.4,
+   18.8,
+   19.1,
+   19.3,
+   19.3,
+   19.6,
+   19.6,
+   19.6,
+   20.1,
+   20.8,
+   21.3,
+   22.2,
+   24.2
+  ],
+  "pulses_per_age": [
+   39,
+   41,
+   42,
+   43,
+   45,
+   48,
+   48,
+   49,
+   49,
+   49,
+   50,
+   51,
+   51,
+   52,
+   52,
+   53,
+   54,
+   54,
+   54,
+   55,
+   55,
+   55,
+   56,
+   56,
+   57,
+   57,
+   57,
+   57,
+   57,
+   57,
+   58,
+   58,
+   59,
+   59,
+   59,
+   59,
+   59,
+   60,
+   60,
+   61,
+   61,
+   61,
+   62,
+   62,
+   63,
+   63,
+   63,
+   63,
+   64,
+   64,
+   64,
+   65,
+   65,
+   65,
+   66,
+   66,
+   66,
+   66,
+   66,
+   67,
+   67,
+   67,
+   68,
+   68,
+   68,
+   68,
+   69,
+   70,
+   71,
+   71,
+   72,
+   72,
+   74,
+   75,
+   75,
+   76,
+   77,
+   77,
+   77,
+   79,
+   82,
+   84,
+   88,
+   96
+  ]
+ },
+ "runs": [
+  {
+   "seed": 0,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 39,
+     "minutes": 10.2,
+     "vp": {
+      "f1": 4,
+      "f2": 10,
+      "f3": 4,
+      "f4": 2,
+      "f5": 5,
+      "f6": 4
+     },
+     "villages": 21,
+     "cities": 8,
+     "trades": 53,
+     "bank_trades": 15,
+     "roads": 27
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 50,
+     "minutes": 12.8,
+     "vp": {
+      "f1": 5,
+      "f2": 10,
+      "f3": 3,
+      "f4": 4,
+      "f5": 4,
+      "f6": 4
+     },
+     "villages": 22,
+     "cities": 8,
+     "trades": 95,
+     "bank_trades": 32,
+     "roads": 64
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 63,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 6,
+      "f2": 10,
+      "f3": 5,
+      "f4": 7,
+      "f5": 7,
+      "f6": 5
+     },
+     "villages": 28,
+     "cities": 12,
+     "trades": 159,
+     "bank_trades": 59,
+     "roads": 111
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 48,
+     "minutes": 12.3,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 3,
+      "f4": 6,
+      "f5": 10,
+      "f6": 6
+     },
+     "villages": 28,
+     "cities": 9,
+     "trades": 221,
+     "bank_trades": 72,
+     "roads": 156
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 51.5,
+   "wall_s": 27.5,
+   "counters": {
+    "trades": 221,
+    "bank_trades": 72,
+    "declined": 2890,
+    "roads": 156,
+    "settlements": 63,
+    "cities": 37,
+    "recruits": 346,
+    "ai_actions": 563
+   },
+   "final": true
+  },
+  {
+   "seed": 1,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 66,
+     "minutes": 17.0,
+     "vp": {
+      "f1": 9,
+      "f2": 10,
+      "f3": 6,
+      "f4": 7,
+      "f5": 6,
+      "f6": 8
+     },
+     "villages": 34,
+     "cities": 12,
+     "trades": 95,
+     "bank_trades": 20,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 76,
+     "minutes": 19.3,
+     "vp": {
+      "f1": 8,
+      "f2": 9,
+      "f3": 8,
+      "f4": 10,
+      "f5": 4,
+      "f6": 9
+     },
+     "villages": 35,
+     "cities": 13,
+     "trades": 208,
+     "bank_trades": 49,
+     "roads": 102
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 67,
+     "minutes": 17.1,
+     "vp": {
+      "f1": 5,
+      "f2": 7,
+      "f3": 6,
+      "f4": 10,
+      "f5": 5,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 12,
+     "trades": 288,
+     "bank_trades": 69,
+     "roads": 150
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 64,
+     "minutes": 16.2,
+     "vp": {
+      "f1": 9,
+      "f2": 8,
+      "f3": 5,
+      "f4": 5,
+      "f5": 5,
+      "f6": 10
+     },
+     "villages": 31,
+     "cities": 11,
+     "trades": 375,
+     "bank_trades": 93,
+     "roads": 203
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 69.5,
+   "wall_s": 44.3,
+   "counters": {
+    "trades": 375,
+    "bank_trades": 93,
+    "declined": 3951,
+    "roads": 203,
+    "settlements": 93,
+    "cities": 48,
+    "recruits": 481,
+    "ai_actions": 823
+   },
+   "final": true
+  },
+  {
+   "seed": 2,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 52,
+     "minutes": 13.5,
+     "vp": {
+      "f1": 7,
+      "f2": 4,
+      "f3": 5,
+      "f4": 8,
+      "f5": 10,
+      "f6": 5
+     },
+     "villages": 30,
+     "cities": 9,
+     "trades": 63,
+     "bank_trades": 17,
+     "roads": 43
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 41,
+     "minutes": 10.6,
+     "vp": {
+      "f1": 5,
+      "f2": 3,
+      "f3": 3,
+      "f4": 3,
+      "f5": 10,
+      "f6": 3
+     },
+     "villages": 19,
+     "cities": 8,
+     "trades": 101,
+     "bank_trades": 31,
+     "roads": 67
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 60,
+     "minutes": 15.3,
+     "vp": {
+      "f1": 9,
+      "f2": 5,
+      "f3": 7,
+      "f4": 10,
+      "f5": 7,
+      "f6": 8
+     },
+     "villages": 33,
+     "cities": 13,
+     "trades": 175,
+     "bank_trades": 58,
+     "roads": 123
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 54,
+     "minutes": 13.8,
+     "vp": {
+      "f1": 9,
+      "f2": 5,
+      "f3": 3,
+      "f4": 9,
+      "f5": 5,
+      "f6": 10
+     },
+     "villages": 29,
+     "cities": 12,
+     "trades": 239,
+     "bank_trades": 73,
+     "roads": 171
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 53.1,
+   "wall_s": 32.7,
+   "counters": {
+    "trades": 239,
+    "bank_trades": 73,
+    "declined": 2929,
+    "roads": 171,
+    "settlements": 75,
+    "cities": 42,
+    "recruits": 377,
+    "ai_actions": 609
+   },
+   "final": true
+  },
+  {
+   "seed": 3,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 54,
+     "minutes": 14.0,
+     "vp": {
+      "f1": 10,
+      "f2": 7,
+      "f3": 8,
+      "f4": 9,
+      "f5": 8,
+      "f6": 6
+     },
+     "villages": 33,
+     "cities": 15,
+     "trades": 64,
+     "bank_trades": 32,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 72,
+     "minutes": 18.4,
+     "vp": {
+      "f1": 7,
+      "f2": 5,
+      "f3": 10,
+      "f4": 8,
+      "f5": 8,
+      "f6": 5
+     },
+     "villages": 29,
+     "cities": 14,
+     "trades": 136,
+     "bank_trades": 66,
+     "roads": 98
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f6",
+     "pulses": 61,
+     "minutes": 15.5,
+     "vp": {
+      "f1": 8,
+      "f2": 6,
+      "f3": 4,
+      "f4": 5,
+      "f5": 4,
+      "f6": 10
+     },
+     "villages": 26,
+     "cities": 11,
+     "trades": 202,
+     "bank_trades": 93,
+     "roads": 142
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f3",
+     "pulses": 88,
+     "minutes": 22.2,
+     "vp": {
+      "f1": 9,
+      "f2": 7,
+      "f3": 10,
+      "f4": 9,
+      "f5": 9,
+      "f6": 8
+     },
+     "villages": 33,
+     "cities": 19,
+     "trades": 297,
+     "bank_trades": 148,
+     "roads": 204
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f6"
+    ],
+    [
+     4,
+     "f3"
+    ]
+   ],
+   "game_minutes": 70.0,
+   "wall_s": 49.0,
+   "counters": {
+    "trades": 297,
+    "bank_trades": 148,
+    "declined": 3618,
+    "roads": 204,
+    "settlements": 85,
+    "cities": 59,
+    "recruits": 470,
+    "ai_actions": 800
+   },
+   "final": true
+  },
+  {
+   "seed": 4,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 48,
+     "minutes": 12.6,
+     "vp": {
+      "f1": 7,
+      "f2": 10,
+      "f3": 6,
+      "f4": 5,
+      "f5": 6,
+      "f6": 5
+     },
+     "villages": 26,
+     "cities": 13,
+     "trades": 68,
+     "bank_trades": 17,
+     "roads": 34
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 42,
+     "minutes": 10.8,
+     "vp": {
+      "f1": 4,
+      "f2": 10,
+      "f3": 5,
+      "f4": 6,
+      "f5": 7,
+      "f6": 5
+     },
+     "villages": 21,
+     "cities": 16,
+     "trades": 115,
+     "bank_trades": 25,
+     "roads": 69
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 51,
+     "minutes": 13.1,
+     "vp": {
+      "f1": 5,
+      "f2": 10,
+      "f3": 6,
+      "f4": 8,
+      "f5": 6,
+      "f6": 7
+     },
+     "villages": 26,
+     "cities": 16,
+     "trades": 173,
+     "bank_trades": 45,
+     "roads": 114
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 51,
+     "minutes": 13.1,
+     "vp": {
+      "f1": 8,
+      "f2": 4,
+      "f3": 7,
+      "f4": 10,
+      "f5": 6,
+      "f6": 4
+     },
+     "villages": 26,
+     "cities": 13,
+     "trades": 235,
+     "bank_trades": 59,
+     "roads": 161
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 49.6,
+   "wall_s": 27.5,
+   "counters": {
+    "trades": 235,
+    "bank_trades": 59,
+    "declined": 2087,
+    "roads": 161,
+    "settlements": 63,
+    "cities": 58,
+    "recruits": 409,
+    "ai_actions": 588
+   },
+   "final": true
+  },
+  {
+   "seed": 5,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 59,
+     "minutes": 15.4,
+     "vp": {
+      "f1": 6,
+      "f2": 5,
+      "f3": 4,
+      "f4": 6,
+      "f5": 10,
+      "f6": 2
+     },
+     "villages": 25,
+     "cities": 8,
+     "trades": 56,
+     "bank_trades": 31,
+     "roads": 36
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 82,
+     "minutes": 20.8,
+     "vp": {
+      "f1": 4,
+      "f2": 10,
+      "f3": 7,
+      "f4": 9,
+      "f5": 8,
+      "f6": 5
+     },
+     "villages": 33,
+     "cities": 10,
+     "trades": 115,
+     "bank_trades": 86,
+     "roads": 99
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 63,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 7,
+      "f2": 7,
+      "f3": 10,
+      "f4": 5,
+      "f5": 9,
+      "f6": 4
+     },
+     "villages": 26,
+     "cities": 16,
+     "trades": 176,
+     "bank_trades": 121,
+     "roads": 146
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 66,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 4,
+      "f2": 5,
+      "f3": 4,
+      "f4": 7,
+      "f5": 10,
+      "f6": 5
+     },
+     "villages": 25,
+     "cities": 10,
+     "trades": 213,
+     "bank_trades": 161,
+     "roads": 183
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 69.1,
+   "wall_s": 41.0,
+   "counters": {
+    "trades": 213,
+    "bank_trades": 161,
+    "declined": 2913,
+    "roads": 183,
+    "settlements": 73,
+    "cities": 44,
+    "recruits": 425,
+    "ai_actions": 676
+   },
+   "final": true
+  },
+  {
+   "seed": 6,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 71,
+     "minutes": 18.3,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 7,
+      "f4": 6,
+      "f5": 10,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 14,
+     "trades": 63,
+     "bank_trades": 35,
+     "roads": 43
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f2",
+     "pulses": 96,
+     "minutes": 24.2,
+     "vp": {
+      "f1": 9,
+      "f2": 10,
+      "f3": 7,
+      "f4": 6,
+      "f5": 9,
+      "f6": 7
+     },
+     "villages": 33,
+     "cities": 15,
+     "trades": 126,
+     "bank_trades": 100,
+     "roads": 94
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 57,
+     "minutes": 14.6,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 10,
+      "f4": 7,
+      "f5": 8,
+      "f6": 6
+     },
+     "villages": 26,
+     "cities": 15,
+     "trades": 183,
+     "bank_trades": 140,
+     "roads": 138
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 68,
+     "minutes": 17.2,
+     "vp": {
+      "f1": 6,
+      "f2": 8,
+      "f3": 9,
+      "f4": 9,
+      "f5": 10,
+      "f6": 9
+     },
+     "villages": 31,
+     "cities": 20,
+     "trades": 250,
+     "bank_trades": 193,
+     "roads": 189
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f2"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 74.3,
+   "wall_s": 44.9,
+   "counters": {
+    "trades": 250,
+    "bank_trades": 193,
+    "declined": 2898,
+    "roads": 189,
+    "settlements": 83,
+    "cities": 64,
+    "recruits": 490,
+    "ai_actions": 788
+   },
+   "final": true
+  },
+  {
+   "seed": 7,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 65,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 10,
+      "f2": 7,
+      "f3": 5,
+      "f4": 8,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 31,
+     "cities": 14,
+     "trades": 60,
+     "bank_trades": 34,
+     "roads": 45
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 67,
+     "minutes": 17.1,
+     "vp": {
+      "f1": 7,
+      "f2": 8,
+      "f3": 10,
+      "f4": 8,
+      "f5": 9,
+      "f6": 9
+     },
+     "villages": 34,
+     "cities": 17,
+     "trades": 146,
+     "bank_trades": 69,
+     "roads": 104
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 68,
+     "minutes": 17.3,
+     "vp": {
+      "f1": 10,
+      "f2": 4,
+      "f3": 8,
+      "f4": 8,
+      "f5": 6,
+      "f6": 8
+     },
+     "villages": 32,
+     "cities": 12,
+     "trades": 202,
+     "bank_trades": 103,
+     "roads": 155
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 55,
+     "minutes": 13.9,
+     "vp": {
+      "f1": 8,
+      "f2": 7,
+      "f3": 7,
+      "f4": 5,
+      "f5": 10,
+      "f6": 8
+     },
+     "villages": 31,
+     "cities": 14,
+     "trades": 265,
+     "bank_trades": 130,
+     "roads": 206
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f1"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 65.2,
+   "wall_s": 38.5,
+   "counters": {
+    "trades": 265,
+    "bank_trades": 130,
+    "declined": 2875,
+    "roads": 206,
+    "settlements": 92,
+    "cities": 57,
+    "recruits": 500,
+    "ai_actions": 757
+   },
+   "final": true
+  },
+  {
+   "seed": 8,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 45,
+     "minutes": 11.9,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 4,
+      "f4": 6,
+      "f5": 10,
+      "f6": 5
+     },
+     "villages": 25,
+     "cities": 12,
+     "trades": 57,
+     "bank_trades": 19,
+     "roads": 40
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 62,
+     "minutes": 15.8,
+     "vp": {
+      "f1": 6,
+      "f2": 8,
+      "f3": 8,
+      "f4": 5,
+      "f5": 7,
+      "f6": 10
+     },
+     "villages": 28,
+     "cities": 16,
+     "trades": 144,
+     "bank_trades": 37,
+     "roads": 88
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 60,
+     "minutes": 15.3,
+     "vp": {
+      "f1": 5,
+      "f2": 9,
+      "f3": 8,
+      "f4": 6,
+      "f5": 10,
+      "f6": 9
+     },
+     "villages": 30,
+     "cities": 17,
+     "trades": 240,
+     "bank_trades": 63,
+     "roads": 146
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f1",
+     "pulses": 59,
+     "minutes": 15.1,
+     "vp": {
+      "f1": 10,
+      "f2": 3,
+      "f3": 8,
+      "f4": 5,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 28,
+     "cities": 13,
+     "trades": 306,
+     "bank_trades": 84,
+     "roads": 190
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f5"
+    ],
+    [
+     4,
+     "f1"
+    ]
+   ],
+   "game_minutes": 58.1,
+   "wall_s": 33.7,
+   "counters": {
+    "trades": 306,
+    "bank_trades": 84,
+    "declined": 3283,
+    "roads": 190,
+    "settlements": 75,
+    "cities": 58,
+    "recruits": 462,
+    "ai_actions": 733
+   },
+   "final": true
+  },
+  {
+   "seed": 9,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f3",
+     "pulses": 68,
+     "minutes": 17.5,
+     "vp": {
+      "f1": 9,
+      "f2": 9,
+      "f3": 10,
+      "f4": 5,
+      "f5": 8,
+      "f6": 5
+     },
+     "villages": 33,
+     "cities": 13,
+     "trades": 80,
+     "bank_trades": 25,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 77,
+     "minutes": 19.6,
+     "vp": {
+      "f1": 6,
+      "f2": 8,
+      "f3": 10,
+      "f4": 7,
+      "f5": 8,
+      "f6": 5
+     },
+     "villages": 30,
+     "cities": 14,
+     "trades": 157,
+     "bank_trades": 70,
+     "roads": 101
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 57,
+     "minutes": 14.5,
+     "vp": {
+      "f1": 4,
+      "f2": 10,
+      "f3": 6,
+      "f4": 4,
+      "f5": 4,
+      "f6": 4
+     },
+     "villages": 25,
+     "cities": 7,
+     "trades": 210,
+     "bank_trades": 88,
+     "roads": 144
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f2",
+     "pulses": 58,
+     "minutes": 14.8,
+     "vp": {
+      "f1": 6,
+      "f2": 10,
+      "f3": 4,
+      "f4": 3,
+      "f5": 5,
+      "f6": 7
+     },
+     "villages": 24,
+     "cities": 11,
+     "trades": 265,
+     "bank_trades": 116,
+     "roads": 185
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f3"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f2"
+    ]
+   ],
+   "game_minutes": 66.4,
+   "wall_s": 40.2,
+   "counters": {
+    "trades": 265,
+    "bank_trades": 116,
+    "declined": 2915,
+    "roads": 185,
+    "settlements": 76,
+    "cities": 45,
+    "recruits": 443,
+    "ai_actions": 697
+   },
+   "final": true
+  },
+  {
+   "seed": 10,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 75,
+     "minutes": 19.3,
+     "vp": {
+      "f1": 8,
+      "f2": 7,
+      "f3": 8,
+      "f4": 10,
+      "f5": 9,
+      "f6": 6
+     },
+     "villages": 34,
+     "cities": 14,
+     "trades": 83,
+     "bank_trades": 40,
+     "roads": 51
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 55,
+     "minutes": 14.1,
+     "vp": {
+      "f1": 8,
+      "f2": 7,
+      "f3": 8,
+      "f4": 10,
+      "f5": 5,
+      "f6": 5
+     },
+     "villages": 30,
+     "cities": 13,
+     "trades": 156,
+     "bank_trades": 54,
+     "roads": 99
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f2",
+     "pulses": 64,
+     "minutes": 16.3,
+     "vp": {
+      "f1": 9,
+      "f2": 10,
+      "f3": 4,
+      "f4": 8,
+      "f5": 6,
+      "f6": 7
+     },
+     "villages": 30,
+     "cities": 14,
+     "trades": 239,
+     "bank_trades": 69,
+     "roads": 147
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 43,
+     "minutes": 10.9,
+     "vp": {
+      "f1": 6,
+      "f2": 4,
+      "f3": 2,
+      "f4": 10,
+      "f5": 5,
+      "f6": 4
+     },
+     "villages": 21,
+     "cities": 10,
+     "trades": 289,
+     "bank_trades": 78,
+     "roads": 180
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f2"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 60.7,
+   "wall_s": 33.7,
+   "counters": {
+    "trades": 289,
+    "bank_trades": 78,
+    "declined": 3075,
+    "roads": 180,
+    "settlements": 79,
+    "cities": 51,
+    "recruits": 470,
+    "ai_actions": 689
+   },
+   "final": true
+  },
+  {
+   "seed": 11,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 67,
+     "minutes": 17.2,
+     "vp": {
+      "f1": 10,
+      "f2": 9,
+      "f3": 9,
+      "f4": 6,
+      "f5": 7,
+      "f6": 5
+     },
+     "villages": 31,
+     "cities": 15,
+     "trades": 89,
+     "bank_trades": 26,
+     "roads": 45
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 63,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 8,
+      "f2": 7,
+      "f3": 6,
+      "f4": 10,
+      "f5": 5,
+      "f6": 9
+     },
+     "villages": 28,
+     "cities": 17,
+     "trades": 159,
+     "bank_trades": 47,
+     "roads": 99
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f3",
+     "pulses": 77,
+     "minutes": 19.6,
+     "vp": {
+      "f1": 7,
+      "f2": 7,
+      "f3": 10,
+      "f4": 8,
+      "f5": 6,
+      "f6": 5
+     },
+     "villages": 32,
+     "cities": 11,
+     "trades": 249,
+     "bank_trades": 80,
+     "roads": 156
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f2",
+     "pulses": 66,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 6,
+      "f2": 10,
+      "f3": 6,
+      "f4": 7,
+      "f5": 5,
+      "f6": 8
+     },
+     "villages": 30,
+     "cities": 12,
+     "trades": 316,
+     "bank_trades": 117,
+     "roads": 207
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f3"
+    ],
+    [
+     4,
+     "f2"
+    ]
+   ],
+   "game_minutes": 69.7,
+   "wall_s": 41.6,
+   "counters": {
+    "trades": 316,
+    "bank_trades": 117,
+    "declined": 3534,
+    "roads": 207,
+    "settlements": 85,
+    "cities": 55,
+    "recruits": 498,
+    "ai_actions": 795
+   },
+   "final": true
+  },
+  {
+   "seed": 12,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 65,
+     "minutes": 16.7,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 4,
+      "f4": 10,
+      "f5": 7,
+      "f6": 8
+     },
+     "villages": 31,
+     "cities": 10,
+     "trades": 60,
+     "bank_trades": 12,
+     "roads": 45
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 84,
+     "minutes": 21.3,
+     "vp": {
+      "f1": 8,
+      "f2": 4,
+      "f3": 9,
+      "f4": 8,
+      "f5": 7,
+      "f6": 10
+     },
+     "villages": 35,
+     "cities": 11,
+     "trades": 147,
+     "bank_trades": 61,
+     "roads": 110
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 71,
+     "minutes": 18.0,
+     "vp": {
+      "f1": 5,
+      "f2": 7,
+      "f3": 6,
+      "f4": 10,
+      "f5": 7,
+      "f6": 7
+     },
+     "villages": 33,
+     "cities": 9,
+     "trades": 200,
+     "bank_trades": 93,
+     "roads": 163
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 64,
+     "minutes": 16.2,
+     "vp": {
+      "f1": 6,
+      "f2": 5,
+      "f3": 8,
+      "f4": 10,
+      "f5": 6,
+      "f6": 5
+     },
+     "villages": 29,
+     "cities": 11,
+     "trades": 268,
+     "bank_trades": 123,
+     "roads": 217
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 72.2,
+   "wall_s": 41.1,
+   "counters": {
+    "trades": 268,
+    "bank_trades": 123,
+    "declined": 3615,
+    "roads": 217,
+    "settlements": 92,
+    "cities": 41,
+    "recruits": 483,
+    "ai_actions": 749
+   },
+   "final": true
+  },
+  {
+   "seed": 13,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 56,
+     "minutes": 14.5,
+     "vp": {
+      "f1": 10,
+      "f2": 6,
+      "f3": 8,
+      "f4": 7,
+      "f5": 8,
+      "f6": 8
+     },
+     "villages": 34,
+     "cities": 13,
+     "trades": 85,
+     "bank_trades": 21,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 56,
+     "minutes": 14.2,
+     "vp": {
+      "f1": 7,
+      "f2": 7,
+      "f3": 6,
+      "f4": 8,
+      "f5": 10,
+      "f6": 7
+     },
+     "villages": 29,
+     "cities": 16,
+     "trades": 155,
+     "bank_trades": 45,
+     "roads": 102
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 57,
+     "minutes": 14.6,
+     "vp": {
+      "f1": 8,
+      "f2": 8,
+      "f3": 5,
+      "f4": 10,
+      "f5": 8,
+      "f6": 10
+     },
+     "villages": 31,
+     "cities": 18,
+     "trades": 242,
+     "bank_trades": 58,
+     "roads": 152
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 53,
+     "minutes": 13.6,
+     "vp": {
+      "f1": 5,
+      "f2": 7,
+      "f3": 5,
+      "f4": 5,
+      "f5": 5,
+      "f6": 10
+     },
+     "villages": 28,
+     "cities": 9,
+     "trades": 296,
+     "bank_trades": 81,
+     "roads": 196
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 56.9,
+   "wall_s": 34.9,
+   "counters": {
+    "trades": 296,
+    "bank_trades": 81,
+    "declined": 2554,
+    "roads": 196,
+    "settlements": 86,
+    "cities": 56,
+    "recruits": 489,
+    "ai_actions": 736
+   },
+   "final": true
+  },
+  {
+   "seed": 14,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f5",
+     "pulses": 62,
+     "minutes": 16.1,
+     "vp": {
+      "f1": 7,
+      "f2": 6,
+      "f3": 7,
+      "f4": 6,
+      "f5": 10,
+      "f6": 7
+     },
+     "villages": 34,
+     "cities": 9,
+     "trades": 81,
+     "bank_trades": 23,
+     "roads": 51
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 70,
+     "minutes": 17.8,
+     "vp": {
+      "f1": 6,
+      "f2": 8,
+      "f3": 10,
+      "f4": 8,
+      "f5": 6,
+      "f6": 7
+     },
+     "villages": 34,
+     "cities": 11,
+     "trades": 179,
+     "bank_trades": 48,
+     "roads": 111
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 54,
+     "minutes": 13.8,
+     "vp": {
+      "f1": 10,
+      "f2": 8,
+      "f3": 5,
+      "f4": 4,
+      "f5": 4,
+      "f6": 4
+     },
+     "villages": 27,
+     "cities": 8,
+     "trades": 250,
+     "bank_trades": 65,
+     "roads": 157
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f5",
+     "pulses": 79,
+     "minutes": 20.1,
+     "vp": {
+      "f1": 9,
+      "f2": 9,
+      "f3": 9,
+      "f4": 5,
+      "f5": 10,
+      "f6": 8
+     },
+     "villages": 34,
+     "cities": 16,
+     "trades": 360,
+     "bank_trades": 95,
+     "roads": 221
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f5"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f1"
+    ],
+    [
+     4,
+     "f5"
+    ]
+   ],
+   "game_minutes": 67.7,
+   "wall_s": 43.7,
+   "counters": {
+    "trades": 360,
+    "bank_trades": 95,
+    "declined": 3289,
+    "roads": 221,
+    "settlements": 93,
+    "cities": 44,
+    "recruits": 450,
+    "ai_actions": 819
+   },
+   "final": true
+  },
+  {
+   "seed": 15,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f2",
+     "pulses": 57,
+     "minutes": 14.8,
+     "vp": {
+      "f1": 7,
+      "f2": 10,
+      "f3": 7,
+      "f4": 8,
+      "f5": 5,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 16,
+     "trades": 67,
+     "bank_trades": 27,
+     "roads": 39
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f6",
+     "pulses": 66,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 8,
+      "f2": 4,
+      "f3": 4,
+      "f4": 9,
+      "f5": 5,
+      "f6": 10
+     },
+     "villages": 29,
+     "cities": 11,
+     "trades": 131,
+     "bank_trades": 62,
+     "roads": 86
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f4",
+     "pulses": 77,
+     "minutes": 19.6,
+     "vp": {
+      "f1": 8,
+      "f2": 6,
+      "f3": 6,
+      "f4": 10,
+      "f5": 9,
+      "f6": 9
+     },
+     "villages": 30,
+     "cities": 18,
+     "trades": 208,
+     "bank_trades": 91,
+     "roads": 138
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 59,
+     "minutes": 15.1,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 5,
+      "f4": 10,
+      "f5": 7,
+      "f6": 8
+     },
+     "villages": 25,
+     "cities": 15,
+     "trades": 277,
+     "bank_trades": 114,
+     "roads": 184
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f2"
+    ],
+    [
+     2,
+     "f6"
+    ],
+    [
+     3,
+     "f4"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 66.2,
+   "wall_s": 40.0,
+   "counters": {
+    "trades": 277,
+    "bank_trades": 114,
+    "declined": 4031,
+    "roads": 184,
+    "settlements": 77,
+    "cities": 60,
+    "recruits": 479,
+    "ai_actions": 731
+   },
+   "final": true
+  },
+  {
+   "seed": 16,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f3",
+     "pulses": 49,
+     "minutes": 12.8,
+     "vp": {
+      "f1": 4,
+      "f2": 5,
+      "f3": 10,
+      "f4": 5,
+      "f5": 6,
+      "f6": 7
+     },
+     "villages": 26,
+     "cities": 11,
+     "trades": 48,
+     "bank_trades": 19,
+     "roads": 35
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f3",
+     "pulses": 52,
+     "minutes": 13.3,
+     "vp": {
+      "f1": 3,
+      "f2": 4,
+      "f3": 10,
+      "f4": 5,
+      "f5": 5,
+      "f6": 5
+     },
+     "villages": 23,
+     "cities": 9,
+     "trades": 90,
+     "bank_trades": 38,
+     "roads": 72
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 69,
+     "minutes": 17.6,
+     "vp": {
+      "f1": 5,
+      "f2": 9,
+      "f3": 4,
+      "f4": 8,
+      "f5": 10,
+      "f6": 8
+     },
+     "villages": 33,
+     "cities": 11,
+     "trades": 163,
+     "bank_trades": 69,
+     "roads": 127
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f3",
+     "pulses": 59,
+     "minutes": 14.9,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 10,
+      "f4": 6,
+      "f5": 5,
+      "f6": 4
+     },
+     "villages": 27,
+     "cities": 8,
+     "trades": 210,
+     "bank_trades": 92,
+     "roads": 172
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f3"
+    ],
+    [
+     2,
+     "f3"
+    ],
+    [
+     3,
+     "f5"
+    ],
+    [
+     4,
+     "f3"
+    ]
+   ],
+   "game_minutes": 58.5,
+   "wall_s": 34.3,
+   "counters": {
+    "trades": 210,
+    "bank_trades": 92,
+    "declined": 2080,
+    "roads": 172,
+    "settlements": 73,
+    "cities": 39,
+    "recruits": 414,
+    "ai_actions": 593
+   },
+   "final": true
+  },
+  {
+   "seed": 17,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 58,
+     "minutes": 15.0,
+     "vp": {
+      "f1": 10,
+      "f2": 7,
+      "f3": 8,
+      "f4": 9,
+      "f5": 6,
+      "f6": 4
+     },
+     "villages": 32,
+     "cities": 12,
+     "trades": 63,
+     "bank_trades": 21,
+     "roads": 44
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 57,
+     "minutes": 14.6,
+     "vp": {
+      "f1": 5,
+      "f2": 6,
+      "f3": 4,
+      "f4": 7,
+      "f5": 10,
+      "f6": 6
+     },
+     "villages": 30,
+     "cities": 8,
+     "trades": 124,
+     "bank_trades": 46,
+     "roads": 93
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f5",
+     "pulses": 59,
+     "minutes": 15.0,
+     "vp": {
+      "f1": 7,
+      "f2": 7,
+      "f3": 6,
+      "f4": 7,
+      "f5": 10,
+      "f6": 3
+     },
+     "villages": 29,
+     "cities": 11,
+     "trades": 198,
+     "bank_trades": 60,
+     "roads": 140
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f1",
+     "pulses": 49,
+     "minutes": 12.4,
+     "vp": {
+      "f1": 10,
+      "f2": 4,
+      "f3": 7,
+      "f4": 5,
+      "f5": 8,
+      "f6": 4
+     },
+     "villages": 26,
+     "cities": 12,
+     "trades": 250,
+     "bank_trades": 68,
+     "roads": 175
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f5"
+    ],
+    [
+     4,
+     "f1"
+    ]
+   ],
+   "game_minutes": 57.1,
+   "wall_s": 36.0,
+   "counters": {
+    "trades": 250,
+    "bank_trades": 68,
+    "declined": 2803,
+    "roads": 175,
+    "settlements": 81,
+    "cities": 43,
+    "recruits": 432,
+    "ai_actions": 629
+   },
+   "final": true
+  },
+  {
+   "seed": 18,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f4",
+     "pulses": 57,
+     "minutes": 14.7,
+     "vp": {
+      "f1": 6,
+      "f2": 9,
+      "f3": 7,
+      "f4": 10,
+      "f5": 4,
+      "f6": 7
+     },
+     "villages": 32,
+     "cities": 11,
+     "trades": 58,
+     "bank_trades": 22,
+     "roads": 47
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 66,
+     "minutes": 16.8,
+     "vp": {
+      "f1": 6,
+      "f2": 5,
+      "f3": 6,
+      "f4": 7,
+      "f5": 10,
+      "f6": 7
+     },
+     "villages": 32,
+     "cities": 9,
+     "trades": 132,
+     "bank_trades": 50,
+     "roads": 106
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f6",
+     "pulses": 72,
+     "minutes": 18.2,
+     "vp": {
+      "f1": 6,
+      "f2": 6,
+      "f3": 6,
+      "f4": 6,
+      "f5": 8,
+      "f6": 10
+     },
+     "villages": 32,
+     "cities": 10,
+     "trades": 195,
+     "bank_trades": 76,
+     "roads": 156
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f4",
+     "pulses": 75,
+     "minutes": 19.1,
+     "vp": {
+      "f1": 4,
+      "f2": 3,
+      "f3": 7,
+      "f4": 10,
+      "f5": 4,
+      "f6": 6
+     },
+     "villages": 29,
+     "cities": 5,
+     "trades": 255,
+     "bank_trades": 106,
+     "roads": 209
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f4"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f6"
+    ],
+    [
+     4,
+     "f4"
+    ]
+   ],
+   "game_minutes": 68.8,
+   "wall_s": 43.2,
+   "counters": {
+    "trades": 255,
+    "bank_trades": 106,
+    "declined": 4324,
+    "roads": 209,
+    "settlements": 89,
+    "cities": 35,
+    "recruits": 482,
+    "ai_actions": 708
+   },
+   "final": true
+  },
+  {
+   "seed": 19,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f1",
+     "pulses": 61,
+     "minutes": 15.7,
+     "vp": {
+      "f1": 10,
+      "f2": 9,
+      "f3": 4,
+      "f4": 8,
+      "f5": 6,
+      "f6": 6
+     },
+     "villages": 32,
+     "cities": 11,
+     "trades": 63,
+     "bank_trades": 19,
+     "roads": 39
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f5",
+     "pulses": 65,
+     "minutes": 16.5,
+     "vp": {
+      "f1": 4,
+      "f2": 9,
+      "f3": 7,
+      "f4": 8,
+      "f5": 10,
+      "f6": 4
+     },
+     "villages": 27,
+     "cities": 15,
+     "trades": 152,
+     "bank_trades": 41,
+     "roads": 95
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f1",
+     "pulses": 49,
+     "minutes": 12.6,
+     "vp": {
+      "f1": 10,
+      "f2": 6,
+      "f3": 6,
+      "f4": 5,
+      "f5": 7,
+      "f6": 4
+     },
+     "villages": 24,
+     "cities": 14,
+     "trades": 200,
+     "bank_trades": 57,
+     "roads": 133
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f1",
+     "pulses": 61,
+     "minutes": 15.5,
+     "vp": {
+      "f1": 10,
+      "f2": 8,
+      "f3": 9,
+      "f4": 8,
+      "f5": 4,
+      "f6": 4
+     },
+     "villages": 29,
+     "cities": 14,
+     "trades": 265,
+     "bank_trades": 77,
+     "roads": 182
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f1"
+    ],
+    [
+     2,
+     "f5"
+    ],
+    [
+     3,
+     "f1"
+    ],
+    [
+     4,
+     "f1"
+    ]
+   ],
+   "game_minutes": 60.3,
+   "wall_s": 39.2,
+   "counters": {
+    "trades": 265,
+    "bank_trades": 77,
+    "declined": 2408,
+    "roads": 182,
+    "settlements": 76,
+    "cities": 54,
+    "recruits": 431,
+    "ai_actions": 657
+   },
+   "final": true
+  },
+  {
+   "seed": 507,
+   "ok": true,
+   "stalled": false,
+   "ages": {
+    "1": {
+     "age": 1,
+     "name": "Prehistoric",
+     "winner": "f6",
+     "pulses": 63,
+     "minutes": 16.2,
+     "vp": {
+      "f1": 7,
+      "f2": 6,
+      "f3": 8,
+      "f4": 7,
+      "f5": 8,
+      "f6": 10
+     },
+     "villages": 33,
+     "cities": 13,
+     "trades": 70,
+     "bank_trades": 33,
+     "roads": 48
+    },
+    "2": {
+     "age": 2,
+     "name": "Historic",
+     "winner": "f4",
+     "pulses": 68,
+     "minutes": 17.4,
+     "vp": {
+      "f1": 6,
+      "f2": 5,
+      "f3": 6,
+      "f4": 10,
+      "f5": 6,
+      "f6": 8
+     },
+     "villages": 29,
+     "cities": 12,
+     "trades": 130,
+     "bank_trades": 66,
+     "roads": 98
+    },
+    "3": {
+     "age": 3,
+     "name": "Modern",
+     "winner": "f6",
+     "pulses": 74,
+     "minutes": 18.8,
+     "vp": {
+      "f1": 4,
+      "f2": 8,
+      "f3": 7,
+      "f4": 8,
+      "f5": 4,
+      "f6": 10
+     },
+     "villages": 28,
+     "cities": 13,
+     "trades": 196,
+     "bank_trades": 96,
+     "roads": 147
+    },
+    "4": {
+     "age": 4,
+     "name": "Dystopian Future",
+     "winner": "f6",
+     "pulses": 55,
+     "minutes": 14.0,
+     "vp": {
+      "f1": 5,
+      "f2": 5,
+      "f3": 6,
+      "f4": 5,
+      "f5": 6,
+      "f6": 10
+     },
+     "villages": 27,
+     "cities": 10,
+     "trades": 267,
+     "bank_trades": 126,
+     "roads": 195
+    }
+   },
+   "winners": [
+    [
+     1,
+     "f6"
+    ],
+    [
+     2,
+     "f4"
+    ],
+    [
+     3,
+     "f6"
+    ],
+    [
+     4,
+     "f6"
+    ]
+   ],
+   "game_minutes": 66.4,
+   "wall_s": 37.2,
+   "counters": {
+    "trades": 267,
+    "bank_trades": 126,
+    "declined": 4733,
+    "roads": 195,
+    "settlements": 81,
+    "cities": 48,
+    "recruits": 440,
+    "ai_actions": 730
+   },
+   "final": true
+  }
+ ],
+ "budget": 600
+}

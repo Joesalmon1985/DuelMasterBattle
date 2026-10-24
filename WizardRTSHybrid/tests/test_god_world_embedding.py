@@ -68,22 +68,21 @@ def test_journeys_follow_corridors_and_the_rules_do_not_move():
         w.advance(1000, seq, snapshot=False)
     exp = next(j for j in w.journeys.values() if j["type"] == "expedition")
     assert len(exp["legs"]) >= len(exp["route"])  # a winding corridor has more legs than edges
-    for leg in exp["legs"]:
-        assert leg["ms"] >= 100
-    # per edge the travel time is still the declared road time
+    # per edge the travel time is exactly the declared road time, whatever the corridor's shape
     by_edge: dict[str, int] = {}
     for leg in exp["legs"]:
         by_edge[leg["edge"]] = by_edge.get(leg["edge"], 0) + int(leg["ms"])
     for eid, ms in by_edge.items():
-        assert abs(ms - rules.timing("edge_travel_road")) <= 100 * len([l for l in exp["legs"] if l["edge"] == eid])
+        assert ms == rules.timing("edge_travel_road"), (eid, ms)
     # the same seed without a map plays the same strategic game (positions are presentation; durations per edge are the rule)
     bare = GodWorld(seed=3, map_name=None)
     mapped = GodWorld(seed=3)
     s = 0
-    for _ in range(900):
+    for _ in range(3600):
         s += 1
         bare.advance(1000, s, snapshot=False)
         mapped.advance(1000, s, snapshot=False)
+    assert bare.history["age_winners"] == mapped.history["age_winners"]
     assert bare.last_roll == mapped.last_roll
     assert {f: bare.vp(f) for f in bare.fids} == {f: mapped.vp(f) for f in mapped.fids}
     assert bare.ledger.hands == mapped.ledger.hands

@@ -54,14 +54,21 @@ func _village_with(world: Node, pred: Callable) -> Dictionary:
 	return {}
 
 
-func _run_age(age: int) -> void:
+func _run_age(age: int, attempt: int = 0) -> void:
 	OS.set_environment("DMB_GOD_START_AGE", str(age))
 	var lan: Node = get_root().get_node("LanSession")
+	lan.stop_local_host()
 	lan.reset()
+	await _wait_until(func(): return false, 4.0)  # the earlier host must have released the port before a new one binds it
 	change_scene_to_file("res://client/scenes/god_world.tscn")
 	await _frames(3)
 	var world: Node = current_scene
-	var ok := await _wait_until(func(): return world.ui_state()["state"] == "playing", 90.0)
+	var ok := await _wait_until(func(): return world.ui_state()["state"] in ["playing", "failed"], 90.0)
+	if world.ui_state()["state"] != "playing" and attempt < 2:
+		print("AGES retry age %d after: %s" % [age, str(world.ui_state()["status"])])
+		await _run_age(age, attempt + 1)
+		return
+	ok = world.ui_state()["state"] == "playing"
 	_check(ok, "age %d: the scene is playing (%s)" % [age, str(world.ui_state()["status"])])
 	if not ok:
 		return
@@ -69,10 +76,17 @@ func _run_age(age: int) -> void:
 	_check(ok, "age %d: the world opened in that age with every faction's villages" % age)
 	# a village with the living picture (sites and agents) in the window
 	world.set_speed(4)
-	var target := {}
+	var holder := {"v": {}}  # a lambda captures locals by value: the found village is handed back through a dictionary
 	ok = await _wait_until(func():
-		target = _village_with(world, func(v): return v.has("ops") and not bool(v["ops"].get("lean", false)) and v["ops"].get("sites", []).size() >= 4)
-		return not target.is_empty(), 30.0)
+		var planned := func(v): return v.has("ops") and not bool(v["ops"].get("lean", false)) and v["ops"].get("sites", []).size() >= 4
+		if age == 4:  # the future age's showcase wants the water chain too: prefer a village with a pipe
+			var wet: Dictionary = _village_with(world, func(v): return planned.call(v) and v["ops"].get("segments", []).any(func(g): return str(g.get("kind", "")) == "pipe"))
+			if not wet.is_empty():
+				holder["v"] = wet
+				return true
+		holder["v"] = _village_with(world, planned)
+		return not (holder["v"] as Dictionary).is_empty(), 30.0)
+	var target: Dictionary = holder["v"]
 	_check(ok, "age %d: a village has its network planned" % age)
 	if target.is_empty():
 		return
@@ -86,7 +100,7 @@ func _run_age(age: int) -> void:
 		if age <= 2:
 			return ops.get("agents", []).any(func(a): return str(a.get("cargo", "")) != "")
 		if age == 3:
-			return ops.get("agents", []).any(func(a): return str(a.get("kind", "")) == "truck" and str(a.get("cargo", "")) != "")
+			return int(ops.get("hub", {}).get("received", 0)) > 0 and ops.get("agents", []).any(func(a): return str(a.get("kind", "")) == "truck")
 		return ops.get("segments", []).any(func(g): return g.get("items", []).size() > 0), 90.0)
 	_check(ok, "age %d: goods are moving in the village (%s)" % [age, str(target.get("name", ""))])
 	await _shot("age%d_village_close" % age)

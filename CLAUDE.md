@@ -6,7 +6,9 @@ board, where six AI factions settle, trade, build roads and raise cities through
 Catan topology" rule for this profile; the ledger is `docs/ledger/GOD_WORLD_PROGRESS.md`; the restart notes are the first section of
 `docs/NEXT_AGENT_HANDOFF.md`. The authority is `WizardRTSHybrid/wizard_rts/god_world/` (profile `god_catan_v1`, hosted by `net/host.py` and
 `net/android_entry.py`); the viewer is `godot_project/client/god_world/`; the menu's first entry is **Watch the World** (`Watch the World.bat`).
-Branch `feature/god-world` (0.6.0), cut from `feature/polish-watching-feel`, so every earlier branch's work is included. Everything below describes
+Branch `feature/god-world` (0.6.0), cut from `feature/polish-watching-feel`, so every earlier branch's work is included. **Second brief (same day): natural
+terrain and living villages**: the island is a real Widelands map (D42 to D47, plan `docs/PLAN_GOD_WORLD_LIVING.md`), villages run local networks of
+workers, carriers, belts and machines from a capacity budget (`god_world/local_ops.py`, `planner.py`, `data/god_world/chains.json`). Everything below describes
 the earlier wizard-led game: it is kept as legacy and development material, not deleted, and its product rules no longer decide the player's game.
 Merging into `main` is the owner's call.
 

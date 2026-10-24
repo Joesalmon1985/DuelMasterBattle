@@ -125,3 +125,59 @@ no missing art after the tour. Shots: `01_setup` (the placements), `02_village_c
 - 14:45 to 15:05 Headed runs: injected positions are window pixels (the scene reasons in viewport units) and a tap within 250 ms of a pinch is swallowed
   by design; the test now converts and waits. The details sheet got a dark backing (buildings showed through the card's translucent style).
   `GOD_WORLD_OK` (25 checks), `MENU_ROUTES_OK`, `ANDROID_APK_OK` (0.6.0). Committed.
+
+## Living world (the owner's second brief of 24 Oct 2026: natural terrain and living village networks)
+
+Plan and the improvements over the brief: `docs/PLAN_GOD_WORLD_LIVING.md`. Decisions D42 to D47. The brief's screenshot was not attached; the headed
+captures of `45ff228f` are the regression reference. Commit `0c16e875` carries stages A to C; the docs and evidence follow in the next commit.
+
+| Stage | State | Where |
+| --- | --- | --- |
+| A Terrain embedding and rendering | done | `god_world/embedding.py`, `scripts/god_world_embed.py`, `data/god_world/embedding_Egyptian_Mandala_v1.2.json`, `terrain_view.gd` fallbacks, `god_view.gd` |
+| B Living villages (ages 1 and 2) | done | `planner.py`, `local_ops.py`, `data/god_world/chains.json`, `god_view.gd` (sites, agents, trees, streets, hubs) |
+| C Industry (ages 3 and 4) | done | `planner._plan_industry`, `local_ops` segments, pump, generator, factory; `god_view._draw_segment` |
+| D Generalisation, saves, invariance | done | every village is planned by the same planner in normal play; `test_v17_*`, `test_v12_v18_*`, the corpus |
+| E Polish and performance | partial | depth sorting by anchor, state effects (smoke while working, a red lamp when short or unpowered, crates at the door); no calibration fixture scene; no device measurements |
+
+### Acceptance (the brief's V01 to V20)
+
+| V | State | Evidence |
+| --- | --- | --- |
+| V01 | verified (headed) | `docs/evidence/god_world/headed/02_village_close.png`, `09_whole_board.png`: the Egyptian Mandala island with summer-set terrain, water, woodland; no role-coloured hexagons |
+| V02 | verified | `test_god_world_embedding.py::test_the_checked_in_embedding_matches_the_map_and_validates` (80 plots, 109 corridors, every corridor joins its logical endpoints) |
+| V03 | verified | the same test (plots on buildable ground, at least 0.55 units apart; corridors avoid other plots) and `test_sites_stand_on_buildable_ground_*` |
+| V04 | verified | corridors are A* paths over passable tiles with crossing repair (`embedding.validate`); journeys follow them with per-edge times exact (`test_journeys_follow_corridors_and_the_rules_do_not_move`) |
+| V05 | verified | `test_v05_capacity_is_a_budget_not_a_copy_count` |
+| V06 | verified | `test_v06_workers_perform_routed_tasks_and_face_the_way_they_walk`; headed `02_village_close.png` |
+| V07 | verified | `test_v07_a_log_goes_from_a_tree_through_the_sawmill_to_the_hub_and_the_woodland_regrows` (conservation of logs in operating units) |
+| V08 | verified (headed) | trucks are the modern age's carriers (`openra.truk`, 32 facings from the simulation's heading); `run_god_world_ages.gd` age 3: goods delivered to the command centre by truck (`headed_ages/age3_village_close.png`) |
+| V09 | verified (test and headed) | `test_v09_silicon_and_lead_build_a_unit_within_the_quota`, `test_v11_a_broken_belt_delivers_nothing_and_recovers`; headed age 4 in normal play: "the ground factory mustered a unit from silicon and lead" (`headed_ages/age4_factory_unit.png`) |
+| V10 | verified (test and headed) | `test_v10_water_is_pumped_through_the_pipe_and_tank_into_the_cultivator`; headed age 4: a pipe carrying water to the cultivator (`AGES_WATER pipes=1 carrying=1`, `age4_village_close.png`) |
+| V11 | verified | `test_v11_belts_carry_spaced_packets_and_back_up_when_the_end_is_full`, the broken-belt test |
+| V12 | verified | `test_v12_v18_operating_goods_never_touch_the_hand_*` (no ledger entry point for an operating good; on/off identical) |
+| V13 | verified (test and headed) | `test_the_hub_changes_with_the_age_and_stays_one` (store, warehouse, command centre, core / core foundation for a city, one id); `headed/02_village_close.png` (store), `headed_ages/age2_village_close.png` (warehouse), `age3_village_close.png` (command centre), `age4_village_close.png` (core) |
+| V14 | partial | anchors and y-sorting per site and agent; industrial pads only under the command centre and the core; no calibration fixture scene |
+| V15 | verified | heading from motion in `local_ops._move`; `test_v06_*` checks heading against the position derivative; the old oscillator is gone |
+| V16 | verified | `planner.py` scored placement; provenance per symbol in `WizardRTSHybrid/docs/SOURCE_REUSE.md` with the named comparison tests |
+| V17 | verified | `test_v17_save_and_load_mid_haul_keeps_jobs_cargo_and_buffers` |
+| V18 | verified | `test_v12_v18_*`, `test_the_industrial_layer_does_not_move_the_strategic_game_either`; the bare and the mapped world play the same hour |
+| V19 | verified | the 21-seed corpus with the living layer on: every seed through four ages, no stall, 10 to 24 game-minutes an age, 28 to 49 s wall a seed (`docs/evidence/god_world/corpus_living.json`). Bare board, mapped board and mapped board with the living layer play the identical game (seeds 0 and 1 through four ages, same winners and pulse counts). The outcomes differ from the `45ff228f` corpus only because units now have their own id counter (the brief's invariance test needed it): village and journey ids no longer shift when a unit is recruited, which changes deterministic tie-break order, not a rule |
+| V20 | partial | normal play builds every network autonomously (the planner is the only path); phone input/export checks: the asset and packaging tests pass, no device run |
+
+### Headed evidence of the ages (`client/tests/run_god_world_ages.gd`, `docs/evidence/god_world/headed_ages/`, 24 Oct 2026)
+
+`GOD_AGES_OK`. For each of the historic, modern and future ages the ordinary scene opened a fresh island in that age (developer start age), the planner
+built every village's network in normal play, and the capture waited for goods to move: age 2 carriers carrying loads, age 3 trucks delivering to the
+command centre, age 4 belts carrying packets, the water pipe carrying, the ground factory mustering a unit from silicon and lead. No missing art in any
+age. Shots: `age{2,3,4}_village_close`, `age{2,3,4}_village`, `age{2,3,4}_overlay`, `age4_factory_unit`.
+
+### Session log (continued)
+
+- 15:10 to 16:40 The second brief. Stage A: the embedding on Egyptian Mandala (The Big Lake rejected: half water); two routing fixes (corridors steer clear of each
+  other, crossings repaired; the board's scale and offset searched so nodes are not pushed across lakes); terrain fallbacks for the desert palette; the
+  start zoom clamped (a remembered fit zoom had leaked into the headed run); taps converted from window to viewport units in the test.
+- 16:40 to 17:30 Stage B: planner, local_ops, chains; every district guaranteed a first producer; woodland planted on mountain sides and beside every plot;
+  foresters plant anew. Stage C: belts, pipes, generator, support drills, factory; belts leaving one outlet take turns (the generator had starved);
+  units got their own id counter (the strategic invariance test had seen village ids drift). Commit `0c16e875`.
+- 17:30 to 18:10 Evidence: corridor leg times made exact per edge (the first living corpus had drifted from the bare one by rounding); agents refreshed on
+  re-plan (age-3 carriers had stayed carriers instead of trucks); Mindustry machines scaled to their cells. `GOD_AGES_OK`, `GOD_WORLD_OK`, the corpus.

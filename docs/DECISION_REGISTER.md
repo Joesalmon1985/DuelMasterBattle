@@ -123,3 +123,17 @@ here so that older instructions cannot undo them. Merging into `main` remains th
 
 What section 6's freeze (D33) means here: God World composes the frozen roster; the asset manifest `data/god_world/asset_manifest.json` lists the ids it
 draws, every one already imported. No upstream content was added.
+
+## 8. God World on natural terrain with living villages (24 October 2026, owner brief "natural terrain and living village networks")
+
+The owner's follow-up brief supersedes the earlier PRD where they conflict (its section 1). Plan: `docs/PLAN_GOD_WORLD_LIVING.md`; ledger section
+"Living world" in `docs/ledger/GOD_WORLD_PROGRESS.md`.
+
+| ID | Decision | Status | Consequence |
+| --- | --- | --- | --- |
+| D42 | **The island is a real Widelands map, embedded.** The logical 30/80/109 graph keeps every rule; its nodes, edges and regions are laid onto Egyptian Mandala v1.2 (60 % contiguous land; The Big Lake is half water) by a validated automatic embedding with the board's scale and offset searched, saved as `data/god_world/embedding_<map>.json`. Visible hexagons are gone; the logical board is an inspection overlay. Widelands' border wrap is never used (a bounded island). | owner (brief) | `god_world/embedding.py`, `scripts/god_world_embed.py`; desert and mountain palettes draw with the summer terrain set by family (D33 keeps the content frozen). |
+| D43 | **Geometry per map, dressing per world.** Plots, corridors, catchments and the coast depend on the map and the shape only; work sites and woodland depend on the seed's roles and are computed when a world attaches its map, never saved as geometry. | implementation | `embedding.dress`; a change of seed never changes where villages can stand. |
+| D44 | **Capacity is a budget, not a copy count.** `pips x level` per region is spent by a local planner on producers (one per three, at most four), workers, support, processors and carriers; a city adds capacity and complexity, never a uniform doubling. Supersedes PRD 7.1's station rows. | owner (brief) | `god_world/planner.py`; `test_god_world_living.py::test_v05_*`. |
+| D45 | **One local-operations engine for all ages.** Sites with typed buffers of operating goods, agents with routed tasks, belt and pipe segments, processors with recipes, a generator, a factory: one data-driven engine (`chains.json`) rather than four. Operating goods never touch the five-slot hand; the layer reads strategic state and never writes it; its randomness is its own stream; switching it off changes nothing strategic. | owner (brief), invariants kept | `god_world/local_ops.py`; `test_v12_v18_*`, `test_the_industrial_layer_*`. |
+| D46 | **The hub by age is data, the primitive one is composed.** Store (barbarian wood hardener with drawn stockpiles), warehouse and yard, command centre on its pad, core (foundation for a city); one semantic hub id per village through every age. No new bitmap was authored; the slot takes one if the owner wants it. | owner (brief), with a choice left open | `chains.json` `hubs`; `test_the_hub_changes_with_the_age_and_stays_one`. |
+| D47 | **Upstream reuse is adapted behaviour with provenance, not a renamed port.** Widelands worker programs and carrier loop, the default AI's proximity and space scoring, Mindustry recipes and transport formulas, OpenRA's facing convention: each recorded per file and symbol with its allowed differences in `WizardRTSHybrid/docs/SOURCE_REUSE.md`. No native engine runs in play. | owner (brief) | The comparison fixtures are the named tests. |

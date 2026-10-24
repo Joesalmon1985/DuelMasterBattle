@@ -1,5 +1,19 @@
 # Next agent handoff
 
+## 24 Oct 2026 (later): the island and the living villages (branch `feature/god-world`, from commit `0c16e875`)
+
+The owner's second brief of the day ("natural terrain and living village networks") asked for a real landscape and villages that work. Plan with the
+improvements made to the brief: `docs/PLAN_GOD_WORLD_LIVING.md`; decisions D42 to D47; the ledger's "Living world" section carries the V01 to V20 table.
+In one paragraph: the logical board is embedded on the Widelands map Egyptian Mandala v1.2 (`god_world/embedding.py`, checked-in JSON, validated;
+`scripts/god_world_embed.py --check --ascii` draws it), positions are tiles (64 px), journeys follow corridors with exact per-edge times, the viewer draws
+the terrain through `terrain_view.gd` (summer fallbacks for desert names) with the logical overlay on the `#` button; every active village runs
+`local_ops.py` from a `planner.py` budget: one hub by age, producers whose workers find trees, rock, game and fields and walk home loaded (facing from
+motion), foresters, processors with recipes, carriers (trucks in age 3), belts with spacing and backpressure, a pump and tank for the cultivator, a
+coal generator, support drills and the ground factory that musters units within the garrison quota (age 4); operating goods never touch the hand
+(`test_v12_v18_*`); the `state` op takes a `view` window so only visible villages carry the heavy picture. Evidence: `client/tests/run_god_world.gd`
+(age 1 tour) and `run_god_world_ages.gd` (DMB_GOD_START_AGE 2/3/4, a developer start age in `session.build_world`). Not done: a calibration fixture
+scene, a sound layer, device measurements, a phone run; the age-3 "initial conveyor lines" (trucks only), power as one generator per village.
+
 ## 24 Oct 2026: God World, 0.6.0 (branch `feature/god-world`, from `feature/polish-watching-feel` at `1e37aef2`)
 
 The owner handed over `docs/GOD_WORLD_PRD.md` and asked for a new branch that carries all the work so far and rejigs the game to it. Ledger and the

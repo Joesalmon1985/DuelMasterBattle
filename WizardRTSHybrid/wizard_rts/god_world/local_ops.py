@@ -85,16 +85,20 @@ def ensure(world, v: dict[str, Any]) -> dict[str, Any] | None:
         for k in range(n):
             aid = f"{s['id']}:w{k}"
             prev = old_agents.get(aid)
-            new_ops["agents"][aid] = prev if prev else {"id": aid, "kind": "worker", "art": s.get("worker", ""), "site": s["id"], "x": s["ex"], "y": s["ey"], "hx": 0.0, "hy": 1.0,
-                                                        "anim": "idle", "cargo": "", "phase": "home", "target": None, "wait_ms": 0, "task": s.get("task", ""), "work_anim": s.get("work_anim", "")}
+            rec = dict(prev) if prev else {"id": aid, "kind": "worker", "site": s["id"], "x": s["ex"], "y": s["ey"], "hx": 0.0, "hy": 1.0, "anim": "idle", "cargo": "", "phase": "home",
+                                           "target": None, "wait_ms": 0}
+            rec.update({"art": s.get("worker", ""), "task": s.get("task", ""), "work_anim": s.get("work_anim", "")})  # the site's current job, whatever age it was planned in
+            new_ops["agents"][aid] = rec
     kind = "truck" if p["transport"] == "truck" else "carrier"
     art = planner.chains()["carrier_art"].get(kind, "")
     if p["transport"] != "belt":
         for k in range(int(p["carriers"])):
             aid = f"{v['id']}:c{k}"
             prev = old_agents.get(aid)
-            new_ops["agents"][aid] = prev if prev else {"id": aid, "kind": kind, "art": art, "site": hub["id"], "x": hub["ex"] + (k - p["carriers"] / 2.0) * 0.5, "y": hub["ey"] + 0.6,
-                                                        "hx": 1.0, "hy": 0.0, "anim": "idle", "cargo": "", "phase": "idle", "target": None, "wait_ms": 0, "job": None}
+            rec = dict(prev) if prev else {"id": aid, "site": hub["id"], "x": hub["ex"] + (k - p["carriers"] / 2.0) * 0.5, "y": hub["ey"] + 0.6, "hx": 1.0, "hy": 0.0, "anim": "idle",
+                                           "cargo": "", "phase": "idle", "target": None, "wait_ms": 0, "job": None}
+            rec.update({"kind": kind, "art": art})  # a carrier of the historic age drives a truck in the modern one
+            new_ops["agents"][aid] = rec
     _claim_trees(world, v, new_ops)
     v["ops"] = new_ops
     return new_ops

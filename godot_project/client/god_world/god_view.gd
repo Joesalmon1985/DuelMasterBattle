@@ -18,7 +18,7 @@ const ROLE_COLOR := {
 	"WOOD": Color(0.22, 0.46, 0.2), "BRICK": Color(0.62, 0.38, 0.22), "SHEEP": Color(0.55, 0.72, 0.32), "WHEAT": Color(0.82, 0.7, 0.3),
 	"ORE": Color(0.48, 0.5, 0.56), "DESERT": Color(0.86, 0.78, 0.55),
 }
-const SCALE_BY_GAME := {"widelands": 2.0, "openra": 2.0, "mindustry": 2.5}
+const SCALE_BY_GAME := {"widelands": 2.0, "openra": 2.0, "mindustry": 1.6}  # a Mindustry cell (32 px) is 0.8 tile: a 3x3 block spans 2.4 tiles, the planner's spacing
 const MIND_PAD := Color(0.17, 0.17, 0.2)
 
 var board: Dictionary = {}
@@ -684,8 +684,8 @@ func _draw_mindustry(item: Dictionary, pos: Vector2, tint: Color, working: bool)
 	var sc := _item_scale(item)
 	var w := float(item.get("width", 64)) * sc
 	var rect := Rect2(pos - Vector2(w * 0.5, w * 0.8), Vector2(w, w))
-	draw_rect(rect.grow(10.0), MIND_PAD * tint, true)  # the industrial pad: a top-view machine reads as a roof on it
-	draw_rect(rect.grow(10.0), Color(0.05, 0.05, 0.06), false, 3.0)
+	draw_rect(rect.grow(4.0), MIND_PAD * tint, true)  # a thin footing under the top-view machine, no yard of its own
+	draw_rect(rect.grow(4.0), Color(0.05, 0.05, 0.06), false, 2.0)
 	var parts: Array = item.get("parts", [])
 	if parts.is_empty():
 		var tex: Texture2D = art._tex(str(item.get("id", "")))
